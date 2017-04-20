@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog_Rechtecktasche</class>
+ <widget class="QDialog" name="Dialog_Rechtecktasche">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>660</width>
+    <height>563</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Rechtecktasche</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>641</width>
+     <height>501</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_allgemein">
+    <attribute name="title">
+     <string>allgemein</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>601</width>
+       <height>451</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_Werkzeug_var">
+        <property name="text">
+         <string>[WKZ]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QComboBox" name="comboBox_Werkzeug"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_posY">
+        <property name="text">
+         <string>Bezugspunkt Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_breite">
+        <property name="text">
+         <string>Taschenbreite</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_posX">
+        <property name="text">
+         <string>Bezugspunkt X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Werkzeug">
+        <property name="text">
+         <string>Werkzeug</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_tiefe">
+        <property name="text">
+         <string>Taschentiefe</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_Zustellung">
+        <property name="text">
+         <string>Zustellmaß</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_laenge">
+        <property name="text">
+         <string>Taschenlänge</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_radius">
+        <property name="text">
+         <string>Eckenradius</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_Gegenlauf">
+        <property name="text">
+         <string>Gegenlauf</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_posX_var">
+        <property name="text">
+         <string>*[X]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_posY_var">
+        <property name="text">
+         <string>*[Y]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_laenge_var">
+        <property name="text">
+         <string>*[TL]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_breite_var">
+        <property name="text">
+         <string>*[TB]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_tiefe_var">
+        <property name="text">
+         <string>*[TT]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="label_radius_var">
+        <property name="text">
+         <string>[RAD]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_Zustellung_var">
+        <property name="text">
+         <string>[ZUST]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="label_Gegenlauf_var">
+        <property name="text">
+         <string>[GEGL]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="lineEdit_posX"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="lineEdit_posY"/>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="lineEdit_laenge"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="lineEdit_breite"/>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="lineEdit_tiefe"/>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLineEdit" name="lineEdit_radius"/>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="lineEdit_Zustellung"/>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLineEdit" name="lineEdit_Gegenlauf"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_Bezugspunkt">
+    <attribute name="title">
+     <string>Bezugspunkt</string>
+    </attribute>
+    <widget class="QRadioButton" name="radioButton_oben_links">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>oben links</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_oben_rechts">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>50</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>oben rechts</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_mitte">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>220</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>mitte</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_unten_links">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>400</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>unten links</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_unten_rechts">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>400</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>unten rechts</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>571</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Lage des Bezugspunkten / Lage des Einfügepunktes der Tagsche</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_links">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>220</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>links</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_unten">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>400</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>unten</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_oben">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>40</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>oben</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_rechts">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>220</y>
+       <width>107</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>rechts</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_Technologie">
+    <attribute name="title">
+     <string>Technologie</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>601</width>
+       <height>451</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_Drehzahl_var">
+        <property name="text">
+         <string>[N]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_Vorschub">
+        <property name="text">
+         <string>Vorschub XY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="lineEdit_Vorschub"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_Eintauchvorschub_var">
+        <property name="text">
+         <string>[FAN]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_Kommentar">
+        <property name="text">
+         <string>Kommentar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_winkel">
+        <property name="text">
+         <string>Drehwinkel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_ausraeumen_var">
+        <property name="text">
+         <string>[AUSR]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_ausraeumen">
+        <property name="text">
+         <string>Ausräumen</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="lineEdit_Eintauchvorschub"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_Kommentar_var">
+        <property name="text">
+         <string>[KOM]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="lineEdit_Kommentar"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_winkel_var">
+        <property name="text">
+         <string>[W]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="lineEdit_Ausfuehrbedingung"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="lineEdit_Drehzahl"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_Ausfuehrbedingung">
+        <property name="text">
+         <string>Ausführbedingung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="lineEdit_ausraeumen"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="lineEdit_winkel"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Eintauchvorschub">
+        <property name="text">
+         <string>Eintauchvorschub</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_Vorschub_var">
+        <property name="text">
+         <string>[F]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_Drehzahl">
+        <property name="text">
+         <string>Drehzahl</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_Ausfuehrbedingung_var">
+        <property name="text">
+         <string>[AFB]</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLineEdit" name="lineEdit_bezeichnung"/>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="label__bezeichnung_var">
+        <property name="text">
+         <string>[BEZ]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_bezeichnung">
+        <property name="text">
+         <string>Bezeichnung</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_Werkzeug">
+    <attribute name="title">
+     <string>Werkzeug</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>601</width>
+       <height>451</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,3">
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_wkz_Kommentar">
+        <property name="text">
+         <string>Kommentar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_wkz_Nutzlaenge">
+        <property name="text">
+         <string>Nutzlänge</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_wkz_Nummer_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_wkz_Durchmesser">
+        <property name="text">
+         <string>Durchmesser</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_wkz_Name">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_wkz_Drehrichtung">
+        <property name="text">
+         <string>Drehrichtung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_wkz_Nummer">
+        <property name="text">
+         <string>Nummer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_40">
+        <property name="text">
+         <string>AUTO-Werte:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_wkz_Eintauschvorschub">
+        <property name="text">
+         <string>Eintauchvorschub</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_wkz_Vorschub_XY">
+        <property name="text">
+         <string>Vorschub XY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="label_wkz_Drehzahl">
+        <property name="text">
+         <string>Drehzahl</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_wkz_Name_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_wkz_Drehrichtung_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_wkz_Durchmesser_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_wkz_Nutzlaenge_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_wkz_Kommentar_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_49">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="label_wkz_Eintauschvorschub_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLabel" name="label_wkz_Vorschub_XY_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLabel" name="label_wkz_Drehzahl_wert">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>520</y>
+     <width>441</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_Abbrechen">
+      <property name="text">
+       <string>Abbrechen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_Speichern">
+      <property name="text">
+       <string>Speichern</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_OK">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>comboBox_Werkzeug</tabstop>
+  <tabstop>lineEdit_posX</tabstop>
+  <tabstop>lineEdit_posY</tabstop>
+  <tabstop>lineEdit_laenge</tabstop>
+  <tabstop>lineEdit_breite</tabstop>
+  <tabstop>lineEdit_tiefe</tabstop>
+  <tabstop>lineEdit_radius</tabstop>
+  <tabstop>lineEdit_Zustellung</tabstop>
+  <tabstop>lineEdit_Gegenlauf</tabstop>
+  <tabstop>lineEdit_winkel</tabstop>
+  <tabstop>lineEdit_ausraeumen</tabstop>
+  <tabstop>lineEdit_Eintauchvorschub</tabstop>
+  <tabstop>lineEdit_Vorschub</tabstop>
+  <tabstop>lineEdit_Drehzahl</tabstop>
+  <tabstop>lineEdit_Kommentar</tabstop>
+  <tabstop>lineEdit_bezeichnung</tabstop>
+  <tabstop>lineEdit_Ausfuehrbedingung</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>pushButton_Abbrechen</tabstop>
+  <tabstop>pushButton_Speichern</tabstop>
+  <tabstop>pushButton_OK</tabstop>
+  <tabstop>radioButton_oben_links</tabstop>
+  <tabstop>radioButton_oben_rechts</tabstop>
+  <tabstop>radioButton_mitte</tabstop>
+  <tabstop>radioButton_unten_links</tabstop>
+  <tabstop>radioButton_unten_rechts</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

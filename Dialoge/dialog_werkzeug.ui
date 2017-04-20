@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog_Werkzeug</class>
+ <widget class="QDialog" name="Dialog_Werkzeug">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>489</width>
+    <height>546</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Werkzeug</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>471</width>
+     <height>491</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_Allgemein">
+    <attribute name="title">
+     <string>Allgemeines</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>441</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_Kommentar">
+        <property name="text">
+         <string>Kommentar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="lineEdit_Kommentar"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="QComboBox" name="comboBox_Drehrichtung"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_Werkzeugnummer"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_Durchmesser">
+        <property name="text">
+         <string>Durchmesser</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Werkzeugnummer">
+        <property name="text">
+         <string>Werkzeugnummer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Steckplatz">
+        <property name="text">
+         <string>Steckplatz</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_Durchmesser"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_Steckplatz"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_Drehrichtung">
+        <property name="text">
+         <string>Drehrichtung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_Werkzeugname"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Werkzeugname">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_Nutzlaenge">
+        <property name="text">
+         <string>Nutzlänge</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit__Nutzlaenge"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_bild">
+     <property name="geometry">
+      <rect>
+       <x>81</x>
+       <y>244</y>
+       <width>301</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_bild_info">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>330</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>???</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_Offset">
+    <attribute name="title">
+     <string>Offset</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>431</width>
+       <height>431</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Offset_X">
+        <property name="text">
+         <string>Offset X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Offset_Y">
+        <property name="text">
+         <string>Offset Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_Y"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Offset_Z">
+        <property name="text">
+         <string>Offset Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_Z"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_Offset_A">
+        <property name="text">
+         <string>Offset A</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_A"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_Offset_B">
+        <property name="text">
+         <string>Offset B</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_B"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_Offset_C">
+        <property name="text">
+         <string>Offset C</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_C"/>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_Offset_U">
+        <property name="text">
+         <string>Offset U</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_U"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_Offset_V">
+        <property name="text">
+         <string>Offset V</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_V"/>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_Offset_W">
+        <property name="text">
+         <string>Offset W</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_W"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_Offset_X"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_Drehmaschine">
+    <attribute name="title">
+     <string>Drehmaschine</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>12</y>
+       <width>441</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Frontwinkel">
+        <property name="text">
+         <string>Frontwinkel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_Frontwinkel"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Rueckwinkel">
+        <property name="text">
+         <string>Rückwinkel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_Rueckwinkel"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Richtung">
+        <property name="text">
+         <string>Richtung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_Richtung"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_AUTO_Werte">
+    <attribute name="title">
+     <string>AUTO-Werte</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>12</y>
+       <width>451</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Eintauchvorschub">
+        <property name="text">
+         <string>Eintauchvorschub</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_Eintauchvorschub"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Vorschub_XY">
+        <property name="text">
+         <string>Vorschub XY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_Vorschub_XY"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_Drehzahl">
+        <property name="text">
+         <string>Drehzahl</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_Drehzahl"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>500</y>
+     <width>471</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_Abbrechen">
+      <property name="text">
+       <string>Abbrechen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_Speichern">
+      <property name="text">
+       <string>Speichern</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_OK">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEdit_Werkzeugname</tabstop>
+  <tabstop>lineEdit_Werkzeugnummer</tabstop>
+  <tabstop>lineEdit_Steckplatz</tabstop>
+  <tabstop>lineEdit_Durchmesser</tabstop>
+  <tabstop>lineEdit__Nutzlaenge</tabstop>
+  <tabstop>comboBox_Drehrichtung</tabstop>
+  <tabstop>lineEdit_Kommentar</tabstop>
+  <tabstop>lineEdit_Offset_X</tabstop>
+  <tabstop>lineEdit_Offset_Y</tabstop>
+  <tabstop>lineEdit_Offset_Z</tabstop>
+  <tabstop>lineEdit_Offset_A</tabstop>
+  <tabstop>lineEdit_Offset_B</tabstop>
+  <tabstop>lineEdit_Offset_C</tabstop>
+  <tabstop>lineEdit_Offset_U</tabstop>
+  <tabstop>lineEdit_Offset_V</tabstop>
+  <tabstop>lineEdit_Offset_W</tabstop>
+  <tabstop>lineEdit_Frontwinkel</tabstop>
+  <tabstop>lineEdit_Rueckwinkel</tabstop>
+  <tabstop>lineEdit_Richtung</tabstop>
+  <tabstop>lineEdit_Eintauchvorschub</tabstop>
+  <tabstop>lineEdit_Vorschub_XY</tabstop>
+  <tabstop>lineEdit_Drehzahl</tabstop>
+  <tabstop>pushButton_Abbrechen</tabstop>
+  <tabstop>pushButton_Speichern</tabstop>
+  <tabstop>pushButton_OK</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
