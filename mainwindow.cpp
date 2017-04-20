@@ -1,0 +1,3047 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QString>
+#include <fstream>
+#include <iostream>
+#include <QFile>
+#include <QMessageBox>
+#include <QStringList>
+
+//---------------------------------------------------Konstruktor / Dekonstruktor
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    //Defaultwerte:
+    kopierterEintrag_t              = NICHT_DEFINIERT;
+    kopiertesWerkzeug               = NICHT_DEFINIERT;
+    tooltable_path                  = NICHT_DEFINIERT;
+    vorlage_pkopf                   = NICHT_DEFINIERT;
+    vorlage_pende                   = NICHT_DEFINIERT;
+    vorlage_kommentar               = NICHT_DEFINIERT;
+    vorlage_variable                = NICHT_DEFINIERT;
+    vorlage_Ktasche                 = NICHT_DEFINIERT;
+    vorlage_Rtasche                 = NICHT_DEFINIERT;
+    vorlage_Faufruf                 = NICHT_DEFINIERT;
+    vorlage_Fgerade                 = NICHT_DEFINIERT;
+    vorlage_Fbogen                  = NICHT_DEFINIERT;
+    vorlage_Fabfa                   = NICHT_DEFINIERT;
+    vorlage_werkzeug                = NICHT_DEFINIERT;
+    nameOfTheOpenFile               = NICHT_DEFINIERT;
+    settings_anz_undo_t             = "10";
+    settings_anz_undo_w             = "30";
+    aktives_wkz                     = NICHT_DEFINIERT;
+
+    vorschaufenster.setParent(ui->tab_Programmliste);
+
+    DateiIstOffen = false;
+    hideElemets_noFileIsOpen();
+
+    QDir dir(PFAD_ZUM_PROGRAMMORDNER);
+    if(!dir.exists())
+    {
+        QString nachricht;
+        nachricht = "Programmpfad nicht gefunden. Pfad \"";
+        nachricht += PFAD_ZUM_PROGRAMMORDNER;
+        nachricht += "\" wird angelegt";
+        QMessageBox mb;
+        mb.setText(nachricht);
+        mb.exec();
+        dir.mkdir(PFAD_ZUM_PROGRAMMORDNER);
+        dir.mkdir(PFAD_ZU_DEN_WERKZEUGBILDERN);
+
+        QFile file(WKZ_FILE);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+        {
+            QMessageBox mb;
+            mb.setText("Fehler beim Datei-Zugriff");
+            mb.exec();
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Neue, leere Werkzeugdatei wurde erzeugt.");
+            mb.exec();
+        }
+        file.close();
+    }
+
+    QString msg = this->loadConfig();
+    if(msg != "OK")
+    {
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
+    }
+    if(konfiguration_ini_ist_vorhanden == false)
+    {
+        //Sicherheitsabfrage:
+        QMessageBox mb;
+        mb.setWindowTitle("Konnte Konfiguratiosdatei nicht finden!");
+        mb.setText("Die Konfigurationsdatei ist nicht vorhanden oder konnte nicht gelesen werden.Soll eine neue Konfigurationsdatei erstellt werden?");
+        mb.setStandardButtons(QMessageBox::Yes);
+        mb.addButton(QMessageBox::No);
+        mb.setDefaultButton(QMessageBox::No);
+        if(mb.exec() == QMessageBox::Yes)
+        {
+            saveConfig();
+            loadConfig();
+        }else
+        {
+            QMessageBox mb2;
+            mb2.setText("Konfiguration wurde nicht angelegt.");
+            mb2.exec();
+        }
+    }
+
+    on_pushButton_WKZ_Laden_clicked();
+    ladeWerkzeugnamen();
+    hat_ungesicherte_inhalte = false;
+
+    //SLOT(slotSaveConfig():
+    connect(&dsettings, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&pkopf, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&pende, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&kommentar, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));   
+    connect(&variable, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&ktasche, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&rtasche, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&faufruf, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&fgerade, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&fbogen, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&fabfa, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&werkzeug_dialog, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+
+    connect(&pkopf, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&pende, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&kommentar, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&variable, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&ktasche, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&rtasche, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&faufruf, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&fgerade, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&fbogen, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&fabfa, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&werkzeug_dialog, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+
+    connect(&pkopf, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&pende, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&kommentar, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&variable, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&ktasche, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&rtasche, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&faufruf, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&fgerade, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&fbogen, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&fabfa, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&werkzeug_dialog, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+
+    connect(&ktasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
+    connect(&rtasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
+    connect(&variablenwerte_anzeigen, SIGNAL(brauche_variablen()), this, SLOT(slotAnfrageVariablen()));
+    connect(&vorschaufenster, SIGNAL(sende_maus_pos(QPoint)), this, SLOT(slot_maus_pos(QPoint)));
+
+
+    this->setWindowState(Qt::WindowMaximized);
+
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+//---------------------------------------------------Konfiguration
+QString MainWindow::loadConfig()
+{
+    QString returnString = "OK";
+
+    QFile file(INI_FILE);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        konfiguration_ini_ist_vorhanden = false;
+        returnString = "Konnte Konfiguratiosdatei nicht finden!\nBitte ueberpruefen Sie die Einstellungen.";
+    } else
+    {
+        konfiguration_ini_ist_vorhanden = true;
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            konfiguration_ini += line;
+        }
+        file.close();
+        //Konfiguration Zeilenweise auswerten:
+        for (QStringList::iterator it = konfiguration_ini.begin(); it != konfiguration_ini.end(); ++it)
+            {
+                QString text = *it;
+
+                //-----------------------------------------------------Settings:
+                if(text.contains(SETTINGS_PFAD_WERKZEUGE))
+                {
+                    tooltable_path = selektiereEintrag(text, SETTINGS_PFAD_WERKZEUGE, ENDE_ZEILE);
+                }
+                if(text.contains(SETTINGS_ANZ_UNDO_T))
+                {
+                    settings_anz_undo_t = selektiereEintrag(text, SETTINGS_ANZ_UNDO_T, ENDE_ZEILE);
+                }
+                if(text.contains(SETTINGS_ANZ_UNDO_W))
+                {
+                    settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
+                }
+                //-----------------------------------------------------Dialoge:
+                if(text.contains(PROGRAMMKOPF_DIALOG))
+                {
+                    vorlage_pkopf = selektiereEintrag(text, PROGRAMMKOPF_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(PROGRAMMENDE_DIALOG))
+                {
+                    vorlage_pende = selektiereEintrag(text, PROGRAMMENDE_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(KOMMENTAR_DIALOG))
+                {
+                    vorlage_kommentar = selektiereEintrag(text, KOMMENTAR_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(VARIABLE_DIALOG))
+                {
+                    vorlage_variable = selektiereEintrag(text, VARIABLE_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(KREISTASCHE_DIALOG))
+                {
+                    vorlage_Ktasche = selektiereEintrag(text, KREISTASCHE_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(RECHTECKTASCHE_DIALOG))
+                {
+                    vorlage_Rtasche = selektiereEintrag(text, RECHTECKTASCHE_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(FRAESERAUFRUF_DIALOG))
+                {
+                    vorlage_Faufruf = selektiereEintrag(text, FRAESERAUFRUF_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(FRAESERGERADE_DIALOG))
+                {
+                    vorlage_Fgerade = selektiereEintrag(text, FRAESERGERADE_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(FRAESERBOGEN_DIALOG))
+                {
+                    vorlage_Fbogen = selektiereEintrag(text, FRAESERBOGEN_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(FRAESERABFAHREN_DIALOG))
+                {
+                    vorlage_Fabfa = selektiereEintrag(text, FRAESERABFAHREN_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(WERKZEUG_DIALOG))
+                {
+                    vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
+                }
+            }
+        //Sicherheitsabfragen:
+        if(tooltable_path == NICHT_DEFINIERT)
+        {
+            returnString = "Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n";
+        }
+    }
+
+    return returnString;
+}
+
+QString MainWindow::saveConfig()
+{
+    QString returnString = "OK";
+
+    //Daten in QString schreiben:
+    QString inhaltVonKonfiguration;
+
+    inhaltVonKonfiguration =        BEGIN_EINSTELLUNGEN;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------Einstellungen:
+    inhaltVonKonfiguration +=       SETTINGS_PFAD_WERKZEUGE;
+    if(tooltable_path != NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   tooltable_path;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_ANZ_UNDO_T;
+    inhaltVonKonfiguration +=       settings_anz_undo_t;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_ANZ_UNDO_W;
+    inhaltVonKonfiguration +=       settings_anz_undo_w;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+
+    inhaltVonKonfiguration +=       ENDE_EINSTELLUNGEN;
+    inhaltVonKonfiguration +=       "\n";
+
+
+    inhaltVonKonfiguration +=       BEGIN_DIALOGE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Programmkopf:
+    inhaltVonKonfiguration +=       PROGRAMMKOPF_DIALOG;
+    if(vorlage_pkopf == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   LAENGE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BREITE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DICKE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   SICHERHEITSABSTAND;
+        inhaltVonKonfiguration +=   "5";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Programmkopf";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_pkopf;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Programmende:
+    inhaltVonKonfiguration +=       PROGRAMMENDE_DIALOG;
+    if(vorlage_pende == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   MODUS;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=   "50";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Programmende";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_pende;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Kommentar:
+    inhaltVonKonfiguration +=       KOMMENTAR_DIALOG;
+    if(vorlage_kommentar == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_kommentar;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Variable:
+    inhaltVonKonfiguration +=       VARIABLE_DIALOG;
+    if(vorlage_variable == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WERT;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_variable;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Kreistasche:
+    inhaltVonKonfiguration +=       KREISTASCHE_DIALOG;
+    if(vorlage_Ktasche == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DURCHMESSER;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   TASCHENTIEFE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSRAEUMEN;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   GEGENLAUF;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VORSCHUB;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DREHZAHL;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Kreistasche";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Ktasche;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Rechtecktasche:
+    inhaltVonKonfiguration +=       RECHTECKTASCHE_DIALOG;
+    if(vorlage_Rtasche == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   TASCHENLAENGE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   TASCHENBREITE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   TASCHENTIEFE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   RADIUS;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   GEGENLAUF;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WINKEL;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSRAEUMEN;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DREHZAHL;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZUGSPUNKT;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Rechtecktasche";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Rtasche;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Fraeseraufruf:
+    inhaltVonKonfiguration +=       FRAESERAUFRUF_DIALOG;
+    if(vorlage_Faufruf == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BAHNRORREKTUR;
+        inhaltVonKonfiguration +=   BAHNRORREKTUR_keine;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ECKENRUNDENGLOBAL;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KANTENDICKE;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DREHZAHL;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANFAHRTYP;
+        inhaltVonKonfiguration +=   ANABFAHRTYP_KEIN;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ABFAHRTYP;
+        inhaltVonKonfiguration +=   ANABFAHRTYP_KEIN;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Aufruf Fraeser";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Faufruf;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Fraeser_Gerade:
+    inhaltVonKonfiguration +=       FRAESERGERADE_DIALOG;
+    if(vorlage_Fgerade == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   RADIUS;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "--- gerade Fraesbahn";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Fgerade;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Fraeser_Bogen:
+    inhaltVonKonfiguration +=       FRAESERBOGEN_DIALOG;
+    if(vorlage_Fbogen == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   BOGENRICHTUNG;
+        inhaltVonKonfiguration +=   BOGENRICHTUNG_IM_UZS;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   MODUS;
+        inhaltVonKonfiguration +=   MODUS_MITTELPUNKT;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   RADIUS;
+        inhaltVonKonfiguration +=   "10";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   MITTELPUNKT_X;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   MITTELPUNKT_Y;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "--- gebogene Fraesbahn";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Fbogen;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Fraeser_Abfahren:
+    inhaltVonKonfiguration +=       FRAESERABFAHREN_DIALOG;
+    if(vorlage_Fabfa == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=   "Abfahren Fraeser";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_Fabfa;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Dialog Werkzeug:
+    inhaltVonKonfiguration +=       WERKZEUG_DIALOG;
+    if(vorlage_werkzeug == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   WKZ_NAME;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_Nummer;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_STECKPLATZ;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_X;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_Y;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_Z;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_A;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_B;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_C;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_U;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_V;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_OFFSET_W;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_DURCHMESSER;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_FRONTWINKEL;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_RUECKWINKEL;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_RICHTUNG;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_KOMMENTAR;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_DREHRICHTUNG;
+        inhaltVonKonfiguration +=   WKZ_DREHRICHTUNG_UNBEKANNT;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_NUTZLAENGE;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_EINTAUCHVORSCHUB;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_VORSCHUB;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_DREHZAHL;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_werkzeug;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+
+    //-------------------------------------------
+    inhaltVonKonfiguration +=       ENDE_DIALOGE;
+    inhaltVonKonfiguration +=       "\n";
+    //---------------------------------------------------------------------------------------------------------
+
+    //Daten Speichern:
+    QFile file(INI_FILE);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Zugriff auf die Datei \"konfiguration.ini\"");
+        mb.exec();
+    } else
+    {
+        file.remove(); //lösche alte Datei wenn vorhanden
+        file.close(); //beende Zugriff
+        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        file.write(inhaltVonKonfiguration.toUtf8()); //fülle Datei mit Inhalt
+        file.close(); //beende Zugriff
+        QMessageBox mb;
+        mb.setText("Konfiguration wurde erfolgreich geschrieben.");
+        mb.exec();
+    }
+    return returnString;
+}
+
+void MainWindow::slotSaveConfig(QString text)
+{
+    //Sicherheitsabfrage:
+    QMessageBox mb;
+    mb.setWindowTitle("Konfiguration speichern");
+    mb.setText("Sind Sie sicher, dass die Konfoguration gespeichert werden soll?");
+    mb.setStandardButtons(QMessageBox::Yes);
+    mb.addButton(QMessageBox::No);
+    mb.setDefaultButton(QMessageBox::No);
+    if(mb.exec() == QMessageBox::Yes)
+    {
+        //Daten vom Dialog in lokale Variabeln speichern:
+        //------------------------------------------------Settings:
+        if(text.contains(SETTINGS_PFAD_WERKZEUGE))
+        {
+            tooltable_path = selektiereEintrag(text, SETTINGS_PFAD_WERKZEUGE, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_ANZ_UNDO_T))
+        {
+            settings_anz_undo_t = selektiereEintrag(text, SETTINGS_ANZ_UNDO_T, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_ANZ_UNDO_W))
+        {
+            settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
+        }
+        //------------------------------------------------Dialoge:
+        if(text.contains(PROGRAMMKOPF_DIALOG))
+        {
+            vorlage_pkopf = selektiereEintrag(text, PROGRAMMKOPF_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(PROGRAMMENDE_DIALOG))
+        {
+            vorlage_pende = selektiereEintrag(text, PROGRAMMENDE_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(KOMMENTAR_DIALOG))
+        {
+            vorlage_kommentar = selektiereEintrag(text, KOMMENTAR_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(VARIABLE_DIALOG))
+        {
+            vorlage_variable = selektiereEintrag(text, VARIABLE_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(KREISTASCHE_DIALOG))
+        {
+            vorlage_Ktasche = selektiereEintrag(text, KREISTASCHE_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(RECHTECKTASCHE_DIALOG))
+        {
+            vorlage_Rtasche = selektiereEintrag(text, RECHTECKTASCHE_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(FRAESERAUFRUF_DIALOG))
+        {
+            vorlage_Faufruf = selektiereEintrag(text, FRAESERAUFRUF_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(FRAESERGERADE_DIALOG))
+        {
+            vorlage_Fgerade = selektiereEintrag(text, FRAESERGERADE_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(FRAESERBOGEN_DIALOG))
+        {
+            vorlage_Fbogen = selektiereEintrag(text, FRAESERBOGEN_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(FRAESERABFAHREN_DIALOG))
+        {
+            vorlage_Fabfa = selektiereEintrag(text, FRAESERABFAHREN_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(WERKZEUG_DIALOG))
+        {
+            vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
+        }
+
+
+        //Daten in Datei sichern:
+        saveConfig();
+        //Konfiguration neu laden:
+        loadConfig();
+    }else
+    {
+        QMessageBox mb2;
+        mb2.setText("Konfiguration wurde nicht geaendert.");
+        mb2.exec();
+    }
+}
+
+QString MainWindow::loadToollistInQStringlist(QString filename)
+{
+    QString returnString = "OK";
+
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        returnString = "Konnte Werkzeugtabelle nicht finden!\nBitte ueberpruefen Sie die Einstellungen.";
+    }else
+    {        
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            tool_tbl += line;            
+        }        
+        file.close();
+    }
+
+    return returnString;
+}
+
+//---------------------------------------------------Werkzeug
+void MainWindow::on_pushButton_WKZ_Neu_clicked()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_WERKZEUGLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Werkzeug!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &werkzeug_dialog, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_werkzeug;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_pushButton_WKZ_Speichern_clicked()
+{
+    //Sicherhietsabfrage:
+    QMessageBox mb;
+    mb.setWindowTitle("Werkzeugdaten speichern");
+    mb.setText("Sind Sie sicher, dass Sie die vorhandenen Daten ueberschreiben wollen?");
+    mb.setStandardButtons(QMessageBox::Yes);
+    mb.addButton(QMessageBox::No);
+    mb.setDefaultButton(QMessageBox::No);
+
+    int mb_returnwert = mb.exec();
+    if(mb_returnwert == QMessageBox::No)
+    {
+        //Abbruch:
+        return;
+    }
+
+    //Werkzeugliste in String schreiben:
+    QString inhaltWerkzeugdatei = w.get_werkzeuge();
+
+    //Daten Speichern:
+    QFile file(WKZ_FILE);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Zugriff auf die Datei \"konfiguration.ini\"");
+        mb.exec();
+    } else
+    {
+        file.remove(); //lösche alte Datei wenn vorhanden
+        file.close(); //beende Zugriff
+        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        file.write(inhaltWerkzeugdatei.toUtf8()); //fülle Datei mit Inhalt
+        file.close(); //beende Zugriff
+        QMessageBox mb;
+        mb.setText("Werkzeugdatei wurde erfolgreich geschrieben.");
+        mb.exec();
+    }
+}
+
+void MainWindow::on_pushButton_WKZ_Laden_clicked()
+{
+    ui->listWidget_Werkzeug->clear();
+
+    QFile file(WKZ_FILE);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox mb;
+        mb.setText("Konnte Werkzeugdatei nicht finden!");
+        mb.exec();
+        file.close();
+    } else
+    {
+        text_zeilenweise tz;
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(tz.zeilenanzahl() == 0)
+            {
+                tz.set_text(line);
+            }else
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+        w.set_werkezuge(tz.get_text());
+        aktualisiere_anzeigetext_wkz();
+        file.close();
+    }
+}
+
+void MainWindow::on_pushButton_WKZ_Export_an_EMC2_clicked()
+{
+    if(hat_werkzeugliste_fehler())
+    {
+        return;
+    }
+
+    //Prüfen ob Einstellungen stimmen:
+    if(tooltable_path == NICHT_DEFINIERT)
+    {
+        QMessageBox mb;
+        mb.setText("Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n");
+        mb.exec();
+        //Abbruch:
+        return;
+    }
+
+    //Sicherhietsabfrage:
+    QMessageBox mb;
+    mb.setWindowTitle("Werkzeugdaten an EMC2 exportieren");
+    mb.setText("Sind Sie sicher, dass Sie die vorhandenen Daten ueberschreiben wollen?");
+    mb.setStandardButtons(QMessageBox::Yes);
+    mb.addButton(QMessageBox::No);
+    mb.setDefaultButton(QMessageBox::No);
+
+    int mb_returnwert = mb.exec();
+    if(mb_returnwert == QMessageBox::No)
+    {
+        //Abbruch:
+        return;
+    }
+
+    //Backup von alter Werkzeugdatei speichern
+    QFile file(tooltable_path);
+    file.remove(tooltable_path + DATEIENDUNG_BACKUP);//altes Backup löschen
+    file.copy(tooltable_path + DATEIENDUNG_BACKUP);//neues Backup anlegen
+
+    //Inhalt für die Datei in string schreiben:
+    QString inhalt_Werkzeugdatei;
+    QString zeile;
+    text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
+    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
+    {
+        zeile = tz.zeile(i);
+        if(selektiereEintrag(zeile, WKZ_Nummer, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_Nummer;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_Nummer, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_STECKPLATZ, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_STECKPLATZ;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_STECKPLATZ, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_X, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_X;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_X, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_Y, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_Y;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_Y, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_Z, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_Z;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_Z, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_A, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_A;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_A, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_B, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_B;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_B, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_C, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_C;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_C, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_U, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_U;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_U, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_V, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_V;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_V, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_OFFSET_W, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_OFFSET_W;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_OFFSET_W, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_DURCHMESSER, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_DURCHMESSER;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_DURCHMESSER, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_FRONTWINKEL, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_FRONTWINKEL;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_FRONTWINKEL, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_RUECKWINKEL, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_RUECKWINKEL;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_RUECKWINKEL, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        if(selektiereEintrag(zeile, WKZ_RICHTUNG, WKZ_ENDE_EINTRAG) != "") //Wenn hier Daten vorliegen
+        {
+            inhalt_Werkzeugdatei += EMC2_WKZ_RICHTUNG;
+            inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_RICHTUNG, WKZ_ENDE_EINTRAG);
+            inhalt_Werkzeugdatei += " ";
+        }
+        inhalt_Werkzeugdatei += EMC2_WKZ_KOMMENTAR;
+        inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_NAME, WKZ_ENDE_EINTRAG);
+        inhalt_Werkzeugdatei += "/";
+        inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_DREHRICHTUNG, WKZ_ENDE_EINTRAG);
+        inhalt_Werkzeugdatei += "/";
+        inhalt_Werkzeugdatei += selektiereEintrag(zeile, WKZ_KOMMENTAR, WKZ_ENDE_EINTRAG);
+        inhalt_Werkzeugdatei += "\n";
+    }
+
+    //Kommas durch Punkte ersetzen:
+    inhalt_Werkzeugdatei.replace(",", ".");
+
+
+    //Werkzeugdatei überschreiben
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Zugriff auf die Werkzeugdatei");
+        mb.exec();
+    } else
+    {
+        file.remove(); //lösche alte Datei wenn vorhanden
+        file.close(); //beende Zugriff
+        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        file.write(inhalt_Werkzeugdatei.toUtf8()); //fülle Datei mit Inhalt
+        file.close(); //beende Zugriff
+        QMessageBox mb;
+        mb.setText("Werkzeugdatei wurde erfolgreich geschrieben.");
+        mb.exec();
+    }
+}
+
+bool MainWindow::hat_werkzeugliste_fehler()
+{
+    //alle Einträge wieder schwarz einfärben wenn nicht schon sind:
+    for(int i = 0; i < ui->listWidget_Werkzeug->count(); i++)
+    {
+        QColor farbe(0,0,0);//schwarz
+        ui->listWidget_Werkzeug->item(i)->setForeground(QBrush(farbe));
+    }
+
+    text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
+    /*
+    //Prüfen ob Werkzeugnummern fehlen:
+        //Das wird schon vom Eingabedialog selbst überprüft!
+    QString tmp;
+    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
+    {
+        tmp = tz.zeile(i);
+        if(selektiereEintrag(tmp, WKZ_Nummer, WKZ_ENDE_EINTRAG) == "") //wenn hier nichts eingetragen ist
+        {
+            QColor farbe(205,0,0);//rot
+            ui->listWidget_Werkzeug->item(i-1)->setForeground(QBrush(farbe));
+            QMessageBox mb;
+            mb.setText("Fehlenden Werkzeugnummer!");
+            mb.exec();
+            //Abbruch
+            return true;//Fehler gefunden
+        }
+    }
+    */
+    //Prüfen, ob Werkzeugnumern doppelt vergeben sind
+    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
+    {
+        QString zeile = tz.zeile(i);
+        QString nummer = text_mitte(zeile, WKZ_Nummer, ENDE_EINTRAG);
+        for(uint j=i+1; j<=tz.zeilenanzahl() ; j++)
+        {
+            QString zeile2 = tz.zeile(j);
+            QString nummer2 = text_mitte(zeile2, WKZ_Nummer, ENDE_EINTRAG);
+            if(nummer == nummer2)
+            {
+                QColor farbe(205,0,0);//rot
+                ui->listWidget_Werkzeug->item(i-1)->setForeground(QBrush(farbe));
+                ui->listWidget_Werkzeug->item(j-1)->setForeground(QBrush(farbe));
+                QMessageBox mb;
+                mb.setText("Fehler!\n Werkzeugnummern " + nummer + " doppelt vorhanden");
+                mb.exec();
+                return true;//Fehler gefunden
+            }
+        }
+    }
+    //Prüfen, ob Werkzeugnamen doppelt vergeben sind
+    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
+    {
+        QString zeile = tz.zeile(i);
+        QString tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+        for(uint j=i+1; j<=tz.zeilenanzahl() ; j++)
+        {
+            QString zeile2 = tz.zeile(j);
+            QString tmp2 = text_mitte(zeile2, WKZ_NAME, ENDE_EINTRAG);
+            if(tmp == tmp2)
+            {
+                QColor farbe(205,0,0);//rot
+                ui->listWidget_Werkzeug->item(i-1)->setForeground(QBrush(farbe));
+                ui->listWidget_Werkzeug->item(j-1)->setForeground(QBrush(farbe));
+                QMessageBox mb;
+                mb.setText("Fehler!\n Werkzeugname " + tmp + " doppelt vorhanden");
+                mb.exec();
+                return true;//Fehler gefunden
+            }
+        }
+    }
+    //Prüfen, ob Werkzeugsteckplätze doppelt belegt sind
+    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
+    {
+        QString zeile = tz.zeile(i);
+        QString tmp = text_mitte(zeile, WKZ_STECKPLATZ, ENDE_EINTRAG);
+        for(uint j=i+1; j<=tz.zeilenanzahl() ; j++)
+        {
+            QString zeile2 = tz.zeile(j);
+            QString tmp2 = text_mitte(zeile2, WKZ_STECKPLATZ, ENDE_EINTRAG);
+            if(tmp == tmp2)
+            {
+                QColor farbe(205,0,0);//rot
+                ui->listWidget_Werkzeug->item(i-1)->setForeground(QBrush(farbe));
+                ui->listWidget_Werkzeug->item(j-1)->setForeground(QBrush(farbe));
+                QMessageBox mb;
+                mb.setText("Fehler!\n Werkzeugsteckplatz " + tmp + " doppelt belegt");
+                mb.exec();
+                return true;//Fehler gefunden
+            }
+        }
+    }
+    return false; //keine Fehler gefunden
+}
+
+bool MainWindow::ladeWerkzeugnamen()
+{
+    werkzeugnamen.clear();
+    //Prüfen, ob Werkzeug vorhanden ist:
+    if(ui->listWidget_Werkzeug->count() == 0)
+    {
+        QMessageBox mb;
+        mb.setText("Kein Werkzeug in der Liste gefunden!");
+        mb.exec();
+        return true; //Ein Fehler ist aufgetreten
+    }else
+    {
+        for(int i = 0; i < ui->listWidget_Werkzeug->count(); i++)
+        {
+            QString tmp = w.zeile(i+1);
+            if(tmp != LISTENENDE)
+            {
+                werkzeugnamen.append(selektiereEintrag(tmp , WKZ_NAME, WKZ_ENDE_EINTRAG));
+            }
+        }
+        return false; //Kein Fehler ist aufgetreten
+    }
+}
+
+void MainWindow::slotAnfrageWerkzeugnamen(QString dialogName)
+{
+    if(dialogName == KREISTASCHE_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugNamen(QStringList)), &ktasche, SLOT(getWerkzeugNamen(QStringList)));
+        emit sendWerkzeugNamen(werkzeugnamen);
+    }else if(dialogName == RECHTECKTASCHE_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugNamen(QStringList)), &rtasche, SLOT(getWerkzeugNamen(QStringList)));
+        emit sendWerkzeugNamen(werkzeugnamen);
+    }
+}
+
+void MainWindow::slotAnfrageWerkzeugdaten(QString Werkzeugname, QString Dialog)
+{
+    disconnect(this, SIGNAL(sendWerkzeugdaten(QString)));
+    QString daten = werkzeugdaten(Werkzeugname);
+
+    if(Dialog == KREISTASCHE_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugdaten(QString)), &ktasche, SLOT(getWerkzeugdaten(QString)));
+        emit sendWerkzeugdaten(daten);
+    }else if(Dialog == RECHTECKTASCHE_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugdaten(QString)), &rtasche, SLOT(getWerkzeugdaten(QString)));
+        emit sendWerkzeugdaten(daten);
+    }
+}
+
+QString MainWindow::werkzeugdaten(QString werkzeugname)
+{
+    QString daten;
+    text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
+    for(uint i=1; i <= tz.zeilenanzahl() ; i++)
+    {
+        QString zeile = tz.zeile(i);
+        if(zeile.contains(werkzeugname))
+        {
+            daten = zeile;
+            break;
+        }
+    }
+    return daten;
+}
+
+//---------------------------------------------------Ändern Funktionen
+
+void MainWindow::on_actionEntfernen_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            //int row_letztes = row_erstes + items_menge-1;
+
+            if(items_menge == 1)
+            {
+                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                if(tmp == LISTENENDE)
+                {
+                    return;
+                }
+                t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
+                aktualisiere_anzeigetext();
+            }else
+            {
+                t.zeilen_loeschen(row_erstes+1, items_menge);
+                aktualisiere_anzeigetext();
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+            }
+
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was geloescht werden kann!");
+            mb.exec();
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        if((ui->listWidget_Werkzeug->currentIndex().isValid())  &&  (ui->listWidget_Werkzeug->currentItem()->isSelected()))
+        {
+            QString tmp = w.zeile(ui->listWidget_Werkzeug->currentRow()+1);
+            if(tmp == LISTENENDE)
+            {
+                return;
+            }
+            w.zeile_loeschen(ui->listWidget_Werkzeug->currentRow()+1);
+            aktualisiere_anzeigetext_wkz();
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was geloescht werden kann!");
+            mb.exec();
+        }
+    }
+    vorschauAktualisieren();
+}
+
+void MainWindow::on_actionKopieren_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            //int row_letztes = row_erstes + items_menge-1;
+
+            if(items_menge==1)
+            {
+                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                if(tmp == LISTENENDE)
+                {
+                    return;
+                }
+                kopierterEintrag_t = tmp;
+            }else
+            {
+                QString tmp = t.zeilen(row_erstes+1, items_menge);
+                kopierterEintrag_t = tmp;
+            }
+
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was kopiert werden kann!");
+            mb.exec();
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        if((ui->listWidget_Werkzeug->currentIndex().isValid())  &&  (ui->listWidget_Werkzeug->currentItem()->isSelected()))
+        {
+            QString tmp = w.zeile(ui->listWidget_Werkzeug->currentRow()+1);
+            if(tmp == LISTENENDE)
+            {
+                return;
+            }
+            kopiertesWerkzeug = tmp;
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was kopiert werden kann!");
+            mb.exec();
+        }
+    }
+
+}
+
+void MainWindow::on_actionEinfuegen_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if(kopierterEintrag_t != NICHT_DEFINIERT)
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            //int row_letztes = row_erstes + items_menge-1;
+
+            //Einfügen über ausgewähltem Eintrag:
+            text_zeilenweise tmp_tz;
+            tmp_tz.set_text(kopierterEintrag_t);
+            if(tmp_tz.zeilenanzahl()==1)
+            {
+                t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow()-items_menge+1 , kopierterEintrag_t);
+                int row = aktualisiere_anzeigetext()-items_menge+2 ;
+                ui->listWidget_Programmliste->setCurrentRow(row);
+            }else
+            {
+                t.zeilen_einfuegen(row_erstes, kopierterEintrag_t);
+                int row = aktualisiere_anzeigetext()-items_menge+2+tmp_tz.zeilenanzahl()-1 ;
+                ui->listWidget_Programmliste->setCurrentRow(row);
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts kopiert!");
+            mb.exec();
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        if(kopiertesWerkzeug != NICHT_DEFINIERT)
+        {
+            //Einfügen über ausgewähltem Eintrag:
+            w.zeile_einfuegen(ui->listWidget_Werkzeug->currentRow() , kopiertesWerkzeug);
+            aktualisiere_anzeigetext_wkz();
+            //neu eingefügte Zeile aktivieren:
+            int row = aktualisiere_anzeigetext_wkz();
+            ui->listWidget_Werkzeug->item(row)->setSelected(true);
+            ui->listWidget_Werkzeug->setCurrentRow(row);
+
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts kopiert!");
+            mb.exec();
+        }
+        //Dialog öffnen zum Bearbeiten des eingefügten Werkzeuges:
+        QListWidgetItem *item = ui->listWidget_Werkzeug->currentItem();
+        on_listWidget_Werkzeug_itemDoubleClicked(item);
+    }
+    vorschauAktualisieren();
+}
+
+void MainWindow::on_actionAusschneiden_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            //int row_letztes = row_erstes + items_menge-1;
+
+            if(items_menge==1)
+            {
+                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                if(tmp == LISTENENDE)
+                {
+                    return;
+                }
+                kopierterEintrag_t = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
+                aktualisiere_anzeigetext();
+            }else
+            {
+                //Zeilen kopieren:
+                QString tmp = t.zeilen(row_erstes+1, items_menge);
+                kopierterEintrag_t = tmp;
+                //Zeilen löschen:
+                t.zeilen_loeschen(row_erstes+1, items_menge);
+                aktualisiere_anzeigetext();
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+            }
+
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was ausgeschnitten werden kann!");
+            mb.exec();
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        if((ui->listWidget_Werkzeug->currentIndex().isValid())  &&  (ui->listWidget_Werkzeug->currentItem()->isSelected()))
+        {
+            QString tmp = w.zeile(ui->listWidget_Werkzeug->currentRow()+1);
+            if(tmp == LISTENENDE)
+            {
+                return;
+            }
+            kopiertesWerkzeug = w.zeile(ui->listWidget_Werkzeug->currentRow()+1);
+            w.zeile_loeschen(ui->listWidget_Werkzeug->currentRow()+1);
+            aktualisiere_anzeigetext_wkz();
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was ausgeschnitten werden kann!");
+            mb.exec();
+        }
+    }
+    vorschauAktualisieren();
+}
+
+void MainWindow::on_actionAendern_triggered()
+{
+    disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+    disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was geaendert werden kann!");
+                mb.exec();
+                return;
+            }
+            //ermitteln an welches Unterfenster der string gehen soll und die Zeile Übergeben:
+            if(programmzeile.contains(PROGRAMMKOPF_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString,bool)), &pkopf, SLOT(getDialogData(QString,bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(PROGRAMMENDE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString,bool)), &pende, SLOT(getDialogData(QString,bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(KOMMENTAR_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &kommentar, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(VARIABLE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &variable, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(KREISTASCHE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(programmzeile, true, werkzeugnamen);
+            }else if(programmzeile.contains(RECHTECKTASCHE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(programmzeile, true, werkzeugnamen);
+            }else if(programmzeile.contains(FRAESERAUFRUF_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList, werkzeug)), &faufruf, SLOT(getDialogData(QString, bool, QStringList, werkzeug)));
+                emit sendDialogData(programmzeile, true, werkzeugnamen, w);
+            }else if(programmzeile.contains(FRAESERGERADE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &fgerade, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &fbogen, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(FRAESERABFAHREN_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &fabfa, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        //text aus der aktiven Zeile in string speichern:
+       QString werkzeugzeile;
+       if(ui->listWidget_Werkzeug->currentIndex().isValid()  &&  (ui->listWidget_Werkzeug->currentItem()->isSelected()))
+       {
+           werkzeugzeile = w.zeile(ui->listWidget_Werkzeug->currentRow()+1);
+           if(werkzeugzeile == LISTENENDE)
+           {
+               return;
+           }
+       } else
+       {
+           QMessageBox mb;
+           mb.setText("Sie haben noch nichts ausgewaelt was geaendert werden kann!");
+           mb.exec();
+           return;
+       }
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &werkzeug_dialog, SLOT(getDialogData(QString, bool)));
+        emit sendDialogData(werkzeugzeile, true);
+    }
+}
+
+void MainWindow::on_listWidget_Programmliste_doubleClicked(const QModelIndex &index)
+{
+    QModelIndex index2 = index; //Zeile nur da, damit keine Warnung vom Compiler, dass Variable ungenutzt ist
+    emit on_actionAendern_triggered();
+}
+
+void MainWindow::on_listWidget_Werkzeug_itemDoubleClicked(QListWidgetItem *item)
+{
+    item = item; //Zeile nur da, damit keine Warnung vom Compiler, dass Variable ungenutzt ist
+    emit on_actionAendern_triggered();
+}
+
+//---------------------------------------------------Dialoge
+void MainWindow::getDialogData(QString text)
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        text_zeilenweise at = t.get_anzeigetext_zeilenweise();
+        if(at.zeilenanzahl() == 0)
+        {
+            t.zeile_anhaengen(text);
+            aktualisiere_anzeigetext();
+            pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
+        }else
+        {
+            //Zeile über aktiver Zeile einfügen:
+            t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
+            //aktualisieren und Element darunter aktivieren:
+            int row = aktualisiere_anzeigetext() + 1;
+            //ui->listWidget_Programmliste->item(row)->setSelected(true);
+            ui->listWidget_Programmliste->setCurrentRow(row);
+            pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow());
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        text_zeilenweise at = w.get_anzeigetext_zeilenweise();
+        if(at.zeilenanzahl() == 0)
+        {
+            w.zeile_anhaengen(text);
+            aktualisiere_anzeigetext_wkz();
+        }else
+        {
+            //Zeile über aktiver Zeile einfügen:
+            w.zeile_einfuegen(ui->listWidget_Werkzeug->currentRow(), text);
+            //aktualisieren und Element darunter aktivieren:
+            int row = aktualisiere_anzeigetext_wkz() + 1;
+            ui->listWidget_Werkzeug->item(row)->setSelected(true);
+            ui->listWidget_Werkzeug->setCurrentRow(row);
+        }
+        ladeWerkzeugnamen();
+        hat_werkzeugliste_fehler();
+    }
+    vorschauAktualisieren();
+}
+
+void MainWindow::getDialogDataModify(QString text)
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QString text_alt = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+        if(text != text_alt)
+        {
+            if(elementIstEingeblendet())
+            {
+                t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, text);
+                aktualisiere_anzeigetext();
+                pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
+            }else
+            {
+                t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, "//"+text);
+                aktualisiere_anzeigetext();
+            }
+        }
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        w.zeile_ersaetzen(ui->listWidget_Werkzeug->currentRow()+1, text);
+        aktualisiere_anzeigetext_wkz();
+        //ui->listWidget_Werkzeug->currentItem()->setText(text);
+        ladeWerkzeugnamen();
+        hat_werkzeugliste_fehler();
+    }
+    vorschauAktualisieren();
+}
+
+void MainWindow::on_actionEinstellungen_triggered()
+{
+    disconnect(this, SIGNAL(sendDialogData(QString,bool)), 0, 0);
+    connect(this, SIGNAL(sendDialogData(QString,bool)), &dsettings, SLOT(getDialogData(QString,bool)));
+    QString msg;
+    msg =  SETTINGS_PFAD_WERKZEUGE;
+    msg += tooltable_path;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_ANZ_UNDO_T;
+    msg += settings_anz_undo_t;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_ANZ_UNDO_W;
+    msg += settings_anz_undo_w;
+    msg += ENDE_ZEILE;
+    emit sendDialogData(msg, false);
+}
+
+void MainWindow::on_actionWerkzeugliste_triggered()
+{
+    tool_tbl.clear();
+    this->loadConfig();
+    QString msg = this->loadToollistInQStringlist(tooltable_path);
+    if(msg != "OK")
+    {
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
+    }else
+    {
+        QString text;
+        for (int i = 0; i<tool_tbl.size() ; ++i)
+            {
+
+            text += tool_tbl.at(i);
+            }
+        QMessageBox mb;
+        mb.setText(text);
+        mb.exec();
+    }
+
+}
+
+void MainWindow::on_actionMakeProgrammkopf_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString,bool)), &pkopf, SLOT(getDialogData(QString,bool)));
+        QString msg = vorlage_pkopf;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeKommentar_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &kommentar, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_kommentar;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeProgrammende_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &pende, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_pende;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeVariable_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &variable, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_variable;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeKreistasche_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
+        QString msg = vorlage_Ktasche;
+        emit sendDialogData(msg, false, werkzeugnamen);
+    }
+}
+
+void MainWindow::on_actionMakeRechtecktasche_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+        QString msg = vorlage_Rtasche;
+        emit sendDialogData(msg, false, werkzeugnamen);
+    }
+}
+
+void MainWindow::on_actionMakeFraeser_Aufruf_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList, werkzeug)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool, QStringList, werkzeug)), &faufruf, SLOT(getDialogData(QString, bool, QStringList, werkzeug)));
+        QString msg = vorlage_Faufruf;
+        emit sendDialogData(msg, false, werkzeugnamen, w);
+    }
+}
+
+void MainWindow::on_actionMakeGerade_Fraesbahn_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &fgerade, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_Fgerade;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeGebogene_Fraesbahn_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &fbogen, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_Fbogen;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeAbfahren_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &fabfa, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_Fabfa;
+        emit sendDialogData(msg, false);
+    }
+}
+
+//---------------------------------------------------Datei
+void MainWindow::on_actionDateiNeu_triggered()
+{
+    if(DateiIstOffen == true)
+    {
+        return;
+    }
+    DateiIstOffen = true;
+    showElements_aFileIsOpen();
+    this->setWindowTitle("Neue Datei");
+    t.set_text("");
+    aktualisiere_anzeigetext();
+    ui->listWidget_Programmliste->item(0)->setSelected(true);
+    ui->listWidget_Programmliste->setCurrentRow(0);
+    hat_ungesicherte_inhalte = false;
+}
+
+void MainWindow::on_actionDateiOefnen_triggered()
+{
+    if(DateiIstOffen == true)
+    {
+        return;
+    }else
+    {
+        //Dialog öffnen zum Wählen der Datei:
+        nameOfTheOpenFile = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
+        QFile file(nameOfTheOpenFile);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            text_zeilenweise tz;
+
+            while(!file.atEnd())
+            {
+                QString line = file.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(tz.zeilenanzahl() == 0)
+                {
+                    tz.set_text(line);
+                }else
+                {
+                    tz.zeilen_anhaengen(line);
+                }
+            }
+
+            t.set_text(tz.get_text());
+            file.close();
+            aktualisiere_anzeigetext();
+            DateiIstOffen = true;
+            showElements_aFileIsOpen();
+            //Datei-Namen in Titelleiste anzeigen lassen:
+            QFileInfo info = nameOfTheOpenFile;
+            QString tmp = PROGRAMMNAME;
+            tmp += " ( " + info.baseName() + " )";
+            this->setWindowTitle(tmp);
+            vorschauAktualisieren();
+            hat_ungesicherte_inhalte = false;
+        }
+    }
+}
+
+void MainWindow::on_actionDateiSchliessen_triggered()
+{
+    //Sicherheitsabfrage:
+    if(hat_ungesicherte_inhalte == true)
+    {
+        QMessageBox mb;
+        mb.setWindowTitle("Datei speichern");
+        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
+        mb.setStandardButtons(QMessageBox::Yes);
+        mb.addButton(QMessageBox::No);
+        mb.addButton(QMessageBox::Abort);
+        mb.setDefaultButton(QMessageBox::Abort);
+
+        int mb_returnwert = mb.exec();
+        if(mb_returnwert == QMessageBox::Yes)
+        {
+            on_actionDateiSpeichern_triggered();
+
+        }else if(mb_returnwert == QMessageBox::No)
+        {
+            ;//nichts tun = nicht speichern
+        }else if(mb_returnwert == QMessageBox::Abort)
+        {
+            return;
+        }
+    }
+    //Datei schließen:
+    DateiIstOffen = false;
+    hideElemets_noFileIsOpen();
+    vorschaufenster.hide();
+    nameOfTheOpenFile = NICHT_DEFINIERT;
+    ui->listWidget_Programmliste->clear();
+    t.clear();
+    vorschauAktualisieren();
+    this->setWindowTitle(PROGRAMMNAME);
+    ur.clear();
+}
+
+void MainWindow::on_actionDateiSpeichern_triggered()
+{
+    if(DateiIstOffen == false)
+    {
+        return;
+    }
+    QString fileName;
+    if(nameOfTheOpenFile == NICHT_DEFINIERT)
+    {
+        //Dialog öffnen zum Wählen des Speicherortes und des Namens:
+        fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
+        if(!fileName.contains(DATEIENDUNG_EIGENE))
+        {
+            fileName += DATEIENDUNG_EIGENE;
+        }
+        if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
+        {
+            nameOfTheOpenFile = NICHT_DEFINIERT;
+            return;
+        }else
+        {
+            nameOfTheOpenFile = fileName;
+        }
+    }else
+    {
+        //Namen der offenen Datei verwenden:
+
+        fileName = nameOfTheOpenFile;
+        if(!fileName.contains(DATEIENDUNG_EIGENE))
+        {
+            fileName += DATEIENDUNG_EIGENE;
+        }
+    }
+
+    //Programmliste in String schreiben
+    QString dateiInhalt = t.get_text();
+    //Datei füllen und speichern
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Dateizugriff");
+        mb.exec();
+    } else
+    {
+        file.remove(); //lösche alte Datei wenn vorhanden
+        file.close(); //beende Zugriff
+        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
+        file.close(); //beende Zugriff
+        QFileInfo info = nameOfTheOpenFile;
+        QString tmp = PROGRAMMNAME;
+        tmp += " ( " + info.baseName() + " )";
+        this->setWindowTitle(tmp);
+        hat_ungesicherte_inhalte = false;
+    }
+}
+
+void MainWindow::on_actionDateiSpeichern_unter_triggered()
+{
+    nameOfTheOpenFile = NICHT_DEFINIERT;
+    on_actionDateiSpeichern_triggered();
+    QFileInfo info = nameOfTheOpenFile;
+    QString tmp = PROGRAMMNAME;
+    tmp += " ( " + info.baseName() + " )";
+    this->setWindowTitle(tmp);
+}
+
+//---------------------------------------------------Sichtbarkeiten
+void MainWindow::hideElemets_noFileIsOpen()
+{
+    ui->listWidget_Programmliste->hide();
+    ui->pushButton_Aktualisieren_GCode->hide();
+    ui->pushButton_Exportieren_GCODE->hide();
+    ui->plainTextEdit_GCode->hide();
+    //Menü Datei:
+    ui->actionDateiSpeichern->setDisabled(true);
+    ui->actionDateiSpeichern_unter->setDisabled(true);
+    ui->actionDateiSchliessen->setDisabled(true);
+    ui->actionGCode_berechnen->setDisabled(true);
+    ui->actionGCode_exportieren->setDisabled(true);
+    //Menü Bearbeiten:
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        ui->actionAendern->setDisabled(true);
+        ui->actionEinfuegen->setDisabled(true);
+        ui->actionKopieren->setDisabled(true);
+        ui->actionAusschneiden->setDisabled(true);
+        ui->actionEntfernen->setDisabled(true);
+    }
+    ui->actionEin_Ausblenden->setDisabled(true);
+    //Menü Hinzufügen:
+    ui->actionMakeProgrammkopf->setDisabled(true);
+    ui->actionMakeProgrammende->setDisabled(true);
+    ui->actionMakeKommentar->setDisabled(true);
+    ui->actionMakeVariable->setDisabled(true);
+    ui->actionMakeKreistasche->setDisabled(true);
+    ui->actionMakeRechtecktasche->setDisabled(true);
+    ui->actionMakeFraeser_Aufruf->setDisabled(true);
+    ui->actionMakeGerade_Fraesbahn->setDisabled(true);
+    ui->actionMakeGebogene_Fraesbahn->setDisabled(true);
+    ui->actionMakeAbfahren->setDisabled(true);
+    //Menü Diverses:
+    ui->actionVorschaufenster_anzeigen->setDisabled(true);
+    ui->actionProgrammliste_anzeigen->setDisabled(true);
+    //anderes:
+    vorschaufenster.hide();
+}
+
+void MainWindow::showElements_aFileIsOpen()
+{
+    ui->listWidget_Programmliste->show();
+    ui->pushButton_Aktualisieren_GCode->show();
+    ui->pushButton_Exportieren_GCODE->show();
+    ui->plainTextEdit_GCode->show();
+    //Menü Datei:
+    ui->actionDateiSpeichern->setEnabled(true);
+    ui->actionDateiSpeichern_unter->setEnabled(true);
+    ui->actionDateiSchliessen->setEnabled(true);
+    ui->actionGCode_berechnen->setEnabled(true);
+    ui->actionGCode_exportieren->setEnabled(true);
+    //Menü Bearbeiten:
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        ui->actionAendern->setEnabled(true);
+        ui->actionEinfuegen->setEnabled(true);
+        ui->actionKopieren->setEnabled(true);
+        ui->actionAusschneiden->setEnabled(true);
+        ui->actionEntfernen->setEnabled(true);
+    }
+    ui->actionEin_Ausblenden->setEnabled(true);
+    //Menü Hinzufügen:
+    ui->actionMakeProgrammkopf->setEnabled(true);
+    ui->actionMakeProgrammende->setEnabled(true);
+    ui->actionMakeKommentar->setEnabled(true);
+    ui->actionMakeVariable->setEnabled(true);
+    ui->actionMakeKreistasche->setEnabled(true);
+    ui->actionMakeRechtecktasche->setEnabled(true);
+    ui->actionMakeFraeser_Aufruf->setEnabled(true);
+    ui->actionMakeGerade_Fraesbahn->setEnabled(true);
+    ui->actionMakeGebogene_Fraesbahn->setEnabled(true);
+    ui->actionMakeAbfahren->setEnabled(true);
+    //Menü Diverses:
+    ui->actionVorschaufenster_anzeigen->setEnabled(true);
+    ui->actionProgrammliste_anzeigen->setEnabled(true);
+    //anderes:
+    vorschaufenster.show();
+}
+
+bool MainWindow::elementIstEingeblendet()
+{
+    QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+    if(tmp.left(2) == "//")
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+}
+
+bool MainWindow::elementIstEingeblendet(QString zeilentext)
+{
+    if(zeilentext.left(2) == "//")
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+}
+
+bool MainWindow::elementIstEingeblendet(QListWidgetItem *item)
+{
+    QString tmp = item->text();
+    if(tmp.left(2) == "//")
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+}
+
+void MainWindow::elementEinblenden()
+{
+    uint i = ui->listWidget_Programmliste->currentRow()+1;
+    QString tmp_t = t.zeile(i);
+    int length_t = tmp_t.length();
+    tmp_t = tmp_t.right(length_t-2);
+    t.zeile_ersaetzen(i, tmp_t);
+
+    QString tmp = ui->listWidget_Programmliste->currentItem()->text();
+    int length = tmp.length();
+    tmp = tmp.right(length-2);
+    ui->listWidget_Programmliste->currentItem()->setText(tmp);
+
+    vorschauAktualisieren();
+}
+
+void MainWindow::elementAusblenden()
+{
+    uint i = ui->listWidget_Programmliste->currentRow()+1;
+    QString tmp_t = t.zeile(i);
+    tmp_t = "//" + tmp_t;
+    t.zeile_ersaetzen(i, tmp_t);
+
+    QString tmp = ui->listWidget_Programmliste->currentItem()->text();
+    QString newText = "//";
+    newText += tmp;
+    ui->listWidget_Programmliste->currentItem()->setText(newText);
+
+    vorschauAktualisieren();
+}
+
+void MainWindow::elementEinblendenSichtbarMachen()
+{
+    QColor farbe(0,0,0);//schwarz
+    ui->listWidget_Programmliste->currentItem()->setForeground(QBrush(farbe));
+}
+
+void MainWindow::elementEinblendenSichtbarMachen(QListWidgetItem *item)
+{
+    QColor farbe(0,0,0);//schwarz
+    item->setForeground(QBrush(farbe));
+}
+
+void MainWindow::elementAusblendenSichtbarMachen()
+{
+    QColor farbe(180,205,205);//grau
+    ui->listWidget_Programmliste->currentItem()->setForeground(QBrush(farbe));
+}
+
+void MainWindow::elementAusblendenSichtbarMachen(QListWidgetItem *item)
+{
+    QColor farbe(180,205,205);//grau
+    item->setForeground(QBrush(farbe));
+}
+
+void MainWindow::on_actionEin_Ausblenden_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            int row_letztes = row_erstes + items_menge-1;
+
+            int menge_ausgeblendet = 0;
+            int menge_eingeblendet = 0;
+            for(int i=row_erstes ; i<=row_letztes ; i++)
+            {
+                QString zeilentext = t.zeile(i+1);
+                if(elementIstEingeblendet(zeilentext))
+                {
+                    menge_eingeblendet++;
+                }else
+                {
+                    menge_ausgeblendet++;
+                }
+            }
+            if(menge_eingeblendet == items_menge)
+            {
+                on_actionAuswahl_Ausblenden_triggered();
+            }else if(menge_ausgeblendet == items_menge)
+            {
+                on_actionAuswahl_Einblenden_triggered();
+            }
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was ausgeblendet werden kann!");
+            mb.exec();
+        }
+    }else
+    {
+        QMessageBox mb;
+        mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
+        mb.exec();
+    }
+}
+
+void MainWindow::on_actionAuswahl_Ausblenden_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            int row_letztes = row_erstes + items_menge-1;
+
+            for(int i=row_erstes ; i<=row_letztes ; i++)
+            {
+                QString zeilentext = t.zeile(i+1);
+                if(elementIstEingeblendet(zeilentext))
+                {
+                    t.zeile_ersaetzen(i+1,"//"+zeilentext);
+                    QColor farbe(180,205,205);//grau
+                    ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
+                }
+                aktualisiere_anzeigetext();
+                vorschauAktualisieren();
+            }
+            for(int i=row_erstes ; i<=row_letztes ; i++)
+            {
+                ui->listWidget_Programmliste->item(i)->setSelected(true);
+            }
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was ausgeblendet werden kann!");
+            mb.exec();
+        }
+    }else
+    {
+        QMessageBox mb;
+        mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
+        mb.exec();
+    }
+}
+
+void MainWindow::on_actionAuswahl_Einblenden_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            int row_letztes = row_erstes + items_menge-1;
+
+            for(int i=row_erstes ; i<=row_letztes ; i++)
+            {
+                QString zeilentext = t.zeile(i+1);
+                if(!elementIstEingeblendet(zeilentext))
+                {
+                    int laenge = zeilentext.length();
+                    zeilentext = zeilentext.right(laenge-2);
+                    t.zeile_ersaetzen(i+1, zeilentext);
+                    QColor farbe(180,205,205);//grau
+                    ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
+                }
+                aktualisiere_anzeigetext();
+                vorschauAktualisieren();
+            }
+            for(int i=row_erstes ; i<=row_letztes ; i++)
+            {
+                ui->listWidget_Programmliste->item(i)->setSelected(true);
+            }
+        } else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was ausgeblendet werden kann!");
+            mb.exec();
+        }
+    }else
+    {
+        QMessageBox mb;
+        mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
+        mb.exec();
+    }
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if(index == INDEX_PROGRAMMLISTE)
+    {
+        if(DateiIstOffen == false)
+        {
+            //Menü Bearbeiten:
+            ui->actionAendern->setDisabled(true);
+            ui->actionEinfuegen->setDisabled(true);
+            ui->actionKopieren->setDisabled(true);
+            ui->actionAusschneiden->setDisabled(true);
+            ui->actionEntfernen->setDisabled(true);
+            //ui->actionEin_Ausblenden->setDisabled(true);
+        }
+    }else if(index == INDEX_WERKZEUGLISTE)
+    {
+        //Menü Bearbeiten:
+        ui->actionAendern->setEnabled(true);
+        ui->actionEinfuegen->setEnabled(true);
+        ui->actionKopieren->setEnabled(true);
+        ui->actionAusschneiden->setEnabled(true);
+        ui->actionEntfernen->setEnabled(true);
+        //ui->actionEin_Ausblenden->setEnabled(true);
+    }
+}
+
+//---------------------------------------------------generell MainWindow
+void MainWindow::closeEvent(QCloseEvent *ce)
+{
+    if(DateiIstOffen == true)
+    {
+        //Sicherheitsabfrage:
+        QMessageBox mb;
+        mb.setWindowTitle("Programm schliessen");
+        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
+        mb.setStandardButtons(QMessageBox::Yes);
+        mb.addButton(QMessageBox::No);
+        mb.addButton(QMessageBox::Abort);
+        mb.setDefaultButton(QMessageBox::Abort);
+
+        int mb_returnwert = mb.exec();
+        if(mb_returnwert == QMessageBox::Yes)
+        {
+            on_actionDateiSpeichern_triggered();
+            DateiIstOffen = false;
+            hideElemets_noFileIsOpen();
+            vorschaufenster.close();
+            ce->accept();
+        }else if(mb_returnwert == QMessageBox::No)
+        {
+            DateiIstOffen = false;
+            hideElemets_noFileIsOpen();
+            vorschaufenster.close();
+            ce->accept();
+        }else if(mb_returnwert == QMessageBox::Abort)
+        {
+            ce->ignore();
+        }
+    }else
+    {
+        ce->accept();
+    }
+
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QRect rect_main =  this->geometry();
+    int hoehe = rect_main.height();
+    int breite = rect_main.width();
+    ui->tabWidget->setFixedSize(breite-20, hoehe-80);
+    QRect rect_tabWidget =  ui->tabWidget->geometry();
+    hoehe = rect_tabWidget.height();
+    breite = rect_tabWidget.width();
+    ui->plainTextEdit_GCode->setFixedSize(breite-20, hoehe-85);
+    ui->listWidget_Werkzeug->setFixedSize(breite-20, hoehe-85);
+
+    vorschaufenster.move(ui->tab_Programmliste->width()/3,10);
+    vorschaufenster.setFixedWidth(ui->tab_Programmliste->width()-ui->tab_Programmliste->width()/3-13);
+    vorschaufenster.setFixedHeight(ui->tab_Programmliste->height()-30);
+    ui->listWidget_Programmliste->setFixedWidth(ui->tab_Programmliste->width()/3-10);
+    ui->listWidget_Programmliste->setFixedHeight(ui->tab_Programmliste->height()-30);
+
+    QMainWindow::resizeEvent(event);
+}
+
+//---------------------------------------------------G-Code
+
+void MainWindow::on_actionGCode_berechnen_triggered()
+{
+    ui->plainTextEdit_GCode->clear();
+    ui->tabWidget->setCurrentWidget(ui->tab_GCode);//Tab G-Code aktivieren
+
+    text_zeilenweise klartext = t.get_klartext_zeilenweise();
+    QString gcode;
+
+    for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+    {
+        gcode += "(";
+        QString zeile = klartext.zeile(i);
+        gcode += klammern_wecklassen(zeile);
+        gcode += ")";
+        gcode += "\n";
+
+        if(zeile.contains(PROGRAMMKOPF_DIALOG))
+        {
+            gcode += "(";
+            gcode += klammern_wecklassen(text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG));
+            gcode += ")";
+            gcode += "\n";
+        }else if(zeile.contains(PROGRAMMENDE_DIALOG))
+        {
+            gcode += "G00";
+            gcode += " X";
+            gcode += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            gcode += " Y";
+            gcode += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            gcode += " Z";
+            gcode += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            gcode += "\n";
+            gcode += "M30";
+            break; //Ende der Ausgabe = Ende der For-Schleife
+        }else if(zeile.contains(KOMMENTAR_DIALOG))
+        {
+            gcode += "(";
+            gcode += klammern_wecklassen(text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG));
+            gcode += ")";
+            gcode += "\n";
+        }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+        {
+            QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            if(aktives_wkz == NICHT_DEFINIERT)
+            {
+                aktives_wkz = werkzeugname;
+            }else if(aktives_wkz != werkzeugname)
+            {
+                QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
+                ui->plainTextEdit_GCode->clear();
+                ui->plainTextEdit_GCode->insertPlainText(tmp);
+                return;
+            }
+            rechtecktasche tasche_tmp;
+            QString tmp;
+            tmp = text_mitte(zeile, BEZUGSPUNKT, ENDE_EINTRAG);
+            tasche_tmp.set_bezugspunkt_nummer(tmp.toInt());
+
+            punkt p;
+            tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            p.x = tmp.toFloat();
+            tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            p.y = tmp.toFloat();
+            tasche_tmp.set_einfuegepunkt(p);
+
+            tmp = text_mitte(zeile, TASCHENLAENGE, ENDE_EINTRAG);
+            tasche_tmp.set_laenge(tmp.toFloat());
+            tmp = text_mitte(zeile, TASCHENBREITE, ENDE_EINTRAG);
+            tasche_tmp.set_breite(tmp.toFloat());
+
+            tmp = text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG);
+            tasche_tmp.set_tiefe(tmp.toFloat());
+
+            tasche_tmp.set_sicherheitsabstand(t.get_sicherheitsabstand());
+
+
+            //Fräserdurchmesser:
+            //tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp = werkzeugname;
+            QString werkzeug;
+            werkzeug = werkzeugdaten(tmp);
+            tmp = text_mitte(werkzeug, WKZ_DURCHMESSER, ENDE_EINTRAG);
+            tasche_tmp.set_durchmesser_fraeser(tmp.toFloat());
+
+            tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
+            tasche_tmp.set_radius_taschenecken(tmp.toFloat());
+
+            tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            tasche_tmp.set_zustellmass(tmp.toFloat());
+
+            tmp = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
+            tasche_tmp.set_ausraeumen(tmp.toInt());
+
+            tmp = text_mitte(zeile, BEZUGSHOEHE, ENDE_EINTRAG);
+            tasche_tmp.set_bezugshoehe(tmp.toFloat());
+
+            tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_VORSCHUB, ENDE_EINTRAG);
+            }
+            tasche_tmp.set_vorschubgeschwindigkeit(tmp.toInt());
+
+            tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG);
+            }
+            tasche_tmp.set_anfahrvorschub(tmp.toInt());
+
+            tmp = text_mitte(zeile, WINKEL, ENDE_EINTRAG);
+            tasche_tmp.set_drehwinkel(tmp.toFloat());
+
+            QString drehrichtung_fraeser;
+            drehrichtung_fraeser = text_mitte(werkzeug, WKZ_DREHRICHTUNG, ENDE_EINTRAG);
+            QString im_gegenlauf;
+            im_gegenlauf = text_mitte(zeile, GEGENLAUF, ENDE_EINTRAG);
+            if(drehrichtung_fraeser == WKZ_DREHRICHTUNG_RECHTS)
+            {
+                if(im_gegenlauf.toInt()  == true)
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(true);
+                }else
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(false);
+                }
+            }else if(drehrichtung_fraeser == WKZ_DREHRICHTUNG_LINKS)
+            {
+                if(im_gegenlauf.toInt()  == false)
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(true);
+                }else
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(false);
+                }
+            }else
+            {
+                //G-Code ausgabe abbreche mit Fehlermeldung
+                //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
+                ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                return ;
+            }
+
+            std::string tasche = tasche_tmp.get_gcode();
+            tmp = QString::fromStdString(tasche);
+            gcode += tmp;
+            gcode += "\n";
+        }else if(zeile.contains(KREISTASCHE_DIALOG))
+        {
+            QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            if(aktives_wkz == NICHT_DEFINIERT)
+            {
+                aktives_wkz = werkzeugname;
+            }else if(aktives_wkz != werkzeugname)
+            {
+                QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
+                ui->plainTextEdit_GCode->clear();
+                ui->plainTextEdit_GCode->insertPlainText(tmp);
+                return;
+            }
+            rechtecktasche tasche_tmp;
+            QString tmp;
+            tasche_tmp.set_bezugspunkt_nummer(MITTE);
+
+            punkt p;
+            tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            p.x = tmp.toFloat();
+            tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            p.y = tmp.toFloat();
+            tasche_tmp.set_einfuegepunkt(p);
+
+            tmp = text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG);
+            tasche_tmp.set_laenge(tmp.toFloat());
+            tasche_tmp.set_breite(tmp.toFloat());
+
+            tmp = text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG);
+            tasche_tmp.set_tiefe(tmp.toFloat());
+
+            tasche_tmp.set_sicherheitsabstand(t.get_sicherheitsabstand());
+
+
+            //Fräserdurchmesser:
+            //tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp = werkzeugname;
+            QString werkzeug;
+            werkzeug = werkzeugdaten(tmp);
+            tmp = text_mitte(werkzeug, WKZ_DURCHMESSER, ENDE_EINTRAG);
+            tasche_tmp.set_durchmesser_fraeser(tmp.toFloat());
+
+            tmp = text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG);
+            tasche_tmp.set_radius_taschenecken(tmp.toFloat()/2);
+
+            tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            tasche_tmp.set_zustellmass(tmp.toFloat());
+
+            tmp = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
+            tasche_tmp.set_ausraeumen(tmp.toInt());
+
+            tmp = text_mitte(zeile, BEZUGSHOEHE, ENDE_EINTRAG);
+            tasche_tmp.set_bezugshoehe(tmp.toFloat());
+
+            tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_VORSCHUB, ENDE_EINTRAG);
+            }
+            tasche_tmp.set_vorschubgeschwindigkeit(tmp.toInt());
+
+            tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG);
+            }
+            tasche_tmp.set_anfahrvorschub(tmp.toInt());
+
+            tasche_tmp.set_drehwinkel(0);
+
+            QString drehrichtung_fraeser;
+            drehrichtung_fraeser = text_mitte(werkzeug, WKZ_DREHRICHTUNG, ENDE_EINTRAG);
+            QString im_gegenlauf;
+            im_gegenlauf = text_mitte(zeile, GEGENLAUF, ENDE_EINTRAG);
+            if(drehrichtung_fraeser == WKZ_DREHRICHTUNG_RECHTS)
+            {
+                if(im_gegenlauf.toInt()  == true)
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(true);
+                }else
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(false);
+                }
+            }else if(drehrichtung_fraeser == WKZ_DREHRICHTUNG_LINKS)
+            {
+                if(im_gegenlauf.toInt()  == false)
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(true);
+                }else
+                {
+                    tasche_tmp.set_fraesbahn_in_uhrzeigersinn(false);
+                }
+            }else
+            {
+                //G-Code ausgabe abbreche mit Fehlermeldung
+                //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
+                ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                return ;
+            }
+
+            std::string tasche = tasche_tmp.get_gcode();
+            tmp = QString::fromStdString(tasche);
+            gcode += tmp;
+            gcode += "\n";
+        }
+    }
+
+    ui->plainTextEdit_GCode->insertPlainText(gcode);
+}
+
+void MainWindow::on_pushButton_Aktualisieren_GCode_clicked()
+{
+    on_actionGCode_berechnen_triggered();
+}
+
+void MainWindow::on_actionGCode_exportieren_triggered()
+{
+    QString fileName;
+    on_actionDateiSpeichern_triggered();
+    fileName = nameOfTheOpenFile;
+    if(fileName == NICHT_DEFINIERT)
+    {
+        QMessageBox mb;
+        mb.setText("Export wurde abgebrochen");
+        mb.exec();
+        return;
+    }
+
+    //Dateiendung ändern:
+    if(fileName.contains(DATEIENDUNG_EIGENE))
+    {
+        QString endung = DATEIENDUNG_EIGENE;
+        QString tmp;
+        for(int i = 0 ; i<(fileName.length()-endung.length()) ; i++)
+        {
+            tmp += fileName.at(i);
+        }
+        fileName = tmp + DATEIENDUNG_GCODE;
+    }else
+    {
+        fileName = fileName + DATEIENDUNG_GCODE;
+    }
+
+    //Programmliste in String schreiben
+    QString dateiInhalt = ui->plainTextEdit_GCode->toPlainText();
+    //Datei füllen und speichern
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Zugriff auf Datei:\n" + fileName);
+        mb.exec();
+    } else
+    {
+        file.remove(); //lösche alte Datei wenn vorhanden
+        file.close(); //beende Zugriff
+        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
+        file.close(); //beende Zugriff
+        QMessageBox mb;
+        mb.setText("G-Code derfolgreich exportiert.");
+        mb.exec();
+    }
+
+}
+
+void MainWindow::on_pushButton_Exportieren_GCODE_clicked()
+{
+    on_actionGCode_exportieren_triggered();
+}
+
+//---------------------------------------------------Vorschaufenster
+
+void MainWindow::vorschauAktualisieren()
+{
+    connect(this, SIGNAL(sendVorschauAktualisieren(programmtext,int)), &vorschaufenster, SLOT(slot_aktualisieren(programmtext,int)));
+    emit sendVorschauAktualisieren(t, ui->listWidget_Programmliste->currentRow()+1);
+}
+
+void MainWindow::on_listWidget_Programmliste_currentRowChanged(int currentRow)
+{
+    connect(this, SIGNAL(sendAktiveProgrammzeile(int)), &vorschaufenster, SLOT(slot_aktives_Element_einfaerben(int)));
+    emit sendAktiveProgrammzeile(currentRow+1);
+}
+
+//---------------------------------------------------nicht zugeordnet
+int MainWindow::loadToolInteger(QString keyword, int index)
+{
+    int returnInt = 0;
+    QString text = tool_tbl.at(index);
+    if(text.contains(keyword))
+    {
+        int indexBegin = text.indexOf(keyword);
+        QString tmp = text.mid(indexBegin+1 , 10);
+        QString tmp2;
+        for(int i=0; i<10 ;i++)
+        {
+            if( tmp[i] == '0' || tmp[i] == '1' || tmp[i] == '2' || tmp[i] == '3' || tmp[i] == '4' || tmp[i] == '5' || tmp[i] == '6' || tmp[i] == '7' || tmp[i] == '8' || tmp[i] == '9')
+            {
+                tmp2 += tmp[i];
+            }else break; //tmp2 beinhaltet jetzt die Zahl als QString
+        }
+        returnInt = tmp2.toInt();//Umwandlung von QString in int
+    }
+    return returnInt;
+}
+
+int MainWindow::aktualisiere_anzeigetext(bool undo_redo_on)
+{
+    int row;
+    if(ui->listWidget_Programmliste->currentIndex().isValid())
+    {
+        row = ui->listWidget_Programmliste->currentRow();
+    }else
+    {
+        row = 0;
+    }
+    ui->listWidget_Programmliste->clear();
+    text_zeilenweise tmp;
+    tmp = t.get_anzeigetext_zeilenweise();
+    if(tmp.zeilenanzahl() == 0)
+    {
+        return -1;
+    }
+    for(uint i=1 ; i<=tmp.zeilenanzahl() ; i++)
+    {
+        ui->listWidget_Programmliste->addItem(tmp.zeile(i));
+    }
+    for(int row = 0; row < ui->listWidget_Programmliste->count(); row++)
+    {
+        QListWidgetItem *item = ui->listWidget_Programmliste->item(row);
+        if(elementIstEingeblendet(item))
+        {
+            elementEinblendenSichtbarMachen(item);
+        }else
+        {
+            elementAusblendenSichtbarMachen(item);
+        }
+    }
+    if(row >= (int)tmp.zeilenanzahl())
+    {
+        row = row-1;
+    }
+    ui->listWidget_Programmliste->setCurrentRow(row);
+
+    if(undo_redo_on == true)
+    {
+        ur.neu(t);
+    }
+    hat_ungesicherte_inhalte = true;
+    return row;
+}
+
+int MainWindow::aktualisiere_anzeigetext_wkz(bool undo_redo_on)
+{
+    int row;
+    if(ui->listWidget_Werkzeug->currentIndex().isValid())
+    {
+        row = ui->listWidget_Werkzeug->currentRow();
+    }else
+    {
+        row = 0;
+    }
+    ui->listWidget_Werkzeug->clear();
+    text_zeilenweise tmp;
+    tmp = w.get_anzeigetext_zeilenweise();
+    if(tmp.zeilenanzahl() == 0)
+    {
+        return -1;
+    }
+    for(uint i=1 ; i<=tmp.zeilenanzahl() ; i++)
+    {
+        ui->listWidget_Werkzeug->addItem(tmp.zeile(i));
+    }
+    if(row >= (int)tmp.zeilenanzahl())
+    {
+        row = row-1;
+    }
+    ui->listWidget_Werkzeug->item(row)->setSelected(true);
+    ui->listWidget_Werkzeug->setCurrentRow(row);
+    if(undo_redo_on == true)
+    {
+        ur_wkz.neu(w);
+    }
+    return row;
+}
+
+void MainWindow::on_actionProgrammliste_anzeigen_triggered()
+{
+    QString tmp_text;
+    tmp_text = "\n---------------------------Text:\n";
+    text_zeilenweise te = t.get_text_zeilenweise();
+    for(uint i=1 ; i<=te.zeilenanzahl() ; i++)
+    {
+        tmp_text += QString::fromStdString(int_to_string(i));
+        tmp_text += "--";
+        tmp_text += te.zeile(i);
+        tmp_text += "\n";
+    }
+
+    QString tmp_klartext;
+    tmp_klartext = "\n---------------------------Klartext:\n";
+    text_zeilenweise kl = t.get_klartext_zeilenweise();
+    for(uint i=1 ; i<=kl.zeilenanzahl() ; i++)
+    {
+        tmp_klartext += QString::fromStdString(int_to_string(i));
+        tmp_klartext += "--";
+        tmp_klartext += kl.zeile(i);
+        tmp_klartext += "\n";
+    }
+
+    QString tmp_var;
+    tmp_var += "\n---------------------------Variablen:\n";
+    text_zeilenweise v = t.get_variablen_zeilenweise();
+    for(uint i=1 ; i<=v.zeilenanzahl() ; i++)
+    {
+        tmp_var += QString::fromStdString(int_to_string(i));
+        tmp_var += "--";
+        tmp_var += v.zeile(i);
+        tmp_var += "\n";
+    }
+
+    QMessageBox mb;
+    mb.setText(tmp_text + tmp_klartext + tmp_var);
+    mb.exec();
+}
+
+void MainWindow::on_actionWerkzeugliste_anzeigen_triggered()
+{
+    QString tmp_liste;
+    tmp_liste = "\n---------------------------Komplette Liste:\n";
+    text_zeilenweise te = w.get_werkzeuge_zeilenweise();
+    for(uint i=1 ; i<=te.zeilenanzahl() ; i++)
+    {
+        tmp_liste += QString::fromStdString(int_to_string(i));
+        tmp_liste += "--";
+        tmp_liste += te.zeile(i);
+        tmp_liste += "\n";
+    }
+
+    QString tmp_namen;
+    tmp_namen = "\n---------------------------Werkzeugnamen:\n";
+    text_zeilenweise na = w.get_anzeigetext_zeilenweise();
+    for(uint i=1 ; i<=na.zeilenanzahl() ; i++)
+    {
+        tmp_namen += QString::fromStdString(int_to_string(i));
+        tmp_namen += "--";
+        tmp_namen += na.zeile(i);
+        tmp_namen += "\n";
+    }
+
+    QMessageBox mb;
+    mb.setText(tmp_liste + tmp_namen);
+    mb.exec();
+}
+
+void MainWindow::pruefe_benutzereingaben(int zeilennummer)
+{
+    QMessageBox mb;
+    text_zeilenweise tz_prg = t.get_text_zeilenweise();
+    QString programmzeile = tz_prg.zeile(zeilennummer);
+    text_zeilenweise tz_kt = t.get_klartext_zeilenweise();
+    QString klartextzeile = tz_kt.zeile(zeilennummer);
+    if(programmzeile.contains(RECHTECKTASCHE_DIALOG))
+    {
+        QString tmp = text_mitte(programmzeile, WKZ_NAME, ENDE_EINTRAG);
+        QString wkz = w.get_werkzeug(tmp);
+        tmp = text_mitte(wkz, WKZ_DURCHMESSER, ENDE_EINTRAG);
+        float wkz_dm = tmp.toFloat();
+        tmp = text_mitte(klartextzeile, TASCHENLAENGE, ENDE_EINTRAG);
+        float tal = tmp.toFloat();
+        if(tal<wkz_dm)
+        {
+            mb.setText("Achtung!\nTaschenlaenge ist kleiner als Fraeserdurchmesser");
+            mb.exec();
+        }
+        tmp = text_mitte(klartextzeile, TASCHENBREITE, ENDE_EINTRAG);
+        float tab = tmp.toFloat();
+        if(tab<wkz_dm)
+        {
+            mb.setText("Achtung!\nTaschenbreite ist kleiner als Fraeserdurchmesser");
+            mb.exec();
+        }
+        tmp = text_mitte(klartextzeile, TASCHENTIEFE, ENDE_EINTRAG);
+        float tati = tmp.toFloat();
+        tmp = text_mitte(wkz, WKZ_NUTZLAENGE, ENDE_EINTRAG);
+        float wkz_nutzl = tmp.toFloat();
+        if(tati>wkz_nutzl)
+        {
+            mb.setText("Achtung!\nTaschentiefe ist groesser als Nutzlaenge des Fraesers");
+            mb.exec();
+        }
+    }
+}
+
+QString MainWindow::klammern_wecklassen(QString text)
+{
+    QString tmp;
+    for(int i = 0; i<text.length() ; i++)
+    {
+        if(  (text.at(i)!='(')  &&  (text.at(i)!=')')  )
+        {
+            tmp += text.at(i);
+        }
+    }
+    return tmp;
+}
+
+void MainWindow::slotAnfrageVariablen()
+{
+    connect(this, SIGNAL(sendVariablen(text_zeilenweise)), &variablenwerte_anzeigen, SLOT(slot_bekomme_variablen(text_zeilenweise)));
+    emit sendVariablen(t.get_variablen_zeilenweise());
+}
+
+void MainWindow::on_actionVariablenwert_anzeigen_triggered()
+{
+    variablenwerte_anzeigen.show();
+}
+
+void MainWindow::on_actionRueckgaengig_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        t = ur.undo();
+        aktualisiere_anzeigetext(false);
+        vorschauAktualisieren();
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        w = ur_wkz.undo();
+        aktualisiere_anzeigetext_wkz(false);
+    }
+}
+
+void MainWindow::on_actionWiederholen_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        t = ur.redo();
+        aktualisiere_anzeigetext(false);
+        vorschauAktualisieren();
+    }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
+    {
+        w = ur_wkz.redo();
+        aktualisiere_anzeigetext_wkz(false);
+    }
+}
+
+//---------------------------------------------------
+
+void MainWindow::slot_maus_pos(QPoint p)
+{
+    int x = p.x();
+    int y = p.y();
+    QString x_ = QString::fromStdString(int_to_string(x));
+    QString y_ = QString::fromStdString(int_to_string(y));
+    ui->statusBar->showMessage("X:" + x_ + " / Y:" + y_);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

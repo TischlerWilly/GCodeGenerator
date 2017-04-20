@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>723</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GCODEGENERATORGUI</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>681</width>
+      <height>641</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>681</width>
+      <height>641</height>
+     </size>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab_Programmliste">
+     <attribute name="title">
+      <string>Programmliste</string>
+     </attribute>
+     <widget class="QListWidget" name="listWidget_Programmliste">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>11</y>
+        <width>241</width>
+        <height>591</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_GCode">
+     <attribute name="title">
+      <string>G-Code</string>
+     </attribute>
+     <widget class="QPlainTextEdit" name="plainTextEdit_GCode">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>661</width>
+        <height>551</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>251</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="layout_GCODE_buttons">
+       <item>
+        <widget class="QPushButton" name="pushButton_Aktualisieren_GCode">
+         <property name="text">
+          <string>Aktualisieren</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Exportieren_GCODE">
+         <property name="text">
+          <string>Exportieren</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_Werkzeug">
+     <attribute name="title">
+      <string>Werkzeug</string>
+     </attribute>
+     <widget class="QListWidget" name="listWidget_Werkzeug">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>661</width>
+        <height>551</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>471</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="pushButton_WKZ_Neu">
+         <property name="text">
+          <string>Neues Werkzeug</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_WKZ_Speichern">
+         <property name="text">
+          <string>Speichern</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_WKZ_Laden">
+         <property name="text">
+          <string>Neu Laden</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_WKZ_Export_an_EMC2">
+         <property name="text">
+          <string>Export an EMC2</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>700</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMen">
+    <property name="title">
+     <string>Diverses</string>
+    </property>
+    <addaction name="actionEinstellungen"/>
+    <addaction name="actionWerkzeugliste"/>
+    <addaction name="actionProgrammliste_anzeigen"/>
+    <addaction name="actionWerkzeugliste_anzeigen"/>
+    <addaction name="actionVariablenwert_anzeigen"/>
+   </widget>
+   <widget class="QMenu" name="menuBearbeiten">
+    <property name="title">
+     <string>Bearbeiten</string>
+    </property>
+    <addaction name="actionAendern"/>
+    <addaction name="separator"/>
+    <addaction name="actionEinfuegen"/>
+    <addaction name="actionKopieren"/>
+    <addaction name="actionAusschneiden"/>
+    <addaction name="actionEntfernen"/>
+    <addaction name="separator"/>
+    <addaction name="actionEin_Ausblenden"/>
+    <addaction name="actionAuswahl_Einblenden"/>
+    <addaction name="actionAuswahl_Ausblenden"/>
+    <addaction name="separator"/>
+    <addaction name="actionRueckgaengig"/>
+    <addaction name="actionWiederholen"/>
+   </widget>
+   <widget class="QMenu" name="menuDatei">
+    <property name="title">
+     <string>Datei</string>
+    </property>
+    <addaction name="actionDateiNeu"/>
+    <addaction name="actionDateiOefnen"/>
+    <addaction name="actionDateiSpeichern"/>
+    <addaction name="actionDateiSpeichern_unter"/>
+    <addaction name="actionDateiSchliessen"/>
+    <addaction name="separator"/>
+    <addaction name="actionGCode_berechnen"/>
+    <addaction name="actionGCode_exportieren"/>
+   </widget>
+   <widget class="QMenu" name="menuHinzufuegen">
+    <property name="title">
+     <string>Hinzufuegen</string>
+    </property>
+    <addaction name="actionMakeProgrammkopf"/>
+    <addaction name="actionMakeProgrammende"/>
+    <addaction name="separator"/>
+    <addaction name="actionMakeKommentar"/>
+    <addaction name="actionMakeVariable"/>
+    <addaction name="separator"/>
+    <addaction name="actionMakeKreistasche"/>
+    <addaction name="actionMakeRechtecktasche"/>
+    <addaction name="separator"/>
+    <addaction name="actionMakeFraeser_Aufruf"/>
+    <addaction name="actionMakeGerade_Fraesbahn"/>
+    <addaction name="actionMakeGebogene_Fraesbahn"/>
+    <addaction name="actionMakeAbfahren"/>
+   </widget>
+   <addaction name="menuDatei"/>
+   <addaction name="menuBearbeiten"/>
+   <addaction name="menuHinzufuegen"/>
+   <addaction name="menuMen"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionEinstellungen">
+   <property name="text">
+    <string>Einstellungen</string>
+   </property>
+  </action>
+  <action name="actionWerkzeugliste">
+   <property name="text">
+    <string>Werkzeutabelle aus EMC2 anzeigen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionAendern">
+   <property name="text">
+    <string>Aendern</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="actionDateiSpeichern">
+   <property name="text">
+    <string>Speichern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionDateiOefnen">
+   <property name="text">
+    <string>Oefnen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionDateiSchliessen">
+   <property name="text">
+    <string>Schliessen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionGCode_berechnen">
+   <property name="text">
+    <string>GCode berechnen</string>
+   </property>
+  </action>
+  <action name="actionGCode_exportieren">
+   <property name="text">
+    <string>GCode exportieren</string>
+   </property>
+  </action>
+  <action name="actionEntfernen">
+   <property name="text">
+    <string>Entfernen</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionKopieren">
+   <property name="text">
+    <string>Kopieren</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionAusschneiden">
+   <property name="text">
+    <string>Ausschneiden</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionEinfuegen">
+   <property name="text">
+    <string>Einfuegen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionMakeProgrammkopf">
+   <property name="text">
+    <string>Programmkopf</string>
+   </property>
+  </action>
+  <action name="actionMakeProgrammende">
+   <property name="text">
+    <string>Programmende</string>
+   </property>
+  </action>
+  <action name="actionMakeKreistasche">
+   <property name="text">
+    <string>Kreistasche</string>
+   </property>
+  </action>
+  <action name="actionMakeRechtecktasche">
+   <property name="text">
+    <string>Rechtecktasche</string>
+   </property>
+  </action>
+  <action name="actionMakeKommentar">
+   <property name="text">
+    <string>Kommentar</string>
+   </property>
+  </action>
+  <action name="actionDateiNeu">
+   <property name="text">
+    <string>Neu</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionDateiSpeichern_unter">
+   <property name="text">
+    <string>Speichern unter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionMakeVariable">
+   <property name="text">
+    <string>Variable</string>
+   </property>
+  </action>
+  <action name="actionEin_Ausblenden">
+   <property name="text">
+    <string>Ein/Ausblenden</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionVorschaufenster_anzeigen">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Vorschaufenster anzeigen</string>
+   </property>
+  </action>
+  <action name="actionProgrammliste_anzeigen">
+   <property name="text">
+    <string>Programmliste anzeigen</string>
+   </property>
+  </action>
+  <action name="actionWerkzeugliste_anzeigen">
+   <property name="text">
+    <string>Werkzeugliste anzeigen</string>
+   </property>
+  </action>
+  <action name="actionVariablenwert_anzeigen">
+   <property name="text">
+    <string>Variablenwert anzeigen</string>
+   </property>
+  </action>
+  <action name="actionAuswahl_Einblenden">
+   <property name="text">
+    <string>Auswahl Einblenden</string>
+   </property>
+  </action>
+  <action name="actionAuswahl_Ausblenden">
+   <property name="text">
+    <string>Auswahl Ausblenden</string>
+   </property>
+  </action>
+  <action name="actionRueckgaengig">
+   <property name="text">
+    <string>Rueckgaengig</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionWiederholen">
+   <property name="text">
+    <string>Wiederholen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionMakeFraeser_Aufruf">
+   <property name="text">
+    <string>Fraeser-Aufruf</string>
+   </property>
+  </action>
+  <action name="actionMakeGerade_Fraesbahn">
+   <property name="text">
+    <string>gerade Fraesbahn</string>
+   </property>
+  </action>
+  <action name="actionMakeGebogene_Fraesbahn">
+   <property name="text">
+    <string>gebogene Fraesbahn</string>
+   </property>
+  </action>
+  <action name="actionMakeAbfahren">
+   <property name="text">
+    <string>Abfahren</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
