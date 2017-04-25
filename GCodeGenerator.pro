@@ -42,7 +42,14 @@ SOURCES += \
     eigeneFunktionen/geometrie.cpp \
     eigeneFunktionen/umwandeln.cpp \
     eigeneFunktionen/text.cpp \
-    eigeneFunktionen/runden.cpp
+    eigeneFunktionen/runden.cpp \
+    eigeneKlassen/geometrietext.cpp \
+    eigeneKlassen/punkt3d.cpp \
+    eigeneKlassen/strecke.cpp \
+    eigeneKlassen/bogen.cpp \
+    eigeneKlassen/punkt2d.cpp \
+    Dialoge/dialog_programmlisten.cpp \
+    eigeneKlassen/kreis.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -76,7 +83,16 @@ HEADERS  += \
     eigeneFunktionen/umwandeln.h \
     eigeneFunktionen/text.h \
     eigeneFunktionen/runden.h \
-    eigeneMakros/makro_geometrie.h
+    eigeneMakros/makro_geometrie.h \
+    ToDo.h \
+    eigeneKlassen/geometrietext.h \
+    eigeneDefines/defines_geometrie.h \
+    eigeneKlassen/punkt3d.h \
+    eigeneKlassen/strecke.h \
+    eigeneKlassen/bogen.h \
+    eigeneKlassen/punkt2d.h \
+    Dialoge/dialog_programmlisten.h \
+    eigeneKlassen/kreis.h
 
 FORMS    += \
     mainwindow.ui \
@@ -92,4 +108,5 @@ FORMS    += \
     Dialoge/dialog_fraeser_gerade.ui \
     Dialoge/dialog_fraeser_bogen.ui \
     Dialoge/dialog_fraeser_aufruf.ui \
-    Dialoge/dialog_fraeser_abfahren.ui
+    Dialoge/dialog_fraeser_abfahren.ui \
+    Dialoge/dialog_programmlisten.ui

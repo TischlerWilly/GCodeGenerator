@@ -8,11 +8,6 @@ text_zeilenweise::text_zeilenweise()
 
 //---------------------------------------------------------------------------
 //Funktionen zum lesen des Textes:
-QString text_zeilenweise::get_text()
-{
-    return text;
-}
-
 QString text_zeilenweise::zeile(uint zeilennummer)
 {
     if(zeilennummer > anzahl_der_zeilen)
@@ -61,11 +56,6 @@ QString text_zeilenweise::zeilen(uint zeilennummer_beginn, uint zeilenmenge)
     return returntext;
 }
 
-char text_zeilenweise::get_trennzeichen()
-{
-    return trenner;
-}
-
 //---------------------------------------------------------------------------
 //Funktionen zum erweitern des Textes:
 void text_zeilenweise::set_text(QString neuer_text)
@@ -92,7 +82,13 @@ void text_zeilenweise::zeile_anhaengen(QString zeilentext)
     zeilentext = textzeile_ohne_Zeilenvorschuebe(zeilentext);
     if(anzahl_der_zeilen == 0)
     {
-        set_text(zeilentext);
+        if(zeilentext.isEmpty())
+        {
+            set_text("\n");
+        }else
+        {
+            set_text(zeilentext);
+        }
     }else
     {
         set_text(text + trenner + zeilentext);
@@ -103,7 +99,13 @@ void text_zeilenweise::zeilen_anhaengen(QString zeilentext)
 {
     if(anzahl_der_zeilen == 0)
     {
-        set_text(zeilentext);
+        if(zeilentext.isEmpty())
+        {
+            set_text("\n");
+        }else
+        {
+            set_text(zeilentext);
+        }
     }else
     {
         set_text(text + trenner + zeilentext);
@@ -194,6 +196,22 @@ int text_zeilenweise::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentex
     if(zeilennummer == 0)
     {
         return 1; //Meldet Fehler in der Funktion
+    }else if(zeilennummer == anzahl_der_zeilen)
+    {                           //Wenn wir in der letzten Zeile sind:
+        uint aktuelle_zeile = 1;
+        QString text_davor;
+        for(int i=0 ; i<text.count() ; i++)
+        {
+            if(aktuelle_zeile < zeilennummer)
+            {
+                text_davor += text.at(i);
+            }
+            if(text.at(i) == trenner)
+            {
+                aktuelle_zeile++;
+            }
+        }
+        set_text(text_davor + neuer_zeilentext);
     }else
     {
         uint aktuelle_zeile = 1;
@@ -294,11 +312,6 @@ int text_zeilenweise::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge
 
 //---------------------------------------------------------------------------
 //andere Funktionen:
-uint text_zeilenweise::zeilenanzahl()
-{
-    return anzahl_der_zeilen;
-}
-
 
 //---------------------------------------------------------------------------
 //interne Funktinen:

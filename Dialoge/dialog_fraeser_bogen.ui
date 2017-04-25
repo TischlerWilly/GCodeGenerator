@@ -7,22 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>459</height>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>gebogene Fräsbahn</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>62</y>
+     <y>10</y>
      <width>431</width>
-     <height>121</height>
+     <height>211</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="3" column="2">
+     <widget class="QLineEdit" name="lineEdit_radius"/>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_ende_x">
       <property name="text">
@@ -74,109 +77,27 @@
     <item row="2" column="2">
      <widget class="QLineEdit" name="lineEdit_ende_z"/>
     </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>12</x>
-     <y>7</y>
-     <width>271</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QRadioButton" name="radioButton_im_UZS">
-      <property name="text">
-       <string>in Uhrzeigersinn (G02)</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_gegen_UZS">
-      <property name="text">
-       <string>gegen den Uhrzeigersinn (G03)</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>200</y>
-     <width>431</width>
-     <height>111</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QRadioButton" name="radioButton_radius">
-      <property name="text">
-       <string>Radius</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
+    <item row="3" column="1">
      <widget class="QLabel" name="label_radius_var">
       <property name="text">
        <string>[RAD]</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="3">
-     <widget class="QLineEdit" name="lineEdit_radius"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="radioButton_mittelpunkt">
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_radius">
       <property name="text">
-       <string>Mittelpunkt</string>
+       <string>Radius</string>
       </property>
      </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="label_mittelpunkt_x">
-      <property name="text">
-       <string>in X</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="label_mittelpunkt_x_var">
-      <property name="text">
-       <string>[MPX]</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QLineEdit" name="lineEdit_mittelpunkt_x"/>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="label_mittelpunkt_y">
-      <property name="text">
-       <string>in Y</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLabel" name="label_mittelpunkt_y_var">
-      <property name="text">
-       <string>[MPY]</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="3">
-     <widget class="QLineEdit" name="lineEdit_mittelpunkt_y"/>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>330</y>
+     <y>290</y>
      <width>431</width>
      <height>61</height>
     </rect>
@@ -218,11 +139,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>420</y>
+     <y>360</y>
      <width>431</width>
      <height>29</height>
     </rect>
@@ -246,6 +167,32 @@
      <widget class="QPushButton" name="pushButton_ok">
       <property name="text">
        <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>221</y>
+     <width>431</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="radioButton_im_UZS">
+      <property name="text">
+       <string>in Uhrzeigersinn (G02)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton_gegen_UZS">
+      <property name="text">
+       <string>gegen den Uhrzeigersinn (G03)</string>
       </property>
      </widget>
     </item>

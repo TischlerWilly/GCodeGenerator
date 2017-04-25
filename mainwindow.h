@@ -36,6 +36,8 @@
 #include "Dialoge/dialog_fraeser_gerade.h"
 #include "Dialoge/dialog_fraeser_bogen.h"
 #include "Dialoge/dialog_fraeser_abfahren.h"
+#include "Dialoge/dialog_programmlisten.h"
+
 
 #define INDEX_PROGRAMMLISTE 0
 #define INDEX_WERKZEUGLISTE 2
@@ -117,6 +119,8 @@ signals:
     void sendVorschauAktualisieren(programmtext t_neu, int aktuelle_programmzeile);
     void sendVariablen(text_zeilenweise variablen);
     void sendAktiveProgrammzeile(int zeilennummer);
+    void send_an_programmlisten(QString prgtext, QString klartext, \
+                        QString variabel, QString geometrietext);
 
 private:
         //Objekte:
@@ -138,6 +142,7 @@ private:
     Dialog_fraeser_gerade fgerade;
     Dialog_fraeser_bogen fbogen;
     Dialog_fraeser_abfahren fabfa;
+    Dialog_Programmlisten programmlisten;
 
 
 

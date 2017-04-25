@@ -23,21 +23,7 @@ void programmtext::set_text(QString neuer_Text)
 void programmtext::clear()
 {
     text.clear();
-    klartext.clear();
-    var.clear();
-    anzeigetext.clear();
-    werkstuecklaenge = 0;
-    werkstueckbreite = 0;
-    hat_programmkopf = false;
-    hat_programmende = false;
-    sicherheitsabstand = 5;
-    min_x = 0;
-    min_y = 0;
-    max_x = 0;
-    max_y = 0;
-    anz_faufr = 0;
-    anz_fabfa = 0;
-    warnung_frDial = false;
+    clear_ausser_text();
 }
 
 void programmtext::clear_ausser_text()
@@ -45,6 +31,7 @@ void programmtext::clear_ausser_text()
     klartext.clear();
     var.clear();
     anzeigetext.clear();
+    geo.clear();
     werkstuecklaenge = 0;
     werkstueckbreite = 0;
     hat_programmkopf = false;
@@ -57,16 +44,6 @@ void programmtext::clear_ausser_text()
     anz_faufr = 0;
     anz_fabfa = 0;
     warnung_frDial = false;
-}
-
-QString programmtext::get_text()
-{
-    return text.get_text();
-}
-
-text_zeilenweise programmtext::get_text_zeilenweise()
-{
-    return text;
 }
 
 QString programmtext::get_klartext()
@@ -83,11 +60,6 @@ QString programmtext::get_klartext()
     return returnstring;
 }
 
-text_zeilenweise programmtext::get_klartext_zeilenweise()
-{
-    return klartext;
-}
-
 QString programmtext::get_variablen()
 {
     QString returnstring;
@@ -100,73 +72,6 @@ QString programmtext::get_variablen()
         }
     }
     return returnstring;
-}
-
-text_zeilenweise programmtext::get_variablen_zeilenweise()
-{
-    return var;
-}
-
-QString programmtext::get_anzeigetext()
-{
-    return anzeigetext.get_text();
-}
-
-text_zeilenweise programmtext::get_anzeigetext_zeilenweise()
-{
-    return anzeigetext;
-}
-
-QString programmtext::get_anzeigetext_zeile(uint zeilennummer)
-{
-    return anzeigetext.zeile(zeilennummer);
-}
-
-void programmtext::warnungen_einschalten(bool einschalten)
-{
-    warnungen_sind_eingeschaltet = einschalten;
-}
-
-//---------------------------------------
-
-float programmtext::get_werkstuecklaenge()
-{
-    return werkstuecklaenge;
-}
-
-float programmtext::get_werkstueckbreite()
-{
-    return werkstueckbreite;
-}
-
-float programmtext::get_werkstueckdicke()
-{
-    return werkstueckdicke;
-}
-
-float programmtext::get_sicherheitsabstand()
-{
-    return sicherheitsabstand;
-}
-
-float programmtext::get_min_x()
-{
-    return min_x;
-}
-
-float programmtext::get_max_x()
-{
-    return max_x;
-}
-
-float programmtext::get_min_y()
-{
-    return min_y;
-}
-
-float programmtext::get_max_y()
-{
-    return max_y;
 }
 
 //---------------------------------------
@@ -235,8 +140,6 @@ int programmtext::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge)
             text.zeile_loeschen(i);
         }
     }
-
-    //text.zeilen_loeschen(zeilennummer_beginn, zeilenmenge);
     aktualisiere_klartext_und_var();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
@@ -332,20 +235,6 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
 
 //------------------------------------------------------------
 //private:
-void programmtext::set_werkstuecklaenge(float neue_laenge)
-{
-    werkstuecklaenge = neue_laenge;
-}
-
-void programmtext::set_werkstueckbreite(float neue_breite)
-{
-    werkstueckbreite = neue_breite;
-}
-
-void programmtext::set_werkstueckdicke(float neue_dicke)
-{
-    werkstueckdicke = neue_dicke;
-}
 
 void programmtext::set_sicherheitsabstand(float neuer_Abstand)
 {
@@ -1408,13 +1297,13 @@ void programmtext::aktualisiere_klartext_und_var()
                     {
                         ist_im_uzs = false;
                     }
-                    punkt m = kreismittelpunkt(start, ende, r, ist_im_uzs);
+                    //punkt m = kreismittelpunkt(start, ende, r, ist_im_uzs);
 
                     zeile_klartext += MITTELPUNKT_X;
-                    zeile_klartext += QString::fromStdString(float_to_string(m.x));
+                    //zeile_klartext += QString::fromStdString(float_to_string(m.x));
                     zeile_klartext += ENDE_EINTRAG;
                     zeile_klartext += MITTELPUNKT_Y;
-                    zeile_klartext += QString::fromStdString(float_to_string(m.x));
+                    //zeile_klartext += QString::fromStdString(float_to_string(m.x));
                     zeile_klartext += ENDE_EINTRAG;
 
                 }else if(modus == MODUS_MITTELPUNKT)
