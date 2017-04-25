@@ -534,24 +534,17 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       FRAESERBOGEN_DIALOG;
     if(vorlage_Fbogen == NICHT_DEFINIERT)
     {
-        inhaltVonKonfiguration +=   BOGENRICHTUNG;
-        inhaltVonKonfiguration +=   BOGENRICHTUNG_IM_UZS;
-        inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_X;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Z;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
-        inhaltVonKonfiguration +=   MODUS;
-        inhaltVonKonfiguration +=   MODUS_MITTELPUNKT;
-        inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   RADIUS;
         inhaltVonKonfiguration +=   "10";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
-        inhaltVonKonfiguration +=   MITTELPUNKT_X;
-        inhaltVonKonfiguration +=   ENDE_EINTRAG;
-        inhaltVonKonfiguration +=   MITTELPUNKT_Y;
+        inhaltVonKonfiguration +=   BOGENRICHTUNG;
+        inhaltVonKonfiguration +=   BOGENRICHTUNG_IM_UZS;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
         inhaltVonKonfiguration +=   "--- gebogene Fraesbahn";
@@ -2842,7 +2835,7 @@ int MainWindow::aktualisiere_anzeigetext_wkz(bool undo_redo_on)
 void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 {
     QString tmp_text;
-    tmp_text = "\n---------------------------Text:\n";
+    tmp_text = "";
     text_zeilenweise te = t.get_text_zeilenweise();
     for(uint i=1 ; i<=te.zeilenanzahl() ; i++)
     {
@@ -2853,7 +2846,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
     }
 
     QString tmp_klartext;
-    tmp_klartext = "\n---------------------------Klartext:\n";
+    tmp_klartext = "";
     text_zeilenweise kl = t.get_klartext_zeilenweise();
     for(uint i=1 ; i<=kl.zeilenanzahl() ; i++)
     {
@@ -2864,7 +2857,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
     }
 
     QString tmp_var;
-    tmp_var += "\n---------------------------Variablen:\n";
+    tmp_var += "";
     text_zeilenweise v = t.get_variablen_zeilenweise();
     for(uint i=1 ; i<=v.zeilenanzahl() ; i++)
     {
@@ -2874,9 +2867,25 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
         tmp_var += "\n";
     }
 
-    QMessageBox mb;
-    mb.setText(tmp_text + tmp_klartext + tmp_var);
-    mb.exec();
+    QString tmp_geom;
+    tmp_geom = "";
+    text_zeilenweise g = t.get_geo().get_text_zeilenweise();
+    for(uint i=1 ; i<=g.zeilenanzahl() ; i++)
+    {
+        tmp_geom += QString::fromStdString(int_to_string(i));
+        tmp_geom += "--";
+        tmp_geom += g.zeile(i);
+        tmp_geom += "\n";
+    }
+
+    connect( this, \
+             SIGNAL(send_an_programmlisten(QString,QString,QString,QString)),\
+             &programmlisten,\
+             SLOT(daten_anzeigen(QString,QString,QString,QString)));
+    emit send_an_programmlisten(tmp_text,\
+                                tmp_klartext,\
+                                tmp_var,\
+                                tmp_geom);
 }
 
 void MainWindow::on_actionWerkzeugliste_anzeigen_triggered()

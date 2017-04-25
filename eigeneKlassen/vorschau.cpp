@@ -325,7 +325,10 @@ void vorschau::paintEvent(QPaintEvent *)
             }
 
 
-            painter.drawRoundedRect(mittelpunkt.x-durchmesser/2, mittelpunkt.y-durchmesser/2, durchmesser, durchmesser, durchmesser, durchmesser, Qt::AbsoluteSize);
+            painter.drawRoundedRect(mittelpunkt.x-durchmesser/2, \
+                                    mittelpunkt.y-durchmesser/2, \
+                                    durchmesser, durchmesser, \
+                                    durchmesser, durchmesser, Qt::AbsoluteSize);
 
             tmp = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
             float afb_ausraeumen = tmp.toFloat();

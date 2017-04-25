@@ -45,16 +45,6 @@ void Dialog_fraeser_bogen::on_pushButton_ok_clicked()
 QString Dialog_fraeser_bogen::dialogDataToString()
 {
     QString msg = FRAESERBOGEN_DIALOG;
-    msg += BOGENRICHTUNG;
-    if(ui->radioButton_im_UZS->isChecked())
-    {
-        msg += BOGENRICHTUNG_IM_UZS;
-    }else if(ui->radioButton_gegen_UZS->isChecked())
-    {
-        msg += BOGENRICHTUNG_IM_GUZS;
-    }
-    msg += ENDE_EINTRAG;
-
     msg += POSITION_X;
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ende_x->text());
     msg += ENDE_EINTRAG;
@@ -67,26 +57,18 @@ QString Dialog_fraeser_bogen::dialogDataToString()
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ende_z->text());
     msg += ENDE_EINTRAG;
 
-    msg += MODUS;
-    if(ui->radioButton_radius->isChecked())
-    {
-        msg += MODUS_RADIUS;
-    }else if(ui->radioButton_mittelpunkt->isChecked())
-    {
-        msg += MODUS_MITTELPUNKT;
-    }
-    msg += ENDE_EINTRAG;
-
     msg += RADIUS;
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_radius->text());
     msg += ENDE_EINTRAG;
 
-    msg += MITTELPUNKT_X;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_mittelpunkt_x->text());
-    msg += ENDE_EINTRAG;
-
-    msg += MITTELPUNKT_Y;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_mittelpunkt_y->text());
+    msg += BOGENRICHTUNG;
+    if(ui->radioButton_im_UZS->isChecked())
+    {
+        msg += BOGENRICHTUNG_IM_UZS;
+    }else if(ui->radioButton_gegen_UZS->isChecked())
+    {
+        msg += BOGENRICHTUNG_IM_GUZS;
+    }
     msg += ENDE_EINTRAG;
 
     msg += BEZEICHNUNG;
@@ -105,8 +87,13 @@ QString Dialog_fraeser_bogen::dialogDataToString()
 void Dialog_fraeser_bogen::getDialogData(QString text, bool openToChangeData)
 {
     openToModifyData = openToChangeData;
-    QString tmp;
 
+    ui->lineEdit_ende_x->setText(selektiereEintrag(text, POSITION_X, ENDE_EINTRAG));
+    ui->lineEdit_ende_y->setText(selektiereEintrag(text, POSITION_Y, ENDE_EINTRAG));
+    ui->lineEdit_ende_z->setText(selektiereEintrag(text, POSITION_Z, ENDE_EINTRAG));
+    ui->lineEdit_radius->setText(selektiereEintrag(text, RADIUS, ENDE_EINTRAG));
+
+    QString tmp;
     tmp = selektiereEintrag(text, BOGENRICHTUNG, ENDE_EINTRAG);
     if(tmp == BOGENRICHTUNG_IM_UZS)
     {
@@ -115,21 +102,7 @@ void Dialog_fraeser_bogen::getDialogData(QString text, bool openToChangeData)
     {
         ui->radioButton_gegen_UZS->setChecked(true);
     }
-    ui->lineEdit_ende_x->setText(selektiereEintrag(text, POSITION_X, ENDE_EINTRAG));
-    ui->lineEdit_ende_y->setText(selektiereEintrag(text, POSITION_Y, ENDE_EINTRAG));
-    ui->lineEdit_ende_z->setText(selektiereEintrag(text, POSITION_Z, ENDE_EINTRAG));
 
-    tmp = selektiereEintrag(text, MODUS, ENDE_EINTRAG);
-    if(tmp == MODUS_RADIUS)
-    {
-        ui->radioButton_radius->setChecked(true);
-    }else
-    {
-        ui->radioButton_mittelpunkt->setChecked(true);
-    }
-    ui->lineEdit_radius->setText(selektiereEintrag(text, RADIUS, ENDE_EINTRAG));
-    ui->lineEdit_mittelpunkt_x->setText(selektiereEintrag(text, MITTELPUNKT_X, ENDE_EINTRAG));
-    ui->lineEdit_mittelpunkt_y->setText(selektiereEintrag(text, MITTELPUNKT_Y, ENDE_EINTRAG));
     ui->lineEdit_bezeichnung->setText(selektiereEintrag(text, BEZEICHNUNG, ENDE_EINTRAG));
     ui->lineEdit_ausfbed->setText(selektiereEintrag(text, AUSFUEHRBEDINGUNG, ENDE_EINTRAG));
     this->show();
