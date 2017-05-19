@@ -4,5 +4,4 @@ kreis::kreis()
 {
     set_mittelpunkt(0,0,0);
     set_radius(0);
-    set_ausgefuellt(0);
 }

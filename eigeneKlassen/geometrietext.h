@@ -10,6 +10,9 @@
 #include "strecke.h"
 #include "bogen.h"
 #include "kreis.h"
+#include "zylinder.h"
+#include "rechteck3d.h"
+#include "wuerfel.h"
 #include "../eigeneDefines/defines_geometrie.h"
 
 
@@ -23,6 +26,9 @@ public:
     void add_strecke(strecke s);
     void add_bogen(bogen b);
     void add_kreis(kreis k);
+    void add_zylinder(zylinder z);
+    void add_rechteck(rechteck3d rec);
+    void add_wuerfel(wuerfel w);
 
     inline QString get_text()
     {

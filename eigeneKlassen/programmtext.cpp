@@ -16,7 +16,7 @@ void programmtext::set_text(QString neuer_Text)
     {
         text.zeile_anhaengen(LISTENENDE);
     }
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
 }
 
@@ -121,7 +121,7 @@ int programmtext::zeile_loeschen(uint zeilennummer)
         return 1; //Meldet Fehler in der Funktion
     }
     text.zeile_loeschen(zeilennummer);
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -140,7 +140,7 @@ int programmtext::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge)
             text.zeile_loeschen(i);
         }
     }
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -162,7 +162,7 @@ int programmtext::zeile_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zei
     {
         text.zeile_einfuegen(zeilennummer_vor_neuer_zeile, zeilentext);
     }
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -190,7 +190,7 @@ int programmtext::zeilen_einfuegen(uint zeilennummer_vor_neuer_zeile, QString ze
             text.zeile_einfuegen(zeilennummer_vor_neuer_zeile+i-1, zeile);
         }
     }
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -202,7 +202,7 @@ void programmtext::zeile_anhaengen(QString zeilentext)
         return;
     }
     text.zeilen_anhaengen(zeilentext);
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
 }
 
@@ -228,7 +228,7 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
         return 1; //Meldet Fehler in der Funktion
     }
     text.zeile_ersaetzen(zeilennummer, neuer_zeilentext);
-    aktualisiere_klartext_und_var();
+    aktualisiere_klartext_var_geo();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -247,7 +247,7 @@ void programmtext::set_sicherheitsabstand(float neuer_Abstand)
     }
 }
 
-void programmtext::aktualisiere_klartext_und_var()
+void programmtext::aktualisiere_klartext_var_geo()
 {
     clear_ausser_text();
     QString variablen;
@@ -262,7 +262,9 @@ void programmtext::aktualisiere_klartext_und_var()
         }
         if(  (anz_faufr > anz_fabfa)  &&  (i<text.zeilenanzahl())  )
         {
-            if(  zeile.contains(FRAESERGERADE_DIALOG)  ||  zeile.contains(FRAESERBOGEN_DIALOG)  ||  zeile.contains(FRAESERABFAHREN_DIALOG)  )
+            if(  zeile.contains(FRAESERGERADE_DIALOG)  ||  \
+                 zeile.contains(FRAESERBOGEN_DIALOG)   ||  \
+                 zeile.contains(FRAESERABFAHREN_DIALOG)    )
             {
                 ;
             }else
@@ -270,7 +272,8 @@ void programmtext::aktualisiere_klartext_und_var()
                 if(warnung_frDial == false)
                 {
                     QMessageBox mb;
-                    mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeser-Abfahren fehlt!");
+                    mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + \
+                               "!\nFraeser-Abfahren fehlt!");
                     mb.exec();
                     warnung_frDial = true;
                 }
@@ -1200,11 +1203,6 @@ void programmtext::aktualisiere_klartext_und_var()
 
                 QString zeile_klartext;
                 zeile_klartext += FRAESERBOGEN_DIALOG;
-                tmp = text_mitte(zeile, BOGENRICHTUNG, ENDE_EINTRAG);
-                zeile_klartext += BOGENRICHTUNG;
-                zeile_klartext += tmp;
-                zeile_klartext += ENDE_EINTRAG;
-                QString richtung = tmp;
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
@@ -1260,70 +1258,17 @@ void programmtext::aktualisiere_klartext_und_var()
                     variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp);
                 }
 
-                tmp = text_mitte(zeile, MODUS, ENDE_EINTRAG);
-                zeile_klartext += MODUS;
+                tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += RADIUS;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
-                QString modus = tmp;
 
-                if(modus == MODUS_RADIUS)
-                {
-                    tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
-                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                    tmp = ausdruck_auswerten(tmp);
-                    zeile_klartext += RADIUS;
-                    zeile_klartext += tmp;
-                    zeile_klartext += ENDE_EINTRAG;
-                    float r = tmp.toFloat();
-                    //Mittelpunkt berechnen:
-                    QString zeile_var = var.zeile(i-1);
-                    tmp = text_mitte(zeile_var, POSITION_X, ENDE_EINTRAG);
-                    punkt start;
-                    start.x = tmp.toFloat();
-                    tmp = text_mitte(zeile_var, POSITION_Y, ENDE_EINTRAG);
-                    start.y = tmp.toFloat();
-                    zeile_var = var.zeile(i);
-                    tmp = text_mitte(zeile_var, POSITION_X, ENDE_EINTRAG);
-                    punkt ende;
-                    ende.x = tmp.toFloat();
-                    tmp = text_mitte(zeile_var, POSITION_Y, ENDE_EINTRAG);
-                    ende.y = tmp.toFloat();
-
-                    bool ist_im_uzs = 0;
-                    if(richtung == BOGENRICHTUNG_IM_UZS)
-                    {
-                        ist_im_uzs = true;
-                    }else
-                    {
-                        ist_im_uzs = false;
-                    }
-                    //punkt m = kreismittelpunkt(start, ende, r, ist_im_uzs);
-
-                    zeile_klartext += MITTELPUNKT_X;
-                    //zeile_klartext += QString::fromStdString(float_to_string(m.x));
-                    zeile_klartext += ENDE_EINTRAG;
-                    zeile_klartext += MITTELPUNKT_Y;
-                    //zeile_klartext += QString::fromStdString(float_to_string(m.x));
-                    zeile_klartext += ENDE_EINTRAG;
-
-                }else if(modus == MODUS_MITTELPUNKT)
-                {
-                    tmp = text_mitte(zeile, MITTELPUNKT_X, ENDE_EINTRAG);
-                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                    tmp = ausdruck_auswerten(tmp);
-                    zeile_klartext += MITTELPUNKT_X;
-                    zeile_klartext += tmp;
-                    zeile_klartext += ENDE_EINTRAG;
-
-                    tmp = text_mitte(zeile, MITTELPUNKT_Y, ENDE_EINTRAG);
-                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                    tmp = ausdruck_auswerten(tmp);
-                    zeile_klartext += MITTELPUNKT_Y;
-                    zeile_klartext += tmp;
-                    zeile_klartext += ENDE_EINTRAG;
-                    //Radius berechnen:
-
-                }
+                tmp = text_mitte(zeile, BOGENRICHTUNG, ENDE_EINTRAG);
+                zeile_klartext += BOGENRICHTUNG;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
 
                 if(x < min_x)
                 {
@@ -1387,122 +1332,392 @@ void programmtext::aktualisiere_klartext_und_var()
     {
         for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
         {
-            QString abtyp = NICHT_DEFINIERT; //brauchen wir an dieser Stelle, damit der Wert später beim Fräser-Abfahren verfügbar ist
+            QString abtyp = NICHT_DEFINIERT; //brauchen wir an dieser Stelle, damit der Wert später
+                                             //beim Fräser-Abfahren verfügbar ist
             QString zeile = klartext.zeile(i), tmp;
 
-            if(zeile.contains(FRAESERAUFRUF_DIALOG))
+            if(zeile.isEmpty())
             {
-                punkt startpKont, startpDial, folgepunkt;
-                startpKont.x = 0;
-                startpKont.y = 0;
-                startpDial.x = 0;
-                startpDial.y = 0;
-                folgepunkt.x = 0;
-                folgepunkt.y = 0;
+                geo.zeilenvorschub();
+            }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
+            {
+                rechteck3d rec;
+                rec.set_bezugspunkt(UNTEN_LINKS);
+                rec.set_einfuegepunkt(0,0,0);
+                rec.set_laenge(text_mitte(zeile, LAENGE, ENDE_EINTRAG));
+                rec.set_breite(text_mitte(zeile, BREITE, ENDE_EINTRAG));
+                rec.set_farbe_fuellung(FARBE_GRAU);
+                geo.add_rechteck(rec);
 
+                punkt3d nullpunkt(0,0,0);
+                nullpunkt.set_breite(5);
+                geo.add_punkt(nullpunkt);
+
+                geo.zeilenvorschub();
+            }else if(zeile.contains(PROGRAMMENDE_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(VARIABLE_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(KOMMENTAR_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(KREISTASCHE_DIALOG))
+            {
+                zylinder z;
+                punkt3d p3;
+                p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
+                p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
+                p3.set_z(werkstueckdicke);
+                z.set_mittelpunkt(p3);
+                z.set_hoehe(text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG));
+                z.set_radius(text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG));
+                z.set_radius(z.radius()/2); //Zeile davor weist DM zu
+                if(p3.z()-z.get_hoehe() <= 0)
+                {//Wenn Tasche durchgefräst ist
+                    z.set_farbe_fuellung(FARBE_WEISS);
+                }else
+                {
+                     z.set_farbe_fuellung(FARBE_BLAU);
+                }
+                geo.add_zylinder(z);
+                QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
+                if(ausr.toInt() == false)
+                {
+                    z.set_radius(z.radius()-5);
+                    z.set_farbe_fuellung(FARBE_GRAU);
+                    geo.add_zylinder(z);
+                }
+                geo.zeilenvorschub();
+            }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+            {
+                wuerfel wue;
+                wue.set_bezugspunkt(text_mitte(zeile, BEZUGSPUNKT, ENDE_EINTRAG));
+                punkt3d p3;
+                p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
+                p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
+                p3.set_z(werkstueckdicke);
+                wue.set_einfuegepunkt(p3);
+                wue.set_laenge(text_mitte(zeile, TASCHENLAENGE, ENDE_EINTRAG));
+                wue.set_breite(text_mitte(zeile, TASCHENBREITE, ENDE_EINTRAG));
+                wue.set_hoehe(text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG));
+                wue.set_rad(text_mitte(zeile, RADIUS, ENDE_EINTRAG));
+                wue.set_drewi(text_mitte(zeile, WINKEL, ENDE_EINTRAG));
+                if(p3.z()-wue.get_hoehe() <= 0)
+                {//Wenn Tasche durchgefräst ist
+                    wue.set_farbe_fuellung(FARBE_WEISS);
+                }else
+                {
+                     wue.set_farbe_fuellung(FARBE_BLAU);
+                }
+                geo.add_wuerfel(wue);
+                QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
+                if(ausr.toInt() == false)
+                {
+                    wue.set_laenge(wue.l()-5);
+                    wue.set_breite(wue.b()-5);
+                    wue.set_farbe_fuellung(FARBE_GRAU);
+                    geo.add_wuerfel(wue);
+                }
+                geo.zeilenvorschub();
+            }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
+            {
                 abtyp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);
                 QString antyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
 
-                tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
-                startpDial.x = tmp.toFloat();
-                tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
-                startpDial.y = tmp.toFloat();
+                punkt3d startpDial;
+                startpDial.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
+                startpDial.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
+                startpDial.set_z(text_mitte(zeile, POSITION_Z, ENDE_EINTRAG));
 
-                if(antyp != ANABFAHRTYP_KEIN)
+                if(antyp == ANABFAHRTYP_KEIN)
                 {
-                    //Folgepunkt ermitteln:
-                    if(i+1 <= klartext.zeilenanzahl()  )
+                    geo.add_punkt(startpDial);
+                }else if(antyp == ANABFAHRTYP_GARADE)
+                {
+                    if(i+1 > klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
+                    {   //kein Anfahrweg nötig
+                        geo.add_punkt(startpDial);
+                    }else
                     {
-                        uint j = i+1;
-                        QString zeile_dannach = klartext.zeile(j);
-                        while(zeile_dannach.isEmpty()  &&  j+1<=klartext.zeilenanzahl()  )
+                        uint ii = i+1;
+                        QString zeile_dannach = klartext.zeile(ii);
+                        while(zeile_dannach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
                         {
-                            j++;
-                            zeile_dannach = klartext.zeile(j);
+                            ii++;
+                            zeile_dannach = klartext.zeile(ii);
+                        }
+                        if(zeile_dannach.contains(FRAESERGERADE_DIALOG))
+                        {   //Anfahrweg ist Strecke
+                            punkt3d folgepunkt;
+                            folgepunkt.set_x(text_mitte(zeile_dannach, POSITION_X, ENDE_EINTRAG));
+                            folgepunkt.set_y(text_mitte(zeile_dannach, POSITION_Y, ENDE_EINTRAG));
+                            folgepunkt.set_z(text_mitte(zeile_dannach, POSITION_Z, ENDE_EINTRAG));
+                            //Anfahrpunkt berechnen:
+                            strecke s;
+                            s.set_start(startpDial);
+                            s.set_ende(folgepunkt);
+                            tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                            float fdm = tmp.toFloat();
+                            if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
+                            {
+                                fdm = 50;
+                                QMessageBox mb;
+                                mb.setText("Achtung!\nFraeserdurchmesser 0 in Zeile " + int_to_qstring(i) + "!");
+                                mb.exec();
+                            }
+                            strecke_bezugspunkt sb;
+                            sb = strecke_bezugspunkt_ende;
+                            //Startpunkt in X u Y setzen:
+                            s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
+                            //Startpunkt in Z setzen:
+                            punkt3d startpunkt = s.startp();
+                            startpunkt.set_z(werkstueckdicke + sicherheitsabstand);
+                            s.set_start(startpunkt);
+                            //Endpunkt setzen:
+                            s.set_ende(startpDial);//Damit auch Z stimmt und weniger gerechent werden muss
+                            geo.add_strecke(s);
+                        }else if(zeile_dannach.contains(FRAESERBOGEN_DIALOG))
+                        {
+                            punkt3d endpu;
+                            endpu.set_x(text_mitte(zeile_dannach, POSITION_X, ENDE_EINTRAG));
+                            endpu.set_y(text_mitte(zeile_dannach, POSITION_Y, ENDE_EINTRAG));
+                            endpu.set_z(text_mitte(zeile_dannach, POSITION_Z, ENDE_EINTRAG));
+                            bool bogriuzs;
+                            if(text_mitte(zeile_dannach, BOGENRICHTUNG, ENDE_EINTRAG) == BOGENRICHTUNG_IM_UZS)
+                            {
+                                bogriuzs = true;
+                            }else
+                            {
+                                bogriuzs = false;
+                            }
+                            bogen b;
+                            b.set_startpunkt(startpDial);
+                            b.set_endpunkt(endpu);
+                            b.set_radius(text_mitte(zeile_dannach, RADIUS, ENDE_EINTRAG), bogriuzs);
+                            punkt3d startpu;
+                            startpu.set_x(b.mittelpunkt().x());
+                            startpu.set_y(b.mittelpunkt().y());
+                            startpu.set_z(werkstueckdicke + sicherheitsabstand);
+                            strecke s;
+                            s.set_start(startpu);
+                            s.set_ende(startpDial);
+                            s.drenen_um_endpunkt_2d(90, -bogriuzs);
+                            geo.add_strecke(s);
+                        }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
+                        {   //kein Anfahrweg nötig
+                            geo.add_punkt(startpDial);
+                        }
+                    }
+                }else //antyp == ANABFAHRTYP_KREISBOGEN_LI oder ANABFAHRTYP_KREISBOGEN_RE
+                {
+                    if(i+1 > klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
+                    {   //kein Anfahrweg nötig
+                        geo.add_punkt(startpDial);
+                    }else
+                    {
+                        uint ii = i+1;
+                        QString zeile_dannach = klartext.zeile(ii);
+                        while(zeile_dannach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
+                        {
+                            ii++;
+                            zeile_dannach = klartext.zeile(ii);
                         }
                         if(zeile_dannach.contains(FRAESERGERADE_DIALOG))
                         {
-                            tmp = text_mitte(zeile_dannach, POSITION_X, ENDE_EINTRAG);
-                            folgepunkt.x = tmp.toFloat();
-                            tmp = text_mitte(zeile_dannach, POSITION_Y, ENDE_EINTRAG);
-                            folgepunkt.y = tmp.toFloat();
-                        }else if(zeile_dannach.contains(FRAESERBOGEN_DIALOG))
-                        {
-                            //Noch programmieren!!!
-                        }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
-                        {
-                            zeile += CAD_BEGIN;
-                            //Punkt am Startpunkt Aufruf Fräser:
-                            zeile += CAD_PUNKT;
-                            zeile += QString::fromStdString(float_to_string(startpDial.x));
-                            zeile += "/";
-                            zeile += QString::fromStdString(float_to_string(startpDial.y));
-                            zeile += ENDE_EINTRAG;
-                            zeile += CAD_ENDE;
-                            klartext.zeile_ersaetzen(i, zeile);
-                            continue;
-                        }
-                        if(antyp == ANABFAHRTYP_GARADE)
-                        {
-                            punkt richtvect;
-                            richtvect.x = folgepunkt.x - startpDial.x;
-                            richtvect.y = folgepunkt.y - startpDial.y;
-                            float l = sqrt(richtvect.x*richtvect.x + richtvect.y*richtvect.y); //c²=a²+b²
+                            punkt3d folgepunkt;
+                            folgepunkt.set_x(text_mitte(zeile_dannach, POSITION_X, ENDE_EINTRAG));
+                            folgepunkt.set_y(text_mitte(zeile_dannach, POSITION_Y, ENDE_EINTRAG));
+                            folgepunkt.set_z(text_mitte(zeile_dannach, POSITION_Z, ENDE_EINTRAG));
+                            strecke s;
+                            s.set_start(startpDial);
+                            s.set_ende(folgepunkt);
                             tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
                             float fdm = tmp.toFloat();
-                            float faktor = fdm/l*2;//Anfahrweg soll 2x Fräserdurchmesser betragen
-                            if(faktor == 0)
+                            if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
                             {
+                                fdm = 50;
                                 QMessageBox mb;
-                                mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!nFraeserdurchmesser darf nicht 0 sein!");
+                                mb.setText("Achtung!\nFraeserdurchmesser 0 in Zeile " + int_to_qstring(i) + "!");
                                 mb.exec();
-                                return;
                             }
-                            startpKont.x = startpDial.x - richtvect.x*faktor;
-                            startpKont.y = startpDial.y - richtvect.y*faktor;
-
-                            zeile += CAD_BEGIN;
-                            //Strecke zum Startpunkt Aufruf Fräser:
-                            zeile += CAD_STRECKE;
-                            zeile += QString::fromStdString(float_to_string(startpKont.x));
-                            zeile += "/";
-                            zeile += QString::fromStdString(float_to_string(startpKont.y));
-                            zeile += "/";
-                            zeile += QString::fromStdString(float_to_string(startpDial.x));
-                            zeile += "/";
-                            zeile += QString::fromStdString(float_to_string(startpDial.y));
-                            zeile += ENDE_EINTRAG;
-                            zeile += CAD_ENDE;
-
-                        }else //antyp == ANABFAHRTYP_KREISBOGEN
-                        {
-                            if(text_mitte(zeile, BAHNRORREKTUR,ENDE_EINTRAG) == BAHNRORREKTUR_rechts)
+                            strecke_bezugspunkt sb;
+                            sb = strecke_bezugspunkt_start;
+                            //Endpunkt in X u Y setzen:
+                            s.set_laenge_2d(fdm*2, sb);
+                            //Bahnkor ermitteln:
+                            if(antyp == ANABFAHRTYP_KREISBOGEN_RE)
                             {
-                                //Noch programmieren!!!
+                                s.drenen_um_startpunkt_2d(90, true);
+                                s.drenen_um_endpunkt_2d(90,false);
+                                punkt3d p3;
+                                p3.set_x(s.startp().x());
+                                p3.set_y(s.startp().y());
+                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                bogen b;
+                                b.set_startpunkt(p3);
+                                b.set_endpunkt(startpDial);
+                                b.set_radius(fdm*2, true);
+                                geo.add_bogen(b);
+                            }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
+                            {
+                                s.drenen_um_startpunkt_2d(90, false);
+                                s.drenen_um_endpunkt_2d(90,true);
+                                punkt3d p3;
+                                p3.set_x(s.startp().x());
+                                p3.set_y(s.startp().y());
+                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                bogen b;
+                                b.set_startpunkt(p3);
+                                b.set_endpunkt(startpDial);
+                                b.set_radius(fdm*2, false);
+                                geo.add_bogen(b);
+                            }
+                        }else if(zeile_dannach.contains(FRAESERBOGEN_DIALOG))
+                        {
+                            punkt3d folgepunkt;
+                            folgepunkt.set_x(text_mitte(zeile_dannach, POSITION_X, ENDE_EINTRAG));
+                            folgepunkt.set_y(text_mitte(zeile_dannach, POSITION_Y, ENDE_EINTRAG));
+                            folgepunkt.set_z(text_mitte(zeile_dannach, POSITION_Z, ENDE_EINTRAG));
+                            bogen b;
+                            b.set_startpunkt(startpDial);
+                            b.set_endpunkt(folgepunkt);
+                            QString r = text_mitte(zeile_dannach, RADIUS, ENDE_EINTRAG);
+                            bool uzs;
+                            if(text_mitte(zeile_dannach, BOGENRICHTUNG, ENDE_EINTRAG) == BOGENRICHTUNG_IM_UZS)
+                            {
+                                uzs = true;
                             }else
                             {
-                                //Noch programmieren!!!
+                                uzs = false;
                             }
+                            b.set_radius(r, uzs);
+                            strecke s;
+                            s.set_start(startpDial);
+                            punkt3d mipu;
+                            mipu.set_x(b.mittelpunkt().x());
+                            mipu.set_y(b.mittelpunkt().y());
+                            s.set_ende(mipu);
+                            tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                            float fdm = tmp.toFloat();
+                            if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
+                            {
+                                fdm = 50;
+                                QMessageBox mb;
+                                mb.setText("Achtung!\nFraeserdurchmesser 0 in Zeile " + int_to_qstring(i) + "!");
+                                mb.exec();
+                            }
+                            strecke_bezugspunkt sb;
+                            sb = strecke_bezugspunkt_start;
+                            if(antyp == ANABFAHRTYP_KREISBOGEN_RE)
+                            {
+                                s.drenen_um_startpunkt_2d(180, true);
+                                s.set_laenge_2d(fdm*2, sb);
+                                s.drenen_um_endpunkt_2d(90, false);
+                                punkt3d p3;
+                                p3.set_x(s.startp().x());
+                                p3.set_y(s.startp().y());
+                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                bogen b;
+                                b.set_startpunkt(p3);
+                                b.set_endpunkt(startpDial);
+                                b.set_radius(fdm*2, true);
+                                geo.add_bogen(b);
+                            }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
+                            {
+                                s.set_laenge_2d(fdm*2, sb);
+                                s.drenen_um_endpunkt_2d(90, true);
+                                punkt3d p3;
+                                p3.set_x(s.startp().x());
+                                p3.set_y(s.startp().y());
+                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                bogen b;
+                                b.set_startpunkt(p3);
+                                b.set_endpunkt(startpDial);
+                                b.set_radius(fdm*2, true);
+                                geo.add_bogen(b);
+                            }
+                        }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
+                        {   //kein Anfahrweg nötig
+                            geo.add_punkt(startpDial);
                         }
                     }
-                }else//wenn ANABFAHRTYP_KEIN
-                {
-                    zeile += CAD_BEGIN;
-                    //Punkt am Startpunkt Aufruf Fräser:
-                    zeile += CAD_PUNKT;
-                    zeile += QString::fromStdString(float_to_string(startpDial.x));
-                    zeile += "/";
-                    zeile += QString::fromStdString(float_to_string(startpDial.y));
-                    zeile += ENDE_EINTRAG;
-                    zeile += CAD_ENDE;
                 }
+                geo.zeilenvorschub();
+            }else if(zeile.contains(FRAESERGERADE_DIALOG))
+            {
+                punkt3d startpunkt, endpunkt;
+                endpunkt.set_x(text_mitte(klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
+                endpunkt.set_y(text_mitte(klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
+                endpunkt.set_z(text_mitte(klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
+                if(i > 1)//wenn die gerade Fräsbahn nicht das erste Element der Liste ist
+                {
+                    uint ii = i-1;
+                    QString zeile_davor = klartext.zeile(ii);
+                    while(zeile_davor.isEmpty()  &&  ii-1>=1  )
+                    {
+                        ii--;
+                        zeile_davor = klartext.zeile(ii);
+                    }
+                    if(zeile_davor.contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(startpunkt);
+                        s.set_ende(endpunkt);
+                        geo.add_strecke(s);
+                    }else if(zeile_davor.contains(FRAESERGERADE_DIALOG))
+                    {
+                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(startpunkt);
+                        s.set_ende(endpunkt);
+                        geo.add_strecke(s);
+                    }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(startpunkt);
+                        s.set_ende(endpunkt);
+                        geo.add_strecke(s);
+                    }
+                }
+                QString rad_zum_nachfolger = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG);
+                if(rad_zum_nachfolger.toFloat() != 0)
+                {
+                    QMessageBox mb;
+                    mb.setText("hier gehts weiter mit dem Programmieren!");
+                    mb.exec();
+
+                    //Wenn der Nachfolger eine gerade Fräsbahn ist
 
 
 
 
 
-                klartext.zeile_ersaetzen(i, zeile);
+
+
+
+
+
+                }
+                geo.zeilenvorschub();
+            }else if(zeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+            {
+                geo.zeilenvorschub();
             }
+
+
         }
     }
 }

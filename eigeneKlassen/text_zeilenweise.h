@@ -44,6 +44,7 @@ public:
     {
         return anzahl_der_zeilen;
     }
+            uint finde_Zeile(QString zeilentext);
 
 private:
     void zeilen_zaehlen();

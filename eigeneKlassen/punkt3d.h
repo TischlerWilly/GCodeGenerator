@@ -3,8 +3,9 @@
 
 #include <QString>
 #include "../eigeneFunktionen/umwandeln.h"
+#include "darstellungsatribute.h"
 
-class punkt3d
+class punkt3d : public darstellungsatribute
 {
 public:
             punkt3d();

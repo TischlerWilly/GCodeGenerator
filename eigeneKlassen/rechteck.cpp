@@ -57,9 +57,6 @@ void rechteck::set_laenge(float neue_laenge)
             mittelpunkt.x = einfuegepunkt.x;
             eckpunkt_oben_mitte.x = einfuegepunkt.x;
             eckpunkt_unten_mitte.x = einfuegepunkt.x;
-
-
-
             break;
     }
 }
@@ -214,14 +211,14 @@ punkt rechteck::get_bezugspunkt()
             return eckpunkt_oben_links;
         case MITTE:
             return mittelpunkt;
-    case LINKS:
-        return eckpunkt_links_mitte;
-    case RECHTS:
-        return eckpunkt_rechts_mitte;
-    case OBEN:
-        return eckpunkt_oben_mitte;
-    case UNTEN:
-        return eckpunkt_unten_mitte;
+        case LINKS:
+            return eckpunkt_links_mitte;
+        case RECHTS:
+            return eckpunkt_rechts_mitte;
+        case OBEN:
+            return eckpunkt_oben_mitte;
+        case UNTEN:
+            return eckpunkt_unten_mitte;
     }
     punkt tmp;
     tmp.x = 0;

@@ -134,7 +134,7 @@ private:
     }
             void    set_sicherheitsabstand(float neuer_Abstand);
 
-            void    aktualisiere_klartext_und_var();
+            void    aktualisiere_klartext_var_geo();
             void    aktualisiere_anzeigetext();
 
 };

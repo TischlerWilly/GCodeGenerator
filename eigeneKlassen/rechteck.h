@@ -4,15 +4,33 @@
 
 using namespace std;
 
+#ifndef UNTEN_LINKS
 #define UNTEN_LINKS     1
+#endif
+#ifndef UNTEN_RECHTS
 #define UNTEN_RECHTS    2
+#endif
+#ifndef OBEN_RECHTS
 #define OBEN_RECHTS     3
+#endif
+#ifndef OBEN_LINKS
 #define OBEN_LINKS      4
+#endif
+#ifndef MITTE
 #define MITTE           5
+#endif
+#ifndef LINKS
 #define LINKS           6
+#endif
+#ifndef RECHTS
 #define RECHTS          7
+#endif
+#ifndef OBEN
 #define OBEN            8
+#endif
+#ifndef UNTEN
 #define UNTEN           9
+#endif
 
 #include "../eigeneStruncts/punkt.h"
 

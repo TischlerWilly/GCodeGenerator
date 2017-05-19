@@ -12,6 +12,8 @@ punkt drehen(punkt drehzentrum, punkt alter_punkt, \
              float drehwinkel, bool drehrichtung_im_uhrzeigersinn);
 punkt2d drehen(punkt2d drehzentrum, punkt2d alter_punkt, \
              float drehwinkel, bool drehrichtung_im_uhrzeigersinn);
+punkt3d drehen(punkt3d drehzentrum, punkt3d alter_punkt, \
+             float drehwinkel, bool drehrichtung_im_uhrzeigersinn);
 
 punkt drehen_ij(punkt drehzentrum, float drehwinkel, \
                 bool drehrichtung_im_uhrzeigersinn, \

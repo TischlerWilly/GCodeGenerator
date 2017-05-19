@@ -3,16 +3,16 @@
 
 #include "punkt3d.h"
 #include "punkt2d.h"
+#include "darstellungsatribute.h"
 
-class kreis
+class kreis : public darstellungsatribute
 {
 public:
     kreis();
-    inline  kreis(punkt3d mittelpunkt, double radius, bool ist_ausgefuellt)
+    inline  kreis(punkt3d mittelpunkt, double radius)
     {
         set_mittelpunkt(mittelpunkt);
         set_radius(radius);
-        set_ausgefuellt(ist_ausgefuellt);
     }
 
     inline  void    set_mittelpunkt(punkt3d mittelpunkt)
@@ -29,9 +29,9 @@ public:
     {
         rad = radius;
     }
-    inline  void    set_ausgefuellt(bool ist_ausgefuellt)
+    inline  void    set_radius(QString radius)
     {
-        ausgefuellt = ist_ausgefuellt;
+        rad = radius.toDouble();
     }
 
     inline  punkt3d     mitte3d()
@@ -50,25 +50,10 @@ public:
     {
         return double_to_qstring(rad);
     }
-    inline  bool        ist_ausgefuellt()
-    {
-        return ausgefuellt;
-    }
-    inline  QString     ist_ausgefuellt_QString()
-    {
-        if(ausgefuellt == true)
-        {
-            return "ja";
-        }else
-        {
-            return "nein";
-        }
-    }
 
 private:
     punkt3d     mittelp;
     double      rad;
-    bool        ausgefuellt;
 
 };
 

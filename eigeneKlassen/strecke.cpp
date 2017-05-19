@@ -74,6 +74,30 @@ void strecke::drenen_um_mittelpunkt_2d(float drehwinkel, \
     set_ende(tmp);
 }
 
+void strecke::drenen_um_startpunkt_2d(float drehwinkel, bool drehrichtung_im_uhrzeigersinn)
+{
+    punkt2d sp(start);
+    punkt2d ep(ende);
+    ep = drehen(sp, ep, drehwinkel, drehrichtung_im_uhrzeigersinn);
+    punkt3d tmp;
+    tmp.set_x(ep.x());
+    tmp.set_y(ep.y());
+    tmp.set_z(ende.z());
+    set_ende(tmp);
+}
+
+void strecke::drenen_um_endpunkt_2d(float drehwinkel, bool drehrichtung_im_uhrzeigersinn)
+{
+    punkt2d sp(start);
+    punkt2d ep(ende);
+    sp = drehen(ep, sp, drehwinkel, drehrichtung_im_uhrzeigersinn);
+    punkt3d tmp;
+    tmp.set_x(sp.x());
+    tmp.set_y(sp.y());
+    tmp.set_z(start.z());
+    set_start(tmp);
+}
+
 void strecke::set_laenge_2d(float neue_laenge, strecke_bezugspunkt bezugspunkt)
 {
     float skalfakt = neue_laenge/laenge2d;
