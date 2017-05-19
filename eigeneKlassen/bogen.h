@@ -4,8 +4,9 @@
 #include "punkt3d.h"
 #include "punkt2d.h"
 #include "strecke.h"
+#include "darstellungsatribute.h"
 
-class bogen
+class bogen : public darstellungsatribute
 {
 public:
     bogen();
@@ -15,6 +16,10 @@ public:
     void set_startpunkt(punkt3d startpunkt);
     void set_endpunkt(punkt3d endpunkt);
     void set_radius(float radiuswert, bool im_uhrzeigersinn);
+    inline void set_radius(QString radiuswert, bool im_uhrzeigersinn)
+    {
+        set_radius(radiuswert.toFloat(), im_uhrzeigersinn);
+    }
 
     inline punkt3d start()
     {
@@ -90,7 +95,6 @@ private:
     punkt2d mittelp;
     bool fehler;
     QString fehlertext;
-
 
 
 

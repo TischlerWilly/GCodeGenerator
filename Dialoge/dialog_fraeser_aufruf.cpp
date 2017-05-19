@@ -14,11 +14,13 @@ Dialog_Fraeser_Aufruf::Dialog_Fraeser_Aufruf(QWidget *parent) :
 
     ui->comboBox_anftyp->addItem(ANABFAHRTYP_KEIN);
     ui->comboBox_anftyp->addItem(ANABFAHRTYP_GARADE);
-    ui->comboBox_anftyp->addItem(ANABFAHRTYP_KREISBOGEN);
+    ui->comboBox_anftyp->addItem(ANABFAHRTYP_KREISBOGEN_LI);
+    ui->comboBox_anftyp->addItem(ANABFAHRTYP_KREISBOGEN_RE);
 
     ui->comboBox_abftyp->addItem(ANABFAHRTYP_KEIN);
     ui->comboBox_abftyp->addItem(ANABFAHRTYP_GARADE);
-    ui->comboBox_abftyp->addItem(ANABFAHRTYP_KREISBOGEN);
+    ui->comboBox_abftyp->addItem(ANABFAHRTYP_KREISBOGEN_LI);
+    ui->comboBox_abftyp->addItem(ANABFAHRTYP_KREISBOGEN_RE);
 }
 
 Dialog_Fraeser_Aufruf::~Dialog_Fraeser_Aufruf()

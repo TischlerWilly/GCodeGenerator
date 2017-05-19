@@ -312,6 +312,20 @@ int text_zeilenweise::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge
 
 //---------------------------------------------------------------------------
 //andere Funktionen:
+uint text_zeilenweise::finde_Zeile(QString zeilentext)
+{
+    if(text.contains(zeilentext))
+    {
+        for(uint i = 1; i<= zeilenanzahl() ; i++)
+        {
+            if(zeile(i)== zeilentext)
+            {
+                return i;
+            }
+        }
+    }
+    return 0;
+}
 
 //---------------------------------------------------------------------------
 //interne Funktinen:

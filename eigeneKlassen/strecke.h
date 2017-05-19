@@ -5,22 +5,29 @@
 #include <math.h>
 #include "punkt3d.h"
 #include "punkt2d.h"
+#include "darstellungsatribute.h"
 #include "../eigeneFunktionen/geometrie.h"
 
 enum strecke_bezugspunkt{strecke_bezugspunkt_start, \
                          strecke_bezugspunkt_mitte, \
                          strecke_bezugspunkt_ende};
 
-class strecke
+class strecke : public darstellungsatribute
 {
 public:
     strecke();
-    void set_start(punkt3d startpunkt);
-    void set_ende(punkt3d endpunkt);
-    void richtung_unkehren();
-    void drenen_um_mittelpunkt_2d(float drehwinkel, bool drehrichtung_im_uhrzeigersinn);
-    void set_laenge_2d(float neue_laenge, \
+            void    set_start(punkt3d startpunkt);
+            void    set_ende(punkt3d endpunkt);
+            void    richtung_unkehren();
+            void    drenen_um_startpunkt_2d(float drehwinkel, \
+                                             bool drehrichtung_im_uhrzeigersinn);
+            void    drenen_um_endpunkt_2d(float drehwinkel, \
+                                             bool drehrichtung_im_uhrzeigersinn);
+            void    drenen_um_mittelpunkt_2d(float drehwinkel, \
+                                             bool drehrichtung_im_uhrzeigersinn);
+            void    set_laenge_2d(float neue_laenge, \
                        strecke_bezugspunkt bezugspunkt = strecke_bezugspunkt_mitte);
+
 
     inline punkt3d startp()
     {

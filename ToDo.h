@@ -3,6 +3,13 @@
 
 /*
 
+-->Klasse Programmtext
+    ->Funktion void programmtext::aktualisiere_klartext_und_var():
+      >im ersten Teil den Klartext für Bögen überarbeiten (angewählte Radio-Buttons beachten)
+      >den zweiten Teil komplettieren
+
+
+-->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
 
 
@@ -17,23 +24,6 @@
 -->Dialog Verschieben
 -->Dialgo Drehen
 -->Zuletz geöffnete Dateien
-
--->Klasse geometrietext vervollständigen
-    ->punkt2d/punkt3d/strecke/bogen/kreis ergänzen um Eigenschafen zur Darstellung
-        >Punktfarbe
-        >Punktgröße
-        >Linienfarbe
-        >Liniendicke
-        >Füllfarbe
-    ->Funktionen in Programmtext überarbeiten/ergänzen
-
--->Klasse Programmtext
-    ->Funktion void programmtext::aktualisiere_klartext_und_var():
-      >im ersten Teil den Klartext für Bögen überarbeiten (angewählte Radio-Buttons beachten)
-      >den zweiten Teil komplettiren
-
-
--->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
 
 

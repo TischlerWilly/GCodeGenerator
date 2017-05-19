@@ -4,8 +4,9 @@
 #include <QString>
 #include "../eigeneFunktionen/umwandeln.h"
 #include "punkt3d.h"
+#include "darstellungsatribute.h"
 
-class punkt2d
+class punkt2d : public darstellungsatribute
 {
 public:
     punkt2d();
@@ -52,6 +53,7 @@ public:
 
 private:
     double  x_param, y_param;
+
 };
 
 //-------------------Funktionen nicht innerhalb der Klasse:

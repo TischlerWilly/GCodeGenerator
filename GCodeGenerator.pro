@@ -49,7 +49,11 @@ SOURCES += \
     eigeneKlassen/bogen.cpp \
     eigeneKlassen/punkt2d.cpp \
     Dialoge/dialog_programmlisten.cpp \
-    eigeneKlassen/kreis.cpp
+    eigeneKlassen/kreis.cpp \
+    eigeneKlassen/darstellungsatribute.cpp \
+    eigeneKlassen/zylinder.cpp \
+    eigeneKlassen/rechteck3d.cpp \
+    eigeneKlassen/wuerfel.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -92,7 +96,11 @@ HEADERS  += \
     eigeneKlassen/bogen.h \
     eigeneKlassen/punkt2d.h \
     Dialoge/dialog_programmlisten.h \
-    eigeneKlassen/kreis.h
+    eigeneKlassen/kreis.h \
+    eigeneKlassen/darstellungsatribute.h \
+    eigeneKlassen/zylinder.h \
+    eigeneKlassen/rechteck3d.h \
+    eigeneKlassen/wuerfel.h
 
 FORMS    += \
     mainwindow.ui \
