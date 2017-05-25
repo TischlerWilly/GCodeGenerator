@@ -88,3 +88,39 @@ punkt drehen_ij(punkt drehzentrum, float drehwinkel, bool drehrichtung_im_uhrzei
     }
 }
 
+double winkel(double endpunkt_x, double endpunkt_y,\
+              double mittelpunkt_x, double mittelpunkt_y)
+{
+    //berechnet wird immer der Winkel zur gedachten waagerechten Grundlinie
+    //im Gegenuhrzeigersinn
+    punkt3d mipu;
+    mipu.set_x(mittelpunkt_x);
+    mipu.set_y(mittelpunkt_y);
+    punkt3d enpu;
+    enpu.set_x(endpunkt_x);
+    enpu.set_y(endpunkt_y);
+    strecke s;
+    s.set_start(mipu);
+    s.set_ende(enpu);
+
+    double hypthenuse = s.laenge2dim();
+    double gegenkathete = mittelpunkt_y - endpunkt_y;
+
+    double wi =  asin(gegenkathete/hypthenuse)/M_PI*180*-1;//Weil sonst Ergebnis in Bogenmaß;
+    if(wi < 0)
+    {
+        wi = 180-wi;
+    }else if(wi == 0)
+    {
+        if(mittelpunkt_x < endpunkt_x)
+        {
+            wi = 0;
+        }else
+        {
+            wi = 180;
+        }
+    }
+    return wi;
+}
+
+

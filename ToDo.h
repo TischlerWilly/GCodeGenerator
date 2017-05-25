@@ -4,16 +4,15 @@
 /*
 
 -->Klasse Programmtext
-    ->Funktion void programmtext::aktualisiere_klartext_und_var():
-      >im ersten Teil den Klartext für Bögen überarbeiten (angewählte Radio-Buttons beachten)
-      >den zweiten Teil komplettieren
+    ->Funktion void programmtext::aktualisiere_klartext_var_geo():
+      >Abfahrweg Fräser noch programmieren
 
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
 
 
-----------neue Dialoge:
+----------Ideen für neue Dialoge:
 -->Dialog für das Zapfen-fräsen
     ->Dialog Rtasche erweitern
     ->Dialog Ktasche erweitern
@@ -23,7 +22,11 @@
 -->Dialog Spiegeln
 -->Dialog Verschieben
 -->Dialgo Drehen
+
+
+----------Ideen für neue Funktionen:
 -->Zuletz geöffnete Dateien
+
 
 
 

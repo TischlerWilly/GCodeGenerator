@@ -113,7 +113,7 @@ void geometrietext::add_rechteck(rechteck3d rec)
 void geometrietext::add_wuerfel(wuerfel w)
 {
     QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + RECHTECK3D + TRZ_PA + \
+    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + WUERFEL + TRZ_PA + \
                          w.bezpunkt_num_qstring() + TRZ_PA + \
                          w.einfpunkt().x_QString() + TRZ_PA + \
                          w.einfpunkt().y_QString() + TRZ_PA + \
