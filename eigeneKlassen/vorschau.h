@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QMenu>
+#include <math.h>
 #include "../eigeneFunktionen/geometrie.h"
 #include "programmtext.h"
 
@@ -29,12 +30,17 @@ private:
     float get_sf();
     void set_sf(float neuer_faktor);
     void werkstueck_darstellung_berechnen();
-    punkt drehen_arcTo(punkt oben_links, float laenge, float breite, float drehwinkel, punkt drehzentrum);
+    punkt drehen_arcTo(punkt oben_links, float laenge, float breite, \
+                       float drehwinkel, punkt drehzentrum);
+    punkt2d drehen_arcTo(punkt2d oben_links, double laenge, double breite, \
+                         double drehwinkel, punkt2d drehzentrum);
     void mouseMoveEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void zoom(bool dichter);
+
+    QColor set_farbe(QString farbe);
 
     punkt n;//Nullpunkt
     punkt npv;//Nullpunkt-Verschiebung

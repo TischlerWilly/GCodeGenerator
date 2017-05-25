@@ -1651,66 +1651,204 @@ void programmtext::aktualisiere_klartext_var_geo()
                 endpunkt.set_x(text_mitte(klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
                 endpunkt.set_y(text_mitte(klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
                 endpunkt.set_z(text_mitte(klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
-                if(i > 1)//wenn die gerade Fräsbahn nicht das erste Element der Liste ist
+                QString zeile_davor, zeile_danach;
+                if(i > 1)//wenn es Zeilen vorab gibt
                 {
                     uint ii = i-1;
-                    QString zeile_davor = klartext.zeile(ii);
+                    zeile_davor = klartext.zeile(ii);
                     while(zeile_davor.isEmpty()  &&  ii-1>=1  )
                     {
                         ii--;
                         zeile_davor = klartext.zeile(ii);
                     }
-                    if(zeile_davor.contains(FRAESERAUFRUF_DIALOG))
-                    {
-                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
-                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
-                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
-                        strecke s;
-                        s.set_start(startpunkt);
-                        s.set_ende(endpunkt);
-                        geo.add_strecke(s);
-                    }else if(zeile_davor.contains(FRAESERGERADE_DIALOG))
-                    {
-                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
-                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
-                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
-                        strecke s;
-                        s.set_start(startpunkt);
-                        s.set_ende(endpunkt);
-                        geo.add_strecke(s);
-                    }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
-                    {
-                        startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
-                        startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
-                        startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
-                        strecke s;
-                        s.set_start(startpunkt);
-                        s.set_ende(endpunkt);
-                        geo.add_strecke(s);
-                    }
                 }
-                QString rad_zum_nachfolger = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG);
-                if(rad_zum_nachfolger.toFloat() != 0)
+                if(i+1<=klartext.zeilenanzahl())//wenn es Zeilen dannach gibt
                 {
-                    QMessageBox mb;
-                    mb.setText("hier gehts weiter mit dem Programmieren!");
-                    mb.exec();
+                     uint ii = i+1;
+                     zeile_danach = klartext.zeile(ii);
+                     while(zeile_danach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
+                     {
+                         ii++;
+                         zeile_danach = klartext.zeile(ii);
+                     }
+                }
+                if(!zeile_davor.contains(FRAESERGERADE_DIALOG))
+                {
+                     if(zeile_davor.contains(FRAESERAUFRUF_DIALOG) ||  \
+                             zeile_davor.contains(FRAESERBOGEN_DIALOG) )
+                     {
+                         startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                         startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                         startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                         strecke s;
+                         s.set_start(startpunkt);
+                         s.set_ende(endpunkt);
 
-                    //Wenn der Nachfolger eine gerade Fräsbahn ist
+                         //Zeile danach prüfen:
+                         strecke s2;
+                         s2.set_start(endpunkt);
+                         punkt3d p3;
+                         p3.set_x(text_mitte(zeile_danach, POSITION_X, ENDE_EINTRAG));
+                         p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
+                         p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
+                         s2.set_ende(p3);
+                         double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
 
+                         if(rad_akt > 0                 &&\
+                            rad_akt < s.laenge2dim()    &&\
+                            rad_akt < s2.laenge2dim())
+                         {
+                             strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                             strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
+                             s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
+                             s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
+                             bogen b;
+                             b.set_startpunkt(s.endp());
+                             b.set_endpunkt(s2.startp());
+                             b.set_radius(rad_akt, false);
+                             if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                             {
+                                 b.set_radius(b.rad(), true);
+                             }
+                             geo.add_strecke(s);
+                             geo.add_bogen(b);
+                         }else
+                         {
+                             geo.add_strecke(s);
+                         }
+                     }else
+                     {
+                         //Wenn es keinen Vorgänger gibt
+                         //oder Vorgänger ist weder Gerade noch Bogen noch Fräser-Aufruf
+                         //dann Strecke vom Nullpunkt beginnend:
+                         strecke s;
+                         s.set_start(startpunkt);
+                         s.set_ende(endpunkt);
+                         geo.add_strecke(s);
+                         QString msg;
+                         msg  = "Achtung!\n";
+                         msg += "Beginn der geraden Fraesbahn in Zeile ";
+                         msg +=  int_to_qstring(i);
+                         msg += " undefiniert!";
+                         QMessageBox mb;
+                         mb.setText(msg);
+                         mb.exec();
+                     }
+                }else //Zeile davor ist Gerade
+                {
+                     double rad_vor = text_mitte(zeile_davor, RADIUS, ENDE_EINTRAG).toDouble();
+                     startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                     startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                     startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                     strecke s;
+                     s.set_start(startpunkt);
+                     s.set_ende(endpunkt);
 
+                     //Wenn der Vorgänger eine Gerade ist und der Nachfolger nicht:
+                     if(!zeile_danach.contains(FRAESERGERADE_DIALOG))
+                     {
+                         if(rad_vor > 0  &&  rad_vor < s.laenge2dim())
+                         {
+                             strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
+                             s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
+                             geo.add_strecke(s);
+                         }else
+                         {
+                             geo.add_strecke(s);
+                         }
+                     }else //Wenn der Vorgänger eine Gerade ist und der Nachfolger auch
+                     {
+                         if(rad_vor > 0  &&  rad_vor < s.laenge2dim())
+                         {
+                             strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
+                             s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
+                         }
+                         strecke s2;
+                         s2.set_start(endpunkt);
+                         punkt3d p3;
+                         p3.set_x(text_mitte(zeile_danach, POSITION_X, ENDE_EINTRAG));
+                         p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
+                         p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
+                         s2.set_ende(p3);
+                         double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
 
-
-
-
-
-
-
-
+                         if(rad_akt > 0                 &&\
+                            rad_akt < s.laenge2dim()    &&\
+                            rad_akt < s2.laenge2dim())
+                         {
+                             strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                             strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
+                             s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
+                             s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
+                             bogen b;
+                             b.set_startpunkt(s.endp());
+                             b.set_endpunkt(s2.startp());
+                             b.set_radius(rad_akt, false);
+                             if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                             {
+                                 b.set_radius(b.rad(), true);
+                             }
+                             geo.add_strecke(s);
+                             geo.add_bogen(b);
+                         }else
+                         {
+                             geo.add_strecke(s);
+                         }
+                     }
                 }
                 geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERBOGEN_DIALOG))
             {
+                punkt3d startpunkt, endpunkt;
+                endpunkt.set_x(text_mitte(klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
+                endpunkt.set_y(text_mitte(klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
+                endpunkt.set_z(text_mitte(klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
+                QString zeile_davor;
+                if(i > 1)//wenn es Zeilen vorab gibt
+                {
+                    uint ii = i-1;
+                    zeile_davor = klartext.zeile(ii);
+                    while(zeile_davor.isEmpty()  &&  ii-1>=1  )
+                    {
+                        ii--;
+                        zeile_davor = klartext.zeile(ii);
+                    }
+                }
+                if(zeile_davor.contains(FRAESERAUFRUF_DIALOG)   ||  \
+                   zeile_davor.contains(FRAESERBOGEN_DIALOG)    ||  \
+                   zeile_davor.contains(FRAESERGERADE_DIALOG))
+                {
+                    startpunkt.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                    startpunkt.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                    startpunkt.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                }else
+                {
+                    //Wenn es keinen Vorgänger gibt
+                    //oder Vorgänger ist weder Gerade noch Bogen noch Fräser-Aufruf
+                    //dann Strecke vom Nullpunkt beginnend:
+                    QString msg;
+                    msg  = "Achtung!\n";
+                    msg += "Beginn der geraden Fraesbahn in Zeile ";
+                    msg +=  int_to_qstring(i);
+                    msg += " undefiniert!";
+                    QMessageBox mb;
+                    mb.setText(msg);
+                    mb.exec();
+                }
+                double rad_akt = text_mitte(zeile, RADIUS, ENDE_EINTRAG).toDouble();
+                bool im_uzs;
+                if(text_mitte(zeile, BOGENRICHTUNG, ENDE_EINTRAG) == BOGENRICHTUNG_IM_UZS)
+                {
+                    im_uzs = true;
+                }else
+                {
+                    im_uzs = false;
+                }
+                bogen b;
+                b.set_startpunkt(startpunkt);
+                b.set_endpunkt(endpunkt);
+                b.set_radius(rad_akt, im_uzs);
+                geo.add_bogen(b);
                 geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
             {

@@ -99,6 +99,8 @@ private slots:
     void on_actionMakeGebogene_Fraesbahn_triggered();
     void on_actionMakeAbfahren_triggered();
 
+    void on_actionTestfunktion_triggered();
+
 public slots:
     void getDialogData(QString text);
     void getDialogDataModify(QString text);

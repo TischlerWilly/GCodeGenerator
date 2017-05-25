@@ -3019,6 +3019,26 @@ void MainWindow::slot_maus_pos(QPoint p)
     ui->statusBar->showMessage("X:" + x_ + " / Y:" + y_);
 }
 
+void MainWindow::on_actionTestfunktion_triggered()
+{
+    punkt3d p3;
+    strecke s;
+    s.set_start(p3);//0,0,0
+    p3.set_x(-50);
+    s.set_ende(p3);//50,0,0
+    //s.drenen_um_startpunkt_2d(180+45, false);
+
+    double wi = winkel(s.endp().x(),\
+                       s.endp().y(),\
+                       s.startp().x(),\
+                       s.startp().y());
+
+    QMessageBox mb;
+    mb.setText(double_to_qstring(wi));
+    mb.exec();
+
+}
+
 
 
 
