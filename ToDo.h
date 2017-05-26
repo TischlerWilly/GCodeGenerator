@@ -2,6 +2,17 @@
 #define TODO_H
 
 /*
+-->ERG bei Aufruf Fräser bislang nicht mit * (nicht automatisch in Variablen aufgenommen)
+-->WKZ-DM berücksichtigen bei Darstellung Kreistasche
+
+-->Beim Ausblenden von mehreren Fräserbahnen gleichzeitig muss noch die Fehlermeldung deaktiviert werden
+   solange die Zeilen einzeln ausgeblendet werden.
+
+-->Klasse Programmtext:
+   ->min_x, min_y, max_x, max_y anhand von Geotext berechnen lassen
+
+-->Programmpfade automatisch auf den angemeldeten Benutzer setzen
+   (Quelltextanpassung vor compilierung entfallen lassen)
 
 -->Klasse Programmtext
     ->Funktion void programmtext::aktualisiere_klartext_var_geo():

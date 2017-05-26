@@ -18,6 +18,7 @@ class Dialog_Rechtecktasche : public QDialog
 public:
     explicit Dialog_Rechtecktasche(QWidget *parent = 0);
     ~Dialog_Rechtecktasche();
+    void show();
     
 private:
     Ui::Dialog_Rechtecktasche *ui;
@@ -33,6 +34,7 @@ private slots:
     void on_pushButton_Speichern_clicked();
     void on_pushButton_Abbrechen_clicked();
     void on_tabWidget_currentChanged(int index);
+    void on_comboBox_Werkzeug_currentIndexChanged();
 
 signals:
     void sendDialogData(QString text);

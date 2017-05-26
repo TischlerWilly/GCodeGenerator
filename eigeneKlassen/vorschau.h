@@ -41,6 +41,8 @@ private:
     void zoom(bool dichter);
 
     QColor set_farbe(QString farbe);
+    Qt::PenStyle set_linienstil(QString stil);
+
 
     punkt n;//Nullpunkt
     punkt npv;//Nullpunkt-Verschiebung
