@@ -304,10 +304,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ENDE_EINTRAG;
                 float l = tmp.toFloat();
                 set_werkstuecklaenge(l);
-                if(l>max_x)
-                {
-                    max_x = l;
-                }
                 if(!variablen.contains(LAENGE))
                 {
                     variablen += LAENGE;
@@ -327,10 +323,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ENDE_EINTRAG;
                 float b = tmp.toFloat();
                 set_werkstueckbreite(b);
-                if(b>max_y)
-                {
-                    max_y = b;
-                }
                 if(!variablen.contains(BREITE))
                 {
                     variablen += BREITE;
@@ -704,25 +696,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-
-
-                if(x-tal/2 < min_x)
-                {
-                    min_x = x-tal/2;
-                }
-                if(x+tal/2 > max_x)
-                {
-                    max_x = x+tal/2;
-                }
-                if(y-tab/2 < min_y)
-                {
-                    min_y = y-tab/2;
-                }
-                if(y+tab/2 > max_y)
-                {
-                    max_y = y+tab/2;
-                }
-
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
             }else
@@ -895,23 +868,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                if(x-dm/2 < min_x)
-                {
-                    min_x = x-dm/2;
-                }
-                if(x+dm/2 > max_x)
-                {
-                    max_x = x+dm/2;
-                }
-                if(y-dm/2 < min_y)
-                {
-                    min_y = y-dm/2;
-                }
-                if(y+dm/2 > max_y)
-                {
-                    max_y = y+dm/2;
-                }
-
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
             }else
@@ -1059,24 +1015,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-
-                if(x < min_x)
-                {
-                    min_x = x;
-                }
-                if(x > max_x)
-                {
-                    max_x = x;
-                }
-                if(y < min_y)
-                {
-                    min_y = y;
-                }
-                if(y > max_y)
-                {
-                    max_y = y;
-                }
-
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
             }else
@@ -1167,23 +1105,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += RADIUS;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
-
-                if(x < min_x)
-                {
-                    min_x = x;
-                }
-                if(x > max_x)
-                {
-                    max_x = x;
-                }
-                if(y < min_y)
-                {
-                    min_y = y;
-                }
-                if(y > max_y)
-                {
-                    max_y = y;
-                }
 
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
@@ -1281,23 +1202,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += BOGENRICHTUNG;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
-
-                if(x < min_x)
-                {
-                    min_x = x;
-                }
-                if(x > max_x)
-                {
-                    max_x = x;
-                }
-                if(y < min_y)
-                {
-                    min_y = y;
-                }
-                if(y > max_y)
-                {
-                    max_y = y;
-                }
 
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
@@ -1909,6 +1813,309 @@ void programmtext::aktualisiere_klartext_var_geo()
             }
 
 
+        }
+
+
+        //min und max berechnen:
+        text_zeilenweise geotext = geo.get_text_zeilenweise();
+        for(uint i=1;i<=geotext.zeilenanzahl();i++)
+        {
+            text_zeilenweise spalten;
+            spalten.set_trennzeichen(TRZ_EL_);
+            spalten.set_text(geotext.zeile(i));
+
+            for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+            {
+                text_zeilenweise element;
+                element.set_trennzeichen(TRZ_PA_);
+                element.set_text(spalten.zeile(ii));
+
+                if(element.get_text().contains(PUNKT))
+                {
+                    double x = element.zeile(2).toDouble();
+                    double y = element.zeile(3).toDouble();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(STRECKE))
+                {
+                    double x = element.zeile(2).toDouble();
+                    double y = element.zeile(3).toDouble();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = element.zeile(5).toDouble();
+                    y = element.zeile(6).toDouble();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(BOGEN))
+                {
+                    double x = element.zeile(2).toDouble();
+                    double y = element.zeile(3).toDouble();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = element.zeile(5).toDouble();
+                    y = element.zeile(6).toDouble();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(KREIS))
+                {
+                    double rad = element.zeile(5).toDouble();
+                    double x = element.zeile(2).toDouble()-rad;
+                    double y = element.zeile(3).toDouble()-rad;
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }
+                    x = x+rad*2;
+                    y = y+rad*2;
+                    if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(ZYLINDER))
+                {
+                    double rad = element.zeile(5).toDouble();
+                    double x = element.zeile(2).toDouble()-rad;
+                    double y = element.zeile(3).toDouble()-rad;
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }
+                    x = x+rad*2;
+                    y = y+rad*2;
+                    if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(RECHTECK3D))
+                {
+                    rechteck3d r;
+                    r.set_bezugspunkt(element.zeile(2).toInt());
+                    r.set_einfuegepunkt(element.zeile(3).toDouble(),\
+                                        element.zeile(4).toDouble(),\
+                                        element.zeile(5).toDouble());
+                    r.set_laenge(element.zeile(6).toDouble());
+                    r.set_breite(element.zeile(7).toDouble());
+                    r.set_rad(element.zeile(8).toDouble());
+                    r.set_drewi(element.zeile(9).toDouble());
+
+                    double x = r.unl(false).x();
+                    double y = r.unl(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.unr(false).x();
+                    y = r.unr(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.obl(false).x();
+                    y = r.obl(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.obr(false).x();
+                    y = r.obr(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }else if(element.get_text().contains(WUERFEL))
+                {
+                    rechteck3d r;
+                    r.set_bezugspunkt(element.zeile(2).toInt());
+                    r.set_einfuegepunkt(element.zeile(3).toDouble(),\
+                                        element.zeile(4).toDouble(),\
+                                        element.zeile(5).toDouble());
+                    r.set_laenge(element.zeile(6).toDouble());
+                    r.set_breite(element.zeile(7).toDouble());
+                    r.set_rad(element.zeile(8).toDouble());
+                    r.set_drewi(element.zeile(9).toDouble());
+
+                    double x = r.unl(false).x();
+                    double y = r.unl(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.unr(false).x();
+                    y = r.unr(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.obl(false).x();
+                    y = r.obl(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                    x = r.obr(false).x();
+                    y = r.obr(false).y();
+                    if(x < min_x)
+                    {
+                        min_x = x;
+                    }else if(x > max_x)
+                    {
+                        max_x = x;
+                    }
+                    if(y < min_y)
+                    {
+                        min_y = y;
+                    }else if(y > max_y)
+                    {
+                        max_y = y;
+                    }
+                }
+            }
         }
     }
 }

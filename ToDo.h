@@ -8,9 +8,6 @@
 -->Beim Ausblenden von mehreren Fräserbahnen gleichzeitig muss noch die Fehlermeldung deaktiviert werden
    solange die Zeilen einzeln ausgeblendet werden.
 
--->Klasse Programmtext:
-   ->min_x, min_y, max_x, max_y anhand von Geotext berechnen lassen
-
 -->Programmpfade automatisch auf den angemeldeten Benutzer setzen
    (Quelltextanpassung vor compilierung entfallen lassen)
 
@@ -18,6 +15,9 @@
     ->Funktion void programmtext::aktualisiere_klartext_var_geo():
       >Abfahrweg Fräser noch programmieren
 
+-->gerade Fräsbahnen mit Rad zum Nachfolger:
+   prüfen ob nachfolgende Gerade in einer Linie mit der aktuellen Geraden liegt
+   dann kein Radius möglich
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
