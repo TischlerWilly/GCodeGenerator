@@ -519,6 +519,11 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
+                tmp = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile_klartext += WKZ_DURCHMESSER;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
@@ -699,6 +704,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
+
+
                 if(x-tal/2 < min_x)
                 {
                     min_x = x-tal/2;
@@ -737,6 +744,11 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += KREISTASCHE_DIALOG;
                 tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
                 zeile_klartext += WKZ_NAME;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile_klartext += WKZ_DURCHMESSER;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
@@ -1341,6 +1353,10 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.zeilenvorschub();
             }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
             {
+                punkt3d nullpunkt(0,0,0);
+                nullpunkt.set_breite(15);
+                geo.add_punkt(nullpunkt);
+
                 rechteck3d rec;
                 rec.set_bezugspunkt(UNTEN_LINKS);
                 rec.set_einfuegepunkt(0,0,0);
@@ -1348,10 +1364,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 rec.set_breite(text_mitte(zeile, BREITE, ENDE_EINTRAG));
                 rec.set_farbe_fuellung(FARBE_GRAU);
                 geo.add_rechteck(rec);
-
-                punkt3d nullpunkt(0,0,0);
-                nullpunkt.set_breite(5);
-                geo.add_punkt(nullpunkt);
 
                 geo.zeilenvorschub();
             }else if(zeile.contains(PROGRAMMENDE_DIALOG))
@@ -1385,9 +1397,18 @@ void programmtext::aktualisiere_klartext_var_geo()
                 QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
                 if(ausr.toInt() == false)
                 {
-                    z.set_radius(z.radius()-5);
+                    double dmwkz = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+                    double dmta = z.radius()-dmwkz;
+                    if(dmta<0)
+                    {
+                        dmta = 0;
+                    }
+                    z.set_radius(dmta);
                     z.set_farbe_fuellung(FARBE_GRAU);
-                    geo.add_zylinder(z);
+                    if(dmta > 0)
+                    {
+                        geo.add_zylinder(z);
+                    }
                 }
                 geo.zeilenvorschub();
             }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
@@ -1402,7 +1423,17 @@ void programmtext::aktualisiere_klartext_var_geo()
                 wue.set_laenge(text_mitte(zeile, TASCHENLAENGE, ENDE_EINTRAG));
                 wue.set_breite(text_mitte(zeile, TASCHENBREITE, ENDE_EINTRAG));
                 wue.set_hoehe(text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG));
-                wue.set_rad(text_mitte(zeile, RADIUS, ENDE_EINTRAG));
+                double rad = text_mitte(zeile, RADIUS, ENDE_EINTRAG).toDouble();
+                double radwkz = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble()/2;
+                double radtasche;
+                if(rad > radwkz)
+                {
+                    radtasche = rad;
+                }else
+                {
+                    radtasche = radwkz;
+                }
+                wue.set_rad(radtasche);
                 wue.set_drewi(text_mitte(zeile, WINKEL, ENDE_EINTRAG));
                 if(p3.z()-wue.get_hoehe() <= 0)
                 {//Wenn Tasche durchgefräst ist
@@ -1415,10 +1446,32 @@ void programmtext::aktualisiere_klartext_var_geo()
                 QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
                 if(ausr.toInt() == false)
                 {
-                    wue.set_laenge(wue.l()-5);
-                    wue.set_breite(wue.b()-5);
-                    wue.set_farbe_fuellung(FARBE_GRAU);
-                    geo.add_wuerfel(wue);
+                    wuerfel wue2 = wue;
+                    wue2.set_bezugspunkt(BEZUGSPUNKT_MITTE);
+                    wue2.set_einfuegepunkt(wue.mi());
+                    double l = wue.l()-radtasche*4;
+                    if(l<0)
+                    {
+                        l=0;
+                    }
+                    wue2.set_laenge(l);
+                    double b = wue.b()-radtasche*4;
+                    if(b<0)
+                    {
+                        b=0;
+                    }
+                    wue2.set_breite(b);
+                    double radwue2 = wue.rad()-radtasche*2;
+                    if(radwue2 < 0)
+                    {
+                        radwue2 = 0;
+                    }
+                    wue2.set_rad(radwue2);
+                    wue2.set_farbe_fuellung(FARBE_GRAU);
+                    if(l>0 && b>0)
+                    {
+                        geo.add_wuerfel(wue2);
+                    }
                 }
                 geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERAUFRUF_DIALOG))

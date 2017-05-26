@@ -23,6 +23,10 @@ QString Dialog_Kreistasche::dialogDataToString()
     msg += ui->comboBox_Werkzeug->currentText();
     msg += ENDE_EINTRAG;
 
+    msg += WKZ_DURCHMESSER;
+    msg += ui->label_wkz_Durchmesser_wert->text();
+    msg += ENDE_EINTRAG;
+
     msg += POSITION_X;
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_posX->text());
     msg += ENDE_EINTRAG;
@@ -93,6 +97,16 @@ void Dialog_Kreistasche::on_pushButton_Speichern_clicked()
 
 void Dialog_Kreistasche::on_pushButton_OK_clicked()
 {
+    QString dmwkz = ui->label_wkz_Durchmesser_wert->text();
+    QString dmta  = ui->lineEdit_Taschendurchmesser->text();
+    if(dmta.toDouble() < dmwkz.toDouble())
+    {
+        QMessageBox mb;
+        mb.setText("Taschendurchmesser darf nicht kleiner sein als Werkzeugdurchmesser!");
+        mb.exec();
+        return;
+    }
+
     QString msg = dialogDataToString();
     this->hide();
     if(openToModifyData)
@@ -168,4 +182,15 @@ void Dialog_Kreistasche::getWerkzeugdaten(QString Werkzeugdaten)
     ui->label_wkz_Eintauschvorschub_wert->setText(selektiereEintrag(Werkzeugdaten, WKZ_EINTAUCHVORSCHUB, WKZ_ENDE_EINTRAG));
     ui->label_wkz_Vorschub_XY_wert->setText(selektiereEintrag(Werkzeugdaten, WKZ_VORSCHUB, WKZ_ENDE_EINTRAG));
     ui->label_wkz_Drehzahl_wert->setText(selektiereEintrag(Werkzeugdaten, WKZ_DREHZAHL, WKZ_ENDE_EINTRAG));
+}
+
+void Dialog_Kreistasche::on_comboBox_Werkzeug_currentIndexChanged()
+{
+    emit signalBraucheWerkzeugdaten(ui->comboBox_Werkzeug->currentText(), KREISTASCHE_DIALOG);
+}
+
+void Dialog_Kreistasche::show()
+{
+    this->setVisible(true);
+    emit signalBraucheWerkzeugdaten(ui->comboBox_Werkzeug->currentText(), KREISTASCHE_DIALOG);
 }

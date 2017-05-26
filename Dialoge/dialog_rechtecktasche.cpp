@@ -23,6 +23,10 @@ QString Dialog_Rechtecktasche::dialogDataToString()
     msg += ui->comboBox_Werkzeug->currentText();
     msg += ENDE_EINTRAG;
 
+    msg += WKZ_DURCHMESSER;
+    msg += ui->label_wkz_Durchmesser_wert->text();
+    msg += ENDE_EINTRAG;
+
     msg += POSITION_X;
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_posX->text());
     msg += ENDE_EINTRAG;
@@ -124,6 +128,25 @@ QString Dialog_Rechtecktasche::dialogDataToString()
 
 void Dialog_Rechtecktasche::on_pushButton_OK_clicked()
 {
+    QString dmwkz = ui->label_wkz_Durchmesser_wert->text();
+    QString l  = ui->lineEdit_laenge->text();
+    if(l.toDouble() < dmwkz.toDouble())
+    {
+        QMessageBox mb;
+        mb.setText("Taschenlaenge darf nicht kleiner sein als Werkzeugdurchmesser!");
+        mb.exec();
+        return;
+    }
+    QString b  = ui->lineEdit_breite->text();
+    if(b.toDouble() < dmwkz.toDouble())
+    {
+        QMessageBox mb;
+        mb.setText("Taschenbreite darf nicht kleiner sein als Werkzeugdurchmesser!");
+        mb.exec();
+        return;
+    }
+
+
     //Infos an MainWindow weitergeben:
     QString msg = dialogDataToString();
     this->hide();
@@ -244,4 +267,15 @@ void Dialog_Rechtecktasche::getDialogData(QString text, bool openToChangeData, Q
     }
 
     this->show();
+}
+
+void Dialog_Rechtecktasche::show()
+{
+    this->setVisible(true);
+    emit signalBraucheWerkzeugdaten(ui->comboBox_Werkzeug->currentText(), RECHTECKTASCHE_DIALOG);
+}
+
+void Dialog_Rechtecktasche::on_comboBox_Werkzeug_currentIndexChanged()
+{
+    emit signalBraucheWerkzeugdaten(ui->comboBox_Werkzeug->currentText(), RECHTECKTASCHE_DIALOG);
 }

@@ -166,6 +166,7 @@
     <addaction name="actionProgrammliste_anzeigen"/>
     <addaction name="actionWerkzeugliste_anzeigen"/>
     <addaction name="actionVariablenwert_anzeigen"/>
+    <addaction name="actionTestfunktion"/>
    </widget>
    <widget class="QMenu" name="menuBearbeiten">
     <property name="title">
@@ -438,6 +439,11 @@
   <action name="actionMakeAbfahren">
    <property name="text">
     <string>Abfahren</string>
+   </property>
+  </action>
+  <action name="actionTestfunktion">
+   <property name="text">
+    <string>Testfunktion</string>
    </property>
   </action>
  </widget>

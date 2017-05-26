@@ -63,8 +63,12 @@ private:
 #define FARBE_GELB      "gelb"
 #define FARBE_GRAU      "grau"
 
+#define STIL_TRANSPARENT    "transparent"
 #define STIL_DURCHGEHEND    "durchgehend"
 #define STIL_GESTRICHELT    "gestrichelt"
+#define STIL_GEPUNKTET      "gepunktet"
+#define STIL_STRICHP        "strichpunkt"
+#define STIL_STRICHPP       "strichpp"
 
 
 #endif // DARSTELLUNGSATRIBUTE_H
