@@ -1642,33 +1642,45 @@ void programmtext::aktualisiere_klartext_var_geo()
                          s.set_ende(endpunkt);
 
                          //Zeile danach prüfen:
-                         strecke s2;
-                         s2.set_start(endpunkt);
-                         punkt3d p3;
-                         p3.set_x(text_mitte(zeile_danach, POSITION_X, ENDE_EINTRAG));
-                         p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
-                         p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
-                         s2.set_ende(p3);
-                         double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
-
-                         if(rad_akt > 0                 &&\
-                            rad_akt < s.laenge2dim()    &&\
-                            rad_akt < s2.laenge2dim())
+                         if(zeile_danach.contains(FRAESERGERADE_DIALOG))
                          {
-                             strecke_bezugspunkt sb = strecke_bezugspunkt_start;
-                             strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
-                             s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
-                             s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
-                             bogen b;
-                             b.set_startpunkt(s.endp());
-                             b.set_endpunkt(s2.startp());
-                             b.set_radius(rad_akt, false);
-                             if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                             strecke s2;
+                             s2.set_start(endpunkt);
+                             punkt3d p3;
+                             p3.set_x(text_mitte(zeile_danach, POSITION_X, ENDE_EINTRAG));
+                             p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
+                             p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
+                             s2.set_ende(p3);
+                             double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
+                             strecke s3 = s;
+                             strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
+                             s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
+
+
+                             if(rad_akt > 0                     &&\
+                                rad_akt < s.laenge2dim()        &&\
+                                rad_akt < s2.laenge2dim()       &&\
+                                s3.endp().x() != s2.endp().x()  &&\
+                                s3.endp().y() != s2.endp().y()  )
                              {
-                                 b.set_radius(b.rad(), true);
+                                 strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                                 strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
+                                 s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
+                                 s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
+                                 bogen b;
+                                 b.set_startpunkt(s.endp());
+                                 b.set_endpunkt(s2.startp());
+                                 b.set_radius(rad_akt, false);
+                                 if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                                 {
+                                     b.set_radius(b.rad(), true);
+                                 }
+                                 geo.add_strecke(s);
+                                 geo.add_bogen(b);
+                             }else
+                             {
+                                 geo.add_strecke(s);
                              }
-                             geo.add_strecke(s);
-                             geo.add_bogen(b);
                          }else
                          {
                              geo.add_strecke(s);
@@ -1701,10 +1713,51 @@ void programmtext::aktualisiere_klartext_var_geo()
                      s.set_start(startpunkt);
                      s.set_ende(endpunkt);
 
+                     uint ii = geo.get_aktuelle_zeile()-1;
+                     QString geo_zeile_davor = geo.get_text_zeilenweise().zeile(ii);
+
+                     while(geo_zeile_davor==" "   &&  ii-1>=1  )
+                     {
+                         ii--;
+                         geo_zeile_davor = geo.get_text_zeilenweise().zeile(ii);
+
+                     }
+                     text_zeilenweise geo_zeile_davor_tz;
+                     geo_zeile_davor_tz.set_trennzeichen(TRZ_PA_);
+                     geo_zeile_davor_tz.set_text(geo_zeile_davor);
+                     if(!geo_zeile_davor_tz.zeile(1).contains(STRECKE))
+                     {
+                         QString msg;
+                         msg  = "Achtung! Fehler im Quellcode!\n";
+                         msg += "Unerwarteter Eintrag in geo!\n";
+                         msg += "Fehler tritt in geo-Zeile ";
+                         msg += int_to_qstring(ii);
+                         msg += " auf.";
+                         QMessageBox mb;
+                         mb.setText(msg);
+                         mb.exec();
+                     }
+
+                     strecke s2;
+                     punkt3d p3;
+                     p3.set_x(geo_zeile_davor_tz.zeile(2));
+                     p3.set_y(geo_zeile_davor_tz.zeile(3));
+                     p3.set_z(0);
+                     s2.set_start(p3);
+                     s2.set_ende(startpunkt);
+
+                     strecke s3 = s2;
+                     strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
+                     s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
+
+
                      //Wenn der Vorgänger eine Gerade ist und der Nachfolger nicht:
                      if(!zeile_danach.contains(FRAESERGERADE_DIALOG))
                      {
-                         if(rad_vor > 0  &&  rad_vor < s.laenge2dim())
+                         if(rad_vor > 0                     &&\
+                            rad_vor < s.laenge2dim()        &&\
+                            s3.endp().x() != s.endp().x()   &&\
+                            s3.endp().y() != s.endp().y()   )
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
                              s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
@@ -1715,7 +1768,10 @@ void programmtext::aktualisiere_klartext_var_geo()
                          }
                      }else //Wenn der Vorgänger eine Gerade ist und der Nachfolger auch
                      {
-                         if(rad_vor > 0  &&  rad_vor < s.laenge2dim())
+                         if(rad_vor > 0                     &&\
+                            rad_vor < s.laenge2dim()        &&\
+                            s3.endp().x() != s.endp().x()   &&\
+                            s3.endp().y() != s.endp().y()   )
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
                              s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
@@ -1729,9 +1785,15 @@ void programmtext::aktualisiere_klartext_var_geo()
                          s2.set_ende(p3);
                          double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
 
-                         if(rad_akt > 0                 &&\
-                            rad_akt < s.laenge2dim()    &&\
-                            rad_akt < s2.laenge2dim())
+                         strecke s3 = s;
+                         strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
+                         s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
+
+                         if(rad_akt > 0                     &&\
+                            rad_akt < s.laenge2dim()        &&\
+                            rad_akt < s2.laenge2dim()       &&\
+                            s3.endp().x() != s2.endp().x()  &&\
+                            s3.endp().y() != s2.endp().y()  )
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_start;
                              strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
@@ -1741,10 +1803,21 @@ void programmtext::aktualisiere_klartext_var_geo()
                              b.set_startpunkt(s.endp());
                              b.set_endpunkt(s2.startp());
                              b.set_radius(rad_akt, false);
-                             if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                             //Die folgende Prüfung ergibt immer das Selbe,
+                             //Stattdessen lieber den Winkel der Geraden zueinander prüfen
+
+
+
+                             if(b.mittelpunkt().x() == endpunkt.x()  &&\
+                                b.mittelpunkt().y() == endpunkt.y()  )
                              {
                                  b.set_radius(b.rad(), true);
                              }
+
+
+
+
+
                              geo.add_strecke(s);
                              geo.add_bogen(b);
                          }else

@@ -107,9 +107,21 @@ double winkel(double endpunkt_x, double endpunkt_y,\
     double gegenkathete = mittelpunkt_y - endpunkt_y;
 
     double wi =  asin(gegenkathete/hypthenuse)/M_PI*180*-1;//Weil sonst Ergebnis in Bogenmaß;
-    if(wi < 0)
+
+    if(endpunkt_x - mittelpunkt_x < 0   &&\
+       wi > 0)
     {
         wi = 180-wi;
+    }
+
+    if(endpunkt_x - mittelpunkt_x < 0   &&\
+       wi < 0)
+    {
+        wi = 180-wi;
+    }else if(mittelpunkt_x - endpunkt_x < 0   &&\
+             wi < 0)
+    {
+        wi = 360+wi;
     }else if(wi == 0)
     {
         if(mittelpunkt_x < endpunkt_x)
@@ -120,7 +132,26 @@ double winkel(double endpunkt_x, double endpunkt_y,\
             wi = 180;
         }
     }
+    if(wi == -90)
+    {
+        wi = 270;
+    }
+
     return wi;
 }
 
+double winkel(double endpunkt1_x, double endpunkt1_y,\
+              double mittelpunkt_x, double mittelpunkt_y,\
+              double endpunkt2_x, double endpunkt2_y)
+{
+    double w1 = winkel(endpunkt1_x, endpunkt1_y,\
+                       mittelpunkt_x, mittelpunkt_y);
 
+    double w2 = winkel(endpunkt2_x, endpunkt2_y,\
+                       mittelpunkt_x, mittelpunkt_y);
+    if(w2 == 0)
+    {
+        w2=360;
+    }
+    return w2-w1;
+}

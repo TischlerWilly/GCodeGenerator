@@ -23,4 +23,8 @@ punkt drehen_ij(punkt drehzentrum, float drehwinkel, \
 double winkel(double endpunkt_x, double endpunkt_y,\
               double mittelpunkt_x, double mittelpunkt_y);
 
+double winkel(double endpunkt1_x, double endpunkt1_y,\
+              double mittelpunkt_x, double mittelpunkt_y,\
+              double endpunkt2_x, double endpunkt2_y);
+
 #endif // GEOMETRIE_H

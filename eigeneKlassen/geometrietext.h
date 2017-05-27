@@ -30,13 +30,17 @@ public:
     void add_rechteck(rechteck3d rec);
     void add_wuerfel(wuerfel w);
 
-    inline QString get_text()
+    inline QString          get_text()
     {
         return text.get_text();
     }
     inline text_zeilenweise get_text_zeilenweise()
     {
         return text;
+    }
+    inline uint             get_aktuelle_zeile()
+    {
+        return aktuelle_zeile;
     }
 
 private:

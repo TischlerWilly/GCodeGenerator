@@ -99,6 +99,45 @@ void vorschau::paintEvent(QPaintEvent *)
                 obli.set_x(mipu.x()-rad);
                 obli.set_y(mipu.y()+rad);
 
+                punkt2d mp;
+                mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
+                mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
+                punkt2d sp;
+                sp.set_x(element.zeile(2).toDouble());//Start in X
+                sp.set_y(element.zeile(3).toDouble());//Start in Y
+                punkt2d ep;
+                ep.set_x(element.zeile(5).toDouble());//Ende in X
+                ep.set_y(element.zeile(6).toDouble());//Ende in Y
+                double stawi=0, bogwi=0;
+
+                if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
+                {
+                    stawi = winkel(sp.x(),   \
+                                   sp.y(),   \
+                                   mp.x(),   \
+                                   mp.y());
+                    bogwi = winkel(sp.x(),   \
+                                   sp.y(),   \
+                                   mp.x(),   \
+                                   mp.y(),   \
+                                   ep.x(),   \
+                                   ep.y());
+                }else//Bogen im Uhrzeigersinn
+                {
+                    stawi = winkel(ep.x(),   \
+                                   ep.y(),   \
+                                   mp.x(),   \
+                                   mp.y());
+                    bogwi = winkel(ep.x(),   \
+                                   ep.y(),   \
+                                   mp.x(),   \
+                                   mp.y(),   \
+                                   sp.x(),   \
+                                   sp.y());
+                }
+                //bogwi = 30;
+                /*
+
                 double stawi = winkel(element.zeile(2).toDouble(),  \
                                             element.zeile(3).toDouble(),  \
                                             element.zeile(10).toDouble(), \
@@ -115,7 +154,7 @@ void vorschau::paintEvent(QPaintEvent *)
                                                                             //Endpunkt in X
                                                                             //Endpunkt in Y
                                                                             //Mittelpunkt in X
-                                                                            //Mittelpunkt in Y
+                                                                        //Mittelpunkt in Y
                 if(stawi > endwi)
                 {
                     //double tmp = stawi;
@@ -127,9 +166,7 @@ void vorschau::paintEvent(QPaintEvent *)
                     endwi = 360;
                 }
                 endwi = endwi-stawi;
-                QMessageBox mb;
-                mb.setText(double_to_qstring(stawi));
-                //mb.exec();
+                */
 
                 QPen pen, pen_alt;
                 pen_alt = painter.pen();
@@ -150,7 +187,7 @@ void vorschau::paintEvent(QPaintEvent *)
                                 rad*2,\
                                 rad*2,\
                                 stawi*16,\
-                                endwi*16);
+                                bogwi*16);
 
                 painter.setPen(pen_alt);
             }else if(element.get_text().contains(KREIS))

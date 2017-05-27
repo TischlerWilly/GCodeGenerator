@@ -36,8 +36,8 @@
  7) z-Ende
  8) Radius
  9) Richtung
-    0 = im uhrzeigersinn
-    1 = gegen den Uhrzeigersinn
+    ja = im uhrzeigersinn
+    nein = gegen den Uhrzeigersinn
 10) x-Mittelpunkt
 11) y-Mittelpunkt
     einen Mittelpunkt in Z gibt es nicht, da der Boden nur 2,5-dimensional ist
