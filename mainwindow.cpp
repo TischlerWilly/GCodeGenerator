@@ -3021,20 +3021,47 @@ void MainWindow::slot_maus_pos(QPoint p)
 
 void MainWindow::on_actionTestfunktion_triggered()
 {
+
     punkt3d p3;
     strecke s;
-    s.set_start(p3);//0,0,0
-    p3.set_x(-50);
-    s.set_ende(p3);//50,0,0
-    //s.drenen_um_startpunkt_2d(180+45, false);
+    p3.set_x(60);
+    p3.set_y(140);
+    s.set_start(p3);
+    p3.set_x(40);
+    p3.set_y(140);
+    s.set_ende(p3);
+    //s.drenen_um_startpunkt_2d(90, false);
 
-    double wi = winkel(s.endp().x(),\
-                       s.endp().y(),\
-                       s.startp().x(),\
-                       s.startp().y());
+    strecke s2 = s;
+    s2.drenen_um_startpunkt_2d(90, false);
+
+    //Winkel von s:
+    double wi1 = winkel(s.endp().x(),\
+                        s.endp().y(),\
+                        s.startp().x(),\
+                        s.startp().y());
+    //Winkel von s2:
+    double wi1b = winkel(s2.endp().x(),\
+                         s2.endp().y(),\
+                         s2.startp().x(),\
+                         s2.startp().y());
+
+    double wi2 = winkel(0,-2,\
+                       0,0);
+
+    double wi3 = winkel(40,140,\
+                        60,140,\
+                        60,120);
+
+    double wi4 = winkel(s.endp().x(),\
+                        s.endp().y(),\
+                        s.startp().x(),\
+                        s.startp().y(),\
+                        s2.endp().x(),\
+                        s2.endp().y());
 
     QMessageBox mb;
-    mb.setText(double_to_qstring(wi));
+    mb.setText(double_to_qstring(wi2));
     mb.exec();
 
 }

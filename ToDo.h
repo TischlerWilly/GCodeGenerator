@@ -3,7 +3,6 @@
 
 /*
 -->ERG bei Aufruf Fräser bislang nicht mit * (nicht automatisch in Variablen aufgenommen)
--->WKZ-DM berücksichtigen bei Darstellung Kreistasche
 
 -->Beim Ausblenden von mehreren Fräserbahnen gleichzeitig muss noch die Fehlermeldung deaktiviert werden
    solange die Zeilen einzeln ausgeblendet werden.
@@ -21,7 +20,8 @@
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
-
+-->Funktionen/geometrier.cpp/winkel(1,2,3,4) gibt nur Winkel zwischen
+    0 und 45° aus!
 
 ----------Ideen für neue Dialoge:
 -->Dialog für das Zapfen-fräsen
