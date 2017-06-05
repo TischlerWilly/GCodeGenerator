@@ -14,6 +14,7 @@
 #include "rechteck3d.h"
 #include "wuerfel.h"
 #include "../eigeneDefines/defines_geometrie.h"
+#include "../eigeneFunktionen/geometrie.h"
 
 
 class geometrietext

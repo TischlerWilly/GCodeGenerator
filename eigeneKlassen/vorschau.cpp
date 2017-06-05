@@ -135,38 +135,10 @@ void vorschau::paintEvent(QPaintEvent *)
                                    sp.x(),   \
                                    sp.y());
                 }
-                //bogwi = 30;
-                /*
-
-                double stawi = winkel(element.zeile(2).toDouble(),  \
-                                            element.zeile(3).toDouble(),  \
-                                            element.zeile(10).toDouble(), \
-                                            element.zeile(11).toDouble());
-                                                                            //Startpunkt in X
-                                                                            //Startpunkt in Y
-                                                                            //Mittelpunkt in X
-                                                                            //Mittelpunkt in Y
-
-                double endwi = winkel(element.zeile(5).toDouble(),  \
-                                          element.zeile(6).toDouble(),  \
-                                          element.zeile(10).toDouble(), \
-                                          element.zeile(11).toDouble());
-                                                                            //Endpunkt in X
-                                                                            //Endpunkt in Y
-                                                                            //Mittelpunkt in X
-                                                                        //Mittelpunkt in Y
-                if(stawi > endwi)
+                if(bogwi<0)
                 {
-                    //double tmp = stawi;
-                    //stawi = endwi;
-                    //endwi = tmp;
+                    bogwi = 360+bogwi;
                 }
-                if(endwi == 0)
-                {
-                    endwi = 360;
-                }
-                endwi = endwi-stawi;
-                */
 
                 QPen pen, pen_alt;
                 pen_alt = painter.pen();
