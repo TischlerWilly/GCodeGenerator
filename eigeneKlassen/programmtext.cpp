@@ -271,10 +271,13 @@ void programmtext::aktualisiere_klartext_var_geo()
             {
                 if(warnung_frDial == false)
                 {
-                    QMessageBox mb;
-                    mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + \
-                               "!\nFraeser-Abfahren fehlt!");
-                    mb.exec();
+                    if(warnungen_sind_eingeschaltet)
+                    {
+                        QMessageBox mb;
+                        mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + \
+                                   "!\nFraeser-Abfahren fehlt!");
+                        mb.exec();
+                    }
                     warnung_frDial = true;
                 }
             }
@@ -958,6 +961,16 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ECKENRUNDENGLOBAL;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
+                if(!variablen.contains(ECKENRUNDENGLOBAL))
+                {
+                    variablen += ECKENRUNDENGLOBAL;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, ECKENRUNDENGLOBAL, ENDE_EINTRAG);
+                    variablen.replace(ECKENRUNDENGLOBAL+alterWert, ECKENRUNDENGLOBAL+tmp);
+                }
 
                 tmp = text_mitte(zeile, KANTENDICKE, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
@@ -1036,9 +1049,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                 {
                     if(warnung_frDial == false)
                     {
-                        QMessageBox mb;
-                        mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
-                        mb.exec();
+                        if(warnungen_sind_eingeschaltet)
+                        {
+                            QMessageBox mb;
+                            mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
+                            mb.exec();
+                        }
                         warnung_frDial = true;
                     }
                 }
@@ -1127,9 +1143,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                 {
                     if(warnung_frDial == false)
                     {
-                        QMessageBox mb;
-                        mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
-                        mb.exec();
+                        if(warnungen_sind_eingeschaltet)
+                        {
+                            QMessageBox mb;
+                            mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
+                            mb.exec();
+                        }
                         warnung_frDial = true;
                     }
                 }
@@ -1224,9 +1243,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                 {
                     if(warnung_frDial == false)
                     {
-                        QMessageBox mb;
-                        mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeser-Abfahren ohne dazu gehoerenden Fraeser-Aufruf!");
-                        mb.exec();
+                        if(warnungen_sind_eingeschaltet)
+                        {
+                            QMessageBox mb;
+                            mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeser-Abfahren ohne dazu gehoerenden Fraeser-Aufruf!");
+                            mb.exec();
+                        }
                         warnung_frDial = true;
                     }
                 }
@@ -1629,6 +1651,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                          zeile_danach = klartext.zeile(ii);
                      }
                 }
+
+
                 if(!zeile_davor.contains(FRAESERGERADE_DIALOG))
                 {
                      if(zeile_davor.contains(FRAESERAUFRUF_DIALOG) ||  \
@@ -1663,18 +1687,48 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 s3.endp().x() != s2.endp().x()  &&\
                                 s3.endp().y() != s2.endp().y()  )
                              {
+                                 //---------------------------------------------------winkel berechnen:
+                                 double wink = winkel(startpunkt.x(),\
+                                                      startpunkt.y(),\
+                                                      endpunkt.x(),\
+                                                      endpunkt.y(),\
+                                                      s2.endp().x(),\
+                                                      s2.endp().y());
+                                 if(wink<0)
+                                 {
+                                     wink = -1*wink;
+                                 }
+                                 double alpha = wink/2;
+                                 double seite_a = rad_akt;
+                                 double seite_b = seite_a/tan_d(alpha);
+                                 //---------------------------------------------------
+
                                  strecke_bezugspunkt sb = strecke_bezugspunkt_start;
                                  strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
-                                 s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
-                                 s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
+                                 s.set_laenge_2d(s.laenge2dim()-seite_b, sb);
+                                 s2.set_laenge_2d(s2.laenge2dim()-seite_b, sb2);
                                  bogen b;
                                  b.set_startpunkt(s.endp());
                                  b.set_endpunkt(s2.startp());
+
+                                 //------------------------------------------------------------------------
                                  b.set_radius(rad_akt, false);
-                                 if(b.mittelpunkt().x() == endpunkt.x()  &&  b.mittelpunkt().y() == endpunkt.y()  )
+                                 if(b.hat_fehler())
                                  {
-                                     b.set_radius(b.rad(), true);
+                                     QMessageBox mb;
+                                     mb.setText("Bogen hat Fehler");
+                                     mb.exec();
                                  }
+                                 //Ungenauigkeiten durch runden ausgleichen:
+                                 if(b.mittelpunkt().x() <= endpunkt.x()+rad_akt/1.1  &&
+                                    b.mittelpunkt().x() >= endpunkt.x()-rad_akt/1.1  &&
+                                    b.mittelpunkt().y() <= endpunkt.y()+rad_akt/1.1  &&
+                                    b.mittelpunkt().y() >= endpunkt.y()-rad_akt/1.1)
+                                 {
+                                     b.set_radius(rad_akt, true);
+                                 }
+                                 //------------------------------------------------------------------------
+
                                  geo.add_strecke(s);
                                  geo.add_bogen(b);
                              }else
@@ -1745,8 +1799,27 @@ void programmtext::aktualisiere_klartext_var_geo()
                      p3.set_z(0);
                      s2.set_start(p3);
                      s2.set_ende(startpunkt);
+                     //---------------------------------------------------winkel berechnen:
+                     double wink = winkel(s2.startp().x(),\
+                                          s2.startp().y(),\
+                                          startpunkt.x(),\
+                                          startpunkt.y(),\
+                                          endpunkt.x(),\
+                                          endpunkt.y());
+                     if(wink<0)
+                     {
+                         wink = -1*wink;
+                     }
+                     double alpha = wink/2;
+                     double seite_a = rad_vor;
+                     double seite_b = seite_a/tan_d(alpha);
+                     if(seite_b<0)
+                     {
+                         seite_b = -1*seite_b;
+                     }
+                     //---------------------------------------------------
 
-                     strecke s3 = s2;
+                     strecke s3 = s2;//s3 prüft, ob die Geraden in einer Linie zueinander liegen
                      strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
                      s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
 
@@ -1755,12 +1828,13 @@ void programmtext::aktualisiere_klartext_var_geo()
                      if(!zeile_danach.contains(FRAESERGERADE_DIALOG))
                      {
                          if(rad_vor > 0                     &&\
+                            rad_vor < s2.laenge2dim()       &&\
                             rad_vor < s.laenge2dim()        &&\
                             s3.endp().x() != s.endp().x()   &&\
                             s3.endp().y() != s.endp().y()   )
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
-                             s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
+                             s.set_laenge_2d(s.laenge2dim()-seite_b,sb);
                              geo.add_strecke(s);
                          }else
                          {
@@ -1769,12 +1843,13 @@ void programmtext::aktualisiere_klartext_var_geo()
                      }else //Wenn der Vorgänger eine Gerade ist und der Nachfolger auch
                      {
                          if(rad_vor > 0                     &&\
+                            rad_vor < s2.laenge2dim()       &&\
                             rad_vor < s.laenge2dim()        &&\
                             s3.endp().x() != s.endp().x()   &&\
                             s3.endp().y() != s.endp().y()   )
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
-                             s.set_laenge_2d(s.laenge2dim()-rad_vor,sb);
+                             s.set_laenge_2d(s.laenge2dim()-seite_b,sb);
                          }
                          strecke s2;
                          s2.set_start(endpunkt);
@@ -1795,28 +1870,51 @@ void programmtext::aktualisiere_klartext_var_geo()
                             s3.endp().x() != s2.endp().x()  &&\
                             s3.endp().y() != s2.endp().y()  )
                          {
+                             //-------------------------------------------------winkel berechnen:
+                             double wink = winkel(startpunkt.x(),\
+                                                  startpunkt.y(),\
+                                                  endpunkt.x(),\
+                                                  endpunkt.y(),\
+                                                  s2.endp().x(),\
+                                                  s2.endp().y());
+                             if(wink<0)
+                             {
+                                 wink = -1*wink;
+                             }
+                             double alpha = wink/2;
+                             double seite_a = rad_akt;
+                             double seite_b = seite_a/tan_d(alpha);
+                             if(seite_b<0)
+                             {
+                                 seite_b = -1*seite_b;
+                             }
+                             //-------------------------------------------------
+
                              strecke_bezugspunkt sb = strecke_bezugspunkt_start;
                              strecke_bezugspunkt sb2 = strecke_bezugspunkt_ende;
-                             s.set_laenge_2d(s.laenge2dim()-rad_akt, sb);
-                             s2.set_laenge_2d(s2.laenge2dim()-rad_akt, sb2);
+                             s.set_laenge_2d(s.laenge2dim()-seite_b, sb);
+                             s2.set_laenge_2d(s2.laenge2dim()-seite_b, sb2);
                              bogen b;
                              b.set_startpunkt(s.endp());
                              b.set_endpunkt(s2.startp());
+
+                             //------------------------------------------------------------------------
                              b.set_radius(rad_akt, false);
-                             //Die folgende Prüfung ergibt immer das Selbe,
-                             //Stattdessen lieber den Winkel der Geraden zueinander prüfen
-
-
-
-                             if(b.mittelpunkt().x() == endpunkt.x()  &&\
-                                b.mittelpunkt().y() == endpunkt.y()  )
+                             if(b.hat_fehler())
                              {
-                                 b.set_radius(b.rad(), true);
+                                 QMessageBox mb;
+                                 mb.setText("Bogen hat Fehler");
+                                 mb.exec();
                              }
-
-
-
-
+                             //Ungenauigkeiten durch runden ausgleichen:
+                             if(b.mittelpunkt().x() <= endpunkt.x()+rad_akt/1.1  &&
+                                b.mittelpunkt().x() >= endpunkt.x()-rad_akt/1.1  &&
+                                b.mittelpunkt().y() <= endpunkt.y()+rad_akt/1.1  &&
+                                b.mittelpunkt().y() >= endpunkt.y()-rad_akt/1.1)
+                             {
+                                 b.set_radius(rad_akt, true);
+                             }
+                             //------------------------------------------------------------------------
 
                              geo.add_strecke(s);
                              geo.add_bogen(b);

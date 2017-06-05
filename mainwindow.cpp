@@ -2159,6 +2159,7 @@ void MainWindow::elementAusblendenSichtbarMachen(QListWidgetItem *item)
 
 void MainWindow::on_actionEin_Ausblenden_triggered()
 {
+    t.warnungen_einschalten(false);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2208,10 +2209,12 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
+    t.warnungen_einschalten(true);
 }
 
 void MainWindow::on_actionAuswahl_Ausblenden_triggered()
 {
+    t.warnungen_einschalten(false);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2257,10 +2260,12 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
+    t.warnungen_einschalten(true);
 }
 
 void MainWindow::on_actionAuswahl_Einblenden_triggered()
 {
+    t.warnungen_einschalten(false);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2308,6 +2313,7 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
+    t.warnungen_einschalten(true);
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -3049,9 +3055,9 @@ void MainWindow::on_actionTestfunktion_triggered()
     double wi2 = winkel(0,-2,\
                        0,0);
 
-    double wi3 = winkel(40,140,\
-                        60,140,\
-                        60,120);
+    double wi3 = winkel(-20,0,\
+                        0,0,\
+                        30,60);
 
     double wi4 = winkel(s.endp().x(),\
                         s.endp().y(),\
@@ -3061,7 +3067,7 @@ void MainWindow::on_actionTestfunktion_triggered()
                         s2.endp().y());
 
     QMessageBox mb;
-    mb.setText(double_to_qstring(wi2));
+    mb.setText(double_to_qstring(wi3));
     mb.exec();
 
 }
