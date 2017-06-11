@@ -2,13 +2,13 @@
 #define TODO_H
 
 /*
+-->Wenn Änderungen am WKZ vorgenommen werden, so muss der Programmtext neu berechnet werden
+  ->Funktion "set_wkz()"
+
+
 
 -->Programmpfade automatisch auf den angemeldeten Benutzer setzen
    (Quelltextanpassung vor compilierung entfallen lassen)
-
--->Klasse Programmtext
-    ->Funktion void programmtext::aktualisiere_klartext_var_geo():
-      >Abfahrweg Fräser noch programmieren
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
 
