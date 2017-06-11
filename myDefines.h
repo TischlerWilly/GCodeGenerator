@@ -47,9 +47,9 @@
 //Parameter müssen immer zwischen [ und ] definiert sein
 #define ANFAHRTYP           "[ANT]"
 #define ABFAHRTYP           "[ABT]"
-#define ANABFAHRTYP_GARADE          "gerade"
-#define ANABFAHRTYP_KREISBOGEN_RE   "bogen von rechts"
-#define ANABFAHRTYP_KREISBOGEN_LI   "bogen von links"
+#define ANABFAHRTYP_GARADE          "Gerade"
+#define ANABFAHRTYP_KREISBOGEN_RE   "Bogen im Uhrzeigersinn"
+#define ANABFAHRTYP_KREISBOGEN_LI   "Bogen gegen den Uhrzeigersinn"
 #define ANABFAHRTYP_KEIN            "kein"
 #define AUSFUEHRBEDINGUNG   "[AFB]"
 #define AUSRAEUMEN          "[AUSR]"

@@ -9,6 +9,7 @@
 #include "wenndannsonst.h"
 #include "rechtecktasche.h"
 #include "geometrietext.h"
+#include "werkzeug.h"
 
 
 class programmtext
@@ -16,6 +17,7 @@ class programmtext
 public:
     programmtext();
             void                set_text(QString neuer_Text);
+            void                set_wkz(werkzeug wkz);
             void                clear();
     inline  void                warnungen_einschalten(bool einschalten)
     {
@@ -101,12 +103,17 @@ public:
     void        zeile_anhaengen(QString zeilentext);
     int         zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext);
 
+
+
+
+
 private:
     text_zeilenweise    text;
     text_zeilenweise    klartext;
     text_zeilenweise    var;
     text_zeilenweise    anzeigetext;
     geometrietext       geo;
+    werkzeug            w;
 
     float   werkstuecklaenge;
     float   werkstueckbreite;
@@ -136,6 +143,11 @@ private:
 
             void    aktualisiere_klartext_var_geo();
             void    aktualisiere_anzeigetext();
+            void    aktualisiere_wkz();
+
+
+
+
 
 };
 

@@ -281,7 +281,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                     warnung_frDial = true;
                 }
             }
-        }
+        }     
+
         if(zeile.contains(PROGRAMMKOPF_DIALOG))
         {
             QString tmp;
@@ -522,7 +523,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float x = tmp.toFloat();
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -540,7 +540,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float y = tmp.toFloat();
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -558,7 +557,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, TASCHENLAENGE, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float tal = tmp.toFloat();
                 zeile_klartext += TASCHENLAENGE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -576,7 +574,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, TASCHENBREITE, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float tab = tmp.toFloat();
                 zeile_klartext += TASCHENBREITE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -731,7 +728,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float x = tmp.toFloat();
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -749,7 +745,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float y = tmp.toFloat();
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -767,7 +762,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float dm = tmp.toFloat();
                 zeile_klartext += DURCHMESSER;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -904,7 +898,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float x = tmp.toFloat();
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -922,7 +915,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float y = tmp.toFloat();
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -940,7 +932,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                //float z = tmp.toFloat();
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1064,7 +1055,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float x = tmp.toFloat();
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1082,7 +1072,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float y = tmp.toFloat();
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1100,7 +1089,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                //float z = tmp.toFloat();
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1159,7 +1147,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float x = tmp.toFloat();
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1177,7 +1164,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                float y = tmp.toFloat();
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1195,7 +1181,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp = ausdruck_auswerten(tmp);
-                //float z = tmp.toFloat();
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -1268,10 +1253,13 @@ void programmtext::aktualisiere_klartext_var_geo()
     //CAD-Parameter ergänzen:
     if(warnung_frDial == false)
     {
+        QString abtyp = NICHT_DEFINIERT; //brauchen wir an dieser Stelle, damit der Wert später
+                                         //beim Fräser-Abfahren verfügbar ist
+        float fdm=0;                     //Fräser-Durchmesser
+
         for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
         {
-            QString abtyp = NICHT_DEFINIERT; //brauchen wir an dieser Stelle, damit der Wert später
-                                             //beim Fräser-Abfahren verfügbar ist
+
             QString zeile = klartext.zeile(i), tmp;
 
             if(zeile.isEmpty())
@@ -1410,6 +1398,16 @@ void programmtext::aktualisiere_klartext_var_geo()
                 startpDial.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
                 startpDial.set_z(text_mitte(zeile, POSITION_Z, ENDE_EINTRAG));
 
+                tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                fdm = tmp.toFloat();
+                if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
+                {
+                    fdm = 50;
+                    QMessageBox mb;
+                    mb.setText("Achtung!\nFraeserdurchmesser 0 in Zeile " + int_to_qstring(i) + "!");
+                    mb.exec();
+                }
+
                 if(antyp == ANABFAHRTYP_KEIN)
                 {
                     geo.add_punkt(startpDial);
@@ -1437,15 +1435,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             strecke s;
                             s.set_start(startpDial);
                             s.set_ende(folgepunkt);
-                            tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
-                            float fdm = tmp.toFloat();
-                            if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
-                            {
-                                fdm = 50;
-                                QMessageBox mb;
-                                mb.setText("Achtung!\nFraeserdurchmesser 0 in Zeile " + int_to_qstring(i) + "!");
-                                mb.exec();
-                            }
+
                             strecke_bezugspunkt sb;
                             sb = strecke_bezugspunkt_ende;
                             //Startpunkt in X u Y setzen:
@@ -1589,9 +1579,13 @@ void programmtext::aktualisiere_klartext_var_geo()
                             }
                             strecke_bezugspunkt sb;
                             sb = strecke_bezugspunkt_start;
+
                             if(antyp == ANABFAHRTYP_KREISBOGEN_RE)
                             {
-                                s.drenen_um_startpunkt_2d(180, true);
+                                if(!uzs)
+                                {
+                                    s.drenen_um_startpunkt_2d(180, false);
+                                }
                                 s.set_laenge_2d(fdm*2, sb);
                                 s.drenen_um_endpunkt_2d(90, false);
                                 punkt3d p3;
@@ -1605,6 +1599,10 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 geo.add_bogen(b);
                             }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                             {
+                                if(uzs)
+                                {
+                                    s.drenen_um_startpunkt_2d(180, false);
+                                }
                                 s.set_laenge_2d(fdm*2, sb);
                                 s.drenen_um_endpunkt_2d(90, true);
                                 punkt3d p3;
@@ -1614,7 +1612,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
-                                b.set_radius(fdm*2, true);
+                                b.set_radius(fdm*2, false);
                                 geo.add_bogen(b);
                             }
                         }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
@@ -1980,10 +1978,188 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
             {
+                QString zeile_davor, zeile_davor_davor;
+                if(i > 1)//wenn es Zeilen vorab gibt
+                {
+                    uint ii = i-1;
+                    zeile_davor = klartext.zeile(ii);
+                    while(zeile_davor_davor.isEmpty()  &&  ii-1>=1  )
+                    {
+                        ii--;
+                        if(zeile_davor.isEmpty())
+                        {
+                            zeile_davor = klartext.zeile(ii);
+                        }else
+                        {
+                            zeile_davor_davor = klartext.zeile(ii);
+                        }
+                    }
+                }
+                punkt3d punkt_davor;
+                punkt_davor.set_x(text_mitte(zeile_davor, POSITION_X, ENDE_EINTRAG));
+                punkt_davor.set_y(text_mitte(zeile_davor, POSITION_Y, ENDE_EINTRAG));
+                punkt_davor.set_z(text_mitte(zeile_davor, POSITION_Z, ENDE_EINTRAG));
+                punkt3d punkt_davor_davor;
+                punkt_davor_davor.set_x(text_mitte(zeile_davor_davor, POSITION_X, ENDE_EINTRAG));
+                punkt_davor_davor.set_y(text_mitte(zeile_davor_davor, POSITION_Y, ENDE_EINTRAG));
+                punkt_davor_davor.set_z(text_mitte(zeile_davor_davor, POSITION_Z, ENDE_EINTRAG));
+
+                if(zeile_davor.contains(FRAESERAUFRUF_DIALOG))
+                {
+                    geo.add_punkt(punkt_davor);
+                    geo.zeilenvorschub();
+                    continue;
+                }
+
+                if(abtyp == ANABFAHRTYP_KEIN)
+                {
+                    geo.add_punkt(punkt_davor);
+                }else if(abtyp == ANABFAHRTYP_GARADE)
+                {
+                    if(zeile_davor.contains(FRAESERGERADE_DIALOG))
+                    {
+
+                        strecke s;
+                        s.set_start(punkt_davor_davor);
+                        s.set_ende(punkt_davor);
+                        strecke_bezugspunkt sb;
+                        sb = strecke_bezugspunkt_start;
+                        //Endpunkt in X u Y setzen:
+                        s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
+                        //Endpunkt in Z setzen:
+                        punkt3d endpunkt = s.endp();
+                        endpunkt.set_z(werkstueckdicke + sicherheitsabstand);
+                        s.set_ende(endpunkt);
+                        //Startpunkt setzen:
+                        s.set_start(punkt_davor);//Damit auch Z stimmt und weniger gerechent werden muss
+                        geo.add_strecke(s);
+                    }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        bool bogriuzs;
+                        if(text_mitte(zeile_davor, BOGENRICHTUNG, ENDE_EINTRAG) == BOGENRICHTUNG_IM_UZS)
+                        {
+                            bogriuzs = true;
+                        }else
+                        {
+                            bogriuzs = false;
+                        }
+                        bogen b;
+                        b.set_startpunkt(punkt_davor_davor);
+                        b.set_endpunkt(punkt_davor);
+                        b.set_radius(text_mitte(zeile_davor, RADIUS, ENDE_EINTRAG), bogriuzs);
+                        punkt3d endpu;
+                        endpu.set_x(b.mittelpunkt().x());
+                        endpu.set_y(b.mittelpunkt().y());
+                        endpu.set_z(werkstueckdicke + sicherheitsabstand);
+                        strecke s;
+                        s.set_start(punkt_davor);
+                        s.set_ende(endpu);
+                        s.drenen_um_startpunkt_2d(-90, -bogriuzs);
+                        geo.add_strecke(s);
+                    }
+                }else //abtyp == ANABFAHRTYP_KREISBOGEN_LI oder ANABFAHRTYP_KREISBOGEN_RE
+                {
+                    if(zeile_davor.contains(FRAESERGERADE_DIALOG))
+                    {
+                        strecke s;
+                        s.set_start(punkt_davor);
+                        s.set_ende(punkt_davor_davor);
+                        strecke_bezugspunkt sb;
+                        sb = strecke_bezugspunkt_start;
+                        //Startpunkt in X u Y setzen:
+                        s.set_laenge_2d(fdm*2, sb);
+
+                        //Bahnkor ermitteln:
+                        if(abtyp == ANABFAHRTYP_KREISBOGEN_RE)
+                        {
+                            s.drenen_um_startpunkt_2d(90, false);
+                            s.drenen_um_endpunkt_2d(90,true);
+                            punkt3d p3;
+                            p3.set_x(s.startp().x());
+                            p3.set_y(s.startp().y());
+                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            bogen b;
+                            b.set_startpunkt(p3);
+                            b.set_endpunkt(punkt_davor);
+                            b.set_radius(fdm*2, false);
+                            geo.add_bogen(b);
+                        }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
+                        {
+                            s.drenen_um_startpunkt_2d(90, true);
+                            s.drenen_um_endpunkt_2d(90,false);
+                            punkt3d p3;
+                            p3.set_x(s.startp().x());
+                            p3.set_y(s.startp().y());
+                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            bogen b;
+                            b.set_startpunkt(p3);
+                            b.set_endpunkt(punkt_davor);
+                            b.set_radius(fdm*2, true);
+                            geo.add_bogen(b);
+                        }
+
+                    }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        bogen b;
+                        b.set_startpunkt(punkt_davor_davor);
+                        b.set_endpunkt(punkt_davor);
+                        QString r = text_mitte(zeile_davor, RADIUS, ENDE_EINTRAG);
+                        bool uzs;
+                        if(text_mitte(zeile_davor, BOGENRICHTUNG, ENDE_EINTRAG) == BOGENRICHTUNG_IM_UZS)
+                        {
+                            uzs = true;
+                        }else
+                        {
+                            uzs = false;
+                        }
+                        b.set_radius(r, uzs);
+                        strecke s;
+                        s.set_start(punkt_davor);
+                        punkt3d mipu;
+                        mipu.set_x(b.mittelpunkt().x());
+                        mipu.set_y(b.mittelpunkt().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb;
+                        sb = strecke_bezugspunkt_start;
+                        if(abtyp == ANABFAHRTYP_KREISBOGEN_RE)
+                        {
+                            if(!uzs)
+                            {
+                                s.drenen_um_startpunkt_2d(180, false);
+                            }
+                            s.set_laenge_2d(fdm*2, sb);
+                            s.drenen_um_endpunkt_2d(90, true);
+                            punkt3d p3;
+                            p3.set_x(s.startp().x());
+                            p3.set_y(s.startp().y());
+                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            bogen b;
+                            b.set_startpunkt(p3);
+                            b.set_endpunkt(punkt_davor);
+                            b.set_radius(fdm*2, false);
+                            geo.add_bogen(b);
+                        }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
+                        {
+                            if(uzs)
+                            {
+                                s.drenen_um_startpunkt_2d(180, false);
+                            }
+                            s.set_laenge_2d(fdm*2, sb);
+                            s.drenen_um_endpunkt_2d(90, false);
+                            punkt3d p3;
+                            p3.set_x(s.startp().x());
+                            p3.set_y(s.startp().y());
+                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            bogen b;
+                            b.set_startpunkt(p3);
+                            b.set_endpunkt(punkt_davor);
+                            b.set_radius(fdm*2, true);
+                            geo.add_bogen(b);
+                        }
+                    }
+                }
                 geo.zeilenvorschub();
             }
-
-
         }
 
 
@@ -2358,6 +2534,27 @@ void programmtext::aktualisiere_anzeigetext()
     }
 }
 
+void programmtext::set_wkz(werkzeug wkz)
+{
+    w = wkz;
+    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    {
+        QString zeile = text.zeile(i);
+        if( zeile.contains(WKZ_NAME) )
+        {
+            if(zeile.contains(WKZ_DURCHMESSER))
+            {
+                QString aktualles_wkz =  wkz.get_werkzeug(text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG));
+                QString wkzdm = text_mitte(aktualles_wkz, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                QString wkzdmalt = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile.replace( WKZ_DURCHMESSER + wkzdmalt + ENDE_EINTRAG, \
+                               WKZ_DURCHMESSER + wkzdm + ENDE_EINTRAG);
+            }
+        }
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_anzeigetext();
+}
 
 
 
