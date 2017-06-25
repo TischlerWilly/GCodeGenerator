@@ -60,7 +60,7 @@ void Dialog_Fraeser_Aufruf::on_pushButton_ok_clicked()
 QString Dialog_Fraeser_Aufruf::dialogDataToString()
 {
     QString msg = FRAESERAUFRUF_DIALOG;
-    msg += WERKZEUG;
+    msg += WKZ_NAME;
     msg += ui->comboBox_werkzeug->currentText();
     msg += ENDE_EINTRAG;
 
@@ -134,7 +134,7 @@ void Dialog_Fraeser_Aufruf::getDialogData(QString text, bool openToChangeData, Q
     openToModifyData = openToChangeData;
     ui->comboBox_werkzeug->clear();
     ui->comboBox_werkzeug->addItems(WerkzeugNamen);
-    QString tmp_werkzeug = selektiereEintrag(text, WERKZEUG, WKZ_ENDE_EINTRAG);
+    QString tmp_werkzeug = selektiereEintrag(text, WKZ_NAME, WKZ_ENDE_EINTRAG);
     int index;
     index = ui->comboBox_werkzeug->findText(tmp_werkzeug);
     if(index == -1)//wenn das angegebene Werkzeug nicht in der Werkzeugliste gefunden wird
@@ -181,7 +181,7 @@ void Dialog_Fraeser_Aufruf::getDialogData(QString text, bool openToChangeData, Q
     ui->lineEdit_ausfbed->setText(selektiereEintrag(text, AUSFUEHRBEDINGUNG, ENDE_EINTRAG));
 
     tmp = w.get_werkzeug(tmp_werkzeug);
-    QPixmap pix(WKZ_BILDER_PFAD + text_mitte(tmp, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
+    QPixmap pix(QDir::homePath() + WKZ_BILDER_PFAD + text_mitte(tmp, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
     ui->label_bild_fraeser->setPixmap(pix);
     ui->label_bild_fraeser->setScaledContents(true);//Bild skallieren
 
@@ -191,7 +191,7 @@ void Dialog_Fraeser_Aufruf::getDialogData(QString text, bool openToChangeData, Q
 void Dialog_Fraeser_Aufruf::on_comboBox_werkzeug_currentIndexChanged(const QString &arg1)
 {
     QString tmp = w.get_werkzeug(arg1);
-    QPixmap pix(WKZ_BILDER_PFAD + text_mitte(tmp, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
+    QPixmap pix(QDir::homePath() + WKZ_BILDER_PFAD + text_mitte(tmp, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
     ui->label_bild_fraeser->setPixmap(pix);
     ui->label_bild_fraeser->setScaledContents(true);//Bild skallieren
 }

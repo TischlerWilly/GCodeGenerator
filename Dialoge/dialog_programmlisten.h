@@ -17,7 +17,8 @@ public:
 
 public slots:
     void daten_anzeigen(QString prgtext, QString klartext, \
-                        QString variabel, QString geometrietext);
+                        QString variabel, QString geotext, \
+                        QString fkon);
     
 private:
     Ui::Dialog_Programmlisten *ui;

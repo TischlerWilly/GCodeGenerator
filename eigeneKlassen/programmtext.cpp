@@ -17,6 +17,7 @@ void programmtext::set_text(QString neuer_Text)
         text.zeile_anhaengen(LISTENENDE);
     }
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
 }
 
@@ -32,6 +33,7 @@ void programmtext::clear_ausser_text()
     var.clear();
     anzeigetext.clear();
     geo.clear();
+    fkon.clear();
     werkstuecklaenge = 0;
     werkstueckbreite = 0;
     hat_programmkopf = false;
@@ -122,6 +124,7 @@ int programmtext::zeile_loeschen(uint zeilennummer)
     }
     text.zeile_loeschen(zeilennummer);
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -141,6 +144,7 @@ int programmtext::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge)
         }
     }
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -163,6 +167,7 @@ int programmtext::zeile_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zei
         text.zeile_einfuegen(zeilennummer_vor_neuer_zeile, zeilentext);
     }
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -191,6 +196,7 @@ int programmtext::zeilen_einfuegen(uint zeilennummer_vor_neuer_zeile, QString ze
         }
     }
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -203,6 +209,7 @@ void programmtext::zeile_anhaengen(QString zeilentext)
     }
     text.zeilen_anhaengen(zeilentext);
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
 }
 
@@ -229,6 +236,7 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
     }
     text.zeile_ersaetzen(zeilennummer, neuer_zeilentext);
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
     return 0; //Keine Fehler
 }
@@ -887,6 +895,11 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += FRAESERAUFRUF_DIALOG;
                 tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
                 zeile_klartext += WKZ_NAME;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile_klartext += WKZ_DURCHMESSER;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
@@ -2553,10 +2566,114 @@ void programmtext::set_wkz(werkzeug wkz)
         }
     }
     aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
     aktualisiere_anzeigetext();
 }
 
+void programmtext::aktualisiere_fkon()
+{
+    QString bahnkorr = BAHNRORREKTUR_keine;
+    QString wkz_aktuell = "";
+    double wkz_dm = 0;
+    double kantendicke = 0;
 
+    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
+    {
+        QString zeile = klartext.zeile(i);
+
+        //----------------------------------------
+        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            //Werte neu setzen:
+            bahnkorr = text_mitte(zeile, BAHNRORREKTUR, ENDE_EINTRAG);
+            wkz_aktuell = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            wkz_dm = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+            kantendicke = text_mitte(zeile, KANTENDICKE, ENDE_EINTRAG).toDouble();
+        }
+        //----------------------------------------
+
+        if(zeile.isEmpty())
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(PROGRAMMENDE_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(VARIABLE_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(KOMMENTAR_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(KREISTASCHE_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(FRAESERAUFRUF_DIALOG)  || \
+                 zeile.contains(FRAESERGERADE_DIALOG)  || \
+                 zeile.contains(FRAESERBOGEN_DIALOG)   || \
+                 zeile.contains(FRAESERABFAHREN_DIALOG)  )
+        {
+            text_zeilenweise geo_zeile;
+            geo_zeile.set_trennzeichen(TRZ_EL_);
+            geo_zeile.set_text(geo.get_text_zeilenweise().zeile(i));
+            for(uint ii=1; ii<=geo_zeile.zeilenanzahl() ;ii++)
+            {
+                text_zeilenweise geo_element;
+                geo_element.set_trennzeichen(TRZ_PA_);
+                geo_element.set_text(geo_zeile.zeile(ii));
+
+                if(bahnkorr == BAHNRORREKTUR_keine)
+                {
+                    //wkz_dm und kantendicke sind irrelevant
+                    //es ändert sich nur die Linienfarbe für die Darstellung
+                    if(geo_element.get_text().contains(STRECKE))
+                    {
+                        strecke s(geo_element.get_text());
+                        s.set_farbe(FARBE_BLAU);
+                        s.set_stil(STIL_GEPUNKTET);
+                        fkon.add_strecke(s);
+                    }else if(geo_element.get_text().contains(BOGEN))
+                    {
+                        bogen b(geo_element.get_text());
+                        b.set_farbe(FARBE_BLAU);
+                        b.set_stil(STIL_GEPUNKTET);
+                        fkon.add_bogen(b);
+                    }
+                }else if(bahnkorr == BAHNRORREKTUR_links)
+                {
+                    double versatz = wkz_dm - kantendicke;
+
+
+
+
+
+                }else  //bahnkorr == BAHNRORREKTUR_rechts
+                {
+                    double versatz = wkz_dm - kantendicke;
+
+
+
+
+
+
+                }
+            }
+
+
+            fkon.zeilenvorschub();
+        }
+
+    }
+
+
+
+
+}
 
 
 

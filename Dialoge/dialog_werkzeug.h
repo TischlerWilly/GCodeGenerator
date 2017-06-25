@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <QDir>
 #include "../myDefines.h"
 #include "../eigeneFunktionen/myfunktion.h"
 #include "../eigeneFunktionen/umwandeln.h"

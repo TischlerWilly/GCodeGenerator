@@ -1,11 +1,11 @@
 #ifndef MYDEFINES_H
 #define MYDEFINES_H
-
-#define PFAD_ZUM_PROGRAMMORDNER     "/home/oliver/.gcodegenerator"
-#define PFAD_ZU_DEN_WERKZEUGBILDERN "/home/oliver/.gcodegenerator/werkzeugbilder"
-#define INI_FILE                    "/home/oliver/.gcodegenerator/konfiguration.ini"
-#define WKZ_FILE                    "/home/oliver/.gcodegenerator/werkzeug.ini"
-#define WKZ_BILDER_PFAD             "/home/oliver/.gcodegenerator/werkzeugbilder/"
+                            ///home/oliver +
+#define PFAD_ZUM_PROGRAMMORDNER     "/.gcodegenerator"
+#define PFAD_ZU_DEN_WERKZEUGBILDERN "/.gcodegenerator/werkzeugbilder"
+#define INI_FILE                    "/.gcodegenerator/konfiguration.ini"
+#define WKZ_FILE                    "/.gcodegenerator/werkzeug.ini"
+#define WKZ_BILDER_PFAD             "/.gcodegenerator/werkzeugbilder/"
 #define DATEIENDUNG_EIGENE          ".ggf"
 #define DATEIENDUNG_BACKUP          ".bak_"
 #define DATEIENDUNG_GCODE           ".ngc"

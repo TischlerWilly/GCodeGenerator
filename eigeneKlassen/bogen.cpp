@@ -11,6 +11,36 @@ bogen::bogen(punkt3d startpunkt, punkt3d endpunkt)
     set_endpunkt(endpunkt);
 }
 
+bogen::bogen(QString geotext)
+{
+    text_zeilenweise tz;
+    tz.set_trennzeichen(TRZ_PA_);
+    tz.set_text(geotext);
+    punkt3d start;
+    start.set_x(tz.zeile(2).toDouble());
+    start.set_y(tz.zeile(3).toDouble());
+    start.set_z(tz.zeile(4).toDouble());
+    punkt3d ende;
+    ende.set_x(tz.zeile(5).toDouble());
+    ende.set_y(tz.zeile(6).toDouble());
+    ende.set_z(tz.zeile(7).toDouble());
+    float rad =tz.zeile(8).toFloat();
+    bool uzs;
+    if(tz.zeile(9).contains("ja"))
+    {
+        uzs = true;
+    }else
+    {
+        uzs = false;
+    }
+    set_startpunkt(start);
+    set_endpunkt(ende);
+    set_radius(rad, uzs);
+    set_farbe(tz.zeile(12));
+    set_breite(tz.zeile(13).toInt());
+    set_stil(tz.zeile(14));
+}
+
 bogen::bogen(punkt3d startpunkt, punkt3d endpunkt, \
              float radiuswert, bool im_uhrzeigersinn)
 {

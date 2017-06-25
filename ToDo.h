@@ -2,15 +2,15 @@
 #define TODO_H
 
 /*
--->Wenn Änderungen am WKZ vorgenommen werden, so muss der Programmtext neu berechnet werden
-  ->Funktion "set_wkz()"
+
+-->fkon in der Klasse Programmtext mit Leben füllen
+    ->Funktion aktualisiere_fkon()
 
 
 
--->Programmpfade automatisch auf den angemeldeten Benutzer setzen
-   (Quelltextanpassung vor compilierung entfallen lassen)
 
--->neue Funktion: in den Voreinstellungen die Möglichkeit beritstellen eine Maschine zu definieren mit Anschlägen
+
+-->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
 
 ----------Ideen für neue Dialoge:

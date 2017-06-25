@@ -2,6 +2,7 @@
 #define DIALOG_FRAESER_AUFRUF_H
 
 #include <QDialog>
+#include <QDir>
 #include "../myDefines.h"
 #include "../eigeneFunktionen/text.h"
 #include "../eigeneKlassen/werkzeug.h"

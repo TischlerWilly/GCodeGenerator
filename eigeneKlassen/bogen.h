@@ -10,6 +10,7 @@ class bogen : public darstellungsatribute
 {
 public:
     bogen();
+    bogen(QString geotext);
     bogen(punkt3d startpunkt, punkt3d endpunkt);
     bogen(punkt3d startpunkt, punkt3d endpunkt, float radiuswert, bool im_uhrzeigersinn);
 

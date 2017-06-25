@@ -3,10 +3,13 @@
 
 #include <QString>
 #include <math.h>
+#include <QMessageBox>
 #include "punkt3d.h"
 #include "punkt2d.h"
 #include "darstellungsatribute.h"
 #include "../eigeneFunktionen/geometrie.h"
+#include "text_zeilenweise.h"
+#include "../eigeneDefines/defines_geometrie.h"
 
 enum strecke_bezugspunkt{strecke_bezugspunkt_start, \
                          strecke_bezugspunkt_mitte, \
@@ -16,6 +19,7 @@ class strecke : public darstellungsatribute
 {
 public:
     strecke();
+    strecke(QString geotext);
             void    set_start(punkt3d startpunkt);
             void    set_ende(punkt3d endpunkt);
             void    richtung_unkehren();

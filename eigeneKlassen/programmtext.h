@@ -58,6 +58,10 @@ public:
     {
         return geo;
     }
+    inline  geometrietext       get_fkon()
+    {
+        return fkon;
+    }
 
     inline  float   get_werkstuecklaenge()
     {
@@ -108,12 +112,13 @@ public:
 
 
 private:
-    text_zeilenweise    text;
-    text_zeilenweise    klartext;
-    text_zeilenweise    var;
-    text_zeilenweise    anzeigetext;
-    geometrietext       geo;
-    werkzeug            w;
+    text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
+    text_zeilenweise    klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)
+    text_zeilenweise    var;            //Variablen
+    text_zeilenweise    anzeigetext;    //Programmliste
+    geometrietext       geo;            //Geometrieen zur Darstellung
+    geometrietext       fkon;           //Fräskonturen
+    werkzeug            w;              //Werkzeug
 
     float   werkstuecklaenge;
     float   werkstueckbreite;
@@ -144,6 +149,7 @@ private:
             void    aktualisiere_klartext_var_geo();
             void    aktualisiere_anzeigetext();
             void    aktualisiere_wkz();
+            void    aktualisiere_fkon();
 
 
 

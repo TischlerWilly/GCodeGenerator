@@ -12,6 +12,25 @@ strecke::strecke()
     laenge3d = 0;
 }
 
+strecke::strecke(QString geotext)
+{
+    text_zeilenweise tz;
+    tz.set_trennzeichen(TRZ_PA_);
+    tz.set_text(geotext);
+    punkt3d p;
+    p.set_x(tz.zeile(2).toDouble());
+    p.set_y(tz.zeile(3).toDouble());
+    p.set_z(tz.zeile(4).toDouble());
+    set_start(p);
+    p.set_x(tz.zeile(5).toDouble());
+    p.set_y(tz.zeile(6).toDouble());
+    p.set_z(tz.zeile(7).toDouble());
+    set_ende(p);
+    set_farbe(tz.zeile(8));
+    set_breite(tz.zeile(9).toInt());
+    set_stil(tz.zeile(10));
+}
+
 void strecke::set_start(punkt3d startpunkt)
 {
     start = startpunkt;

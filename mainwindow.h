@@ -122,7 +122,7 @@ signals:
     void sendVariablen(text_zeilenweise variablen);
     void sendAktiveProgrammzeile(int zeilennummer);
     void send_an_programmlisten(QString prgtext, QString klartext, \
-                        QString variabel, QString geometrietext);
+                        QString variabel, QString geotext, QString fkon);
 
 private:
         //Objekte:
