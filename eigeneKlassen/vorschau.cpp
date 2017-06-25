@@ -521,6 +521,124 @@ void vorschau::paintEvent(QPaintEvent *)
             }
         }
     }
+
+    text_zeilenweise fkontext = t.get_fkon().get_text_zeilenweise();
+    for(uint i=1;i<=fkontext.zeilenanzahl();i++)
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(fkontext.zeile(i));
+
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            text_zeilenweise element;
+            element.set_trennzeichen(TRZ_PA_);
+            element.set_text(spalten.zeile(ii));
+
+            if(element.get_text().contains(STRECKE))
+            {
+                punkt2d startpunkt, endpunkt;
+                startpunkt.set_x(element.zeile(2).toDouble()*sf*zf);
+                startpunkt.set_y(element.zeile(3).toDouble()*sf*zf);
+                endpunkt.set_x(element.zeile(5).toDouble()*sf*zf);
+                endpunkt.set_y(element.zeile(6).toDouble()*sf*zf);
+
+                QPen pen, pen_alt;
+                pen_alt = painter.pen();
+                pen.setWidth(element.zeile(9).toInt());
+                pen.setStyle(set_linienstil(element.zeile(10)));
+                if(i==aktuelle_zeilennummer)
+                {
+                    pen.setColor(Qt::red);
+                }else
+                {
+                    pen.setColor(set_farbe(element.zeile(8)));
+                }
+                pen.setCapStyle(Qt::RoundCap);
+                painter.setPen(pen);
+
+                painter.drawLine(n.x-npv.x+startpunkt.x(), \
+                                 n.y-npv.y-startpunkt.y(), \
+                                 n.x-npv.x+endpunkt.x(), \
+                                 n.y-npv.y-endpunkt.y());
+
+                painter.setPen(pen_alt);
+            }else if(element.get_text().contains(BOGEN))
+            {
+                double rad = element.zeile(8).toDouble()*sf*zf;
+                punkt2d mipu;
+                mipu.set_x(element.zeile(10).toDouble()*sf*zf);//Mittelpunkt in X
+                mipu.set_y(element.zeile(11).toDouble()*sf*zf);//Mittelpunkt in Y
+                punkt2d obli;
+                obli.set_x(mipu.x()-rad);
+                obli.set_y(mipu.y()+rad);
+
+                punkt2d mp;
+                mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
+                mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
+                punkt2d sp;
+                sp.set_x(element.zeile(2).toDouble());//Start in X
+                sp.set_y(element.zeile(3).toDouble());//Start in Y
+                punkt2d ep;
+                ep.set_x(element.zeile(5).toDouble());//Ende in X
+                ep.set_y(element.zeile(6).toDouble());//Ende in Y
+                double stawi=0, bogwi=0;
+
+                if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
+                {
+                    stawi = winkel(sp.x(),   \
+                                   sp.y(),   \
+                                   mp.x(),   \
+                                   mp.y());
+                    bogwi = winkel(sp.x(),   \
+                                   sp.y(),   \
+                                   mp.x(),   \
+                                   mp.y(),   \
+                                   ep.x(),   \
+                                   ep.y());
+                }else//Bogen im Uhrzeigersinn
+                {
+                    stawi = winkel(ep.x(),   \
+                                   ep.y(),   \
+                                   mp.x(),   \
+                                   mp.y());
+                    bogwi = winkel(ep.x(),   \
+                                   ep.y(),   \
+                                   mp.x(),   \
+                                   mp.y(),   \
+                                   sp.x(),   \
+                                   sp.y());
+                }
+                if(bogwi<0)
+                {
+                    bogwi = 360+bogwi;
+                }
+
+                QPen pen, pen_alt;
+                pen_alt = painter.pen();
+                pen.setWidth(element.zeile(13).toInt());
+                pen.setStyle(set_linienstil(element.zeile(14)));
+                if(i==aktuelle_zeilennummer)
+                {
+                    pen.setColor(Qt::red);
+                }else
+                {
+                    pen.setColor(set_farbe(element.zeile(12)));
+                }
+                pen.setCapStyle(Qt::RoundCap);
+                painter.setPen(pen);
+
+                painter.drawArc(n.x-npv.x+obli.x(),\
+                                n.y-npv.y-obli.y(),\
+                                rad*2,\
+                                rad*2,\
+                                stawi*16,\
+                                bogwi*16);
+
+                painter.setPen(pen_alt);
+            }
+        }
+    }
 }
 
 

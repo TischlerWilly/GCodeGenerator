@@ -38,20 +38,20 @@ MainWindow::MainWindow(QWidget *parent) :
     DateiIstOffen = false;
     hideElemets_noFileIsOpen();
 
-    QDir dir(PFAD_ZUM_PROGRAMMORDNER);
+    QDir dir(QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER);
     if(!dir.exists())
     {
         QString nachricht;
         nachricht = "Programmpfad nicht gefunden. Pfad \"";
-        nachricht += PFAD_ZUM_PROGRAMMORDNER;
+        nachricht += QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER;
         nachricht += "\" wird angelegt";
         QMessageBox mb;
         mb.setText(nachricht);
         mb.exec();
-        dir.mkdir(PFAD_ZUM_PROGRAMMORDNER);
-        dir.mkdir(PFAD_ZU_DEN_WERKZEUGBILDERN);
+        dir.mkdir(QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER);
+        dir.mkdir(QDir::homePath() + PFAD_ZU_DEN_WERKZEUGBILDERN);
 
-        QFile file(WKZ_FILE);
+        QFile file(QDir::homePath() + WKZ_FILE);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
         {
             QMessageBox mb;
@@ -156,7 +156,7 @@ QString MainWindow::loadConfig()
 {
     QString returnString = "OK";
 
-    QFile file(INI_FILE);
+    QFile file(QDir::homePath() + INI_FILE);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         konfiguration_ini_ist_vorhanden = false;
@@ -648,7 +648,7 @@ QString MainWindow::saveConfig()
     //---------------------------------------------------------------------------------------------------------
 
     //Daten Speichern:
-    QFile file(INI_FILE);
+    QFile file(QDir::homePath() + INI_FILE);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
     {
         QMessageBox mb;
@@ -802,7 +802,7 @@ void MainWindow::on_pushButton_WKZ_Speichern_clicked()
     QString inhaltWerkzeugdatei = w.get_werkzeuge();
 
     //Daten Speichern:
-    QFile file(WKZ_FILE);
+    QFile file(QDir::homePath() + WKZ_FILE);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
     {
         QMessageBox mb;
@@ -825,7 +825,7 @@ void MainWindow::on_pushButton_WKZ_Laden_clicked()
 {
     ui->listWidget_Werkzeug->clear();
 
-    QFile file(WKZ_FILE);
+    QFile file(QDir::homePath() + WKZ_FILE);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox mb;
@@ -2884,14 +2884,26 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
         tmp_geom += "\n";
     }
 
+    QString tmp_fkon;
+    tmp_fkon = "";
+    text_zeilenweise fk = t.get_fkon().get_text_zeilenweise();
+    for(uint i=1 ; i<=fk.zeilenanzahl() ; i++)
+    {
+        tmp_fkon += QString::fromStdString(int_to_string(i));
+        tmp_fkon += "--";
+        tmp_fkon += fk.zeile(i);
+        tmp_fkon += "\n";
+    }
+
     connect( this, \
-             SIGNAL(send_an_programmlisten(QString,QString,QString,QString)),\
+             SIGNAL(send_an_programmlisten(QString,QString,QString,QString,QString)),\
              &programmlisten,\
-             SLOT(daten_anzeigen(QString,QString,QString,QString)));
+             SLOT(daten_anzeigen(QString,QString,QString,QString,QString)));
     emit send_an_programmlisten(tmp_text,\
                                 tmp_klartext,\
                                 tmp_var,\
-                                tmp_geom);
+                                tmp_geom,\
+                                tmp_fkon);
 }
 
 void MainWindow::on_actionWerkzeugliste_anzeigen_triggered()
@@ -3027,47 +3039,11 @@ void MainWindow::slot_maus_pos(QPoint p)
 
 void MainWindow::on_actionTestfunktion_triggered()
 {
+    text_zeilenweise fk = t.get_fkon().get_text_zeilenweise();
 
-    punkt3d p3;
-    strecke s;
-    p3.set_x(60);
-    p3.set_y(140);
-    s.set_start(p3);
-    p3.set_x(40);
-    p3.set_y(140);
-    s.set_ende(p3);
-    //s.drenen_um_startpunkt_2d(90, false);
-
-    strecke s2 = s;
-    s2.drenen_um_startpunkt_2d(90, false);
-
-    //Winkel von s:
-    double wi1 = winkel(s.endp().x(),\
-                        s.endp().y(),\
-                        s.startp().x(),\
-                        s.startp().y());
-    //Winkel von s2:
-    double wi1b = winkel(s2.endp().x(),\
-                         s2.endp().y(),\
-                         s2.startp().x(),\
-                         s2.startp().y());
-
-    double wi2 = winkel(0,-2,\
-                       0,0);
-
-    double wi3 = winkel(-20,0,\
-                        0,0,\
-                        30,60);
-
-    double wi4 = winkel(s.endp().x(),\
-                        s.endp().y(),\
-                        s.startp().x(),\
-                        s.startp().y(),\
-                        s2.endp().x(),\
-                        s2.endp().y());
 
     QMessageBox mb;
-    mb.setText(double_to_qstring(wi3));
+    mb.setText(fk.zeile(8));
     mb.exec();
 
 }

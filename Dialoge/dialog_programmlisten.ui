@@ -115,6 +115,24 @@
      </property>
     </widget>
    </widget>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>Fraeskonturen</string>
+    </attribute>
+    <widget class="QPlainTextEdit" name="plainTextEdit_fkon">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>581</width>
+       <height>521</height>
+      </rect>
+     </property>
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
+     </property>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>

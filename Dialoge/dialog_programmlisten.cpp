@@ -14,11 +14,13 @@ Dialog_Programmlisten::~Dialog_Programmlisten()
 }
 
 void Dialog_Programmlisten::daten_anzeigen(QString prgtext, QString klartext, \
-                                           QString variabel, QString geometrietext)
+                                           QString variabel, QString geotext, \
+                                           QString fkon)
 {
     ui->plainTextEdit_programmtext->setPlainText(prgtext);
     ui->plainTextEdit_klartext->setPlainText(klartext);
     ui->plainTextEdit_variablen->setPlainText(variabel);
-    ui->plainTextEdit_geometrietext->setPlainText(geometrietext);
+    ui->plainTextEdit_geometrietext->setPlainText(geotext);
+    ui->plainTextEdit_fkon->setPlainText(fkon);
     this->show();
 }

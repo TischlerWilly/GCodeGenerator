@@ -143,7 +143,7 @@ void Dialog_Werkzeug::getDialogData(QString text, bool openToChangeData)
     ui->comboBox_Drehrichtung->setCurrentIndex(index);
 
     //QPixmap pix("./werkzeugbilder/testbild.jpg");
-    QPixmap pix(WKZ_BILDER_PFAD + text_mitte(text, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
+    QPixmap pix(QDir::homePath() + WKZ_BILDER_PFAD + text_mitte(text, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
     ui->label_bild->setPixmap(pix);
     ui->label_bild->setScaledContents(true);//Bild skallieren
 
@@ -246,7 +246,7 @@ void Dialog_Werkzeug::on_pushButton_bild_info_clicked()
 {
     QString nachricht;
     nachricht = "Im Ordner \"";
-    nachricht += WKZ_BILDER_PFAD;
+    nachricht += QDir::homePath() + WKZ_BILDER_PFAD;
     nachricht += "\" koennen Bilder der Werkzeuge abgelegt werden. Ein Bild wird im Werkzeugdialog angezeigt, wenn es nach der Nummer des Werkzeuges benannt ist. Es werden nur Bilder im JPG-Format akzeptiert.\nz.B:   1.jpg  \nfuer das Bild des Fraesers mit der Werkzeugnummer 1";
     QMessageBox mb;
     mb.setText(nachricht);
