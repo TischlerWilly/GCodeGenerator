@@ -2092,9 +2092,9 @@ void programmtext::aktualisiere_klartext_var_geo()
                             p3.set_y(s.startp().y());
                             p3.set_z(werkstueckdicke + sicherheitsabstand);
                             bogen b;
-                            b.set_startpunkt(p3);
-                            b.set_endpunkt(punkt_davor);
-                            b.set_radius(fdm*2, false);
+                            b.set_startpunkt(punkt_davor);
+                            b.set_endpunkt(p3);
+                            b.set_radius(fdm*2, true);
                             geo.add_bogen(b);
                         }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                         {
@@ -2105,9 +2105,9 @@ void programmtext::aktualisiere_klartext_var_geo()
                             p3.set_y(s.startp().y());
                             p3.set_z(werkstueckdicke + sicherheitsabstand);
                             bogen b;
-                            b.set_startpunkt(p3);
-                            b.set_endpunkt(punkt_davor);
-                            b.set_radius(fdm*2, true);
+                            b.set_startpunkt(punkt_davor);
+                            b.set_endpunkt(p3);
+                            b.set_radius(fdm*2, false);
                             geo.add_bogen(b);
                         }
 
@@ -2648,6 +2648,83 @@ void programmtext::aktualisiere_fkon()
                 {
                     double versatz = wkz_dm - kantendicke;
 
+                    if(geo_element.get_text().contains(STRECKE))
+                    {
+                        strecke s(geo_element.get_text());
+                        strecke strecke_sp = s;
+                        strecke strecke_ep = s;
+                        strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                        strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                        strecke_sp.set_laenge_2d(versatz, bezug_start);
+                        strecke_ep.set_laenge_2d(versatz, bezug_ende);
+                        strecke_sp.drenen_um_startpunkt_2d(90, false);
+                        strecke_ep.drenen_um_endpunkt_2d(90, true);
+                        punkt3d sp;
+                        sp.set_x(strecke_sp.endp().x());
+                        sp.set_y(strecke_sp.endp().y());
+                        sp.set_z(s.startp().z());
+                        punkt3d ep;
+                        ep.set_x(strecke_ep.startp().x());
+                        ep.set_y(strecke_ep.startp().y());
+                        ep.set_z(s.endp().z());
+                        s.set_start(sp);
+                        s.set_ende(ep);
+                        s.set_farbe(FARBE_BLAU);
+                        s.set_stil(STIL_GEPUNKTET);
+                        fkon.add_strecke(s);
+                    }else if(geo_element.get_text().contains(BOGEN))
+                    {
+                        bogen b(geo_element.get_text());
+                        if(b.im_uzs())
+                        {
+                            double rad_neu = b.rad() + versatz;
+                            strecke strecke_sp;
+                            strecke strecke_ep;
+                            punkt3d mipu;
+                            mipu.set_x(b.mitte().x());
+                            mipu.set_y(b.mitte().y());
+                            strecke_sp.set_start(b.start());
+                            strecke_sp.set_ende(mipu);
+                            strecke_ep.set_start(b.ende());
+                            strecke_ep.set_ende(mipu);
+                            //strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                            strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                            strecke_sp.set_laenge_2d(rad_neu, bezug_ende);
+                            strecke_ep.set_laenge_2d(rad_neu, bezug_ende);
+                            b.set_startpunkt(strecke_sp.startp());
+                            b.set_endpunkt(strecke_ep.startp());
+                            b.set_radius(rad_neu, b.im_uzs());
+                            b.set_farbe(FARBE_BLAU);
+                            b.set_stil(STIL_GEPUNKTET);
+                            fkon.add_bogen(b);
+                        }else
+                        {
+                            double rad_neu = b.rad() - versatz;
+                            if(rad_neu > 0)
+                            {
+                                strecke strecke_sp;
+                                strecke strecke_ep;
+                                punkt3d mipu;
+                                mipu.set_x(b.mitte().x());
+                                mipu.set_y(b.mitte().y());
+                                strecke_sp.set_start(b.start());
+                                strecke_sp.set_ende(mipu);
+                                strecke_ep.set_start(b.ende());
+                                strecke_ep.set_ende(mipu);
+                                //strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                                strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                                strecke_sp.set_laenge_2d(rad_neu, bezug_ende);
+                                strecke_ep.set_laenge_2d(rad_neu, bezug_ende);
+                                b.set_startpunkt(strecke_sp.startp());
+                                b.set_endpunkt(strecke_ep.startp());
+                                b.set_radius(rad_neu, b.im_uzs());
+                                b.set_farbe(FARBE_BLAU);
+                                b.set_stil(STIL_GEPUNKTET);
+                                fkon.add_bogen(b);
+                            }
+                        }
+
+                    }
 
 
 
@@ -2656,6 +2733,82 @@ void programmtext::aktualisiere_fkon()
                 {
                     double versatz = wkz_dm - kantendicke;
 
+                    if(geo_element.get_text().contains(STRECKE))
+                    {
+                        strecke s(geo_element.get_text());
+                        strecke strecke_sp = s;
+                        strecke strecke_ep = s;
+                        strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                        strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                        strecke_sp.set_laenge_2d(versatz, bezug_start);
+                        strecke_ep.set_laenge_2d(versatz, bezug_ende);
+                        strecke_sp.drenen_um_startpunkt_2d(90, true);
+                        strecke_ep.drenen_um_endpunkt_2d(90, false);
+                        punkt3d sp;
+                        sp.set_x(strecke_sp.endp().x());
+                        sp.set_y(strecke_sp.endp().y());
+                        sp.set_z(s.startp().z());
+                        punkt3d ep;
+                        ep.set_x(strecke_ep.startp().x());
+                        ep.set_y(strecke_ep.startp().y());
+                        ep.set_z(s.endp().z());
+                        s.set_start(sp);
+                        s.set_ende(ep);
+                        s.set_farbe(FARBE_BLAU);
+                        s.set_stil(STIL_GEPUNKTET);
+                        fkon.add_strecke(s);
+                    }else if(geo_element.get_text().contains(BOGEN))
+                    {
+                        bogen b(geo_element.get_text());
+                        if(b.im_uzs())
+                        {
+                            double rad_neu = b.rad() - versatz;
+                            if(rad_neu > 0)
+                            {
+                                strecke strecke_sp;
+                                strecke strecke_ep;
+                                punkt3d mipu;
+                                mipu.set_x(b.mitte().x());
+                                mipu.set_y(b.mitte().y());
+                                strecke_sp.set_start(b.start());
+                                strecke_sp.set_ende(mipu);
+                                strecke_ep.set_start(b.ende());
+                                strecke_ep.set_ende(mipu);
+                                //strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                                strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                                strecke_sp.set_laenge_2d(rad_neu, bezug_ende);
+                                strecke_ep.set_laenge_2d(rad_neu, bezug_ende);
+                                b.set_startpunkt(strecke_sp.startp());
+                                b.set_endpunkt(strecke_ep.startp());
+                                b.set_radius(rad_neu, b.im_uzs());
+                                b.set_farbe(FARBE_BLAU);
+                                b.set_stil(STIL_GEPUNKTET);
+                                fkon.add_bogen(b);
+                            }
+                        }else
+                        {
+                            double rad_neu = b.rad() + versatz;
+                            strecke strecke_sp;
+                            strecke strecke_ep;
+                            punkt3d mipu;
+                            mipu.set_x(b.mitte().x());
+                            mipu.set_y(b.mitte().y());
+                            strecke_sp.set_start(b.start());
+                            strecke_sp.set_ende(mipu);
+                            strecke_ep.set_start(b.ende());
+                            strecke_ep.set_ende(mipu);
+                            //strecke_bezugspunkt bezug_start = strecke_bezugspunkt_start;
+                            strecke_bezugspunkt bezug_ende = strecke_bezugspunkt_ende;
+                            strecke_sp.set_laenge_2d(rad_neu, bezug_ende);
+                            strecke_ep.set_laenge_2d(rad_neu, bezug_ende);
+                            b.set_startpunkt(strecke_sp.startp());
+                            b.set_endpunkt(strecke_ep.startp());
+                            b.set_radius(rad_neu, b.im_uzs());
+                            b.set_farbe(FARBE_BLAU);
+                            b.set_stil(STIL_GEPUNKTET);
+                            fkon.add_bogen(b);
+                        }
+                    }
 
 
 
@@ -2672,6 +2825,60 @@ void programmtext::aktualisiere_fkon()
 
 
 
+
+
+/*
+
+
+    QString geometrie_aktuell, geometrie_dannach;
+
+    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
+    {
+        QString zeile = klartext.zeile(i);
+        uint anz_faufruf = 0;
+        uint anz_fabfahr = 0;
+
+        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            anz_faufruf++;
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+            anz_fabfahr++;
+        }
+
+        if(  anz_faufr > anz_fabfahr  )
+        {
+            text_zeilenweise fkon_tz = fkon.get_text_zeilenweise();
+
+            text_zeilenweise fkon_tz_zeile;
+            fkon_tz_zeile.set_trennzeichen(TRZ_EL_);
+            fkon_tz_zeile.set_text(fkon_tz.zeile(i));
+
+            text_zeilenweise fkon_tz_zeile_danach;
+            fkon_tz_zeile_danach.set_trennzeichen(TRZ_EL_);
+            fkon_tz_zeile_danach.set_text(fkon_tz.zeile(i+1));
+
+            if(fkon_tz_zeile.zeilenanzahl() == 1)
+            {
+                geometrie_aktuell = fkon_tz_zeile.get_text();
+            }else
+            {
+
+            }
+
+
+
+
+
+
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+
+        }
+    }
+
+    }
+*/
 
 }
 
