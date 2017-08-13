@@ -2577,6 +2577,11 @@ void programmtext::aktualisiere_fkon()
     double wkz_dm = 0;
     double kantendicke = 0;
 
+    tabelle_tz3 tab_fkon;
+    tab_fkon.set_trennzeichen_zeilen('\n');
+    tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
+    tab_fkon.set_trennzeichen_eintraege(TRZ_PA_);//Farbe, Länge ...
+
     for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
     {
         QString zeile = klartext.zeile(i);
@@ -2822,6 +2827,8 @@ void programmtext::aktualisiere_fkon()
         }
 
     }
+
+
 
 
 

@@ -7,7 +7,8 @@
     ->Funktion aktualisiere_fkon()
        >Übergänge müssen noch berechnet werden (Geraden kürzen oder verlängern + Bogen sp und EP verschieben)
 
--->die Klasse tabelle fertigstellen, diese soll helfen fkon fertig zu stellen
+-->die Klasse tabelle_tz3 fertigstellen, diese soll helfen fkon fertig zu stellen
+
 
 
 
