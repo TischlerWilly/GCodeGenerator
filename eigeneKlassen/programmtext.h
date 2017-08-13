@@ -10,6 +10,7 @@
 #include "rechtecktasche.h"
 #include "geometrietext.h"
 #include "werkzeug.h"
+#include "tabelle_tz3.h"
 
 
 class programmtext
