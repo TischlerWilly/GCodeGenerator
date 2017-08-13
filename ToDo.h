@@ -12,6 +12,7 @@
 
 
 
+
 -->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
 
