@@ -2575,12 +2575,7 @@ void programmtext::aktualisiere_fkon()
     QString bahnkorr = BAHNRORREKTUR_keine;
     QString wkz_aktuell = "";
     double wkz_dm = 0;
-    double kantendicke = 0;
-
-    tabelle_tz3 tab_fkon;
-    tab_fkon.set_trennzeichen_zeilen('\n');
-    tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
-    tab_fkon.set_trennzeichen_eintraege(TRZ_PA_);//Farbe, Länge ...
+    double kantendicke = 0; 
 
     for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
     {
@@ -2623,6 +2618,7 @@ void programmtext::aktualisiere_fkon()
                  zeile.contains(FRAESERBOGEN_DIALOG)   || \
                  zeile.contains(FRAESERABFAHREN_DIALOG)  )
         {
+
             text_zeilenweise geo_zeile;
             geo_zeile.set_trennzeichen(TRZ_EL_);
             geo_zeile.set_text(geo.get_text_zeilenweise().zeile(i));
@@ -2731,9 +2727,6 @@ void programmtext::aktualisiere_fkon()
 
                     }
 
-
-
-
                 }else  //bahnkorr == BAHNRORREKTUR_rechts
                 {
                     double versatz = wkz_dm - kantendicke;
@@ -2821,14 +2814,58 @@ void programmtext::aktualisiere_fkon()
 
                 }
             }
-
-
             fkon.zeilenvorschub();
         }
+    }
 
+    //----------------------------------------------------------------------------
+    //Übergänge verbinden nach parallelverschiebung:
+
+    tabelle_tz3 tab_fkon;
+    tab_fkon.set_trennzeichen_zeilen('\n');
+    tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
+    tab_fkon.set_text(fkon.get_text());
+    uint anz_faufruf = 0;
+    uint anz_fabfahr = 0;
+
+    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
+    {
+        QString zeile = klartext.zeile(i);
+
+        //die aktuelle Zeile mit der Zeile davor verbinden:
+        if(anz_faufruf > anz_fabfahr)
+        {
+            for(uint ii=1 ; ii<tab_fkon.get_spaltenzahl(i) ; ii++)//Spaltenzahl ist aus einem mir noch nicht bekannten Grund um 1 zu groß!!! desshalb < und nicht <=
+            {
+                QString spalte_jetzt = tab_fkon.get_spalte(i,ii);
+                QString spalte_davor = tab_fkon.vorherigespalte(i,ii);
+
+                trimmen(&spalte_davor, &spalte_jetzt);
+
+                /*
+                QMessageBox mb;
+                mb.setText(int_to_qstring(i) + "/" + int_to_qstring(ii) + "\n" + \
+                           "Spalte davor: " + spalte_davor + "\n" + \
+                           "Spalte jetzt: " + spalte_jetzt );
+                mb.exec();
+                */
+                tab_fkon.vorherigespalte_ersaetzen(i,ii,spalte_davor);
+                tab_fkon.spalte_ersatzen(i,ii,spalte_jetzt);
+            }
+        }
+        //----------------------------------------
+        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            anz_faufruf++;
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+            anz_fabfahr++;
+        }
     }
 
 
+    //Daten in fkon zurückspeichern
+    fkon.set_text(tab_fkon.get_text());
 
 
 

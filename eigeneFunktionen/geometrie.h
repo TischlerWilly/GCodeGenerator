@@ -27,4 +27,6 @@ double winkel(double endpunkt1_x, double endpunkt1_y,\
               double mittelpunkt_x, double mittelpunkt_y,\
               double endpunkt2_x, double endpunkt2_y);
 
+void trimmen(QString *geo1, QString *geo2);
+
 #endif // GEOMETRIE_H

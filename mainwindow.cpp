@@ -3041,9 +3041,18 @@ void MainWindow::on_actionTestfunktion_triggered()
 {
     text_zeilenweise fk = t.get_fkon().get_text_zeilenweise();
 
+    tabelle_tz3 tab_fkon;
+    tab_fkon.set_trennzeichen_zeilen('\n');
+    tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
+
+    tab_fkon.set_text(fk.get_text());
+
+
 
     QMessageBox mb;
-    mb.setText(fk.zeile(8));
+    //mb.setText(tab_fkon.vorherigespalte(8,1));
+    //mb.setText(tab_fkon.get_spalten());
+    mb.setText(tab_fkon.get_spalte(11,2));
     mb.exec();
 
 }

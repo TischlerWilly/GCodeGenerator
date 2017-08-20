@@ -56,7 +56,6 @@ SOURCES += \
     eigeneKlassen/wuerfel.cpp \
     eigeneKlassen/tabelle_tz3.cpp
 
-
 HEADERS  += \
     mainwindow.h \
     Dialoge/dialog_werkzeug.h \
@@ -104,7 +103,6 @@ HEADERS  += \
     eigeneKlassen/rechteck3d.h \
     eigeneKlassen/wuerfel.h \
     eigeneKlassen/tabelle_tz3.h
-
 
 FORMS    += \
     mainwindow.ui \
