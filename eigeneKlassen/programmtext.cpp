@@ -1296,7 +1296,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             }else if(zeile.contains(PROGRAMMENDE_DIALOG))
             {
                 geo.zeilenvorschub();
-            }else if(zeile.contains(VARIABLE_DIALOG))
+            }else if(text.zeile(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
             {
                 geo.zeilenvorschub();
             }else if(zeile.contains(KOMMENTAR_DIALOG))
@@ -2601,7 +2601,7 @@ void programmtext::aktualisiere_fkon()
         }else if(zeile.contains(PROGRAMMENDE_DIALOG))
         {
             fkon.zeilenvorschub();
-        }else if(zeile.contains(VARIABLE_DIALOG))
+        }else if(text.zeile(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
         {
             fkon.zeilenvorschub();
         }else if(zeile.contains(KOMMENTAR_DIALOG))
@@ -2832,6 +2832,23 @@ void programmtext::aktualisiere_fkon()
     {
         QString zeile = klartext.zeile(i);
 
+        if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+            anz_fabfahr = 0;
+            anz_faufruf = 0;
+        }
+        //Prüfen, ob Anfahrty = kein gesetzt ist!!
+        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            QString anftyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
+            if(anftyp == ANABFAHRTYP_KEIN)
+            {
+                anz_faufruf++;
+                i++;
+                continue;
+            }
+        }
+
         //die aktuelle Zeile mit der Zeile davor verbinden:
         if(anz_faufruf > anz_fabfahr)
         {
@@ -2842,13 +2859,6 @@ void programmtext::aktualisiere_fkon()
 
                 trimmen(&spalte_davor, &spalte_jetzt);
 
-                /*
-                QMessageBox mb;
-                mb.setText(int_to_qstring(i) + "/" + int_to_qstring(ii) + "\n" + \
-                           "Spalte davor: " + spalte_davor + "\n" + \
-                           "Spalte jetzt: " + spalte_jetzt );
-                mb.exec();
-                */
                 tab_fkon.vorherigespalte_ersaetzen(i,ii,spalte_davor);
                 tab_fkon.spalte_ersatzen(i,ii,spalte_jetzt);
             }
@@ -2857,9 +2867,6 @@ void programmtext::aktualisiere_fkon()
         if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
             anz_faufruf++;
-        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
-        {
-            anz_fabfahr++;
         }
     }
 

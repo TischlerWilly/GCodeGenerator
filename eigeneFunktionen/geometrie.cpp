@@ -158,6 +158,8 @@ double winkel(double endpunkt1_x, double endpunkt1_y,\
 
 void trimmen(QString *geo1, QString *geo2)
 {
+    //die Funktion kann derzeit nur Strecken trimmen!
+
     QString a = *geo1;
     QString b = *geo2;
     if(a.contains(STRECKE) && b.contains(STRECKE))
@@ -172,37 +174,75 @@ void trimmen(QString *geo1, QString *geo2)
 
         punkt3d schnittpunkt;
         schnittpunkt.set_z(s1.endp().z());
-        //Schnittpunkt der beiden Geraden berechnen
-        //Geradengleichungen aufstellen y = m*x + t:
-        //m = (y2-y1):(x2-x1)
-        double m1 = (  s1.endp().y()-s1.startp().y()  )  /  (  s1.endp().x()-s1.startp().x()  );
-        double m2 = (  s2.endp().y()-s2.startp().y()  )  /  (  s2.endp().x()-s2.startp().x()  );
-        //t = y1 - (m1*x1)
-        double t1 = s1.startp().y()  -  (m1*s1.startp().x());
-        double t2 = s2.startp().y()  -  (m2*s2.startp().x());
-        //Geradengleichungen gleichsetzen:
-        //m1*x+t1 = m2*x+t2     /-m2*x
-        //(m1-m2)*x+t1 = t2     /-t1
-        //(m1-m2)*x = t2-t1     / :(m1-m2)
-        //x = (t2-t1):(m1-m2)
-        double x = (t2-t1)/(m1-m2);
-        //x in eine der beiden Gleichungen einsetzen:
-        //y = m1*x+t1
-        double y = m1*x+t1;
+        //Schnittpunkt der beiden Geraden berechnen:
+        if(s1.startp().x()!=s1.endp().x()  &&  s2.startp().x()!=s2.endp().x())//sonst div/0 möglich
+        {
+            //Geradengleichungen aufstellen y = m*x + t:
+            //m = (y2-y1):(x2-x1)
+            double m1 = (  s1.endp().y()-s1.startp().y()  )  /  (  s1.endp().x()-s1.startp().x()  );
+            double m2 = (  s2.endp().y()-s2.startp().y()  )  /  (  s2.endp().x()-s2.startp().x()  );
+            //t = y1 - (m1*x1)
+            double t1 = s1.startp().y()  -  (m1*s1.startp().x());
+            double t2 = s2.startp().y()  -  (m2*s2.startp().x());
+            //Geradengleichungen gleichsetzen:
+            //m1*x+t1 = m2*x+t2     /-m2*x
+            //(m1-m2)*x+t1 = t2     /-t1
+            //(m1-m2)*x = t2-t1     / :(m1-m2)
+            //x = (t2-t1):(m1-m2)
+            double x = (t2-t1)/(m1-m2);
+            //x in eine der beiden Gleichungen einsetzen:
+            double y = m1*x+t1;
 
-        schnittpunkt.set_x(x);
-        schnittpunkt.set_y(y);
+            schnittpunkt.set_x(x);
+            schnittpunkt.set_y(y);
+            s1.set_ende(schnittpunkt);
+            s2.set_start(schnittpunkt);
+        }else
+        {
+            if(s1.startp().x()==s1.endp().x()  &&  s2.startp().x()!=s2.endp().x())//s1 ist senkrecht
+            {
+                //heißt x von s1 ist bekannt
+                //Geradengleichungen aufstellen für s2     y = m*x + t:
+                double m = (  s2.endp().y()-s2.startp().y()  )  /  (  s2.endp().x()-s2.startp().x()  );
+                //t = y1 - (m*x)
+                double t = s2.startp().y()  -  (m*s2.startp().x());
+                double x = s1.startp().x();
+                //x in die Gleichung einsetzen:
+                double y = m*x+t;
 
-        s1.set_ende(schnittpunkt);
-        s2.set_start(schnittpunkt);
+                schnittpunkt.set_x(x);
+                schnittpunkt.set_y(y);
+                s1.set_ende(schnittpunkt);
+                s2.set_start(schnittpunkt);
+            }else if(s1.startp().x()!=s1.endp().x()  &&  s2.startp().x()==s2.endp().x())//s2 ist senkrecht
+            {
+                //heißt x von s2 ist bekannt
+                //Geradengleichungen aufstellen für s1     y = m*x + t:
+                double m = (  s1.endp().y()-s1.startp().y()  )  /  (  s1.endp().x()-s1.startp().x()  );
+                //t = y - (m*x)
+                double t = s1.startp().y()  -  (m*s1.startp().x());
+                double x = s2.startp().x();
+                //x in die Gleichung einsetzen:
+                double y = m*x+t;
+
+                schnittpunkt.set_x(x);
+                schnittpunkt.set_y(y);
+                s1.set_ende(schnittpunkt);
+                s2.set_start(schnittpunkt);
+            }else
+            {
+                //beide geraden sind senkrecht
+                //soetwas sollte nicht an die Funktion übergeben werden
+            }
+        }
 
         //Werte zurück in die geo-QStrings schreiben:
         *geo1 = s1.get_text();
         *geo2 = s2.get_text();
 
-        QMessageBox mb;
-        mb.setText("m1: " + double_to_qstring(m1) + "\nm2: " + double_to_qstring(m2));
-        mb.exec();
+        //QMessageBox mb;
+        //mb.setText("m1: " + double_to_qstring(m1) + "\nm2: " + double_to_qstring(m2));
+        //mb.exec();
     }
 
 

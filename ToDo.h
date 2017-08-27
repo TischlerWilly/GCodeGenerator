@@ -3,19 +3,14 @@
 
 /*
 
--->fkon in der Klasse Programmtext mit Leben füllen
-    ->Funktion aktualisiere_fkon()
-       >Übergänge müssen noch berechnet werden (Geraden kürzen oder verlängern + Bogen sp und EP verschieben)
-       >die Funktion "trimmen" in der Datei geometrie.cpp fertigstellen
-        >>die Funktion hat noch eine Falsche Ausgabe wenn die eine Gerade senkrecht ist!!!,
-          also wenn stratp.x() == endp.x()
-          dann wäre Division durch 0 :-(
-
 
 
 -->Noch Fehler im Ecken-Verrunden siehe Programm "TestEckenVerrunden.ggf"
 
-
+-->nicht erlaubt in Variablen-Nahmen:
+  Zahlen            z.B: x1
+  Unterstriche      z.B: RASTER_X
+  ->Eingabe der nicht erlaubten Namen muss verhindert werden!!!
 
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
