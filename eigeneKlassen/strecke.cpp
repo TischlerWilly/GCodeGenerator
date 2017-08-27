@@ -186,3 +186,28 @@ void strecke::set_laenge_2d(float neue_laenge, strecke_bezugspunkt bezugspunkt)
         break;
     }
 }
+
+QString strecke::get_text()
+{
+    QString msg = STRECKE;
+    msg += TRZ_PA;
+    msg += startp().x_QString();
+    msg += TRZ_PA;
+    msg += startp().y_QString();
+    msg += TRZ_PA;
+    msg += startp().z_QString();
+    msg += TRZ_PA;
+    msg += endp().x_QString();
+    msg += TRZ_PA;
+    msg += endp().y_QString();
+    msg += TRZ_PA;
+    msg += endp().z_QString();
+    msg += TRZ_PA;
+    msg += get_farbe();
+    msg += TRZ_PA;
+    msg += get_breite_qstring();
+    msg += TRZ_PA;
+    msg += get_stil();
+
+    return msg;
+}

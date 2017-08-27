@@ -61,6 +61,8 @@ public:
     punkt3d get_mittelpunkt3d();
     punkt2d get_mittelpunkt2d();
 
+    QString get_text();
+
 private:
     punkt3d start, ende;
     double laenge3d, laenge2d;

@@ -128,3 +128,10 @@ void geometrietext::add_wuerfel(wuerfel w)
                          w.get_breite_qstring() + TRZ_PA + \
                          w.get_stil() + TRZ_EL);
 }
+
+void geometrietext::set_text(QString neuer_text)
+{
+    text.clear();
+    text.set_text(neuer_text);
+    aktuelle_zeile=1;
+}
