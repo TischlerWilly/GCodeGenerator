@@ -3,14 +3,11 @@
 
 /*
 
+G-Code ausgeben für freie Fräskonturen
 
-
--->Noch Fehler im Ecken-Verrunden siehe Programm "TestEckenVerrunden.ggf"
-
--->nicht erlaubt in Variablen-Nahmen:
-  Zahlen            z.B: x1
-  Unterstriche      z.B: RASTER_X
-  ->Eingabe der nicht erlaubten Namen muss verhindert werden!!!
+-->void MainWindow::on_actionGCode_berechnen_triggered()
+    ->Faufruf komische Tiefenzustellung beim Anfahren
+    ->Fabfahren noch programmieren
 
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen

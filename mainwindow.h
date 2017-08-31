@@ -204,6 +204,7 @@ private:
     bool hat_werkzeugliste_fehler();
     QString klammern_wecklassen(QString text);
 
+
 };
 
 #endif // MAINWINDOW_H
