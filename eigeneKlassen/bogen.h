@@ -21,6 +21,7 @@ public:
     {
         set_radius(radiuswert.toFloat(), im_uhrzeigersinn);
     }
+    void set_radius(float radiuswert, punkt2d bogenrichtung);
 
     inline punkt3d start()
     {

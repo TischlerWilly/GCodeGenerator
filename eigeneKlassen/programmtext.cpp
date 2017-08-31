@@ -1663,7 +1663,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                      }
                 }
 
-
                 if(!zeile_davor.contains(FRAESERGERADE_DIALOG))
                 {
                      if(zeile_davor.contains(FRAESERAUFRUF_DIALOG) ||  \
@@ -1687,7 +1686,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                              p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
                              s2.set_ende(p3);
                              double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
-                             strecke s3 = s;
+                             strecke s3 = s;//s3 prüft, ob die Geraden in einer Linie zueinander liegen
                              strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
                              s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
 
@@ -1705,6 +1704,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                                       endpunkt.y(),\
                                                       s2.endp().x(),\
                                                       s2.endp().y());
+
                                  if(wink<0)
                                  {
                                      wink = -1*wink;
@@ -1712,6 +1712,10 @@ void programmtext::aktualisiere_klartext_var_geo()
                                  double alpha = wink/2;
                                  double seite_a = rad_akt;
                                  double seite_b = seite_a/tan_d(alpha);
+                                 if(seite_b<0)
+                                 {
+                                     seite_b = seite_b*-1;
+                                 }
                                  //---------------------------------------------------
 
                                  strecke_bezugspunkt sb = strecke_bezugspunkt_start;
@@ -1723,20 +1727,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                                  b.set_endpunkt(s2.startp());
 
                                  //------------------------------------------------------------------------
-                                 b.set_radius(rad_akt, false);
+                                 b.set_radius(rad_akt, startpunkt);
                                  if(b.hat_fehler())
                                  {
                                      QMessageBox mb;
                                      mb.setText("Bogen hat Fehler");
                                      mb.exec();
-                                 }
-                                 //Ungenauigkeiten durch runden ausgleichen:
-                                 if(b.mittelpunkt().x() <= endpunkt.x()+rad_akt/1.1  &&
-                                    b.mittelpunkt().x() >= endpunkt.x()-rad_akt/1.1  &&
-                                    b.mittelpunkt().y() <= endpunkt.y()+rad_akt/1.1  &&
-                                    b.mittelpunkt().y() >= endpunkt.y()-rad_akt/1.1)
-                                 {
-                                     b.set_radius(rad_akt, true);
                                  }
                                  //------------------------------------------------------------------------
 
@@ -1910,20 +1906,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                              b.set_endpunkt(s2.startp());
 
                              //------------------------------------------------------------------------
-                             b.set_radius(rad_akt, false);
+                             b.set_radius(rad_akt, startpunkt);
                              if(b.hat_fehler())
                              {
                                  QMessageBox mb;
                                  mb.setText("Bogen hat Fehler");
                                  mb.exec();
-                             }
-                             //Ungenauigkeiten durch runden ausgleichen:
-                             if(b.mittelpunkt().x() <= endpunkt.x()+rad_akt/1.1  &&
-                                b.mittelpunkt().x() >= endpunkt.x()-rad_akt/1.1  &&
-                                b.mittelpunkt().y() <= endpunkt.y()+rad_akt/1.1  &&
-                                b.mittelpunkt().y() >= endpunkt.y()-rad_akt/1.1)
-                             {
-                                 b.set_radius(rad_akt, true);
                              }
                              //------------------------------------------------------------------------
 
@@ -2844,7 +2832,16 @@ void programmtext::aktualisiere_fkon()
             if(anftyp == ANABFAHRTYP_KEIN)
             {
                 anz_faufruf++;
-                i++;
+                while(text.zeile(i+1).at(0)=='/'  &&  \
+                      text.zeile(i+1).at(1)=='/'  &&  \
+                      i+1 < text.zeilenanzahl())
+                {
+                    i++;
+                }
+                if(i+1 < text.zeilenanzahl())
+                {
+                    i++;
+                }
                 continue;
             }
         }
@@ -2932,6 +2929,18 @@ void programmtext::aktualisiere_fkon()
 */
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

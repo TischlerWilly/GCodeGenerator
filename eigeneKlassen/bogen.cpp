@@ -59,7 +59,6 @@ void bogen::set_endpunkt(punkt3d endpunkt)
     endp = endpunkt;
 }
 
-
 void bogen::set_radius(float radiuswert, bool im_uhrzeigersinn)
 {
     radius = radiuswert;
@@ -100,5 +99,19 @@ void bogen::set_radius(float radiuswert, bool im_uhrzeigersinn)
             mittelp.set_x(stre_tmp.endp().x());
             mittelp.set_y(stre_tmp.endp().y());
         }
+    }
+}
+
+void bogen::set_radius(float radiuswert, punkt2d bogenrichtung)
+{
+    double w = winkel(startp.x(), startp.y(),\
+                      bogenrichtung.x(), bogenrichtung.y(),\
+                      endp.x(), endp.y());
+    if(w<0)
+    {
+        set_radius(radiuswert, true);
+    }else
+    {
+        set_radius(radiuswert, false);
     }
 }

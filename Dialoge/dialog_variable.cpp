@@ -46,6 +46,29 @@ QString Dialog_Variable::dialogDataToString()
 
 void Dialog_Variable::on_pushButton_OK_clicked()
 {
+    if(ui->lineEdit_Bezeichnung->text().contains("_"))
+    {
+        QMessageBox mb;
+        mb.setText("Unerlaubtes Zeichen im Namen \"_\"!");
+        mb.exec();
+        return;
+    }else if(ui->lineEdit_Bezeichnung->text().contains("0")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("1")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("2")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("3")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("4")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("5")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("6")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("7")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("8")  ||  \
+             ui->lineEdit_Bezeichnung->text().contains("9")  )
+    {
+        QMessageBox mb;
+        mb.setText("Name darf keine Zahlen enthalten!");
+        mb.exec();
+        return;
+    }
+
     QString msg = dialogDataToString();
     this->hide();
     if(openToModifyData)
