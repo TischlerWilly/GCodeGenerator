@@ -1727,7 +1727,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                                  b.set_endpunkt(s2.startp());
 
                                  //------------------------------------------------------------------------
-                                 b.set_radius(rad_akt, startpunkt);
+//--------->
+                                 b.set_radius(rad_akt, endpunkt);
                                  if(b.hat_fehler())
                                  {
                                      QMessageBox mb;
@@ -1906,7 +1907,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                              b.set_endpunkt(s2.startp());
 
                              //------------------------------------------------------------------------
-                             b.set_radius(rad_akt, startpunkt);
+//----->
+                             b.set_radius(rad_akt, endpunkt);
                              if(b.hat_fehler())
                              {
                                  QMessageBox mb;
@@ -2135,9 +2137,9 @@ void programmtext::aktualisiere_klartext_var_geo()
                             p3.set_y(s.startp().y());
                             p3.set_z(werkstueckdicke + sicherheitsabstand);
                             bogen b;
-                            b.set_startpunkt(p3);
-                            b.set_endpunkt(punkt_davor);
-                            b.set_radius(fdm*2, false);
+                            b.set_startpunkt(punkt_davor);
+                            b.set_endpunkt(p3);
+                            b.set_radius(fdm*2, true);
                             geo.add_bogen(b);
                         }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                         {
@@ -2152,9 +2154,9 @@ void programmtext::aktualisiere_klartext_var_geo()
                             p3.set_y(s.startp().y());
                             p3.set_z(werkstueckdicke + sicherheitsabstand);
                             bogen b;
-                            b.set_startpunkt(p3);
-                            b.set_endpunkt(punkt_davor);
-                            b.set_radius(fdm*2, true);
+                            b.set_startpunkt(punkt_davor);
+                            b.set_endpunkt(p3);
+                            b.set_radius(fdm*2, false);
                             geo.add_bogen(b);
                         }
                     }

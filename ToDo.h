@@ -2,13 +2,12 @@
 #define TODO_H
 
 /*
+-->Funktion Trimmen vervollständigen:
+    ->Trimmen Geraden zu Bögen
+            >hier bei nächsten Mal weiter machen
+    ->Trimmen Bogen zu Bogen
 
-G-Code ausgeben für freie Fräskonturen
-
--->void MainWindow::on_actionGCode_berechnen_triggered()
-    ->Faufruf komische Tiefenzustellung beim Anfahren
-    ->Fabfahren noch programmieren
-
+-->Fräsernahmen automatisch mit in der Programmliste anzeigen bei Aufruf Fräser
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
@@ -36,23 +35,19 @@ G-Code ausgeben für freie Fräskonturen
 
 
 ----------Bereich G-Code:
-    -->Ausgabe von Klammern ( und ) aus Textfeldern in G-Code-Erzeugung unterdrücken,
-        damit diese in Programminternen Kommentaren genutzt werden können
-        ->bei neu hinzukommenden Dialogen jeweils daran denken
--->Ausgabe der neuen Dialoge möglich machen
-    ->Fräseraufruf
-    ->gerade Fräsbahn
-    ->runde Fräsbahn
-    ->Abfahren
+###    -->Ausgabe von Klammern ( und ) aus Textfeldern in G-Code-Erzeugung unterdrücken,
+###        damit diese in Programminternen Kommentaren genutzt werden können
+###        ->bei neu hinzukommenden Dialogen jeweils daran denken
+
 
 
 ----------Bereich Werkzeug:
-    -->AUTO-Werte möglich machen
-        ist umgesetzt, muss jedoch in der Funktion
-            void MainWindow::on_actionGCode_berechnen_triggered()
-        und der Funktion
-            void programmtext::aktualisiere_klartext_und_var()
-        berücksichtigt werden wenn neue Elemente hinzukommen
+###    -->AUTO-Werte möglich machen
+###        ist umgesetzt, muss jedoch in der Funktion
+###            void MainWindow::on_actionGCode_berechnen_triggered()
+###        und der Funktion
+###            void programmtext::aktualisiere_klartext_und_var()
+###        berücksichtigt werden wenn neue Elemente hinzukommen
 
 
 
