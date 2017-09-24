@@ -243,6 +243,61 @@ void trimmen(QString *geo1, QString *geo2)
         //QMessageBox mb;
         //mb.setText("m1: " + double_to_qstring(m1) + "\nm2: " + double_to_qstring(m2));
         //mb.exec();
+    }else if(a.contains(STRECKE) && b.contains(BOGEN))
+    {
+        strecke s(a);
+        bogen b(b);
+
+        //Kreisformel aufstellen:
+        //  mx = Kreismittelpunkt X-Wert
+        //  my = Kreismittelpunkt Y-Wert
+        //  r  = Kreisradius
+        //  (x-mx)²+(y-my)²=r²
+        double mx = b.mitte().x();
+        double my = b.mitte().y();
+        double r  = b.rad();
+
+        //Geradenformel aufstellen:
+        //  y = m*x+n
+        //  m = (y2-y1)/(x2-x1) =Steigung
+        //    x1 = X-Wert der vom Startpunkt der Strecke
+        //    x2 = X-Wert der vom Endpunkt der Strecke
+        //    y1 = Y-Wert der vom Startpunkt der Strecke
+        //    y2 = Y-Wert der vom Endpunkt der Strecke
+        double x1= s.startp().x();
+        double x2= s.endp().x();
+        double y1= s.startp().y();
+        double y2= s.endp().y();
+        double m = (y2-y1)/(x2-x1);
+        //  n = Länge -->N bekommt man raus indem man m in die Geradenformel einsetzt
+        //               mit den Werten von einem der Punkte
+        //    y1 = m*x1+n   /-m*x1
+        //    n = y1-m*x1
+        double n = y1-m*x1;
+
+        //Geradenformel in Kreisformel einsetzen:
+        //  (x-mx)²+(   y   -my)²=r²
+        //  (x-mx)²+((m*x+n)-my)²=r²
+
+        //Lösung mit ABC-Formel eritteln:
+        //  allgemeine Form:
+        //  a*x² + b*x + c = 0
+        //    Formel Umstellen:
+        //    (x-mx)²+((m*x+n)-my)² = r²    //Wurzel ziehen??
+
+
+
+
+
+
+
+        //Werte zurück in die geo-QStrings schreiben:
+        *geo1 = s.get_text();
+        //*geo2 = b.get_text();
+
+    }else if(a.contains(BOGEN) && b.contains(STRECKE))
+    {
+
     }
 
 

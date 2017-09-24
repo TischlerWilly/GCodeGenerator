@@ -6,6 +6,7 @@
 #include "../eigeneMakros/makro_geometrie.h"
 #include "../eigeneKlassen/punkt2d.h"
 #include "../eigeneKlassen/strecke.h"
+#include "../eigeneKlassen/bogen.h"
 
 
 

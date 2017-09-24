@@ -104,14 +104,37 @@ void bogen::set_radius(float radiuswert, bool im_uhrzeigersinn)
 
 void bogen::set_radius(float radiuswert, punkt2d bogenrichtung)
 {
-    double w = winkel(startp.x(), startp.y(),\
-                      bogenrichtung.x(), bogenrichtung.y(),\
-                      endp.x(), endp.y());
-    if(w<0)
+
+    //Es muss geprüft werden, ob der Punkt links oder rechts von der Strecke liegt,
+    //die vom Bogenstart- bis Bogenendpunkt geht
+
+    /*
+     * p = (px-x1)*(y1-y2) + (py-y1)*(x2-x1)
+     * p = 0 : Punkt auf Linie
+     * p < 0 : Punkt unter Linie
+     * p > 0 : Punkt über Linie
+    */
+
+    double px = bogenrichtung.x();
+    double py = bogenrichtung.y();
+    double x1 = start().x();
+    double x2 = ende().x();
+    double y1 = start().y();
+    double y2 = ende().y();
+
+    double p = ((px-x1)*(y1-y2)) + ((py-y1)*(x2-x1));
+
+    if(p<0)
+    {
+        set_radius(radiuswert, false);
+    }else if(p>0)
     {
         set_radius(radiuswert, true);
     }else
     {
-        set_radius(radiuswert, false);
+        //if(p=0)
+        //-->der Punkt "Bogenrichtung" liegt auf der Linie
+        fehler = true;
+        fehlertext = "Bogenrichtung nicht bestimmbar!";
     }
 }
