@@ -10,6 +10,18 @@ dialog_settings::dialog_settings(QWidget *parent) :
 {
     ui->setupUi(this);
     openToModifyData = false;
+    QString msg = "Pfad Werkzeugtabelle von ";
+    msg += PROGRAMMNAME;
+    msg += ":\n";
+    msg += QDir::homePath();
+    msg += WKZ_FILE;
+    ui->label_werkzeugliste_pfad->setText(msg);
+    msg = "Pfad Konfigurationsdatei von ";
+    msg += PROGRAMMNAME;
+    msg += ":\n";
+    msg += QDir::homePath();
+    msg += INI_FILE;
+    ui->label_konfig_pfad->setText(msg);
 }
 
 dialog_settings::~dialog_settings()

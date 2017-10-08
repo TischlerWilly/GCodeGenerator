@@ -9,7 +9,7 @@
 #define DATEIENDUNG_EIGENE          ".ggf"
 #define DATEIENDUNG_BACKUP          ".bak_"
 #define DATEIENDUNG_GCODE           ".ngc"
-#define PROGRAMMNAME                "GCODEGENDERATORGUI"
+#define PROGRAMMNAME                "GCodeGenerator"
 #define SICHERHEITSABSTAND_WERT     "5"
 
 //-------------------------------------------------------------------------------------------------------------------------------

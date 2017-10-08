@@ -55,16 +55,23 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>20</y>
+     <y>50</y>
      <width>661</width>
-     <height>52</height>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="label_tooltable">
       <property name="text">
-       <string>Pfad zur Werkzeugtabelle:</string>
+       <string>Pfad zur Werkzeugtabelle von EMC2:</string>
       </property>
      </widget>
     </item>
@@ -82,15 +89,36 @@
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="Line" name="line_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_werkzeugliste_pfad">
+      <property name="text">
+       <string>zeigt den Pfad zur internen Wekzeugtabelle an</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>80</y>
+     <y>200</y>
      <width>661</width>
-     <height>54</height>
+     <height>111</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" columnstretch="3,1">
@@ -115,6 +143,19 @@
      <widget class="QSpinBox" name="spinBox_anz_undo_w"/>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_konfig_pfad">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>659</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>zeigt den Pfad zur Konfigurationsdatei an</string>
+   </property>
   </widget>
  </widget>
  <resources/>
