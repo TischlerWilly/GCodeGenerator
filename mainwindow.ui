@@ -10,9 +10,6 @@
     <height>723</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>GCODEGENERATORGUI</string>
-  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">

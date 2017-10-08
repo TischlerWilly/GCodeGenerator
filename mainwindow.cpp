@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle(PROGRAMMNAME);
     //Defaultwerte:
     kopierterEintrag_t              = NICHT_DEFINIERT;
     kopiertesWerkzeug               = NICHT_DEFINIERT;
