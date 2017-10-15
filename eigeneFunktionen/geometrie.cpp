@@ -283,8 +283,22 @@ void trimmen(QString *geo1, QString *geo2)
         //  allgemeine Form:
         //  a*x² + b*x + c = 0
         //    Formel Umstellen:
-        //    (x-mx)²+((m*x+n)-my)² = r²    //Wurzel ziehen??
-
+        //    (x-mx)²            + (y-my)²           = r²  wobei y=m*x-n
+        //    x² - 2*mx*x - mx²  + y² - 2*my*y - my² = r²
+        //    x² - 2*mx*x - mx²  + (m*x-n)² - 2*my*(m*x-n) - my² = r²
+        //    x² - 2*mx*x - mx²  + (m*x)² - 2*(m*x)*n + n² - 2*my*(m*x-n) - my² = r²
+        //    x² - 2*mx*x - mx²  + m²*x² - 2*m*x*n + n² - 2*my*(m*x-n) - my² = r²
+        //    x² - 2*mx*x   + m²*x² - 2*m*x*n  - 2*my*(m*x-n)   +n²-mx²-my² = r²
+        //    x²+(m²)*x²  -(2*mx)*x -(2*m*n)*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
+        //    (m²+1)*x²  -(2*mx)*x -(2*m*n)*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
+        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
+        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - my*(m*x-n)- my*(m*x-n)   +n²-mx²-my² = r²
+        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - my*m*x - my*n - my*m*x - my*n   +n²-mx²-my² = r²
+        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - 2*my*m*x -(2*my*n +n²-mx²-my²) = r²
+        //    (m²+1)*x²  -((2*mx)+(2*m*n)+(2*my*m))*x -(2*my*n +n²-mx²-my²) = r² /-r²
+        // jetzt ist die Formel schon einmal umgestellt
+        //    (m²+1)*x²  -((2*mx)+(2*m*n)+(2*my*m))*x -(2*my*n +n²-mx²-my²-r²) = 0
+        //      a   *x² +             b            *x -         c              = 0
 
 
 
