@@ -2,7 +2,7 @@
 #define TODO_H
 
 /*
--->Funktion Trimmen vervollständigen:
+-->Funktion Trimmen vervollständigen (eigene Funktionen geometrie.cpp):
     ->Trimmen Geraden zu Bögen
             >hier bei nächsten Mal weiter machen
     ->Trimmen Bogen zu Bogen
@@ -26,6 +26,7 @@
 
 ----------Ideen für neue Funktionen:
 -->Zuletz geöffnete Dateien
+-->Import von anderen (programmeigenen) CNC-Programmen, mit Auswahl der zu importierenden Zeilen
 
 
 ----------Bereich Ändern:
