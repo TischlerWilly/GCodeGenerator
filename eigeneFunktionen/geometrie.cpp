@@ -160,12 +160,12 @@ void trimmen(QString *geo1, QString *geo2)
 {
     //die Funktion kann derzeit nur Strecken trimmen!
 
-    QString a = *geo1;
-    QString b = *geo2;
-    if(a.contains(STRECKE) && b.contains(STRECKE))
+    QString text_a = *geo1;
+    QString text_b = *geo2;
+    if(text_a.contains(STRECKE) && text_b.contains(STRECKE))
     {
-        strecke s1(a);
-        strecke s2(b);
+        strecke s1(text_a);
+        strecke s2(text_b);
 
         if(s1.endp() == s2.startp())
         {
@@ -243,10 +243,15 @@ void trimmen(QString *geo1, QString *geo2)
         //QMessageBox mb;
         //mb.setText("m1: " + double_to_qstring(m1) + "\nm2: " + double_to_qstring(m2));
         //mb.exec();
-    }else if(a.contains(STRECKE) && b.contains(BOGEN))
+    }else if(text_a.contains(STRECKE) && text_b.contains(BOGEN))
     {
-        strecke s(a);
-        bogen b(b);
+        strecke s(text_a);
+        bogen b(text_b);
+
+        if(s.endp() == b.start())
+        {
+            return;
+        }
 
         //Kreisformel aufstellen:
         //  mx = Kreismittelpunkt X-Wert
@@ -258,8 +263,7 @@ void trimmen(QString *geo1, QString *geo2)
         double r  = b.rad();
 
         //Geradenformel aufstellen:
-        //  y = m*x+n
-        //  m = (y2-y1)/(x2-x1) =Steigung
+        //  a*x + b*y = c
         //    x1 = X-Wert der vom Startpunkt der Strecke
         //    x2 = X-Wert der vom Endpunkt der Strecke
         //    y1 = Y-Wert der vom Startpunkt der Strecke
@@ -268,50 +272,208 @@ void trimmen(QString *geo1, QString *geo2)
         double x2= s.endp().x();
         double y1= s.startp().y();
         double y2= s.endp().y();
-        double m = (y2-y1)/(x2-x1);
-        //  n = Länge -->N bekommt man raus indem man m in die Geradenformel einsetzt
-        //               mit den Werten von einem der Punkte
-        //    y1 = m*x1+n   /-m*x1
-        //    n = y1-m*x1
-        double n = y1-m*x1;
+        // a = y1-y2
+        // b = x2-x1
+        // c = x2*y1 - x1*y2
+        double var_a = y1-y2;
+        double var_b = x2-x1;
+        double var_c = x2*y1 - x1*y2;
+        // d = c-a*mx-b*my
+        double var_d = var_c-var_a*mx-var_b*my;
+        // e = r²*(a²+b²)-d²
+        double var_e = r*r * (var_a*var_a + var_b*var_b) - var_d*var_d;
 
-        //Geradenformel in Kreisformel einsetzen:
-        //  (x-mx)²+(   y   -my)²=r²
-        //  (x-mx)²+((m*x+n)-my)²=r²
+        //QMessageBox mb;
+        //mb.setText("e= " + double_to_qstring(var_e));
+        //mb.exec();
 
-        //Lösung mit ABC-Formel eritteln:
-        //  allgemeine Form:
-        //  a*x² + b*x + c = 0
-        //    Formel Umstellen:
-        //    (x-mx)²            + (y-my)²           = r²  wobei y=m*x-n
-        //    x² - 2*mx*x - mx²  + y² - 2*my*y - my² = r²
-        //    x² - 2*mx*x - mx²  + (m*x-n)² - 2*my*(m*x-n) - my² = r²
-        //    x² - 2*mx*x - mx²  + (m*x)² - 2*(m*x)*n + n² - 2*my*(m*x-n) - my² = r²
-        //    x² - 2*mx*x - mx²  + m²*x² - 2*m*x*n + n² - 2*my*(m*x-n) - my² = r²
-        //    x² - 2*mx*x   + m²*x² - 2*m*x*n  - 2*my*(m*x-n)   +n²-mx²-my² = r²
-        //    x²+(m²)*x²  -(2*mx)*x -(2*m*n)*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
-        //    (m²+1)*x²  -(2*mx)*x -(2*m*n)*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
-        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - 2*my*(m*x-n)   +n²-mx²-my² = r²
-        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - my*(m*x-n)- my*(m*x-n)   +n²-mx²-my² = r²
-        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - my*m*x - my*n - my*m*x - my*n   +n²-mx²-my² = r²
-        //    (m²+1)*x²  -((2*mx)+(2*m*n))*x - 2*my*m*x -(2*my*n +n²-mx²-my²) = r²
-        //    (m²+1)*x²  -((2*mx)+(2*m*n)+(2*my*m))*x -(2*my*n +n²-mx²-my²) = r² /-r²
-        // jetzt ist die Formel schon einmal umgestellt
-        //    (m²+1)*x²  -((2*mx)+(2*m*n)+(2*my*m))*x -(2*my*n +n²-mx²-my²-r²) = 0
-        //      a   *x² +             b            *x -         c              = 0
+        if(var_e == 0)
+        {
+            //Es gibt genau eine Lösung
+            // x = mx+ a*d / (a²+b²)
+            double var_x = mx+ var_a*var_d / (var_a*var_a + var_b*var_b);
 
+            // y = my+ b*d / (a²+b²)
+            double var_y = my+ var_b*var_d / (var_a*var_a + var_b*var_b);
 
+            punkt3d p3d = s.endp();
+            p3d.set_x(var_x);
+            p3d.set_y(var_y);
+            s.set_ende(p3d);
+            b.set_startpunkt(p3d);
 
+        }else if(var_e > 0)
+        {
+            //Es gibt zwei Lösungen
+            // x1 = mx+ (a*d + b* wurzel(e)) /  (a²+b²)
+            // x2 = mx+ (a*d - b* wurzel(e)) /  (a²+b²)
+            double var_x1 = mx+ (var_a*var_d + var_b*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+            double var_x2 = mx+ (var_a*var_d - var_b*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
 
+            // y1 = my+ (b*d - a* wurzel(e)) /  (a²+b²)
+            // y2 = my+ (b*d + a* wurzel(e)) /  (a²+b²)
+            double var_y1 = my+ (var_b*var_d - var_a*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+            double var_y2 = my+ (var_b*var_d + var_a*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+
+            punkt3d p3d1 = s.endp();
+            punkt3d p3d2 = s.endp();
+
+            p3d1.set_x(var_x1);
+            p3d1.set_y(var_y1);
+            p3d2.set_x(var_x2);
+            p3d2.set_y(var_y2);
+
+            //entscheiden ob p3d1 oder p3d2 richtig sind
+            double winkel_orgi = winkel(b.start().x(),b.start().y(),\
+                                        b.ende().x(),b.ende().y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double winkep_p3d1 = winkel(p3d1.x(),p3d1.y(),\
+                                        b.ende().x(),b.ende().y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double winkep_p3d2 = winkel(p3d2.x(),p3d2.y(),\
+                                        b.ende().x(),b.ende().y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double diff_1 = winkel_orgi - winkep_p3d1;
+            if(diff_1 < 0)
+            {
+                diff_1 = -diff_1;
+            }
+            double diff_2 = winkel_orgi - winkep_p3d2;
+            if(diff_2 < 0)
+            {
+                diff_2 = -diff_2;
+            }
+            if(diff_1 < diff_2)
+            {
+                s.set_ende(p3d1);
+                b.set_startpunkt(p3d1);
+            }else
+            {
+                s.set_ende(p3d2);
+                b.set_startpunkt(p3d2);
+            }
+        }
 
 
         //Werte zurück in die geo-QStrings schreiben:
         *geo1 = s.get_text();
-        //*geo2 = b.get_text();
+        *geo2 = b.get_text();
 
-    }else if(a.contains(BOGEN) && b.contains(STRECKE))
+    }else if(text_a.contains(BOGEN) && text_b.contains(STRECKE))
     {
+        bogen b(text_a);
+        strecke s(text_b);
 
+        if(b.ende() == s.startp())
+        {
+            return;
+        }
+
+        //Kreisformel aufstellen:
+        //  mx = Kreismittelpunkt X-Wert
+        //  my = Kreismittelpunkt Y-Wert
+        //  r  = Kreisradius
+        //  (x-mx)²+(y-my)²=r²
+        double mx = b.mitte().x();
+        double my = b.mitte().y();
+        double r  = b.rad();
+
+        //Geradenformel aufstellen:
+        //  a*x + b*y = c
+        //    x1 = X-Wert der vom Startpunkt der Strecke
+        //    x2 = X-Wert der vom Endpunkt der Strecke
+        //    y1 = Y-Wert der vom Startpunkt der Strecke
+        //    y2 = Y-Wert der vom Endpunkt der Strecke
+        double x2= s.startp().x();
+        double x1= s.endp().x();
+        double y2= s.startp().y();
+        double y1= s.endp().y();
+        // a = y1-y2
+        // b = x2-x1
+        // c = x2*y1 - x1*y2
+        double var_a = y1-y2;
+        double var_b = x2-x1;
+        double var_c = x2*y1 - x1*y2;
+        // d = c-a*mx-b*my
+        double var_d = var_c-var_a*mx-var_b*my;
+        // e = r²*(a²+b²)-d²
+        double var_e = r*r * (var_a*var_a + var_b*var_b) - var_d*var_d;
+
+        //QMessageBox mb;
+        //mb.setText("e= " + double_to_qstring(var_e));
+        //mb.exec();
+
+        if(var_e == 0)
+        {
+            //Es gibt genau eine Lösung
+            // x = mx+ a*d / (a²+b²)
+            double var_x = mx+ var_a*var_d / (var_a*var_a + var_b*var_b);
+
+            // y = my+ b*d / (a²+b²)
+            double var_y = my+ var_b*var_d / (var_a*var_a + var_b*var_b);
+
+            punkt3d p3d = s.startp();
+            p3d.set_x(var_x);
+            p3d.set_y(var_y);
+            s.set_start(p3d);
+            b.set_endpunkt(p3d);
+
+        }else if(var_e > 0)
+        {
+            //Es gibt zwei Lösungen
+            // x1 = mx+ (a*d + b* wurzel(e)) /  (a²+b²)
+            // x2 = mx+ (a*d - b* wurzel(e)) /  (a²+b²)
+            double var_x1 = mx+ (var_a*var_d + var_b*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+            double var_x2 = mx+ (var_a*var_d - var_b*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+
+            // y1 = my+ (b*d - a* wurzel(e)) /  (a²+b²)
+            // y2 = my+ (b*d + a* wurzel(e)) /  (a²+b²)
+            double var_y1 = my+ (var_b*var_d - var_a*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+            double var_y2 = my+ (var_b*var_d + var_a*sqrt(var_e)) / (var_a*var_a + var_b*var_b);
+
+            punkt3d p3d1 = s.startp();
+            punkt3d p3d2 = s.startp();
+
+            p3d1.set_x(var_x1);
+            p3d1.set_y(var_y1);
+            p3d2.set_x(var_x2);
+            p3d2.set_y(var_y2);
+
+            //entscheiden ob p3d1 oder p3d2 richtig sind
+            double winkel_orgi = winkel(b.start().x(),b.start().y(),\
+                                        b.ende().x(),b.ende().y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double winkep_p3d1 = winkel(b.start().x(),b.start().y(),\
+                                        p3d1.x(),p3d1.y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double winkep_p3d2 = winkel(b.start().x(),b.start().y(),\
+                                        p3d2.x(),p3d2.y(),\
+                                        b.mitte().x(),b.mitte().y());
+            double diff_1 = winkel_orgi - winkep_p3d1;
+            if(diff_1 < 0)
+            {
+                diff_1 = -diff_1;
+            }
+            double diff_2 = winkel_orgi - winkep_p3d2;
+            if(diff_2 < 0)
+            {
+                diff_2 = -diff_2;
+            }
+            if(diff_1 < diff_2)
+            {
+                s.set_start(p3d1);
+                b.set_endpunkt(p3d1);
+            }else
+            {
+                s.set_start(p3d2);
+                b.set_endpunkt(p3d2);
+            }
+        }
+
+
+        //Werte zurück in die geo-QStrings schreiben:
+        *geo2 = s.get_text();
+        *geo1 = b.get_text();
     }
 
 
