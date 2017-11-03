@@ -2,12 +2,9 @@
 #define TODO_H
 
 /*
--->Funktion Trimmen vervollständigen (eigene Funktionen geometrie.cpp):
-    ->Trimmen Geraden zu Bögen
-            >hier bei nächsten Mal weiter machen
-    ->Trimmen Bogen zu Bogen
-
 -->Fräsernahmen automatisch mit in der Programmliste anzeigen bei Aufruf Fräser
+-->Aufruf Fräser-Dialog erweitern:
+    ->Zustellmaß für Tiefenzustellung
 
 -->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 

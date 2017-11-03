@@ -158,8 +158,6 @@ double winkel(double endpunkt1_x, double endpunkt1_y,\
 
 void trimmen(QString *geo1, QString *geo2)
 {
-    //die Funktion kann derzeit nur Strecken trimmen!
-
     QString text_a = *geo1;
     QString text_b = *geo2;
     if(text_a.contains(STRECKE) && text_b.contains(STRECKE))
@@ -474,7 +472,115 @@ void trimmen(QString *geo1, QString *geo2)
         //Werte zurück in die geo-QStrings schreiben:
         *geo2 = s.get_text();
         *geo1 = b.get_text();
+    }else if(text_a.contains(BOGEN) && text_b.contains(BOGEN))
+    {
+        bogen b1(text_a);
+        bogen b2(text_b);
+
+        if(b1.ende() == b2.start())
+        {
+            return;
+        }
+
+        //Kreisformel aufstellen:
+        //  mx = Kreismittelpunkt X-Wert
+        //  my = Kreismittelpunkt Y-Wert
+        //  r  = Kreisradius
+        //  (x-mx)²+(y-my)²=r²
+        double mx1 = b1.mitte().x();
+        double my1 = b1.mitte().y();
+        double r1  = b1.rad();
+
+        double mx2 = b2.mitte().x();
+        double my2 = b2.mitte().y();
+        double r2  = b2.rad();
+
+        //Prüfen, wie weit die Kreise auseinander liegen
+        strecke s;
+        punkt3d tmp;
+        tmp.set_x(b1.mitte().x());
+        tmp.set_y(b1.mitte().y());
+        s.set_start(tmp);
+        tmp.set_x(b2.mitte().x());
+        tmp.set_y(b2.mitte().y());
+        s.set_ende(tmp);
+        double abst = s.laenge2dim();
+
+        if(abst > r1+r2)//Kreise liegen zu weit auseinander
+        {
+            return;
+        }else if(abst == r1+r2)//Kreise berühren sich in genau einem Punkt
+        {
+            strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+            s.set_laenge_2d(r1, sb);
+            b1.set_endpunkt(s.endp());
+            b1.set_startpunkt(s.endp());
+        }else//Kreise schneiden sich in 2 Punkten
+        {
+            //http://walter.bislins.ch/blog/index.asp?page=Schnittpunkte+zweier+Kreise+berechnen+%28JavaScript%29
+
+            double var_x = (r1*r1 + abst*abst - r2*r2) / (2*abst);
+            double var_y = r1*r1 - var_x*var_x;
+            if(var_y > 0)
+            {
+                var_y = sqrt(var_y);
+            }
+            double AB0 = mx2-mx1;
+            double AB1 = my2-my1;
+            double ex0 = AB0/abst;
+            double ex1 = AB1/abst;
+            double ey0 = -ex1;
+            double ey1 =  ex0;
+            double Q1x = mx1 + var_x * ex0;
+            double Q1y = my1 + var_x * ex1;
+            double Q2x = Q1x - var_y * ey0;
+            double Q2y = Q1y - var_y * ey1;
+            Q1x += var_y * ey0;
+            Q1y += var_y * ey1;
+
+            punkt3d p3d1 = b1.ende();
+            punkt3d p3d2 = p3d1;
+            p3d1.set_x(Q1x);
+            p3d1.set_y(Q1y);
+            p3d2.set_x(Q2x);
+            p3d2.set_y(Q2y);
+
+            //entscheiden ob p3d1 oder p3d2 richtig sind
+            double winkel_orgi = winkel(b1.start().x(),b1.start().y(),\
+                                        b1.ende().x(),b1.ende().y(),\
+                                        b1.mitte().x(),b1.mitte().y());
+            double winkep_p3d1 = winkel(b1.start().x(),b1.start().y(),\
+                                        p3d1.x(),p3d1.y(),\
+                                        b1.mitte().x(),b1.mitte().y());
+            double winkep_p3d2 = winkel(b1.start().x(),b1.start().y(),\
+                                        p3d2.x(),p3d2.y(),\
+                                        b1.mitte().x(),b1.mitte().y());
+            double diff_1 = winkel_orgi - winkep_p3d1;
+            if(diff_1 < 0)
+            {
+                diff_1 = -diff_1;
+            }
+            double diff_2 = winkel_orgi - winkep_p3d2;
+            if(diff_2 < 0)
+            {
+                diff_2 = -diff_2;
+            }
+            if(diff_1 < diff_2)
+            {
+                b1.set_endpunkt(p3d1);
+                b2.set_startpunkt(p3d1);
+            }else
+            {
+                b1.set_endpunkt(p3d2);
+                b2.set_startpunkt(p3d2);
+            }
+
+        }
+
+
+        //Werte zurück in die geo-QStrings schreiben:
+        *geo1 = b1.get_text();
+        *geo2 = b2.get_text();
+
     }
-
-
 }
