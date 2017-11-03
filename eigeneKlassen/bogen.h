@@ -89,6 +89,8 @@ public:
         return fehlertext;
     }
 
+    QString get_text();
+
 private:
     punkt3d startp, endp;
     double radius;

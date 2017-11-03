@@ -138,3 +138,36 @@ void bogen::set_radius(float radiuswert, punkt2d bogenrichtung)
         fehlertext = "Bogenrichtung nicht bestimmbar!";
     }
 }
+
+QString bogen::get_text()
+{
+    QString msg = BOGEN;
+    msg += TRZ_PA;
+    msg += start().x_QString();
+    msg += TRZ_PA;
+    msg += start().y_QString();
+    msg += TRZ_PA;
+    msg += start().z_QString();
+    msg += TRZ_PA;
+    msg += ende().x_QString();
+    msg += TRZ_PA;
+    msg += ende().y_QString();
+    msg += TRZ_PA;
+    msg += ende().z_QString();
+    msg += TRZ_PA;
+    msg += rad_qString();
+    msg += TRZ_PA;
+    msg += im_uzs_QString();
+    msg += TRZ_PA;
+    msg += mitte().x_QString();
+    msg += TRZ_PA;
+    msg += mitte().y_QString();
+    msg += TRZ_PA;
+    msg += get_farbe();
+    msg += TRZ_PA;
+    msg += get_breite_qstring();
+    msg += TRZ_PA;
+    msg += get_stil();
+
+    return msg;
+}
