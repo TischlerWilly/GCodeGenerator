@@ -2,11 +2,6 @@
 #define TODO_H
 
 /*
--->Fräsernahmen automatisch mit in der Programmliste anzeigen bei Aufruf Fräser
--->Aufruf Fräser-Dialog erweitern:
-    ->Zustellmaß für Tiefenzustellung
-
--->neue Funktion: in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
 
 ----------Ideen für neue Dialoge:
@@ -24,6 +19,11 @@
 ----------Ideen für neue Funktionen:
 -->Zuletz geöffnete Dateien
 -->Import von anderen (programmeigenen) CNC-Programmen, mit Auswahl der zu importierenden Zeilen
+-->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
+-->Aufruf Fräser-Dialog erweitern:
+    ->Zustellmaß für Tiefenzustellung
+
+
 
 
 ----------Bereich Ändern:

@@ -2496,12 +2496,21 @@ void programmtext::aktualisiere_anzeigetext()
         }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(KREISTASCHE_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);

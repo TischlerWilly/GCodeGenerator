@@ -2161,6 +2161,7 @@ void MainWindow::elementAusblendenSichtbarMachen(QListWidgetItem *item)
 void MainWindow::on_actionEin_Ausblenden_triggered()
 {
     t.warnungen_einschalten(false);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2211,11 +2212,13 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
         mb.exec();
     }
     t.warnungen_einschalten(true);
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAuswahl_Ausblenden_triggered()
 {
     t.warnungen_einschalten(false);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2262,11 +2265,13 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
         mb.exec();
     }
     t.warnungen_einschalten(true);
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAuswahl_Einblenden_triggered()
 {
     t.warnungen_einschalten(false);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -2315,6 +2320,7 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
         mb.exec();
     }
     t.warnungen_einschalten(true);
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -2407,6 +2413,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::on_actionGCode_berechnen_triggered()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     ui->plainTextEdit_GCode->clear();
     ui->tabWidget->setCurrentWidget(ui->tab_GCode);//Tab G-Code aktivieren
     aktives_wkz = NICHT_DEFINIERT;
@@ -2416,6 +2423,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
     text_zeilenweise klartext = t.get_klartext_zeilenweise();
     QString gcode;
+    QString abfahrtyp;
 
     for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
     {
@@ -2674,7 +2682,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
                 return;
             }
-            //Fräser über den Beginn der Kontur bringen:
             QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
@@ -2682,18 +2689,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             text_zeilenweise geoelement;
             geoelement.set_trennzeichen(TRZ_PA_);
             geoelement.set_text(fkon_tz.zeile(1));
-            punkt3d startpunkt;
-            startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
-            //X und Y Koordinaten sind gleich bei Punkt/Strecke/Bogen:
-            startpunkt.set_x(geoelement.zeile(2).toDouble());
-            startpunkt.set_y(geoelement.zeile(3).toDouble());
-            gcode += "G0 X";
-            gcode += startpunkt.x_QString();
-            gcode += " Y";
-            gcode += startpunkt.y_QString();
-            gcode += " Z";
-            gcode += startpunkt.z_QString();
-            gcode += "\n";
 
             //Vorschübe setzen etc.:
             QString tmp;
@@ -2717,32 +2712,113 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             }
             drehzahl = tmp.toDouble();
 
-            //Anfahrweg ausgeben:
-            startpunkt.set_z(geoelement.zeile(3).toDouble());
-            //Anfahrpunkt:
-            gcode += "G0 X";
-            gcode += startpunkt.x_QString();
-            gcode += " Y";
-            gcode += startpunkt.y_QString();
-            gcode += " Z";
-            gcode += startpunkt.z_QString();
-            gcode += " F";
-            gcode += double_to_qstring(eintauchvorschub);
-            gcode += "\n";
-            //ggf. Anfahrweg:
-            if(fkon_tz.zeile(1).contains(STRECKE))
+            QString anfahrtyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
+            abfahrtyp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);//brauchen wir später für das Abfahren
+            if(anfahrtyp == ANABFAHRTYP_KEIN)
             {
-                gcode += "G1 X";
-                gcode += geoelement.zeile(5);
+                QString zeile_fkon2;
+                if(i+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
+                {
+                    uint ii = i+1;
+                    zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                    while(klartext.zeile(ii).isEmpty()  &&  ii+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl()  )
+                    {
+                        ii++;
+                        zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                    }
+                }
+                //QString zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(i+1);
+                text_zeilenweise fkon_tz2;
+                fkon_tz2.set_trennzeichen(TRZ_EL_);
+                fkon_tz2.set_text(zeile_fkon2);
+                text_zeilenweise geoelement2;
+                geoelement2.set_trennzeichen(TRZ_PA_);
+                geoelement2.set_text(fkon_tz2.zeile(1));
+
+                if(fkon_tz2.zeile(1).contains(STRECKE))
+                {
+                    //Anfahrpunkt:
+                    punkt3d startpunkt;
+                    startpunkt.set_x(geoelement2.zeile(2).toDouble());
+                    startpunkt.set_y(geoelement2.zeile(3).toDouble());
+                    startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                    gcode += "G0 X";
+                    gcode += double_to_qstring(runden(startpunkt.x(),2));
+                    gcode += " Y";
+                    gcode += double_to_qstring(runden(startpunkt.y(),2));
+                    gcode += " Z";
+                    gcode += double_to_qstring(runden(startpunkt.z(),2));
+                    gcode += "\n";
+
+                    //Eintauchen:
+                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(startpunkt.z(),2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += "\n";
+                }else if(fkon_tz2.zeile(1).contains(BOGEN))
+                {
+                    //Anfahrpunkt:
+                    punkt3d startpunkt;
+                    startpunkt.set_x(geoelement2.zeile(2).toDouble());
+                    startpunkt.set_y(geoelement2.zeile(3).toDouble());
+                    startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                    gcode += "G0 X";
+                    gcode += double_to_qstring(runden(startpunkt.x(),2));
+                    gcode += " Y";
+                    gcode += double_to_qstring(runden(startpunkt.y(),2));
+                    gcode += " Z";
+                    gcode += double_to_qstring(runden(startpunkt.z(),2));
+                    gcode += "\n";
+
+                    //Eintauchen:
+                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(startpunkt.z(),2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += "\n";
+                }
+            }else if(fkon_tz.zeile(1).contains(STRECKE))
+            {
+                //Anfahrpunkt:
+                punkt3d startpunkt;
+                startpunkt.set_x(geoelement.zeile(2).toDouble());
+                startpunkt.set_y(geoelement.zeile(3).toDouble());
+                startpunkt.set_z(geoelement.zeile(4).toDouble());
+                gcode += "G0 X";
+                gcode += double_to_qstring(runden(startpunkt.x(),2));
                 gcode += " Y";
-                gcode += geoelement.zeile(6);
+                gcode += double_to_qstring(runden(startpunkt.y(),2));
                 gcode += " Z";
-                gcode += geoelement.zeile(7);
+                gcode += double_to_qstring(runden(startpunkt.z(),2));
+                gcode += "\n";
+
+                gcode += "G1 X";
+                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
+                gcode += " Y";
+                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
+                gcode += " Z";
+                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
                 gcode += " F";
                 gcode += double_to_qstring(eintauchvorschub);
                 gcode += "\n";
             }else if(fkon_tz.zeile(1).contains(BOGEN))
             {
+                //Anfahrpunkt:
+                punkt3d startpunkt;
+                startpunkt.set_x(geoelement.zeile(2).toDouble());
+                startpunkt.set_y(geoelement.zeile(3).toDouble());
+                startpunkt.set_z(geoelement.zeile(4).toDouble());
+                gcode += "G0 X";
+                gcode += double_to_qstring(runden(startpunkt.x(),2));
+                gcode += " Y";
+                gcode += double_to_qstring(runden(startpunkt.y(),2));
+                gcode += " Z";
+                gcode += double_to_qstring(runden(startpunkt.z(),2));
+                gcode += "\n";
+
                 double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
                 double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
 
@@ -2754,15 +2830,15 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     gcode += "G3";
                 }
                 gcode += " X";
-                gcode += geoelement.zeile(5);
+                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
                 gcode += " Y";
-                gcode += geoelement.zeile(6);
+                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
                 gcode += " Z";
-                gcode += geoelement.zeile(7);
+                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
                 gcode += " I";
-                gcode += double_to_qstring(I);
+                gcode += double_to_qstring(runden(I,2));
                 gcode += " J";
-                gcode += double_to_qstring(J);
+                gcode += double_to_qstring(runden(J,2));
                 gcode += " F";
                 gcode += double_to_qstring(eintauchvorschub);
                 gcode += "\n";
@@ -2779,11 +2855,11 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             geoelement.set_text(fkon_tz.zeile(1));
 
             gcode += "G1 X";
-            gcode += geoelement.zeile(5);
+            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
             gcode += " Y";
-            gcode += geoelement.zeile(6);
+            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
             gcode += " Z";
-            gcode += geoelement.zeile(7);
+            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
             gcode += " F";
             gcode += double_to_qstring(vorschub);
             gcode += "\n";
@@ -2802,15 +2878,15 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     gcode += "G3";
                 }
                 gcode += " X";
-                gcode += geoelement.zeile(5);
+                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
                 gcode += " Y";
-                gcode += geoelement.zeile(6);
+                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
                 gcode += " Z";
-                gcode += geoelement.zeile(7);
+                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
                 gcode += " I";
-                gcode += double_to_qstring(I);
+                gcode += double_to_qstring(runden(I,2));
                 gcode += " J";
-                gcode += double_to_qstring(J);
+                gcode += double_to_qstring(runden(J,2));
                 gcode += " F";
                 gcode += double_to_qstring(eintauchvorschub);
                 gcode += "\n";
@@ -2836,32 +2912,84 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 gcode += "G3";
             }
             gcode += " X";
-            gcode += geoelement.zeile(5);
+            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
             gcode += " Y";
-            gcode += geoelement.zeile(6);
+            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
             gcode += " Z";
-            gcode += geoelement.zeile(7);
+            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
             gcode += " I";
-            gcode += double_to_qstring(I);
+            gcode += double_to_qstring(runden(I,2));
             gcode += " J";
-            gcode += double_to_qstring(J);
+            gcode += double_to_qstring(runden(J,2));
             gcode += " F";
             gcode += double_to_qstring(eintauchvorschub);
             gcode += "\n";
 
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
-            //Muss noch programmiert werden
+            punkt3d endpunkt;
+            endpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
 
+            if(abfahrtyp == ANABFAHRTYP_KEIN)
+            {
+                gcode += "G1 Z";
+                gcode += double_to_qstring(runden(endpunkt.z(),2));
+                gcode += " F";
+                gcode += double_to_qstring(eintauchvorschub);
+                gcode += "\n";
+            }else
+            {
+                QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
+                text_zeilenweise fkon_tz;
+                fkon_tz.set_trennzeichen(TRZ_EL_);
+                fkon_tz.set_text(zeile_fkon);
+                text_zeilenweise geoelement;
+                geoelement.set_trennzeichen(TRZ_PA_);
+                geoelement.set_text(fkon_tz.zeile(1));
 
+                if(fkon_tz.zeile(1).contains(STRECKE))
+                {
+                    gcode += "G1 X";
+                    gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
+                    gcode += " Y";
+                    gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
+                    gcode += " Z";
+                    gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += "\n";
+                }else if(fkon_tz.zeile(1).contains(BOGEN))
+                {
+                    double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                    double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
 
-
-
-
+                    if(geoelement.zeile(9) == "ja")
+                    {
+                        gcode += "G2";
+                    }else
+                    {
+                        gcode += "G3";
+                    }
+                    gcode += " X";
+                    gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
+                    gcode += " Y";
+                    gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
+                    gcode += " Z";
+                    gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                    gcode += " I";
+                    gcode += double_to_qstring(runden(I,2));
+                    gcode += " J";
+                    gcode += double_to_qstring(runden(J,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += "\n";
+                }
+            }
         }
     }
 
     ui->plainTextEdit_GCode->insertPlainText(gcode);
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_pushButton_Aktualisieren_GCode_clicked()
@@ -3242,20 +3370,8 @@ void MainWindow::slot_maus_pos(QPoint p)
 
 void MainWindow::on_actionTestfunktion_triggered()
 {
-    text_zeilenweise fk = t.get_fkon().get_text_zeilenweise();
-
-    tabelle_tz3 tab_fkon;
-    tab_fkon.set_trennzeichen_zeilen('\n');
-    tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
-
-    tab_fkon.set_text(fk.get_text());
-
-
-
     QMessageBox mb;
-    //mb.setText(tab_fkon.vorherigespalte(8,1));
-    //mb.setText(tab_fkon.get_spalten());
-    mb.setText(tab_fkon.get_spalte(11,2));
+    mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 
 }
