@@ -6,11 +6,13 @@
 #define INI_FILE                    "/.gcodegenerator/konfiguration.ini"
 #define WKZ_FILE                    "/.gcodegenerator/werkzeug.ini"
 #define WKZ_BILDER_PFAD             "/.gcodegenerator/werkzeugbilder/"
+#define PFAD_LETZTE_DATEIEN         "/.gcodegenerator/letzte_dateien.ini"
 #define DATEIENDUNG_EIGENE          ".ggf"
 #define DATEIENDUNG_BACKUP          ".bak_"
 #define DATEIENDUNG_GCODE           ".ngc"
 #define PROGRAMMNAME                "GCodeGenerator"
 #define SICHERHEITSABSTAND_WERT     "5"
+#define ANZAHL_LETZTER_DATEIEN      15
 
 //-------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------Einstellungen:

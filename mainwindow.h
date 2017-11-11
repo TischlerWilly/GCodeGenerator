@@ -37,6 +37,7 @@
 #include "Dialoge/dialog_fraeser_bogen.h"
 #include "Dialoge/dialog_fraeser_abfahren.h"
 #include "Dialoge/dialog_programmlisten.h"
+#include "eigeneKlassen/letzte_dateien.h"
 
 
 #define INDEX_PROGRAMMLISTE 0
@@ -70,6 +71,7 @@ private slots:
     void on_actionDateiSchliessen_triggered();
     void on_actionDateiSpeichern_triggered();
     void on_actionDateiOefnen_triggered();
+    void actionLetzteDateiOefnenTriggered();
     void on_actionDateiSpeichern_unter_triggered();
     void on_actionEin_Ausblenden_triggered();
     void resizeEvent(QResizeEvent *event);
@@ -174,6 +176,8 @@ private:
     QString         settings_anz_undo_t;
     QString         settings_anz_undo_w;
     QString         aktives_wkz;
+    letzte_dateien  letzte_geoefnete_dateien;
+    QAction *oefneLetzteDateien[ANZAHL_LETZTER_DATEIEN];
 
         //Eigene Datentypen:
 
@@ -181,6 +185,7 @@ private:
         //Funktionen:
     QString loadConfig();
     QString saveConfig();
+    void loadConfig_letzte_Dateien();
     QString loadToollistInQStringlist(QString filename);
     int loadToolInteger(QString keyword, int index);
     void hideElemets_noFileIsOpen();
@@ -203,6 +208,9 @@ private:
     void pruefe_benutzereingaben(int zeilennummer);
     bool hat_werkzeugliste_fehler();
     QString klammern_wecklassen(QString text);
+    void aktuelisiere_letzte_dateien_inifile();
+    void aktualisiere_letzte_dateien_menu();
+    void openFile(QString pfad);
 
 
 };

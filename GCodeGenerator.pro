@@ -54,7 +54,8 @@ SOURCES += \
     eigeneKlassen/zylinder.cpp \
     eigeneKlassen/rechteck3d.cpp \
     eigeneKlassen/wuerfel.cpp \
-    eigeneKlassen/tabelle_tz3.cpp
+    eigeneKlassen/tabelle_tz3.cpp \
+    eigeneKlassen/letzte_dateien.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -102,7 +103,8 @@ HEADERS  += \
     eigeneKlassen/zylinder.h \
     eigeneKlassen/rechteck3d.h \
     eigeneKlassen/wuerfel.h \
-    eigeneKlassen/tabelle_tz3.h
+    eigeneKlassen/tabelle_tz3.h \
+    eigeneKlassen/letzte_dateien.h
 
 FORMS    += \
     mainwindow.ui \

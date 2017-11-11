@@ -187,8 +187,14 @@
     <property name="title">
      <string>Datei</string>
     </property>
+    <widget class="QMenu" name="menuLetzte_Dateien">
+     <property name="title">
+      <string>erneut Oefnen</string>
+     </property>
+    </widget>
     <addaction name="actionDateiNeu"/>
     <addaction name="actionDateiOefnen"/>
+    <addaction name="menuLetzte_Dateien"/>
     <addaction name="actionDateiSpeichern"/>
     <addaction name="actionDateiSpeichern_unter"/>
     <addaction name="actionDateiSchliessen"/>
@@ -441,6 +447,11 @@
   <action name="actionTestfunktion">
    <property name="text">
     <string>Testfunktion</string>
+   </property>
+  </action>
+  <action name="actionLetzte_Dateien">
+   <property name="text">
+    <string>letzte Dateien</string>
    </property>
   </action>
  </widget>
