@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings_anz_undo_t             = "10";
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
+    letzte_geoefnete_dateien.set_anz_eintreage(ANZAHL_LETZTER_DATEIEN);
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
@@ -98,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     on_pushButton_WKZ_Laden_clicked();
     ladeWerkzeugnamen();
     hat_ungesicherte_inhalte = false;
+    loadConfig_letzte_Dateien();
 
     //SLOT(slotSaveConfig():
     connect(&dsettings, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
@@ -142,8 +144,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&variablenwerte_anzeigen, SIGNAL(brauche_variablen()), this, SLOT(slotAnfrageVariablen()));
     connect(&vorschaufenster, SIGNAL(sende_maus_pos(QPoint)), this, SLOT(slot_maus_pos(QPoint)));
 
+    aktualisiere_letzte_dateien_menu();
 
     this->setWindowState(Qt::WindowMaximized);
+
+
 
 }
 
@@ -667,6 +672,21 @@ QString MainWindow::saveConfig()
         mb.exec();
     }
     return returnString;
+}
+
+void MainWindow::loadConfig_letzte_Dateien()
+{
+    QFile file(QDir::homePath() + PFAD_LETZTE_DATEIEN);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QString tmp;
+        while(!file.atEnd())
+        {
+            tmp += file.readLine();
+        }
+        file.close();
+        letzte_geoefnete_dateien.set_text(tmp);
+    }
 }
 
 void MainWindow::slotSaveConfig(QString text)
@@ -1843,41 +1863,117 @@ void MainWindow::on_actionDateiOefnen_triggered()
     }else
     {
         //Dialog öffnen zum Wählen der Datei:
-        nameOfTheOpenFile = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
-        QFile file(nameOfTheOpenFile);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        openFile(QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)")));
+    }
+}
+
+void MainWindow::aktuelisiere_letzte_dateien_inifile()
+{
+    letzte_geoefnete_dateien.datei_merken(nameOfTheOpenFile);
+    //Daten Speichern:
+    QFile inifile(QDir::homePath() + PFAD_LETZTE_DATEIEN);
+    if (!inifile.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    {
+        QMessageBox mb;
+        mb.setText("Fehler beim Zugriff auf die Datei \"letzte_dateien.ini\"");
+        mb.exec();
+    } else
+    {
+        inifile.remove(); //lösche alte Datei wenn vorhanden
+        inifile.close(); //beende Zugriff
+        inifile.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+        inifile.write(letzte_geoefnete_dateien.get_text().toUtf8()); //fülle Datei mit Inhalt
+        inifile.close(); //beende Zugriff
+    }
+}
+
+void MainWindow::aktualisiere_letzte_dateien_menu()
+{
+    ui->menuLetzte_Dateien->clear();
+    //QMenu *meinMenu;
+    //meinMenu = ui->menuLetzte_Dateien->addMenu(tr("mein Menu"));
+
+    text_zeilenweise namen;
+    namen.set_text(letzte_geoefnete_dateien.get_text());
+    for(uint i=1; i<=namen.zeilenanzahl() ;i++)
+    {
+        //QAction *meineAction;
+        //meineAction = new QAction(namen.zeile(i), this);
+                                                            //meinMenu->addAction(meineAction);
+        //ui->menuLetzte_Dateien->addAction(meineAction);
+        //connect(meineAction, SIGNAL(triggered()), \
+        //        this, SLOT(on_actionLetzteDateiOefnen_triggered()));
+        oefneLetzteDateien[i-1] = new QAction(namen.zeile(i), this);
+        ui->menuLetzte_Dateien->addAction(oefneLetzteDateien[i-1]);
+        oefneLetzteDateien[i-1]->setData(namen.zeile(i));
+        connect(oefneLetzteDateien[i-1], SIGNAL(triggered()), \
+                this, SLOT(actionLetzteDateiOefnenTriggered()));
+    }
+
+}
+
+void MainWindow::actionLetzteDateiOefnenTriggered()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString msg = action->data().toString();
+
+        if(DateiIstOffen == true)
         {
-            text_zeilenweise tz;
-
-            while(!file.atEnd())
-            {
-                QString line = file.readLine();
-                if(line.right(1) == "\n")
-                {
-                    line = line.left(line.length()-1);
-                }
-                if(tz.zeilenanzahl() == 0)
-                {
-                    tz.set_text(line);
-                }else
-                {
-                    tz.zeilen_anhaengen(line);
-                }
-            }
-
-            t.set_text(tz.get_text());
-            file.close();
-            aktualisiere_anzeigetext();
-            DateiIstOffen = true;
-            showElements_aFileIsOpen();
-            //Datei-Namen in Titelleiste anzeigen lassen:
-            QFileInfo info = nameOfTheOpenFile;
-            QString tmp = PROGRAMMNAME;
-            tmp += " ( " + info.baseName() + " )";
-            this->setWindowTitle(tmp);
-            vorschauAktualisieren();
-            hat_ungesicherte_inhalte = false;
+            QMessageBox mb;
+            mb.setText("Bitte schiessen Sie zuerst die offene Datei.");
+            mb.exec();
+            return;
+        }else
+        {
+            openFile(msg);
         }
+    }
+
+}
+
+void MainWindow::openFile(QString pfad)
+{
+    nameOfTheOpenFile = pfad;
+    QFile file(pfad);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        text_zeilenweise tz;
+
+        aktuelisiere_letzte_dateien_inifile();
+        aktualisiere_letzte_dateien_menu();
+
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(tz.zeilenanzahl() == 0)
+            {
+                tz.set_text(line);
+            }else
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+
+        t.set_text(tz.get_text());
+        file.close();
+        aktualisiere_anzeigetext();
+        DateiIstOffen = true;
+        showElements_aFileIsOpen();
+        //Datei-Namen in Titelleiste anzeigen lassen:
+        QFileInfo info = nameOfTheOpenFile;
+        QString tmp = PROGRAMMNAME;
+        tmp += " ( " + info.baseName() + " )";
+        this->setWindowTitle(tmp);
+        vorschauAktualisieren();
+        hat_ungesicherte_inhalte = false;
+        QApplication::restoreOverrideCursor();
     }
 }
 

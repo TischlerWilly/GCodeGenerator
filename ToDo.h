@@ -2,6 +2,12 @@
 #define TODO_H
 
 /*
+----------Aktuell in Arbeit:
+
+
+
+
+
 
 
 ----------Ideen für neue Dialoge:
@@ -14,10 +20,11 @@
 -->Dialog Spiegeln
 -->Dialog Verschieben
 -->Dialgo Drehen
+-->Ankörnen (mit V-Fräser?)
+
 
 
 ----------Ideen für neue Funktionen:
--->Zuletz geöffnete Dateien
 -->Import von anderen (programmeigenen) CNC-Programmen, mit Auswahl der zu importierenden Zeilen
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 -->Aufruf Fräser-Dialog erweitern:
