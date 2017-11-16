@@ -37,6 +37,7 @@
 #include "Dialoge/dialog_fraeser_bogen.h"
 #include "Dialoge/dialog_fraeser_abfahren.h"
 #include "Dialoge/dialog_programmlisten.h"
+#include "Dialoge/dialog_import_ggf.h"
 #include "eigeneKlassen/letzte_dateien.h"
 
 
@@ -100,8 +101,9 @@ private slots:
     void on_actionMakeGerade_Fraesbahn_triggered();
     void on_actionMakeGebogene_Fraesbahn_triggered();
     void on_actionMakeAbfahren_triggered();
-
     void on_actionTestfunktion_triggered();
+    void on_import_GGF_triggered();
+    void on_import_DXF_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -111,6 +113,7 @@ public slots:
     void slotAnfrageWerkzeugdaten(QString Werkzeugname, QString Dialog);
     void slotAnfrageVariablen();
     void slot_maus_pos(QPoint p);
+    void getImportGGF(QString text);
 
 signals:
     //void sendDialogData(QString text);
@@ -125,6 +128,7 @@ signals:
     void sendAktiveProgrammzeile(int zeilennummer);
     void send_an_programmlisten(QString prgtext, QString klartext, \
                         QString variabel, QString geotext, QString fkon);
+    void sendTextToImportGGF(QString text);
 
 private:
         //Objekte:
@@ -137,6 +141,7 @@ private:
     Dialog_variablenwerte_anzeigen variablenwerte_anzeigen;
     Dialog_Kreistasche ktasche;
     Dialog_Rechtecktasche rtasche;
+    Dialog_import_ggf import_ggf;
     vorschau vorschaufenster;
     undo_redo ur;
     undo_redo_wkz ur_wkz;

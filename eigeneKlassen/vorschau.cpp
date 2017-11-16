@@ -37,488 +37,7 @@ void vorschau::paintEvent(QPaintEvent *)
 
         for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
         {
-            text_zeilenweise element;
-            element.set_trennzeichen(TRZ_PA_);
-            element.set_text(spalten.zeile(ii));
-
-            if(element.get_text().contains(PUNKT))
-            {
-                punkt2d p2;
-                p2.set_x(element.zeile(2).toDouble()*sf*zf);
-                p2.set_y(element.zeile(3).toDouble()*sf*zf);
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(6).toInt());
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(5)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-                painter.drawPoint(n.x-npv.x+p2.x(), \
-                                  n.y-npv.y-p2.y());
-                painter.setPen(pen_alt);
-            }else if(element.get_text().contains(STRECKE))
-            {
-                punkt2d startpunkt, endpunkt;
-                startpunkt.set_x(element.zeile(2).toDouble()*sf*zf);
-                startpunkt.set_y(element.zeile(3).toDouble()*sf*zf);
-                endpunkt.set_x(element.zeile(5).toDouble()*sf*zf);
-                endpunkt.set_y(element.zeile(6).toDouble()*sf*zf);
-
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(9).toInt());
-                pen.setStyle(set_linienstil(element.zeile(10)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(8)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-
-                painter.drawLine(n.x-npv.x+startpunkt.x(), \
-                                 n.y-npv.y-startpunkt.y(), \
-                                 n.x-npv.x+endpunkt.x(), \
-                                 n.y-npv.y-endpunkt.y());
-
-                painter.setPen(pen_alt);
-            }else if(element.get_text().contains(BOGEN))
-            {
-                double rad = element.zeile(8).toDouble()*sf*zf;
-                punkt2d mipu;
-                mipu.set_x(element.zeile(10).toDouble()*sf*zf);//Mittelpunkt in X
-                mipu.set_y(element.zeile(11).toDouble()*sf*zf);//Mittelpunkt in Y
-                punkt2d obli;
-                obli.set_x(mipu.x()-rad);
-                obli.set_y(mipu.y()+rad);
-
-                punkt2d mp;
-                mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
-                mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
-                punkt2d sp;
-                sp.set_x(element.zeile(2).toDouble());//Start in X
-                sp.set_y(element.zeile(3).toDouble());//Start in Y
-                punkt2d ep;
-                ep.set_x(element.zeile(5).toDouble());//Ende in X
-                ep.set_y(element.zeile(6).toDouble());//Ende in Y
-                double stawi=0, bogwi=0;
-
-                if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
-                {
-                    stawi = winkel(sp.x(),   \
-                                   sp.y(),   \
-                                   mp.x(),   \
-                                   mp.y());
-                    bogwi = winkel(sp.x(),   \
-                                   sp.y(),   \
-                                   mp.x(),   \
-                                   mp.y(),   \
-                                   ep.x(),   \
-                                   ep.y());
-                }else//Bogen im Uhrzeigersinn
-                {
-                    stawi = winkel(ep.x(),   \
-                                   ep.y(),   \
-                                   mp.x(),   \
-                                   mp.y());
-                    bogwi = winkel(ep.x(),   \
-                                   ep.y(),   \
-                                   mp.x(),   \
-                                   mp.y(),   \
-                                   sp.x(),   \
-                                   sp.y());
-                }
-                if(bogwi<0)
-                {
-                    bogwi = 360+bogwi;
-                }
-
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(13).toInt());
-                pen.setStyle(set_linienstil(element.zeile(14)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(12)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-
-                painter.drawArc(n.x-npv.x+obli.x(),\
-                                n.y-npv.y-obli.y(),\
-                                rad*2,\
-                                rad*2,\
-                                stawi*16,\
-                                bogwi*16);
-
-                painter.setPen(pen_alt);
-            }else if(element.get_text().contains(KREIS))
-            {
-                double rad = element.zeile(5).toDouble()*sf*zf;
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(8).toInt());
-                pen.setStyle(set_linienstil(element.zeile(9)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(6)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-
-                QBrush brush = painter.brush();
-                QBrush brush_alt = painter.brush();
-                brush.setColor(set_farbe(element.zeile(7)));
-                painter.setBrush(brush);
-
-                painter.drawEllipse(n.x-npv.x+(element.zeile(2).toDouble()*sf*zf)-rad,\
-                                    n.y-npv.y-(element.zeile(3).toDouble()*sf*zf)-rad,\
-                                    rad*2,\
-                                    rad*2);
-
-                painter.setPen(pen_alt);
-                painter.setBrush(brush_alt);
-            }else if(element.get_text().contains(ZYLINDER))
-            {
-                double rad = element.zeile(5).toDouble()*sf*zf;
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(9).toInt());
-                pen.setStyle(set_linienstil(element.zeile(10)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(7)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-
-                QBrush brush = painter.brush();
-                QBrush brush_alt = painter.brush();
-                brush.setColor(set_farbe(element.zeile(8)));
-                painter.setBrush(brush);
-
-                painter.drawEllipse(n.x-npv.x+(element.zeile(2).toDouble()*sf*zf)-rad,\
-                                    n.y-npv.y-(element.zeile(3).toDouble()*sf*zf)-rad,\
-                                    rad*2,\
-                                    rad*2);
-
-                painter.setPen(pen_alt);
-                painter.setBrush(brush_alt);
-            }else if(element.get_text().contains(RECHTECK3D))
-            {
-                rechteck3d r;
-                int bezpunkt = element.zeile(2).toInt();
-                if(bezpunkt == UNTEN_LINKS)
-                {
-                    bezpunkt = OBEN_LINKS;
-                }else if(bezpunkt == UNTEN)
-                {
-                    bezpunkt = OBEN;
-                }else if(bezpunkt == UNTEN_RECHTS)
-                {
-                    bezpunkt = OBEN_RECHTS;
-                }else if(bezpunkt == OBEN_LINKS)
-                {
-                    bezpunkt = UNTEN_LINKS;
-                }else if(bezpunkt == OBEN)
-                {
-                    bezpunkt = UNTEN;
-                }else if(bezpunkt == OBEN_RECHTS)
-                {
-                    bezpunkt = UNTEN_RECHTS;
-                }
-                r.set_bezugspunkt(bezpunkt);
-                r.set_einfuegepunkt(n.x-npv.x+element.zeile(3).toDouble()*sf*zf,\
-                                    n.y-npv.y-element.zeile(4).toDouble()*sf*zf,\
-                                    element.zeile(5).toDouble()*sf*zf);
-                r.set_laenge(element.zeile(6).toDouble()*sf*zf);
-                r.set_breite(element.zeile(7).toDouble()*sf*zf);
-                r.set_rad(element.zeile(8).toDouble()*sf*zf);
-                r.set_drewi(element.zeile(9).toDouble());
-
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(12).toInt());
-                pen.setStyle(set_linienstil(element.zeile(13)));
-                pen.setCapStyle(Qt::RoundCap);
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(10)));
-                }
-                painter.setPen(pen);
-
-                QBrush brush = painter.brush();
-                QBrush brush_alt = painter.brush();
-                brush.setColor(set_farbe(element.zeile(11)));
-                painter.setBrush(brush);
-
-                if(r.rad()==0)
-                {
-                    //Rechteck mit eckigen Ecken:
-                    QPainterPath pp;
-                    pp.moveTo(r.unl(false).x(),\
-                              r.unl(false).y());
-                    pp.lineTo(r.unr(false).x(),\
-                              r.unr(false).y());
-                    pp.lineTo(r.obr(false).x(),\
-                              r.obr(false).y());
-                    pp.lineTo(r.obl(false).x(),\
-                              r.obl(false).y());
-                    pp.closeSubpath();
-                    painter.drawPath(pp);
-
-                }else
-                {
-                    //Rechteck runden Ecken:
-                    punkt2d mitpu = r.mi();
-                    //mitpu.set_y(mitpu.y()-r.b());
-                    QPainterPath pp;
-
-                    punkt2d p2;
-                    //Startpunkt:
-                    p2.set_x(r.unl().x());
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad());
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.moveTo(p2.x(), p2.y());
-                    //Rundung links unten:
-                    p2.set_x(r.unl().x());
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 180+r.drewi(), 90);
-                    //Linie nach rechts unten:
-                    p2.set_x(r.unr().x()-r.rad());
-                    p2.set_y((r.mi().y()+r.b()/2));
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung rechts unten:
-                    p2.set_x(r.unr().x()-r.rad()*2);
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 270+r.drewi(), 90);
-                    //Linie nach rechts oben:
-                    p2.set_x(r.obr().x());
-                    p2.set_y((r.mi().y()-r.b()/2)+r.rad());
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung rechts oben
-                    p2.set_x(r.unr().x()-r.rad()*2);
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 0+r.drewi(), 90);
-                    //Linie nach links oben:
-                    p2.set_x(r.obl().x()+r.rad());
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung links oben
-                    p2.set_x(r.obl().x());
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 90+r.drewi(), 90);
-
-                    pp.closeSubpath();
-                    painter.drawPath(pp);
-                }
-
-                painter.setPen(pen_alt);
-                painter.setBrush(brush_alt);
-            }else if(element.get_text().contains(WUERFEL))
-            {
-                rechteck3d r;
-                int bezpunkt = element.zeile(2).toInt();
-                if(bezpunkt == UNTEN_LINKS)
-                {
-                    bezpunkt = OBEN_LINKS;
-                }else if(bezpunkt == UNTEN)
-                {
-                    bezpunkt = OBEN;
-                }else if(bezpunkt == UNTEN_RECHTS)
-                {
-                    bezpunkt = OBEN_RECHTS;
-                }else if(bezpunkt == OBEN_LINKS)
-                {
-                    bezpunkt = UNTEN_LINKS;
-                }else if(bezpunkt == OBEN)
-                {
-                    bezpunkt = UNTEN;
-                }else if(bezpunkt == OBEN_RECHTS)
-                {
-                    bezpunkt = UNTEN_RECHTS;
-                }
-                r.set_bezugspunkt(bezpunkt);
-                r.set_einfuegepunkt(n.x-npv.x+element.zeile(3).toDouble()*sf*zf,\
-                                    n.y-npv.y-element.zeile(4).toDouble()*sf*zf,\
-                                    element.zeile(5).toDouble()*sf*zf);
-                r.set_laenge(element.zeile(6).toDouble()*sf*zf);
-                r.set_breite(element.zeile(7).toDouble()*sf*zf);
-                r.set_rad(element.zeile(8).toDouble()*sf*zf);
-                r.set_drewi(element.zeile(9).toDouble());
-
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(13).toInt());
-                pen.setStyle(set_linienstil(element.zeile(14)));
-                pen.setCapStyle(Qt::RoundCap);
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(11)));
-                }
-                painter.setPen(pen);
-
-                QBrush brush = painter.brush();
-                QBrush brush_alt = painter.brush();
-                brush.setColor(set_farbe(element.zeile(12)));
-                painter.setBrush(brush);
-
-                if(r.rad()==0)
-                {
-                    //Rechteck mit eckigen Ecken:
-                    QPainterPath pp;
-                    pp.moveTo(r.unl(false).x(),\
-                              r.unl(false).y());
-                    pp.lineTo(r.unr(false).x(),\
-                              r.unr(false).y());
-                    pp.lineTo(r.obr(false).x(),\
-                              r.obr(false).y());
-                    pp.lineTo(r.obl(false).x(),\
-                              r.obl(false).y());
-                    pp.closeSubpath();
-                    painter.drawPath(pp);
-
-                }else
-                {
-                    //Rechteck runden Ecken:
-                    punkt2d mitpu = r.mi();
-                    //mitpu.set_y(mitpu.y()-r.b());
-                    QPainterPath pp;
-
-                    punkt2d p2;
-                    //Startpunkt:
-                    p2.set_x(r.unl().x());
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad());
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.moveTo(p2.x(), p2.y());
-                    //Rundung links unten:
-                    p2.set_x(r.unl().x());
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 180+r.drewi(), 90);
-                    //Linie nach rechts unten:
-                    p2.set_x(r.unr().x()-r.rad());
-                    p2.set_y((r.mi().y()+r.b()/2));
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung rechts unten:
-                    p2.set_x(r.unr().x()-r.rad()*2);
-                    p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 270+r.drewi(), 90);
-                    //Linie nach rechts oben:
-                    p2.set_x(r.obr().x());
-                    p2.set_y((r.mi().y()-r.b()/2)+r.rad());
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung rechts oben
-                    p2.set_x(r.unr().x()-r.rad()*2);
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 0+r.drewi(), 90);
-                    //Linie nach links oben:
-                    p2.set_x(r.obl().x()+r.rad());
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen(mitpu,\
-                                p2,\
-                                r.drewi(),\
-                                true);
-                    pp.lineTo(p2.x(),p2.y());
-                    //Rundung links oben
-                    p2.set_x(r.obl().x());
-                    p2.set_y((r.mi().y()-r.b()/2));
-                    p2 = drehen_arcTo(p2,\
-                                r.rad()*2,\
-                                r.rad()*2,\
-                                r.drewi(),\
-                                mitpu);
-                    pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 90+r.drewi(), 90);
-
-                    pp.closeSubpath();
-                    painter.drawPath(pp);
-                }
-
-                painter.setPen(pen_alt);
-                painter.setBrush(brush_alt);
-            }
+            zeichneGeotext(spalten.zeile(ii), i);
         }
     }
 
@@ -531,117 +50,642 @@ void vorschau::paintEvent(QPaintEvent *)
 
         for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
         {
-            text_zeilenweise element;
-            element.set_trennzeichen(TRZ_PA_);
-            element.set_text(spalten.zeile(ii));
+            zeichneFkon(spalten.zeile(ii), i);
+        }
+    }
 
-            if(element.get_text().contains(STRECKE))
-            {
-                punkt2d startpunkt, endpunkt;
-                startpunkt.set_x(element.zeile(2).toDouble()*sf*zf);
-                startpunkt.set_y(element.zeile(3).toDouble()*sf*zf);
-                endpunkt.set_x(element.zeile(5).toDouble()*sf*zf);
-                endpunkt.set_y(element.zeile(6).toDouble()*sf*zf);
+    //Aktuelle Zeile noch einmal rot überzeichen, da bereits wieder überdeckt
+    //durch deckungsgleiche Elemente in späteren Zeilen:
+    if(aktuelle_zeilennummer <= geotext.zeilenanzahl() && \
+            !t.get_klartext_zeilenweise().zeile(aktuelle_zeilennummer).contains(PROGRAMMKOPF_DIALOG))
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(geotext.zeile(aktuelle_zeilennummer));
 
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(9).toInt());
-                pen.setStyle(set_linienstil(element.zeile(10)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(8)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            zeichneGeotext(spalten.zeile(ii), aktuelle_zeilennummer);
+        }
+    }
+    if(aktuelle_zeilennummer <= fkontext.zeilenanzahl() && \
+            !t.get_klartext_zeilenweise().zeile(aktuelle_zeilennummer).contains(PROGRAMMKOPF_DIALOG))
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(fkontext.zeile(aktuelle_zeilennummer));
 
-                painter.drawLine(n.x-npv.x+startpunkt.x(), \
-                                 n.y-npv.y-startpunkt.y(), \
-                                 n.x-npv.x+endpunkt.x(), \
-                                 n.y-npv.y-endpunkt.y());
-
-                painter.setPen(pen_alt);
-            }else if(element.get_text().contains(BOGEN))
-            {
-                double rad = element.zeile(8).toDouble()*sf*zf;
-                punkt2d mipu;
-                mipu.set_x(element.zeile(10).toDouble()*sf*zf);//Mittelpunkt in X
-                mipu.set_y(element.zeile(11).toDouble()*sf*zf);//Mittelpunkt in Y
-                punkt2d obli;
-                obli.set_x(mipu.x()-rad);
-                obli.set_y(mipu.y()+rad);
-
-                punkt2d mp;
-                mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
-                mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
-                punkt2d sp;
-                sp.set_x(element.zeile(2).toDouble());//Start in X
-                sp.set_y(element.zeile(3).toDouble());//Start in Y
-                punkt2d ep;
-                ep.set_x(element.zeile(5).toDouble());//Ende in X
-                ep.set_y(element.zeile(6).toDouble());//Ende in Y
-                double stawi=0, bogwi=0;
-
-                if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
-                {
-                    stawi = winkel(sp.x(),   \
-                                   sp.y(),   \
-                                   mp.x(),   \
-                                   mp.y());
-                    bogwi = winkel(sp.x(),   \
-                                   sp.y(),   \
-                                   mp.x(),   \
-                                   mp.y(),   \
-                                   ep.x(),   \
-                                   ep.y());
-                }else//Bogen im Uhrzeigersinn
-                {
-                    stawi = winkel(ep.x(),   \
-                                   ep.y(),   \
-                                   mp.x(),   \
-                                   mp.y());
-                    bogwi = winkel(ep.x(),   \
-                                   ep.y(),   \
-                                   mp.x(),   \
-                                   mp.y(),   \
-                                   sp.x(),   \
-                                   sp.y());
-                }
-                if(bogwi<0)
-                {
-                    bogwi = 360+bogwi;
-                }
-
-                QPen pen, pen_alt;
-                pen_alt = painter.pen();
-                pen.setWidth(element.zeile(13).toInt());
-                pen.setStyle(set_linienstil(element.zeile(14)));
-                if(i==aktuelle_zeilennummer)
-                {
-                    pen.setColor(Qt::red);
-                }else
-                {
-                    pen.setColor(set_farbe(element.zeile(12)));
-                }
-                pen.setCapStyle(Qt::RoundCap);
-                painter.setPen(pen);
-
-                painter.drawArc(n.x-npv.x+obli.x(),\
-                                n.y-npv.y-obli.y(),\
-                                rad*2,\
-                                rad*2,\
-                                stawi*16,\
-                                bogwi*16);
-
-                painter.setPen(pen_alt);
-            }
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            zeichneFkon(spalten.zeile(ii), aktuelle_zeilennummer);
         }
     }
 }
 
+void vorschau::zeichneGeotext(QString geometrieElement, uint i)
+{
+    QPainter painter(this);
+    painter.setBrush( Qt::white);
+    painter.setPen(Qt::black);
 
+    text_zeilenweise element;
+    element.set_trennzeichen(TRZ_PA_);
+    element.set_text(geometrieElement);
+
+    if(element.get_text().contains(PUNKT))
+    {
+        punkt2d p2;
+        p2.set_x(element.zeile(2).toDouble()*sf*zf);
+        p2.set_y(element.zeile(3).toDouble()*sf*zf);
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(6).toInt());
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(5)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+        painter.drawPoint(n.x-npv.x+p2.x(), \
+                          n.y-npv.y-p2.y());
+        painter.setPen(pen_alt);
+    }else if(element.get_text().contains(STRECKE))
+    {
+        punkt2d startpunkt, endpunkt;
+        startpunkt.set_x(element.zeile(2).toDouble()*sf*zf);
+        startpunkt.set_y(element.zeile(3).toDouble()*sf*zf);
+        endpunkt.set_x(element.zeile(5).toDouble()*sf*zf);
+        endpunkt.set_y(element.zeile(6).toDouble()*sf*zf);
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(9).toInt());
+        pen.setStyle(set_linienstil(element.zeile(10)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(8)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        painter.drawLine(n.x-npv.x+startpunkt.x(), \
+                         n.y-npv.y-startpunkt.y(), \
+                         n.x-npv.x+endpunkt.x(), \
+                         n.y-npv.y-endpunkt.y());
+
+        painter.setPen(pen_alt);
+    }else if(element.get_text().contains(BOGEN))
+    {
+        double rad = element.zeile(8).toDouble()*sf*zf;
+        punkt2d mipu;
+        mipu.set_x(element.zeile(10).toDouble()*sf*zf);//Mittelpunkt in X
+        mipu.set_y(element.zeile(11).toDouble()*sf*zf);//Mittelpunkt in Y
+        punkt2d obli;
+        obli.set_x(mipu.x()-rad);
+        obli.set_y(mipu.y()+rad);
+
+        punkt2d mp;
+        mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
+        mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
+        punkt2d sp;
+        sp.set_x(element.zeile(2).toDouble());//Start in X
+        sp.set_y(element.zeile(3).toDouble());//Start in Y
+        punkt2d ep;
+        ep.set_x(element.zeile(5).toDouble());//Ende in X
+        ep.set_y(element.zeile(6).toDouble());//Ende in Y
+        double stawi=0, bogwi=0;
+
+        if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
+        {
+            stawi = winkel(sp.x(),   \
+                           sp.y(),   \
+                           mp.x(),   \
+                           mp.y());
+            bogwi = winkel(sp.x(),   \
+                           sp.y(),   \
+                           mp.x(),   \
+                           mp.y(),   \
+                           ep.x(),   \
+                           ep.y());
+        }else//Bogen im Uhrzeigersinn
+        {
+            stawi = winkel(ep.x(),   \
+                           ep.y(),   \
+                           mp.x(),   \
+                           mp.y());
+            bogwi = winkel(ep.x(),   \
+                           ep.y(),   \
+                           mp.x(),   \
+                           mp.y(),   \
+                           sp.x(),   \
+                           sp.y());
+        }
+        if(bogwi<0)
+        {
+            bogwi = 360+bogwi;
+        }
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(13).toInt());
+        pen.setStyle(set_linienstil(element.zeile(14)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(12)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        painter.drawArc(n.x-npv.x+obli.x(),\
+                        n.y-npv.y-obli.y(),\
+                        rad*2,\
+                        rad*2,\
+                        stawi*16,\
+                        bogwi*16);
+
+        painter.setPen(pen_alt);
+    }else if(element.get_text().contains(KREIS))
+    {
+        double rad = element.zeile(5).toDouble()*sf*zf;
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(8).toInt());
+        pen.setStyle(set_linienstil(element.zeile(9)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(6)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        QBrush brush = painter.brush();
+        QBrush brush_alt = painter.brush();
+        brush.setColor(set_farbe(element.zeile(7)));
+        painter.setBrush(brush);
+
+        painter.drawEllipse(n.x-npv.x+(element.zeile(2).toDouble()*sf*zf)-rad,\
+                            n.y-npv.y-(element.zeile(3).toDouble()*sf*zf)-rad,\
+                            rad*2,\
+                            rad*2);
+
+        painter.setPen(pen_alt);
+        painter.setBrush(brush_alt);
+    }else if(element.get_text().contains(ZYLINDER))
+    {
+        double rad = element.zeile(5).toDouble()*sf*zf;
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(9).toInt());
+        pen.setStyle(set_linienstil(element.zeile(10)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(7)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        QBrush brush = painter.brush();
+        QBrush brush_alt = painter.brush();
+        brush.setColor(set_farbe(element.zeile(8)));
+        painter.setBrush(brush);
+
+        painter.drawEllipse(n.x-npv.x+(element.zeile(2).toDouble()*sf*zf)-rad,\
+                            n.y-npv.y-(element.zeile(3).toDouble()*sf*zf)-rad,\
+                            rad*2,\
+                            rad*2);
+
+        painter.setPen(pen_alt);
+        painter.setBrush(brush_alt);
+    }else if(element.get_text().contains(RECHTECK3D))
+    {
+        rechteck3d r;
+        int bezpunkt = element.zeile(2).toInt();
+        if(bezpunkt == UNTEN_LINKS)
+        {
+            bezpunkt = OBEN_LINKS;
+        }else if(bezpunkt == UNTEN)
+        {
+            bezpunkt = OBEN;
+        }else if(bezpunkt == UNTEN_RECHTS)
+        {
+            bezpunkt = OBEN_RECHTS;
+        }else if(bezpunkt == OBEN_LINKS)
+        {
+            bezpunkt = UNTEN_LINKS;
+        }else if(bezpunkt == OBEN)
+        {
+            bezpunkt = UNTEN;
+        }else if(bezpunkt == OBEN_RECHTS)
+        {
+            bezpunkt = UNTEN_RECHTS;
+        }
+        r.set_bezugspunkt(bezpunkt);
+        r.set_einfuegepunkt(n.x-npv.x+element.zeile(3).toDouble()*sf*zf,\
+                            n.y-npv.y-element.zeile(4).toDouble()*sf*zf,\
+                            element.zeile(5).toDouble()*sf*zf);
+        r.set_laenge(element.zeile(6).toDouble()*sf*zf);
+        r.set_breite(element.zeile(7).toDouble()*sf*zf);
+        r.set_rad(element.zeile(8).toDouble()*sf*zf);
+        r.set_drewi(element.zeile(9).toDouble());
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(12).toInt());
+        pen.setStyle(set_linienstil(element.zeile(13)));
+        pen.setCapStyle(Qt::RoundCap);
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(10)));
+        }
+        painter.setPen(pen);
+
+        QBrush brush = painter.brush();
+        QBrush brush_alt = painter.brush();
+        brush.setColor(set_farbe(element.zeile(11)));
+        painter.setBrush(brush);
+
+        if(r.rad()==0)
+        {
+            //Rechteck mit eckigen Ecken:
+            QPainterPath pp;
+            pp.moveTo(r.unl(false).x(),\
+                      r.unl(false).y());
+            pp.lineTo(r.unr(false).x(),\
+                      r.unr(false).y());
+            pp.lineTo(r.obr(false).x(),\
+                      r.obr(false).y());
+            pp.lineTo(r.obl(false).x(),\
+                      r.obl(false).y());
+            pp.closeSubpath();
+            painter.drawPath(pp);
+
+        }else
+        {
+            //Rechteck runden Ecken:
+            punkt2d mitpu = r.mi();
+            //mitpu.set_y(mitpu.y()-r.b());
+            QPainterPath pp;
+
+            punkt2d p2;
+            //Startpunkt:
+            p2.set_x(r.unl().x());
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad());
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.moveTo(p2.x(), p2.y());
+            //Rundung links unten:
+            p2.set_x(r.unl().x());
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 180+r.drewi(), 90);
+            //Linie nach rechts unten:
+            p2.set_x(r.unr().x()-r.rad());
+            p2.set_y((r.mi().y()+r.b()/2));
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung rechts unten:
+            p2.set_x(r.unr().x()-r.rad()*2);
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 270+r.drewi(), 90);
+            //Linie nach rechts oben:
+            p2.set_x(r.obr().x());
+            p2.set_y((r.mi().y()-r.b()/2)+r.rad());
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung rechts oben
+            p2.set_x(r.unr().x()-r.rad()*2);
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 0+r.drewi(), 90);
+            //Linie nach links oben:
+            p2.set_x(r.obl().x()+r.rad());
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung links oben
+            p2.set_x(r.obl().x());
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 90+r.drewi(), 90);
+
+            pp.closeSubpath();
+            painter.drawPath(pp);
+        }
+
+        painter.setPen(pen_alt);
+        painter.setBrush(brush_alt);
+    }else if(element.get_text().contains(WUERFEL))
+    {
+        rechteck3d r;
+        int bezpunkt = element.zeile(2).toInt();
+        if(bezpunkt == UNTEN_LINKS)
+        {
+            bezpunkt = OBEN_LINKS;
+        }else if(bezpunkt == UNTEN)
+        {
+            bezpunkt = OBEN;
+        }else if(bezpunkt == UNTEN_RECHTS)
+        {
+            bezpunkt = OBEN_RECHTS;
+        }else if(bezpunkt == OBEN_LINKS)
+        {
+            bezpunkt = UNTEN_LINKS;
+        }else if(bezpunkt == OBEN)
+        {
+            bezpunkt = UNTEN;
+        }else if(bezpunkt == OBEN_RECHTS)
+        {
+            bezpunkt = UNTEN_RECHTS;
+        }
+        r.set_bezugspunkt(bezpunkt);
+        r.set_einfuegepunkt(n.x-npv.x+element.zeile(3).toDouble()*sf*zf,\
+                            n.y-npv.y-element.zeile(4).toDouble()*sf*zf,\
+                            element.zeile(5).toDouble()*sf*zf);
+        r.set_laenge(element.zeile(6).toDouble()*sf*zf);
+        r.set_breite(element.zeile(7).toDouble()*sf*zf);
+        r.set_rad(element.zeile(8).toDouble()*sf*zf);
+        r.set_drewi(element.zeile(9).toDouble());
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(13).toInt());
+        pen.setStyle(set_linienstil(element.zeile(14)));
+        pen.setCapStyle(Qt::RoundCap);
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(11)));
+        }
+        painter.setPen(pen);
+
+        QBrush brush = painter.brush();
+        QBrush brush_alt = painter.brush();
+        brush.setColor(set_farbe(element.zeile(12)));
+        painter.setBrush(brush);
+
+        if(r.rad()==0)
+        {
+            //Rechteck mit eckigen Ecken:
+            QPainterPath pp;
+            pp.moveTo(r.unl(false).x(),\
+                      r.unl(false).y());
+            pp.lineTo(r.unr(false).x(),\
+                      r.unr(false).y());
+            pp.lineTo(r.obr(false).x(),\
+                      r.obr(false).y());
+            pp.lineTo(r.obl(false).x(),\
+                      r.obl(false).y());
+            pp.closeSubpath();
+            painter.drawPath(pp);
+
+        }else
+        {
+            //Rechteck runden Ecken:
+            punkt2d mitpu = r.mi();
+            //mitpu.set_y(mitpu.y()-r.b());
+            QPainterPath pp;
+
+            punkt2d p2;
+            //Startpunkt:
+            p2.set_x(r.unl().x());
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad());
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.moveTo(p2.x(), p2.y());
+            //Rundung links unten:
+            p2.set_x(r.unl().x());
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 180+r.drewi(), 90);
+            //Linie nach rechts unten:
+            p2.set_x(r.unr().x()-r.rad());
+            p2.set_y((r.mi().y()+r.b()/2));
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung rechts unten:
+            p2.set_x(r.unr().x()-r.rad()*2);
+            p2.set_y((r.mi().y()+r.b()/2)-r.rad()*2);
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 270+r.drewi(), 90);
+            //Linie nach rechts oben:
+            p2.set_x(r.obr().x());
+            p2.set_y((r.mi().y()-r.b()/2)+r.rad());
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung rechts oben
+            p2.set_x(r.unr().x()-r.rad()*2);
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 0+r.drewi(), 90);
+            //Linie nach links oben:
+            p2.set_x(r.obl().x()+r.rad());
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen(mitpu,\
+                        p2,\
+                        r.drewi(),\
+                        true);
+            pp.lineTo(p2.x(),p2.y());
+            //Rundung links oben
+            p2.set_x(r.obl().x());
+            p2.set_y((r.mi().y()-r.b()/2));
+            p2 = drehen_arcTo(p2,\
+                        r.rad()*2,\
+                        r.rad()*2,\
+                        r.drewi(),\
+                        mitpu);
+            pp.arcTo(p2.x(), p2.y(), r.rad()*2, r.rad()*2, 90+r.drewi(), 90);
+
+            pp.closeSubpath();
+            painter.drawPath(pp);
+        }
+
+        painter.setPen(pen_alt);
+        painter.setBrush(brush_alt);
+    }
+
+}
+
+void vorschau::zeichneFkon(QString geometrieElement, uint i)
+{
+    QPainter painter(this);
+    painter.setBrush( Qt::white);
+    painter.setPen(Qt::black);
+
+    text_zeilenweise element;
+    element.set_trennzeichen(TRZ_PA_);
+    element.set_text(geometrieElement);
+
+    if(element.get_text().contains(STRECKE))
+    {
+        punkt2d startpunkt, endpunkt;
+        startpunkt.set_x(element.zeile(2).toDouble()*sf*zf);
+        startpunkt.set_y(element.zeile(3).toDouble()*sf*zf);
+        endpunkt.set_x(element.zeile(5).toDouble()*sf*zf);
+        endpunkt.set_y(element.zeile(6).toDouble()*sf*zf);
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(9).toInt());
+        pen.setStyle(set_linienstil(element.zeile(10)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(8)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        painter.drawLine(n.x-npv.x+startpunkt.x(), \
+                         n.y-npv.y-startpunkt.y(), \
+                         n.x-npv.x+endpunkt.x(), \
+                         n.y-npv.y-endpunkt.y());
+
+        painter.setPen(pen_alt);
+    }else if(element.get_text().contains(BOGEN))
+    {
+        double rad = element.zeile(8).toDouble()*sf*zf;
+        punkt2d mipu;
+        mipu.set_x(element.zeile(10).toDouble()*sf*zf);//Mittelpunkt in X
+        mipu.set_y(element.zeile(11).toDouble()*sf*zf);//Mittelpunkt in Y
+        punkt2d obli;
+        obli.set_x(mipu.x()-rad);
+        obli.set_y(mipu.y()+rad);
+
+        punkt2d mp;
+        mp.set_x(element.zeile(10).toDouble());//Mittelpunkt in X
+        mp.set_y(element.zeile(11).toDouble());//Mittelpunkt in Y
+        punkt2d sp;
+        sp.set_x(element.zeile(2).toDouble());//Start in X
+        sp.set_y(element.zeile(3).toDouble());//Start in Y
+        punkt2d ep;
+        ep.set_x(element.zeile(5).toDouble());//Ende in X
+        ep.set_y(element.zeile(6).toDouble());//Ende in Y
+        double stawi=0, bogwi=0;
+
+        if(element.zeile(9) == "nein")//Bogen gegen den Uhrzeigersinn
+        {
+            stawi = winkel(sp.x(),   \
+                           sp.y(),   \
+                           mp.x(),   \
+                           mp.y());
+            bogwi = winkel(sp.x(),   \
+                           sp.y(),   \
+                           mp.x(),   \
+                           mp.y(),   \
+                           ep.x(),   \
+                           ep.y());
+        }else//Bogen im Uhrzeigersinn
+        {
+            stawi = winkel(ep.x(),   \
+                           ep.y(),   \
+                           mp.x(),   \
+                           mp.y());
+            bogwi = winkel(ep.x(),   \
+                           ep.y(),   \
+                           mp.x(),   \
+                           mp.y(),   \
+                           sp.x(),   \
+                           sp.y());
+        }
+        if(bogwi<0)
+        {
+            bogwi = 360+bogwi;
+        }
+
+        QPen pen, pen_alt;
+        pen_alt = painter.pen();
+        pen.setWidth(element.zeile(13).toInt());
+        pen.setStyle(set_linienstil(element.zeile(14)));
+        if(i==aktuelle_zeilennummer)
+        {
+            pen.setColor(Qt::red);
+        }else
+        {
+            pen.setColor(set_farbe(element.zeile(12)));
+        }
+        pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(pen);
+
+        painter.drawArc(n.x-npv.x+obli.x(),\
+                        n.y-npv.y-obli.y(),\
+                        rad*2,\
+                        rad*2,\
+                        stawi*16,\
+                        bogwi*16);
+
+        painter.setPen(pen_alt);
+    }
+}
 
 void vorschau::werkstueck_darstellung_berechnen()
 {

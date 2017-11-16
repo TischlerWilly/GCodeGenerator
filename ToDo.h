@@ -7,9 +7,6 @@
 
 
 
-
-
-
 ----------Ideen für neue Dialoge:
 -->Dialog für das Zapfen-fräsen
     ->Dialog Rtasche erweitern
@@ -25,7 +22,6 @@
 
 
 ----------Ideen für neue Funktionen:
--->Import von anderen (programmeigenen) CNC-Programmen, mit Auswahl der zu importierenden Zeilen
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 -->Aufruf Fräser-Dialog erweitern:
     ->Zustellmaß für Tiefenzustellung

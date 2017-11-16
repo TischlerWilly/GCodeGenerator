@@ -144,6 +144,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&variablenwerte_anzeigen, SIGNAL(brauche_variablen()), this, SLOT(slotAnfrageVariablen()));
     connect(&vorschaufenster, SIGNAL(sende_maus_pos(QPoint)), this, SLOT(slot_maus_pos(QPoint)));
 
+    connect(this, SIGNAL(sendTextToImportGGF(QString)), &import_ggf, SLOT(getText(QString)));
+    connect(&import_ggf, SIGNAL(sendData(QString)), this, SLOT(getImportGGF(QString)));
+
     aktualisiere_letzte_dateien_menu();
 
     this->setWindowState(Qt::WindowMaximized);
@@ -1211,6 +1214,7 @@ QString MainWindow::werkzeugdaten(QString werkzeugname)
 
 void MainWindow::on_actionEntfernen_triggered()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -1269,10 +1273,12 @@ void MainWindow::on_actionEntfernen_triggered()
         }
     }
     vorschauAktualisieren();
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionKopieren_triggered()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -1327,11 +1333,12 @@ void MainWindow::on_actionKopieren_triggered()
             mb.exec();
         }
     }
-
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionEinfuegen_triggered()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if(kopierterEintrag_t != NICHT_DEFINIERT)
@@ -1392,10 +1399,12 @@ void MainWindow::on_actionEinfuegen_triggered()
         on_listWidget_Werkzeug_itemDoubleClicked(item);
     }
     vorschauAktualisieren();
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAusschneiden_triggered()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
         if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
@@ -1460,6 +1469,7 @@ void MainWindow::on_actionAusschneiden_triggered()
         }
     }
     vorschauAktualisieren();
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAendern_triggered()
@@ -1562,6 +1572,14 @@ void MainWindow::on_listWidget_Werkzeug_itemDoubleClicked(QListWidgetItem *item)
 {
     item = item; //Zeile nur da, damit keine Warnung vom Compiler, dass Variable ungenutzt ist
     emit on_actionAendern_triggered();
+}
+
+void MainWindow::getImportGGF(QString text)
+{
+    QString tmp = kopierterEintrag_t;
+    kopierterEintrag_t = text;
+    on_actionEinfuegen_triggered();
+    kopierterEintrag_t = tmp;
 }
 
 //---------------------------------------------------Dialoge
@@ -1863,7 +1881,7 @@ void MainWindow::on_actionDateiOefnen_triggered()
     }else
     {
         //Dialog öffnen zum Wählen der Datei:
-        openFile(QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)")));
+        openFile(QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath()+"/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)")));
     }
 }
 
@@ -1975,6 +1993,58 @@ void MainWindow::openFile(QString pfad)
         hat_ungesicherte_inhalte = false;
         QApplication::restoreOverrideCursor();
     }
+}
+
+
+void MainWindow::on_import_GGF_triggered()
+{
+    //Dialog öffnen zum Wählen der Datei:
+    //QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
+    QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath()+ "/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
+    QFile file(dateipfad);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        //QApplication::setOverrideCursor(Qt::WaitCursor);
+        text_zeilenweise tz;
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            if(line.contains(PROGRAMMKOPF_DIALOG) ||\
+               line.contains(PROGRAMMENDE_DIALOG))
+            {
+                continue;
+            }
+            if(line.contains(LISTENENDE))
+            {
+                break;
+            }
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(tz.zeilenanzahl() == 0)
+            {
+                tz.set_text(line);
+            }else
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+        file.close();
+
+        emit sendTextToImportGGF(tz.get_text());
+
+        //QApplication::restoreOverrideCursor();
+    }
+}
+
+void MainWindow::on_import_DXF_triggered()
+{
+    //Dialog öffnen zum Wählen der Datei:
+    //QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath() , tr("DXF Dateien (*.dxf)"));
+    QMessageBox mb;
+    mb.setText("Der Import von DXF-Dateien wird leider noch nicht unterstuetzt.");
+    mb.exec();
 }
 
 void MainWindow::on_actionDateiSchliessen_triggered()
@@ -2096,6 +2166,9 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionDateiSchliessen->setDisabled(true);
     ui->actionGCode_berechnen->setDisabled(true);
     ui->actionGCode_exportieren->setDisabled(true);
+    ui->menuImport->setDisabled(true);
+    ui->import_GGF->setDisabled(true);
+    ui->import_DXF->setDisabled(true);
     //Menü Bearbeiten:
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -2136,6 +2209,9 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionDateiSchliessen->setEnabled(true);
     ui->actionGCode_berechnen->setEnabled(true);
     ui->actionGCode_exportieren->setEnabled(true);
+    ui->menuImport->setEnabled(true);
+    ui->import_GGF->setEnabled(true);
+    ui->import_DXF->setEnabled(true);
     //Menü Bearbeiten:
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -3471,6 +3547,12 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.exec();
 
 }
+
+
+
+
+
+
 
 
 

@@ -192,9 +192,17 @@
       <string>erneut Oefnen</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import</string>
+     </property>
+     <addaction name="import_GGF"/>
+     <addaction name="import_DXF"/>
+    </widget>
     <addaction name="actionDateiNeu"/>
     <addaction name="actionDateiOefnen"/>
     <addaction name="menuLetzte_Dateien"/>
+    <addaction name="menuImport"/>
     <addaction name="actionDateiSpeichern"/>
     <addaction name="actionDateiSpeichern_unter"/>
     <addaction name="actionDateiSchliessen"/>
@@ -452,6 +460,16 @@
   <action name="actionLetzte_Dateien">
    <property name="text">
     <string>letzte Dateien</string>
+   </property>
+  </action>
+  <action name="import_GGF">
+   <property name="text">
+    <string>aus GGF-Datei</string>
+   </property>
+  </action>
+  <action name="import_DXF">
+   <property name="text">
+    <string>aus DXF-Datei</string>
    </property>
   </action>
  </widget>
