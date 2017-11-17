@@ -110,6 +110,10 @@ QString Dialog_Werkzeug::dialogDataToString()
     msg += ui->lineEdit_Drehzahl->text();
     msg += ENDE_EINTRAG;
 
+    msg += WKZ_ZUSTELLTIEFE;
+    msg += ui->lineEdit_zustelltiefe->text();
+    msg += ENDE_EINTRAG;
+
     msg += ENDE_ZEILE;
     return msg;
 }
@@ -138,6 +142,7 @@ void Dialog_Werkzeug::getDialogData(QString text, bool openToChangeData)
     ui->lineEdit_Eintauchvorschub->setText(selektiereEintrag(text, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_Vorschub_XY->setText(selektiereEintrag(text, WKZ_VORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_Drehzahl->setText(selektiereEintrag(text, WKZ_DREHZAHL, ENDE_EINTRAG));
+    ui->lineEdit_zustelltiefe->setText(selektiereEintrag(text, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG));
     int index;
     index = ui->comboBox_Drehrichtung->findText(selektiereEintrag(text, WKZ_DREHRICHTUNG, ENDE_EINTRAG));
     ui->comboBox_Drehrichtung->setCurrentIndex(index);
@@ -171,6 +176,7 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
         QMessageBox mb;
         mb.setText("Werkzeugnummer darf nicht leer sein!");
         mb.exec();
+        ui->tabWidget->setCurrentIndex(0);
         return;
     }else
     {
@@ -182,6 +188,7 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
             QMessageBox mb;
             mb.setText("Werkzeugnummer ist ungueltig!\nBitte nur ganze Zahlen verwenden.");
             mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
             return;
         }
         if(num > 99999)
@@ -189,6 +196,7 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
             QMessageBox mb;
             mb.setText("Werkzeugnummer ist zu gross\nMaximal 99999 ist erlaubt!");
             mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
             return;
         }
     }
@@ -198,6 +206,7 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
         QMessageBox mb;
         mb.setText("Werkzeugname darf nicht leer sein!");
         mb.exec();
+        ui->tabWidget->setCurrentIndex(0);
         return;
     }
     tmp = text_mitte(msg, WKZ_NUTZLAENGE, ENDE_EINTRAG);
@@ -206,7 +215,26 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
         QMessageBox mb;
         mb.setText("Nutzlaenge ist nicht definiert!");
         mb.exec();
+        ui->tabWidget->setCurrentIndex(0);
         return;
+    }else
+    {
+        float wert = tmp.toFloat();
+        if(wert <0)
+        {
+            QMessageBox mb;
+            mb.setText("Nutzlaenge darf nicht kleiner als 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
+            return;
+        }else if (wert == 0)
+        {
+            QMessageBox mb;
+            mb.setText("Nutzlaenge darf nicht 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
+            return;
+        }
     }
     tmp = text_mitte(msg, WKZ_DURCHMESSER, ENDE_EINTRAG);
     if(tmp.isEmpty())
@@ -214,7 +242,26 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
         QMessageBox mb;
         mb.setText("Werkzeugdurchmesser darf nicht leer sein!");
         mb.exec();
+        ui->tabWidget->setCurrentIndex(0);
         return;
+    }else
+    {
+        float wert = tmp.toFloat();
+        if(wert <0)
+        {
+            QMessageBox mb;
+            mb.setText("Werkzeugdurchmesser darf nicht kleiner als 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
+            return;
+        }else if (wert == 0)
+        {
+            QMessageBox mb;
+            mb.setText("Werkzeugdurchmesser darf nicht 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
+            return;
+        }
     }
     tmp = text_mitte(msg, WKZ_STECKPLATZ, ENDE_EINTRAG);
     if(!tmp.isEmpty())
@@ -227,9 +274,47 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
             QMessageBox mb;
             mb.setText("Steckplatz ist ungueltig!\nBitte nur ganze Zahlen verwenden.");
             mb.exec();
+            ui->tabWidget->setCurrentIndex(0);
             return;
         }
     }
+    tmp = text_mitte(msg, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG);
+    if(!tmp.isEmpty())
+    {
+        float tiefe = tmp.toFloat();
+        tmp = text_mitte(msg, WKZ_NUTZLAENGE, ENDE_EINTRAG);
+        float nutzl = tmp.toFloat();
+        if(tiefe <0)
+        {
+            QMessageBox mb;
+            mb.setText("Zustelltiefe darf nicht kleiner als 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(3);
+            return;
+        }else if (tiefe == 0)
+        {
+            QMessageBox mb;
+            mb.setText("Zustelltiefe darf nicht 0 sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(3);
+            return;
+        }else if(tiefe > nutzl)
+        {
+            QMessageBox mb;
+            mb.setText("Zustelltiefe darf nicht groeßer als Nutzlaenge sein!");
+            mb.exec();
+            ui->tabWidget->setCurrentIndex(3);
+            return;
+        }
+    }else
+    {
+        QMessageBox mb;
+        mb.setText("Zustelltiefe muss noch angageben werden!");
+        mb.exec();
+        ui->tabWidget->setCurrentIndex(3);
+        return;
+    }
+
     this->hide();
     if(openToModifyData)
     {

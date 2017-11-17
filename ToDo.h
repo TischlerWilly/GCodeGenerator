@@ -3,6 +3,9 @@
 
 /*
 ----------Aktuell in Arbeit:
+-->Aufruf Fräser-Dialog erweitern:
+    ->Zustellmaß für Tiefenzustellung
+
 
 
 ----------Ideen für neue Dialoge:
@@ -21,8 +24,7 @@
 
 ----------Ideen für neue Funktionen:
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
--->Aufruf Fräser-Dialog erweitern:
-    ->Zustellmaß für Tiefenzustellung
+
 
 
 
