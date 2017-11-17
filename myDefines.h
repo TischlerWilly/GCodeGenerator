@@ -166,6 +166,7 @@
 #define WKZ_EINTAUCHVORSCHUB "[wFAN]"
 #define WKZ_VORSCHUB        "[wF]"
 #define WKZ_DREHZAHL        "[wN]"
+#define WKZ_ZUSTELLTIEFE    "[wZUTI]"
 #define WKZ_ENDE_EINTRAG    ";"
 
 

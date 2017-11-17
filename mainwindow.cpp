@@ -2677,6 +2677,10 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             tasche_tmp.set_radius_taschenecken(tmp.toFloat());
 
             tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG);
+            }
             tasche_tmp.set_zustellmass(tmp.toFloat());
 
             tmp = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
@@ -2781,6 +2785,10 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             tasche_tmp.set_radius_taschenecken(tmp.toFloat()/2);
 
             tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG);
+            }
             tasche_tmp.set_zustellmass(tmp.toFloat());
 
             tmp = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);

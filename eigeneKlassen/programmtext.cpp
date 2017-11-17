@@ -628,8 +628,14 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ENDE_EINTRAG;
 
                 tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
-                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
                 zeile_klartext += ZUSTELLUNG;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -809,8 +815,14 @@ void programmtext::aktualisiere_klartext_var_geo()
                 }
 
                 tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
-                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
                 zeile_klartext += ZUSTELLUNG;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
