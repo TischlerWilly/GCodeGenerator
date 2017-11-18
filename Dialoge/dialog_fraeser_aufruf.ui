@@ -188,141 +188,158 @@
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="7" column="1">
-       <widget class="QLabel" name="label_ausfbed_var">
-        <property name="text">
-         <string>*[AFB]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2">
-       <widget class="QLineEdit" name="lineEdit_ausfbed"/>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_bezeichn">
-        <property name="text">
-         <string>Bezeichnung</string>
-        </property>
-       </widget>
-      </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="label_komment">
-        <property name="text">
-         <string>Kommentar</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_vorschub">
-        <property name="text">
-         <string>Vorschub XY</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_ausfbed">
-        <property name="text">
-         <string>Ausführbedingung</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="2">
-       <widget class="QLineEdit" name="lineEdit_bezeichn"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_drehzahl">
-        <property name="text">
-         <string>Drehzahl</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QLabel" name="label_komment_var">
-        <property name="text">
-         <string>[KOM]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="QLabel" name="label_bezeichn_var">
-        <property name="text">
-         <string>[BEZ]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="QLineEdit" name="lineEdit_komment"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_anftyp">
-        <property name="text">
-         <string>Anfahrtyp</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
        <widget class="QLabel" name="label_abftyp">
         <property name="text">
          <string>Abfahrtyp</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="8" column="1">
+       <widget class="QLabel" name="label_ausfbed_var">
+        <property name="text">
+         <string>*[AFB]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLineEdit" name="lineEdit_ausfbed"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_bezeichn">
+        <property name="text">
+         <string>Bezeichnung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_komment">
+        <property name="text">
+         <string>Kommentar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_vorschub">
+        <property name="text">
+         <string>Vorschub XY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_ausfbed">
+        <property name="text">
+         <string>Ausführbedingung</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="lineEdit_bezeichn"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_drehzahl">
+        <property name="text">
+         <string>Drehzahl</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="label_komment_var">
+        <property name="text">
+         <string>[KOM]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_bezeichn_var">
+        <property name="text">
+         <string>[BEZ]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLineEdit" name="lineEdit_komment"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_anftyp">
+        <property name="text">
+         <string>Anfahrtyp</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QLabel" name="label_eintvors">
         <property name="text">
          <string>Eintauchvorschub</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="QLabel" name="label_abftyp_var">
         <property name="text">
          <string>[ANT]</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QLabel" name="label_anftyp_var">
         <property name="text">
          <string>[ABT]</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QLabel" name="label_drehzahl_var">
         <property name="text">
          <string>[N]</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QLabel" name="label_vorschub_var">
         <property name="text">
          <string>[F]</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QLabel" name="label_eintvors_var">
         <property name="text">
          <string>[FAN]</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <widget class="QLineEdit" name="lineEdit_eintvors"/>
       </item>
-      <item row="1" column="2">
+      <item row="2" column="2">
        <widget class="QLineEdit" name="lineEdit_vorschub"/>
       </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QLineEdit" name="lineEdit_drehzahl"/>
       </item>
-      <item row="3" column="2">
+      <item row="4" column="2">
        <widget class="QComboBox" name="comboBox_anftyp"/>
       </item>
-      <item row="4" column="2">
+      <item row="5" column="2">
        <widget class="QComboBox" name="comboBox_abftyp"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label__zustellung">
+        <property name="text">
+         <string>Zustellmass</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_zustellung_var">
+        <property name="text">
+         <string>[ZUST]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="lineEdit_zustellung"/>
       </item>
      </layout>
     </widget>
@@ -363,7 +380,6 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>comboBox_werkzeug</tabstop>
   <tabstop>comboBox__bahnkor</tabstop>
   <tabstop>lineEdit_startx</tabstop>
@@ -371,9 +387,7 @@
   <tabstop>lineEdit_startz</tabstop>
   <tabstop>lineEdit_eckruglob</tabstop>
   <tabstop>lineEdit_kantdi</tabstop>
-  <tabstop>pushButton_abbrechen</tabstop>
-  <tabstop>pushButton_speichern</tabstop>
-  <tabstop>pushButton_ok</tabstop>
+  <tabstop>lineEdit_zustellung</tabstop>
   <tabstop>lineEdit_eintvors</tabstop>
   <tabstop>lineEdit_vorschub</tabstop>
   <tabstop>lineEdit_drehzahl</tabstop>
@@ -382,6 +396,10 @@
   <tabstop>lineEdit_komment</tabstop>
   <tabstop>lineEdit_bezeichn</tabstop>
   <tabstop>lineEdit_ausfbed</tabstop>
+  <tabstop>pushButton_abbrechen</tabstop>
+  <tabstop>pushButton_speichern</tabstop>
+  <tabstop>pushButton_ok</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

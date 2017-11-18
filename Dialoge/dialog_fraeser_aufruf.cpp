@@ -124,6 +124,10 @@ QString Dialog_Fraeser_Aufruf::dialogDataToString()
     msg += text_mitte(w.get_werkzeug(ui->comboBox_werkzeug->currentText()), WKZ_DURCHMESSER, WKZ_ENDE_EINTRAG);
     msg += ENDE_EINTRAG;
 
+    msg += ZUSTELLUNG;
+    msg += ui->lineEdit_zustellung->text();
+    msg += ENDE_EINTRAG;
+
     msg += ENDE_ZEILE;
     return msg;
 }
@@ -167,6 +171,7 @@ void Dialog_Fraeser_Aufruf::getDialogData(QString text, bool openToChangeData, Q
     ui->lineEdit_eintvors->setText(selektiereEintrag(text, ANFAHRVORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_vorschub->setText(selektiereEintrag(text, VORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_drehzahl->setText(selektiereEintrag(text, DREHZAHL, ENDE_EINTRAG));
+    ui->lineEdit_zustellung->setText(selektiereEintrag(text, ZUSTELLUNG, ENDE_EINTRAG));
 
     tmp = selektiereEintrag(text, ANFAHRTYP, ENDE_EINTRAG);
     index = ui->comboBox_anftyp->findText(tmp);
