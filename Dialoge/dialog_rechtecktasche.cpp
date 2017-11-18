@@ -130,6 +130,7 @@ void Dialog_Rechtecktasche::on_pushButton_OK_clicked()
 {
     QString dmwkz = ui->label_wkz_Durchmesser_wert->text();
     QString l  = ui->lineEdit_laenge->text();
+    l = ausdruck_auswerten(l);
     if(l.toDouble() < dmwkz.toDouble())
     {
         QMessageBox mb;
@@ -138,6 +139,7 @@ void Dialog_Rechtecktasche::on_pushButton_OK_clicked()
         return;
     }
     QString b  = ui->lineEdit_breite->text();
+    b = ausdruck_auswerten(b);
     if(b.toDouble() < dmwkz.toDouble())
     {
         QMessageBox mb;

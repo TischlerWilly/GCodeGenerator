@@ -99,6 +99,7 @@ void Dialog_Kreistasche::on_pushButton_OK_clicked()
 {
     QString dmwkz = ui->label_wkz_Durchmesser_wert->text();
     QString dmta  = ui->lineEdit_Taschendurchmesser->text();
+    dmta = ausdruck_auswerten(dmta);
     if(dmta.toDouble() < dmwkz.toDouble())
     {
         QMessageBox mb;

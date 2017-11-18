@@ -2658,7 +2658,7 @@ void programmtext::aktualisiere_fkon()
                     }
                 }else if(bahnkorr == BAHNRORREKTUR_links)
                 {
-                    double versatz = wkz_dm - kantendicke;
+                    double versatz = wkz_dm/2 - kantendicke;
 
                     if(geo_element.get_text().contains(STRECKE))
                     {
@@ -2740,7 +2740,7 @@ void programmtext::aktualisiere_fkon()
 
                 }else  //bahnkorr == BAHNRORREKTUR_rechts
                 {
-                    double versatz = wkz_dm - kantendicke;
+                    double versatz = wkz_dm/2 - kantendicke;
 
                     if(geo_element.get_text().contains(STRECKE))
                     {

@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "../myDefines.h"
 #include "../eigeneFunktionen/text.h"
+#include "../eigeneFunktionen/myfunktion.h"
 
 namespace Ui {
 class Dialog_Kreistasche;
