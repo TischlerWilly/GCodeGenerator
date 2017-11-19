@@ -688,7 +688,17 @@ void MainWindow::loadConfig_letzte_Dateien()
             tmp += file.readLine();
         }
         file.close();
-        letzte_geoefnete_dateien.set_text(tmp);
+        text_zeilenweise tz;
+        tz.set_text(tmp);
+        QString liste;
+        //Reihenfolge umdrehen:
+        for(uint i=tz.zeilenanzahl(); i>0;i--)
+        {
+            liste += tz.zeile(i);
+            liste += "\n";
+        }
+        liste = liste.left(liste.length() - 1);//letzets Zeichen löschen = "\n"
+        letzte_geoefnete_dateien.set_text(liste);
     }
 }
 
@@ -1217,7 +1227,8 @@ void MainWindow::on_actionEntfernen_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
         {
             QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
             int items_menge = items.count();
@@ -1995,7 +2006,6 @@ void MainWindow::openFile(QString pfad)
     }
 }
 
-
 void MainWindow::on_import_GGF_triggered()
 {
     //Dialog öffnen zum Wählen der Datei:
@@ -2140,6 +2150,8 @@ void MainWindow::on_actionDateiSpeichern_triggered()
         tmp += " ( " + info.baseName() + " )";
         this->setWindowTitle(tmp);
         hat_ungesicherte_inhalte = false;
+        aktuelisiere_letzte_dateien_inifile();
+        aktualisiere_letzte_dateien_menu();
     }
 }
 
@@ -2336,7 +2348,8 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
         {
             QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
             int items_menge = items.count();
@@ -2390,10 +2403,11 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
 void MainWindow::on_actionAuswahl_Ausblenden_triggered()
 {
     t.warnungen_einschalten(false);
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor); 
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
         {
             QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
             int items_menge = items.count();
@@ -2408,6 +2422,7 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
             }
             int row_letztes = row_erstes + items_menge-1;
 
+            t.aktualisieren_ein_aus(false);
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
                 QString zeilentext = t.zeile(i+1);
@@ -2416,14 +2431,15 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
                     t.zeile_ersaetzen(i+1,"//"+zeilentext);
                     QColor farbe(180,205,205);//grau
                     ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
-                }
-                aktualisiere_anzeigetext();
-                vorschauAktualisieren();
+                }                
             }
+            t.aktualisieren_ein_aus(true);
+            aktualisiere_anzeigetext();
+            vorschauAktualisieren();
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
                 ui->listWidget_Programmliste->item(i)->setSelected(true);
-            }
+            }           
         } else
         {
             QMessageBox mb;
@@ -2446,7 +2462,8 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
         {
             QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
             int items_menge = items.count();
@@ -2461,6 +2478,7 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
             }
             int row_letztes = row_erstes + items_menge-1;
 
+            t.aktualisieren_ein_aus(false);
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
                 QString zeilentext = t.zeile(i+1);
@@ -2472,13 +2490,14 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
                     QColor farbe(180,205,205);//grau
                     ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
                 }
-                aktualisiere_anzeigetext();
-                vorschauAktualisieren();
             }
+            t.aktualisieren_ein_aus(true);
+            aktualisiere_anzeigetext();
+            vorschauAktualisieren();
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
                 ui->listWidget_Programmliste->item(i)->setSelected(true);
-            }
+            }        
         } else
         {
             QMessageBox mb;
