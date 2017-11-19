@@ -108,6 +108,19 @@ public:
     void        zeile_anhaengen(QString zeilentext);
     int         zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext);
 
+    inline  void aktualisieren_ein_aus(bool einschalten)
+    {
+        if(einschalten)
+        {
+            aktualisieren_eingeschaltet = true;
+            aktualisiere_klartext_var_geo();
+            aktualisiere_anzeigetext();
+            aktualisiere_fkon();
+        }else
+        {
+            aktualisieren_eingeschaltet = false;
+        }
+    }
 
 
 
@@ -131,6 +144,7 @@ private:
     uint    anz_faufr, anz_fabfa;
     bool    warnungen_sind_eingeschaltet;
     bool    warnung_frDial;
+    bool    aktualisieren_eingeschaltet;
 
             void    clear_ausser_text();
     inline  void    set_werkstuecklaenge(float neue_laenge)

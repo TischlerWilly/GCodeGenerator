@@ -411,9 +411,11 @@
   <tabstop>lineEdit_Eintauchvorschub</tabstop>
   <tabstop>lineEdit_Vorschub_XY</tabstop>
   <tabstop>lineEdit_Drehzahl</tabstop>
+  <tabstop>lineEdit_zustelltiefe</tabstop>
   <tabstop>pushButton_Abbrechen</tabstop>
   <tabstop>pushButton_Speichern</tabstop>
   <tabstop>pushButton_OK</tabstop>
+  <tabstop>pushButton_bild_info</tabstop>
  </tabstops>
  <resources/>
  <connections/>

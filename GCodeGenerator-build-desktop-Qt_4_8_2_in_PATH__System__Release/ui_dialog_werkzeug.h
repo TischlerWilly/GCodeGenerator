@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog_werkzeug.ui'
 **
-** Created: Fri Nov 17 21:27:31 2017
+** Created: Sat Nov 18 22:23:19 2017
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -421,9 +421,11 @@ public:
         QWidget::setTabOrder(lineEdit_Richtung, lineEdit_Eintauchvorschub);
         QWidget::setTabOrder(lineEdit_Eintauchvorschub, lineEdit_Vorschub_XY);
         QWidget::setTabOrder(lineEdit_Vorschub_XY, lineEdit_Drehzahl);
-        QWidget::setTabOrder(lineEdit_Drehzahl, pushButton_Abbrechen);
+        QWidget::setTabOrder(lineEdit_Drehzahl, lineEdit_zustelltiefe);
+        QWidget::setTabOrder(lineEdit_zustelltiefe, pushButton_Abbrechen);
         QWidget::setTabOrder(pushButton_Abbrechen, pushButton_Speichern);
         QWidget::setTabOrder(pushButton_Speichern, pushButton_OK);
+        QWidget::setTabOrder(pushButton_OK, pushButton_bild_info);
 
         retranslateUi(Dialog_Werkzeug);
 

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog_fraeser_aufruf.ui'
 **
-** Created: Fri Nov 17 21:27:31 2017
+** Created: Sat Nov 18 22:23:19 2017
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -59,6 +59,7 @@ public:
     QWidget *tab_2;
     QWidget *layoutWidget1;
     QGridLayout *gridLayout_2;
+    QLabel *label_abftyp;
     QLabel *label_ausfbed_var;
     QLineEdit *lineEdit_ausfbed;
     QLabel *label_bezeichn;
@@ -71,7 +72,6 @@ public:
     QLabel *label_bezeichn_var;
     QLineEdit *lineEdit_komment;
     QLabel *label_anftyp;
-    QLabel *label_abftyp;
     QLabel *label_eintvors;
     QLabel *label_abftyp_var;
     QLabel *label_anftyp_var;
@@ -83,6 +83,9 @@ public:
     QLineEdit *lineEdit_drehzahl;
     QComboBox *comboBox_anftyp;
     QComboBox *comboBox_abftyp;
+    QLabel *label__zustellung;
+    QLabel *label_zustellung_var;
+    QLineEdit *lineEdit_zustellung;
     QWidget *layoutWidget2;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButton_abbrechen;
@@ -222,125 +225,140 @@ public:
         gridLayout_2 = new QGridLayout(layoutWidget1);
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
+        label_abftyp = new QLabel(layoutWidget1);
+        label_abftyp->setObjectName(QString::fromUtf8("label_abftyp"));
+
+        gridLayout_2->addWidget(label_abftyp, 5, 0, 1, 1);
+
         label_ausfbed_var = new QLabel(layoutWidget1);
         label_ausfbed_var->setObjectName(QString::fromUtf8("label_ausfbed_var"));
 
-        gridLayout_2->addWidget(label_ausfbed_var, 7, 1, 1, 1);
+        gridLayout_2->addWidget(label_ausfbed_var, 8, 1, 1, 1);
 
         lineEdit_ausfbed = new QLineEdit(layoutWidget1);
         lineEdit_ausfbed->setObjectName(QString::fromUtf8("lineEdit_ausfbed"));
 
-        gridLayout_2->addWidget(lineEdit_ausfbed, 7, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_ausfbed, 8, 2, 1, 1);
 
         label_bezeichn = new QLabel(layoutWidget1);
         label_bezeichn->setObjectName(QString::fromUtf8("label_bezeichn"));
 
-        gridLayout_2->addWidget(label_bezeichn, 6, 0, 1, 1);
+        gridLayout_2->addWidget(label_bezeichn, 7, 0, 1, 1);
 
         label_komment = new QLabel(layoutWidget1);
         label_komment->setObjectName(QString::fromUtf8("label_komment"));
 
-        gridLayout_2->addWidget(label_komment, 5, 0, 1, 1);
+        gridLayout_2->addWidget(label_komment, 6, 0, 1, 1);
 
         label_vorschub = new QLabel(layoutWidget1);
         label_vorschub->setObjectName(QString::fromUtf8("label_vorschub"));
 
-        gridLayout_2->addWidget(label_vorschub, 1, 0, 1, 1);
+        gridLayout_2->addWidget(label_vorschub, 2, 0, 1, 1);
 
         label_ausfbed = new QLabel(layoutWidget1);
         label_ausfbed->setObjectName(QString::fromUtf8("label_ausfbed"));
 
-        gridLayout_2->addWidget(label_ausfbed, 7, 0, 1, 1);
+        gridLayout_2->addWidget(label_ausfbed, 8, 0, 1, 1);
 
         lineEdit_bezeichn = new QLineEdit(layoutWidget1);
         lineEdit_bezeichn->setObjectName(QString::fromUtf8("lineEdit_bezeichn"));
 
-        gridLayout_2->addWidget(lineEdit_bezeichn, 6, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_bezeichn, 7, 2, 1, 1);
 
         label_drehzahl = new QLabel(layoutWidget1);
         label_drehzahl->setObjectName(QString::fromUtf8("label_drehzahl"));
 
-        gridLayout_2->addWidget(label_drehzahl, 2, 0, 1, 1);
+        gridLayout_2->addWidget(label_drehzahl, 3, 0, 1, 1);
 
         label_komment_var = new QLabel(layoutWidget1);
         label_komment_var->setObjectName(QString::fromUtf8("label_komment_var"));
 
-        gridLayout_2->addWidget(label_komment_var, 5, 1, 1, 1);
+        gridLayout_2->addWidget(label_komment_var, 6, 1, 1, 1);
 
         label_bezeichn_var = new QLabel(layoutWidget1);
         label_bezeichn_var->setObjectName(QString::fromUtf8("label_bezeichn_var"));
 
-        gridLayout_2->addWidget(label_bezeichn_var, 6, 1, 1, 1);
+        gridLayout_2->addWidget(label_bezeichn_var, 7, 1, 1, 1);
 
         lineEdit_komment = new QLineEdit(layoutWidget1);
         lineEdit_komment->setObjectName(QString::fromUtf8("lineEdit_komment"));
 
-        gridLayout_2->addWidget(lineEdit_komment, 5, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_komment, 6, 2, 1, 1);
 
         label_anftyp = new QLabel(layoutWidget1);
         label_anftyp->setObjectName(QString::fromUtf8("label_anftyp"));
 
-        gridLayout_2->addWidget(label_anftyp, 3, 0, 1, 1);
-
-        label_abftyp = new QLabel(layoutWidget1);
-        label_abftyp->setObjectName(QString::fromUtf8("label_abftyp"));
-
-        gridLayout_2->addWidget(label_abftyp, 4, 0, 1, 1);
+        gridLayout_2->addWidget(label_anftyp, 4, 0, 1, 1);
 
         label_eintvors = new QLabel(layoutWidget1);
         label_eintvors->setObjectName(QString::fromUtf8("label_eintvors"));
 
-        gridLayout_2->addWidget(label_eintvors, 0, 0, 1, 1);
+        gridLayout_2->addWidget(label_eintvors, 1, 0, 1, 1);
 
         label_abftyp_var = new QLabel(layoutWidget1);
         label_abftyp_var->setObjectName(QString::fromUtf8("label_abftyp_var"));
 
-        gridLayout_2->addWidget(label_abftyp_var, 4, 1, 1, 1);
+        gridLayout_2->addWidget(label_abftyp_var, 5, 1, 1, 1);
 
         label_anftyp_var = new QLabel(layoutWidget1);
         label_anftyp_var->setObjectName(QString::fromUtf8("label_anftyp_var"));
 
-        gridLayout_2->addWidget(label_anftyp_var, 3, 1, 1, 1);
+        gridLayout_2->addWidget(label_anftyp_var, 4, 1, 1, 1);
 
         label_drehzahl_var = new QLabel(layoutWidget1);
         label_drehzahl_var->setObjectName(QString::fromUtf8("label_drehzahl_var"));
 
-        gridLayout_2->addWidget(label_drehzahl_var, 2, 1, 1, 1);
+        gridLayout_2->addWidget(label_drehzahl_var, 3, 1, 1, 1);
 
         label_vorschub_var = new QLabel(layoutWidget1);
         label_vorschub_var->setObjectName(QString::fromUtf8("label_vorschub_var"));
 
-        gridLayout_2->addWidget(label_vorschub_var, 1, 1, 1, 1);
+        gridLayout_2->addWidget(label_vorschub_var, 2, 1, 1, 1);
 
         label_eintvors_var = new QLabel(layoutWidget1);
         label_eintvors_var->setObjectName(QString::fromUtf8("label_eintvors_var"));
 
-        gridLayout_2->addWidget(label_eintvors_var, 0, 1, 1, 1);
+        gridLayout_2->addWidget(label_eintvors_var, 1, 1, 1, 1);
 
         lineEdit_eintvors = new QLineEdit(layoutWidget1);
         lineEdit_eintvors->setObjectName(QString::fromUtf8("lineEdit_eintvors"));
 
-        gridLayout_2->addWidget(lineEdit_eintvors, 0, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_eintvors, 1, 2, 1, 1);
 
         lineEdit_vorschub = new QLineEdit(layoutWidget1);
         lineEdit_vorschub->setObjectName(QString::fromUtf8("lineEdit_vorschub"));
 
-        gridLayout_2->addWidget(lineEdit_vorschub, 1, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_vorschub, 2, 2, 1, 1);
 
         lineEdit_drehzahl = new QLineEdit(layoutWidget1);
         lineEdit_drehzahl->setObjectName(QString::fromUtf8("lineEdit_drehzahl"));
 
-        gridLayout_2->addWidget(lineEdit_drehzahl, 2, 2, 1, 1);
+        gridLayout_2->addWidget(lineEdit_drehzahl, 3, 2, 1, 1);
 
         comboBox_anftyp = new QComboBox(layoutWidget1);
         comboBox_anftyp->setObjectName(QString::fromUtf8("comboBox_anftyp"));
 
-        gridLayout_2->addWidget(comboBox_anftyp, 3, 2, 1, 1);
+        gridLayout_2->addWidget(comboBox_anftyp, 4, 2, 1, 1);
 
         comboBox_abftyp = new QComboBox(layoutWidget1);
         comboBox_abftyp->setObjectName(QString::fromUtf8("comboBox_abftyp"));
 
-        gridLayout_2->addWidget(comboBox_abftyp, 4, 2, 1, 1);
+        gridLayout_2->addWidget(comboBox_abftyp, 5, 2, 1, 1);
+
+        label__zustellung = new QLabel(layoutWidget1);
+        label__zustellung->setObjectName(QString::fromUtf8("label__zustellung"));
+
+        gridLayout_2->addWidget(label__zustellung, 0, 0, 1, 1);
+
+        label_zustellung_var = new QLabel(layoutWidget1);
+        label_zustellung_var->setObjectName(QString::fromUtf8("label_zustellung_var"));
+
+        gridLayout_2->addWidget(label_zustellung_var, 0, 1, 1, 1);
+
+        lineEdit_zustellung = new QLineEdit(layoutWidget1);
+        lineEdit_zustellung->setObjectName(QString::fromUtf8("lineEdit_zustellung"));
+
+        gridLayout_2->addWidget(lineEdit_zustellung, 0, 2, 1, 1);
 
         tabWidget->addTab(tab_2, QString());
         layoutWidget2 = new QWidget(Dialog_Fraeser_Aufruf);
@@ -364,17 +382,14 @@ public:
 
         horizontalLayout->addWidget(pushButton_ok);
 
-        QWidget::setTabOrder(tabWidget, comboBox_werkzeug);
         QWidget::setTabOrder(comboBox_werkzeug, comboBox__bahnkor);
         QWidget::setTabOrder(comboBox__bahnkor, lineEdit_startx);
         QWidget::setTabOrder(lineEdit_startx, lineEdit_starty);
         QWidget::setTabOrder(lineEdit_starty, lineEdit_startz);
         QWidget::setTabOrder(lineEdit_startz, lineEdit_eckruglob);
         QWidget::setTabOrder(lineEdit_eckruglob, lineEdit_kantdi);
-        QWidget::setTabOrder(lineEdit_kantdi, pushButton_abbrechen);
-        QWidget::setTabOrder(pushButton_abbrechen, pushButton_speichern);
-        QWidget::setTabOrder(pushButton_speichern, pushButton_ok);
-        QWidget::setTabOrder(pushButton_ok, lineEdit_eintvors);
+        QWidget::setTabOrder(lineEdit_kantdi, lineEdit_zustellung);
+        QWidget::setTabOrder(lineEdit_zustellung, lineEdit_eintvors);
         QWidget::setTabOrder(lineEdit_eintvors, lineEdit_vorschub);
         QWidget::setTabOrder(lineEdit_vorschub, lineEdit_drehzahl);
         QWidget::setTabOrder(lineEdit_drehzahl, comboBox_anftyp);
@@ -382,6 +397,10 @@ public:
         QWidget::setTabOrder(comboBox_abftyp, lineEdit_komment);
         QWidget::setTabOrder(lineEdit_komment, lineEdit_bezeichn);
         QWidget::setTabOrder(lineEdit_bezeichn, lineEdit_ausfbed);
+        QWidget::setTabOrder(lineEdit_ausfbed, pushButton_abbrechen);
+        QWidget::setTabOrder(pushButton_abbrechen, pushButton_speichern);
+        QWidget::setTabOrder(pushButton_speichern, pushButton_ok);
+        QWidget::setTabOrder(pushButton_ok, tabWidget);
 
         retranslateUi(Dialog_Fraeser_Aufruf);
 
@@ -410,6 +429,7 @@ public:
         label__startx_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "*[X]", 0, QApplication::UnicodeUTF8));
         label_bild_fraeser->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Bild des Fr\303\244sers", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("Dialog_Fraeser_Aufruf", "allgemein", 0, QApplication::UnicodeUTF8));
+        label_abftyp->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Abfahrtyp", 0, QApplication::UnicodeUTF8));
         label_ausfbed_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "*[AFB]", 0, QApplication::UnicodeUTF8));
         label_bezeichn->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Bezeichnung", 0, QApplication::UnicodeUTF8));
         label_komment->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Kommentar", 0, QApplication::UnicodeUTF8));
@@ -419,13 +439,14 @@ public:
         label_komment_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[KOM]", 0, QApplication::UnicodeUTF8));
         label_bezeichn_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[BEZ]", 0, QApplication::UnicodeUTF8));
         label_anftyp->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Anfahrtyp", 0, QApplication::UnicodeUTF8));
-        label_abftyp->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Abfahrtyp", 0, QApplication::UnicodeUTF8));
         label_eintvors->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Eintauchvorschub", 0, QApplication::UnicodeUTF8));
         label_abftyp_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[ANT]", 0, QApplication::UnicodeUTF8));
         label_anftyp_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[ABT]", 0, QApplication::UnicodeUTF8));
         label_drehzahl_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[N]", 0, QApplication::UnicodeUTF8));
         label_vorschub_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[F]", 0, QApplication::UnicodeUTF8));
         label_eintvors_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[FAN]", 0, QApplication::UnicodeUTF8));
+        label__zustellung->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Zustellmass", 0, QApplication::UnicodeUTF8));
+        label_zustellung_var->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "[ZUST]", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("Dialog_Fraeser_Aufruf", "Technologie", 0, QApplication::UnicodeUTF8));
         pushButton_abbrechen->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Abbrechen", 0, QApplication::UnicodeUTF8));
         pushButton_speichern->setText(QApplication::translate("Dialog_Fraeser_Aufruf", "Speichern", 0, QApplication::UnicodeUTF8));

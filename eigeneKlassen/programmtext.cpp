@@ -6,6 +6,7 @@ programmtext::programmtext()
 {
     clear();
     warnungen_einschalten(true);
+    aktualisieren_ein_aus(true);
 }
 
 void programmtext::set_text(QString neuer_Text)
@@ -257,6 +258,11 @@ void programmtext::set_sicherheitsabstand(float neuer_Abstand)
 
 void programmtext::aktualisiere_klartext_var_geo()
 {
+    if(!aktualisieren_eingeschaltet)
+    {
+        return;
+    }
+
     clear_ausser_text();
     QString variablen;
     for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
@@ -1041,6 +1047,19 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);
                 zeile_klartext += ABFAHRTYP;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += ZUSTELLUNG;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
@@ -2484,6 +2503,11 @@ void programmtext::aktualisiere_klartext_var_geo()
 
 void programmtext::aktualisiere_anzeigetext()
 {
+    if(!aktualisieren_eingeschaltet)
+    {
+        return;
+    }
+
     anzeigetext.clear();
     for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
     {
@@ -2523,12 +2547,21 @@ void programmtext::aktualisiere_anzeigetext()
             tmp += " [";
             tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
             tmp += "]";
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
@@ -2583,6 +2616,11 @@ void programmtext::set_wkz(werkzeug wkz)
 
 void programmtext::aktualisiere_fkon()
 {
+    if(!aktualisieren_eingeschaltet)
+    {
+        return;
+    }
+
     QString bahnkorr = BAHNRORREKTUR_keine;
     QString wkz_aktuell = "";
     double wkz_dm = 0;
