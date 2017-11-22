@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog_fraeser_bogen.ui'
 **
-** Created: Fri Nov 17 21:27:31 2017
+** Created: Wed Nov 22 20:54:07 2017
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -206,6 +206,16 @@ public:
 
         verticalLayout->addWidget(radioButton_gegen_UZS);
 
+        QWidget::setTabOrder(lineEdit_ende_x, lineEdit_ende_y);
+        QWidget::setTabOrder(lineEdit_ende_y, lineEdit_ende_z);
+        QWidget::setTabOrder(lineEdit_ende_z, lineEdit_radius);
+        QWidget::setTabOrder(lineEdit_radius, radioButton_im_UZS);
+        QWidget::setTabOrder(radioButton_im_UZS, radioButton_gegen_UZS);
+        QWidget::setTabOrder(radioButton_gegen_UZS, lineEdit_bezeichnung);
+        QWidget::setTabOrder(lineEdit_bezeichnung, lineEdit_ausfbed);
+        QWidget::setTabOrder(lineEdit_ausfbed, pushButton_abbrechen);
+        QWidget::setTabOrder(pushButton_abbrechen, pushButton_speichern);
+        QWidget::setTabOrder(pushButton_speichern, pushButton_ok);
 
         retranslateUi(Dialog_fraeser_bogen);
 

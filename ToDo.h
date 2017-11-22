@@ -3,8 +3,6 @@
 
 /*
 ----------Aktuell in Arbeit:
--->Aufruf Fräser-Dialog erweitern:
-    ->Zustellmaß für Tiefenzustellung -->ist fertig, muss noch getestet werden
 
 
 

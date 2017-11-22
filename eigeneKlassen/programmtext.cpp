@@ -471,6 +471,8 @@ void programmtext::aktualisiere_klartext_var_geo()
                 tmp = text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
                 QString bez = "[" + tmp + "]";
                 QString wert = text_mitte(zeile, WERT, ENDE_EINTRAG);
+                wert = variablen_durch_werte_ersetzten(variablen,wert);
+                wert = ausdruck_auswerten(wert);
                 if(!variablen.contains(bez))
                 {
                     variablen += bez;
@@ -2526,6 +2528,9 @@ void programmtext::aktualisiere_anzeigetext()
         {
             tmp += "Variable: ";
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " = ";
+            tmp += text_mitte(zeile, WERT, ENDE_EINTRAG);
+            tmp += "";
         }else if(zeile.contains(KOMMENTAR_DIALOG))
         {
             tmp += text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG);
