@@ -395,9 +395,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(PROGRAMMENDE_DIALOG))
+        }else if(zeile.contains(PROGRAMMENDE_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -458,9 +456,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(VARIABLE_DIALOG))
+        }else if(zeile.contains(VARIABLE_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -491,9 +487,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(KOMMENTAR_DIALOG))
+        }else if(zeile.contains(KOMMENTAR_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -514,9 +508,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(RECHTECKTASCHE_DIALOG))
+        }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -725,9 +717,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(KREISTASCHE_DIALOG))
+        }else if(zeile.contains(KREISTASCHE_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -900,9 +890,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -1072,9 +1060,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(FRAESERGERADE_DIALOG))
+        }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -1163,9 +1149,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(FRAESERBOGEN_DIALOG))
+        }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -1260,9 +1244,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
-        }
-        //------------
-        if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
             QString tmp;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
@@ -1292,8 +1274,15 @@ void programmtext::aktualisiere_klartext_var_geo()
             {//Wenn AFB == 0;
                 klartext.zeilen_anhaengen(" ");//leere Zeile
             }
+        }else if(zeile.contains(STRECKE))
+        {
+            klartext.zeilen_anhaengen(zeile);
+        }else
+        {
+            klartext.zeilen_anhaengen("");
+            var.zeilen_anhaengen("");
         }
-        //------------
+
 
     }
     //CAD-Parameter ergänzen:
@@ -2195,6 +2184,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                     }
                 }
                 geo.zeilenvorschub();
+            }else if(zeile.contains(STRECKE))
+            {
+                strecke s(zeile);
+                geo.add_strecke(s);
+
+                geo.zeilenvorschub();
             }
         }
 
@@ -2570,6 +2565,9 @@ void programmtext::aktualisiere_anzeigetext()
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
             tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(STRECKE))
+        {
+            tmp += "CAD / Strecke";
         }else if(zeile.contains(LISTENENDE))
         {
             tmp += "...";
@@ -2868,6 +2866,9 @@ void programmtext::aktualisiere_fkon()
 
                 }
             }
+            fkon.zeilenvorschub();
+        }else
+        {
             fkon.zeilenvorschub();
         }
     }

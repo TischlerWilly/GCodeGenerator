@@ -2051,10 +2051,72 @@ void MainWindow::on_import_GGF_triggered()
 void MainWindow::on_import_DXF_triggered()
 {
     //Dialog öffnen zum Wählen der Datei:
-    //QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath() , tr("DXF Dateien (*.dxf)"));
-    QMessageBox mb;
-    mb.setText("Der Import von DXF-Dateien wird leider noch nicht unterstuetzt.");
-    mb.exec();
+    QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath() , tr("DXF Dateien (*.dxf)"));
+    QFile file(dateipfad);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        //QApplication::setOverrideCursor(Qt::WaitCursor);
+        text_zeilenweise tz;
+        bool bin_im_geometriebereich = false;
+
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(line.contains("ENTITIES"))
+            {
+                bin_im_geometriebereich = true;
+            }else if(line.contains("ENDSEC"))
+            {
+                bin_im_geometriebereich = false;
+            }
+            if(bin_im_geometriebereich)
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+        file.close();
+
+        for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+        {
+            if(tz.zeile(i).contains("LINE"))
+            {
+                QString klasse = tz.zeile(i+8);
+                QString x1 = tz.zeile(i+16);
+                QString y1 = tz.zeile(i+18);
+                QString x2 = tz.zeile(i+22);
+                QString y2 = tz.zeile(i+24);
+
+                i=i+27;
+                QMessageBox mb;
+                mb.setText(klasse +"/"+ x1 +"/"+ y1 +"/"+ x2 +"/"+ y2);
+                //mb.exec();
+
+                strecke s;
+                punkt3d p;
+                p.set_x(x1);
+                p.set_y(y1);
+                p.set_z(0);
+                s.set_start(p);
+                p.set_x(x2);
+                p.set_y(y2);
+                s.set_ende(p);
+                s.set_farbe(FARBE_GRUEN);
+
+
+                getDialogData(s.get_text());
+            }
+        }
+
+
+
+        //QApplication::restoreOverrideCursor();
+    }
+
+
 }
 
 void MainWindow::on_actionDateiSchliessen_triggered()
