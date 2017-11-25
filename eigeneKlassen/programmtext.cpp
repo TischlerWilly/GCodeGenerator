@@ -1280,6 +1280,9 @@ void programmtext::aktualisiere_klartext_var_geo()
         }else if(zeile.contains(KREIS))
         {
             klartext.zeilen_anhaengen(zeile);
+        }else if(zeile.contains(BOGEN))
+        {
+            klartext.zeilen_anhaengen(zeile);
         }else
         {
             klartext.zeilen_anhaengen("");
@@ -2199,6 +2202,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.add_kreis(k);
 
                 geo.zeilenvorschub();
+            }else if(zeile.contains(BOGEN))
+            {
+                bogen b(zeile);
+                geo.add_bogen(b);
+
+                geo.zeilenvorschub();
             }
         }
 
@@ -2580,6 +2589,9 @@ void programmtext::aktualisiere_anzeigetext()
         }else if(zeile.contains(KREIS))
         {
             tmp += "CAD / Kreis";
+        }else if(zeile.contains(BOGEN))
+        {
+            tmp += "CAD / Bogen";
         }else if(zeile.contains(LISTENENDE))
         {
             tmp += "...";

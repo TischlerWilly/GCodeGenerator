@@ -53,8 +53,20 @@ bogen::bogen(punkt2d mipu, double rad, double startwinkel, double endwinkel)
 {
     mittelp = mipu;
     radius = rad;
+    punkt3d p;
+    p.set_x(mipu.x());
+    p.set_y(mipu.y());
+    strecke ssp;
+    ssp.set_start(p);
+    p.set_x(mipu.x()+rad);
+    ssp.set_ende(p);
+    strecke sep = ssp;
+    ssp.drenen_um_startpunkt_2d(startwinkel, false);
+    sep.drenen_um_startpunkt_2d(endwinkel, false);
+    startp = ssp.endp();
+    endp = sep.endp();
+    bogen_im_uzs = false;
 
-    //Startpunkt, Endpunkt und Bogenrichtung muss noch berechnet werden
 }
 
 void bogen::set_startpunkt(punkt3d startpunkt)

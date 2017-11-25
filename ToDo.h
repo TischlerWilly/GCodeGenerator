@@ -3,11 +3,12 @@
 
 /*
 ----------Aktuell in Arbeit:
--->die Funktion fertigstellen:
-bogen::bogen(punkt3d mipu, double rad, double startwinkel, double endwinkel)
 
 -->Import von DXF-Dateien aus LibreCAD
     ->void MainWindow::on_import_DXF_triggered()
+        >Probleme bei Bögen größer als ein Halbkreis!!!!!!
+        >dann müssen aus einem Bogen 2 gemacht werden
+
     ->void programmtext::aktualisiere_klartext_var_geo()
     ->void programmtext::aktualisiere_anzeigetext()
 

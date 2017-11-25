@@ -6,6 +6,7 @@
 #include "strecke.h"
 #include "darstellungsatribute.h"
 
+
 class bogen : public darstellungsatribute
 {
 public:

@@ -2160,10 +2160,54 @@ void MainWindow::on_import_DXF_triggered()
 
                 if(klasse == "fraeskontur" && anz_np!=1)
                 {
-
+                    punkt2d mipu;
+                    mipu.set_x(tz.zeile(i+16));
+                    mipu.set_y(tz.zeile(i+18));
+                    double rad = tz.zeile(i+22).toDouble();
+                    double stawi = tz.zeile(i+26).toDouble();
+                    double endwi = tz.zeile(i+28).toDouble();
+                    bogen b(mipu,rad,stawi,endwi);
+                    b.set_farbe(FARBE_GRUEN);
+                    getDialogData(b.get_text());
                 }else
                 {
+                    punkt2d mipu;
+                    mipu.set_x(tz.zeile(i+16).toDouble()-np.x());
+                    mipu.set_y(tz.zeile(i+18).toDouble()-np.y());
+                    double rad = tz.zeile(i+22).toDouble();
+                    double stawi = tz.zeile(i+26).toDouble();
+                    double endwi = tz.zeile(i+28).toDouble();
 
+
+                    bogen b(mipu,rad,stawi,endwi);
+                    b.set_farbe(FARBE_GRUEN);
+                    getDialogData(b.get_text());
+
+
+                    /*
+                    double gesamtwinkel;
+                    if(stawi > endwi)
+                    {
+                        gesamtwinkel = stawi - endwi;
+                    }else
+                    {
+                        gesamtwinkel = 360-endwi-stawi;
+                    }
+                    if(gesamtwinkel<180)
+                    {
+                        bogen b(mipu,rad,stawi,endwi);
+                        b.set_farbe(FARBE_GRUEN);
+                        getDialogData(b.get_text());
+                    }else
+                    {
+                        bogen b(mipu,rad,stawi,stawi+gesamtwinkel/2);
+                        b.set_farbe(FARBE_GRUEN);
+                        getDialogData(b.get_text());
+                        bogen b2(mipu,rad,stawi+gesamtwinkel/2,endwi);
+                        b2.set_farbe(FARBE_GRUEN);
+                        getDialogData(b2.get_text());
+                    }
+                    */
                 }
             }
         }
