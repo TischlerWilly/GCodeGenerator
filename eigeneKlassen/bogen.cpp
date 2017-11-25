@@ -49,6 +49,14 @@ bogen::bogen(punkt3d startpunkt, punkt3d endpunkt, \
     set_radius(radiuswert, im_uhrzeigersinn);
 }
 
+bogen::bogen(punkt2d mipu, double rad, double startwinkel, double endwinkel)
+{
+    mittelp = mipu;
+    radius = rad;
+
+    //Startpunkt, Endpunkt und Bogenrichtung muss noch berechnet werden
+}
+
 void bogen::set_startpunkt(punkt3d startpunkt)
 {
     startp = startpunkt;

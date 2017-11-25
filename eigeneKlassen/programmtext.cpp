@@ -1277,6 +1277,9 @@ void programmtext::aktualisiere_klartext_var_geo()
         }else if(zeile.contains(STRECKE))
         {
             klartext.zeilen_anhaengen(zeile);
+        }else if(zeile.contains(KREIS))
+        {
+            klartext.zeilen_anhaengen(zeile);
         }else
         {
             klartext.zeilen_anhaengen("");
@@ -2190,6 +2193,12 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.add_strecke(s);
 
                 geo.zeilenvorschub();
+            }else if(zeile.contains(KREIS))
+            {
+                kreis k(zeile);
+                geo.add_kreis(k);
+
+                geo.zeilenvorschub();
             }
         }
 
@@ -2568,6 +2577,9 @@ void programmtext::aktualisiere_anzeigetext()
         }else if(zeile.contains(STRECKE))
         {
             tmp += "CAD / Strecke";
+        }else if(zeile.contains(KREIS))
+        {
+            tmp += "CAD / Kreis";
         }else if(zeile.contains(LISTENENDE))
         {
             tmp += "...";

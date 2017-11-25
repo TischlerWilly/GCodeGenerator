@@ -2080,34 +2080,91 @@ void MainWindow::on_import_DXF_triggered()
         }
         file.close();
 
+        punkt3d np; //Nullpunkt
+        uint anz_np = 0;
+
+        for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+        {
+            if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)=="werkstuecknullpunkt")
+            {
+                anz_np++;
+                np.set_x(tz.zeile(i+16));
+                np.set_y(tz.zeile(i+18));
+            }
+        }
+
+
         for(uint i=1; i<=tz.zeilenanzahl() ;i++)
         {
             if(tz.zeile(i).contains("LINE"))
             {
                 QString klasse = tz.zeile(i+8);
-                QString x1 = tz.zeile(i+16);
-                QString y1 = tz.zeile(i+18);
-                QString x2 = tz.zeile(i+22);
-                QString y2 = tz.zeile(i+24);
 
-                i=i+27;
-                QMessageBox mb;
-                mb.setText(klasse +"/"+ x1 +"/"+ y1 +"/"+ x2 +"/"+ y2);
-                //mb.exec();
+                if(klasse == "fraeskontur" && anz_np!=1)
+                {
+                    strecke s;
+                    punkt3d p;
+                    p.set_x(tz.zeile(i+16));
+                    p.set_y(tz.zeile(i+18));
+                    p.set_z(0);
+                    s.set_start(p);
+                    p.set_x(tz.zeile(i+22));
+                    p.set_y(tz.zeile(i+24));
+                    s.set_ende(p);
+                    s.set_farbe(FARBE_GRUEN);
+                    getDialogData(s.get_text());
+                }else
+                {
+                    strecke s;
+                    punkt3d p;
+                    p.set_x(tz.zeile(i+16).toDouble()-np.x());
+                    p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                    p.set_z(0);
+                    s.set_start(p);
+                    p.set_x(tz.zeile(i+22).toDouble()-np.x());
+                    p.set_y(tz.zeile(i+24).toDouble()-np.y());
+                    s.set_ende(p);
+                    s.set_farbe(FARBE_GRUEN);
+                    getDialogData(s.get_text());
+                }
+            }else if(tz.zeile(i).contains("CIRCLE"))
+            {
+                QString klasse = tz.zeile(i+8);
 
-                strecke s;
-                punkt3d p;
-                p.set_x(x1);
-                p.set_y(y1);
-                p.set_z(0);
-                s.set_start(p);
-                p.set_x(x2);
-                p.set_y(y2);
-                s.set_ende(p);
-                s.set_farbe(FARBE_GRUEN);
+                if(klasse == "fraeskontur" && anz_np!=1)
+                {
+                    kreis k;
+                    punkt3d p;
+                    p.set_x(tz.zeile(i+16));
+                    p.set_y(tz.zeile(i+18));
+                    p.set_z(0);
+                    k.set_mittelpunkt(p);
+                    k.set_radius(tz.zeile(i+22));
+                    k.set_farbe(FARBE_GRUEN);
+                    getDialogData(k.get_text());
+                }else
+                {
+                    kreis k;
+                    punkt3d p;
+                    p.set_x(tz.zeile(i+16).toDouble()-np.x());
+                    p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                    p.set_z(0);
+                    k.set_mittelpunkt(p);
+                    k.set_radius(tz.zeile(i+22));
+                    k.set_farbe(FARBE_GRUEN);
+                    getDialogData(k.get_text());
+                }
+            }else if(tz.zeile(i).contains("ARC"))//Bogen
+            {
+                QString klasse = tz.zeile(i+8);
 
+                if(klasse == "fraeskontur" && anz_np!=1)
+                {
 
-                getDialogData(s.get_text());
+                }else
+                {
+
+                }
             }
         }
 
@@ -2722,6 +2779,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             rechtecktasche tasche_tmp;
@@ -2815,6 +2873,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 //G-Code ausgabe abbreche mit Fehlermeldung
                 //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
                 ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                QApplication::restoreOverrideCursor();
                 return ;
             }
 
@@ -2833,6 +2892,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             rechtecktasche tasche_tmp;
@@ -2922,6 +2982,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 //G-Code ausgabe abbreche mit Fehlermeldung
                 //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
                 ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                QApplication::restoreOverrideCursor();
                 return ;
             }
 
@@ -2942,6 +3003,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         //tmp += aktives_wkz + " != " + werkzeugname;
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'vorschau.h'
 **
-** Created: Sun Nov 19 14:22:36 2017
+** Created: Sat Nov 25 14:39:37 2017
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!

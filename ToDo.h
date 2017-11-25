@@ -3,6 +3,9 @@
 
 /*
 ----------Aktuell in Arbeit:
+-->die Funktion fertigstellen:
+bogen::bogen(punkt3d mipu, double rad, double startwinkel, double endwinkel)
+
 -->Import von DXF-Dateien aus LibreCAD
     ->void MainWindow::on_import_DXF_triggered()
     ->void programmtext::aktualisiere_klartext_var_geo()
