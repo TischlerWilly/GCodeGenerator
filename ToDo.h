@@ -4,19 +4,8 @@
 /*
 ----------Aktuell in Arbeit:
 
--->Import von DXF-Dateien aus LibreCAD
-    ->void MainWindow::on_import_DXF_triggered()
-        >Probleme bei Bögen größer als ein Halbkreis!!!!!!
-        >dann müssen aus einem Bogen 2 gemacht werden
+-->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
 
-    ->void programmtext::aktualisiere_klartext_var_geo()
-    ->void programmtext::aktualisiere_anzeigetext()
-
-    ->nur Linien importieren die einer festgelegten Klasse zugewiesen sind
-
-    ->Vorab nach einem Nullpunkt in der Importdatei suchen
-        >wenn ein Punkt, und nur ein Punkt mit der Klasse "WST_Nullpunkt" beim Import dabei ist
-        >dann alle Koordinaten der linien mit dem Nullpunkt gegenrechnen
 
 
 
@@ -37,6 +26,9 @@
 ----------Ideen für neue Funktionen:
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
+-->Ort merken, von der die letzte Datei geöffnet wurde
+-->Ort merken, von der die letzte ggf Datei importiert wurde
+-->Ort merken, von der die letzte dxf Datei importiert wurde
 
 
 

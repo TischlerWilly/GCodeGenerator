@@ -51,99 +51,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>50</y>
-     <width>661</width>
-     <height>131</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_tooltable">
-      <property name="text">
-       <string>Pfad zur Werkzeugtabelle von EMC2:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLineEdit" name="lineEdit_tooltable"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_tooltable">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="Line" name="line_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_werkzeugliste_pfad">
-      <property name="text">
-       <string>zeigt den Pfad zur internen Wekzeugtabelle an</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="Line" name="line_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>200</y>
-     <width>661</width>
-     <height>111</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" columnstretch="3,1">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_anz_undo_t">
-      <property name="text">
-       <string>Anzahl der Wiederrufenschritte in der Programmliste:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QSpinBox" name="spinBox_anz_undo_t"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_anz_undo_w">
-      <property name="text">
-       <string>Anzahl der Wiederrufenschritte in der Werkzeugliste:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QSpinBox" name="spinBox_anz_undo_w"/>
-    </item>
-   </layout>
-  </widget>
   <widget class="QLabel" name="label_konfig_pfad">
    <property name="geometry">
     <rect>
@@ -157,7 +64,243 @@
     <string>zeigt den Pfad zur Konfigurationsdatei an</string>
    </property>
   </widget>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>711</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>allgemein</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>691</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="3,1">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_anz_undo_t">
+        <property name="text">
+         <string>Anzahl der Wiederrufenschritte in der Programmliste:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spinBox_anz_undo_t"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_anz_undo_w">
+        <property name="text">
+         <string>Anzahl der Wiederrufenschritte in der Werkzeugliste:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spinBox_anz_undo_w"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>691</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label_tooltable">
+        <property name="text">
+         <string>Pfad zur Werkzeugtabelle von EMC2:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_tooltable"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_tooltable">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_werkzeugliste_pfad">
+        <property name="text">
+         <string>zeigt den Pfad zur internen Wekzeugtabelle an</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <zorder>label_tooltable</zorder>
+    <zorder>lineEdit_tooltable</zorder>
+    <zorder>label_tooltable</zorder>
+    <zorder>lineEdit_tooltable</zorder>
+    <zorder>pushButton_tooltable</zorder>
+    <zorder>line_3</zorder>
+    <zorder>label_werkzeugliste_pfad</zorder>
+    <zorder>layoutWidget</zorder>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Import DXF</string>
+    </attribute>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>681</width>
+       <height>351</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="8" column="2">
+       <spacer name="verticalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <widget class="QLabel" name="label_dxf_info">
+        <property name="text">
+         <string>Wird in der angegebenen Importdatei geneau ein Punkt gefunden, der in der oben festgelegten Klasse liegt, so wird dieser als Koordinatenursprung für die Importierten Geometrieen angenommen.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_dxf_klasse">
+        <property name="text">
+         <string>Nur Geometrieen aus dieser Klasse importieren:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="lineEdit_dxf_klasse"/>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1" colspan="2">
+       <widget class="QLineEdit" name="lineEdit_dxf_wstnp"/>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QLabel" name="label_dxf_Headline">
+        <property name="text">
+         <string>Unterstuetzte (importierbare) Geometrieen sind: Punkte, Strecken/Linien, Bögen, Kreise</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_dxf_wstnp">
+        <property name="text">
+         <string>Der Werkstuecknullpunkt liegt in der Klasse:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEdit_tooltable</tabstop>
+  <tabstop>pushButton_tooltable</tabstop>
+  <tabstop>spinBox_anz_undo_t</tabstop>
+  <tabstop>spinBox_anz_undo_w</tabstop>
+  <tabstop>pushButton_cancel</tabstop>
+  <tabstop>pushButton_save</tabstop>
+  <tabstop>lineEdit_dxf_wstnp</tabstop>
+  <tabstop>checkBox_dxf_klasse</tabstop>
+  <tabstop>lineEdit_dxf_klasse</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

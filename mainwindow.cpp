@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
     letzte_geoefnete_dateien.set_anz_eintreage(ANZAHL_LETZTER_DATEIEN);
+    dxf_klasse_wstnp                = "werkstuecknullpunkt";
+    dxf_klasse_geo                  = "fraeskontur";
+    dxf_klasse_geo_beachten         = "ja";
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
@@ -188,14 +191,21 @@ QString MainWindow::loadConfig()
                 if(text.contains(SETTINGS_PFAD_WERKZEUGE))
                 {
                     tooltable_path = selektiereEintrag(text, SETTINGS_PFAD_WERKZEUGE, ENDE_ZEILE);
-                }
-                if(text.contains(SETTINGS_ANZ_UNDO_T))
+                }else if(text.contains(SETTINGS_ANZ_UNDO_T))
                 {
                     settings_anz_undo_t = selektiereEintrag(text, SETTINGS_ANZ_UNDO_T, ENDE_ZEILE);
-                }
-                if(text.contains(SETTINGS_ANZ_UNDO_W))
+                }else if(text.contains(SETTINGS_ANZ_UNDO_W))
                 {
                     settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_WSTNP))
+                {
+                    dxf_klasse_wstnp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_WSTNP, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_GEO))
+                {
+                    dxf_klasse_geo = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_GEO_BEACHTEN))
+                {
+                    dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
                 }
                 //-----------------------------------------------------Dialoge:
                 if(text.contains(PROGRAMMKOPF_DIALOG))
@@ -268,6 +278,21 @@ QString MainWindow::saveConfig()
     //----------------------------------------------------
     inhaltVonKonfiguration +=       SETTINGS_ANZ_UNDO_W;
     inhaltVonKonfiguration +=       settings_anz_undo_w;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_WSTNP;
+    inhaltVonKonfiguration +=       dxf_klasse_wstnp;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_GEO;
+    inhaltVonKonfiguration +=       dxf_klasse_geo;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
+    inhaltVonKonfiguration +=       dxf_klasse_geo_beachten;
     inhaltVonKonfiguration +=       ENDE_ZEILE;
     inhaltVonKonfiguration +=       "\n";
     //----------------------------------------------------
@@ -727,6 +752,18 @@ void MainWindow::slotSaveConfig(QString text)
         {
             settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
         }
+        if(text.contains(SETTINGS_DXF_KLASSE_WSTNP))
+        {
+            dxf_klasse_wstnp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_WSTNP, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_DXF_KLASSE_GEO))
+        {
+            dxf_klasse_geo = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_DXF_KLASSE_GEO_BEACHTEN))
+        {
+            dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
+        }
         //------------------------------------------------Dialoge:
         if(text.contains(PROGRAMMKOPF_DIALOG))
         {
@@ -762,7 +799,6 @@ void MainWindow::slotSaveConfig(QString text)
         {
             vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
         }
-
 
         //Daten in Datei sichern:
         saveConfig();
@@ -1679,6 +1715,15 @@ void MainWindow::on_actionEinstellungen_triggered()
     msg += SETTINGS_ANZ_UNDO_W;
     msg += settings_anz_undo_w;
     msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_WSTNP;
+    msg += dxf_klasse_wstnp;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_GEO;
+    msg += dxf_klasse_geo;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
+    msg += dxf_klasse_geo_beachten;
+    msg += ENDE_ZEILE;
     emit sendDialogData(msg, false);
 }
 
@@ -2085,7 +2130,7 @@ void MainWindow::on_import_DXF_triggered()
 
         for(uint i=1; i<=tz.zeilenanzahl() ;i++)
         {
-            if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)=="werkstuecknullpunkt")
+            if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)==dxf_klasse_wstnp)
             {
                 anz_np++;
                 np.set_x(tz.zeile(i+16));
@@ -2099,8 +2144,12 @@ void MainWindow::on_import_DXF_triggered()
             if(tz.zeile(i).contains("LINE"))
             {
                 QString klasse = tz.zeile(i+8);
+                if(dxf_klasse_geo_beachten != "ja")
+                {
+                    klasse = dxf_klasse_geo;
+                }
 
-                if(klasse == "fraeskontur" && anz_np!=1)
+                if(klasse == dxf_klasse_geo && anz_np!=1)
                 {
                     strecke s;
                     punkt3d p;
@@ -2113,7 +2162,7 @@ void MainWindow::on_import_DXF_triggered()
                     s.set_ende(p);
                     s.set_farbe(FARBE_GRUEN);
                     getDialogData(s.get_text());
-                }else
+                }else if(klasse == dxf_klasse_geo)
                 {
                     strecke s;
                     punkt3d p;
@@ -2130,8 +2179,12 @@ void MainWindow::on_import_DXF_triggered()
             }else if(tz.zeile(i).contains("CIRCLE"))
             {
                 QString klasse = tz.zeile(i+8);
+                if(dxf_klasse_geo_beachten != "ja")
+                {
+                    klasse = dxf_klasse_geo;
+                }
 
-                if(klasse == "fraeskontur" && anz_np!=1)
+                if(klasse == dxf_klasse_geo && anz_np!=1)
                 {
                     kreis k;
                     punkt3d p;
@@ -2142,7 +2195,7 @@ void MainWindow::on_import_DXF_triggered()
                     k.set_radius(tz.zeile(i+22));
                     k.set_farbe(FARBE_GRUEN);
                     getDialogData(k.get_text());
-                }else
+                }else if(klasse == dxf_klasse_geo)
                 {
                     kreis k;
                     punkt3d p;
@@ -2156,9 +2209,13 @@ void MainWindow::on_import_DXF_triggered()
                 }
             }else if(tz.zeile(i).contains("ARC"))//Bogen
             {
-                QString klasse = tz.zeile(i+8);
+                QString klasse = tz.zeile(i+6);
+                if(dxf_klasse_geo_beachten != "ja")
+                {
+                    klasse = dxf_klasse_geo;
+                }
 
-                if(klasse == "fraeskontur" && anz_np!=1)
+                if(klasse == dxf_klasse_geo && anz_np!=1)
                 {
                     punkt2d mipu;
                     mipu.set_x(tz.zeile(i+16));
@@ -2166,32 +2223,13 @@ void MainWindow::on_import_DXF_triggered()
                     double rad = tz.zeile(i+22).toDouble();
                     double stawi = tz.zeile(i+26).toDouble();
                     double endwi = tz.zeile(i+28).toDouble();
-                    bogen b(mipu,rad,stawi,endwi);
-                    b.set_farbe(FARBE_GRUEN);
-                    getDialogData(b.get_text());
-                }else
-                {
-                    punkt2d mipu;
-                    mipu.set_x(tz.zeile(i+16).toDouble()-np.x());
-                    mipu.set_y(tz.zeile(i+18).toDouble()-np.y());
-                    double rad = tz.zeile(i+22).toDouble();
-                    double stawi = tz.zeile(i+26).toDouble();
-                    double endwi = tz.zeile(i+28).toDouble();
-
-
-                    bogen b(mipu,rad,stawi,endwi);
-                    b.set_farbe(FARBE_GRUEN);
-                    getDialogData(b.get_text());
-
-
-                    /*
                     double gesamtwinkel;
-                    if(stawi > endwi)
+                    if(stawi < endwi)
                     {
-                        gesamtwinkel = stawi - endwi;
+                        gesamtwinkel = endwi - stawi;
                     }else
                     {
-                        gesamtwinkel = 360-endwi-stawi;
+                        gesamtwinkel = 360-(stawi-endwi);
                     }
                     if(gesamtwinkel<180)
                     {
@@ -2207,7 +2245,37 @@ void MainWindow::on_import_DXF_triggered()
                         b2.set_farbe(FARBE_GRUEN);
                         getDialogData(b2.get_text());
                     }
-                    */
+                }else if(klasse == dxf_klasse_geo)
+                {
+                    punkt2d mipu;
+                    mipu.set_x(tz.zeile(i+16).toDouble()-np.x());
+                    mipu.set_y(tz.zeile(i+18).toDouble()-np.y());
+                    double rad = tz.zeile(i+22).toDouble();
+                    double stawi = tz.zeile(i+26).toDouble();
+                    double endwi = tz.zeile(i+28).toDouble();
+                    double gesamtwinkel;
+                    if(stawi < endwi)
+                    {
+                        gesamtwinkel = endwi - stawi;
+                    }else
+                    {
+                        gesamtwinkel = 360-(stawi-endwi);
+                    }
+                    if(gesamtwinkel<180)
+                    {
+                        bogen b(mipu,rad,stawi,endwi);
+                        b.set_farbe(FARBE_GRUEN);
+                        getDialogData(b.get_text());
+                    }else
+                    {
+                        bogen b(mipu,rad,stawi,stawi+gesamtwinkel/2);
+                        b.set_farbe(FARBE_GRUEN);
+                        getDialogData(b.get_text());
+                        bogen b2(mipu,rad,stawi+gesamtwinkel/2,endwi);
+                        b2.set_farbe(FARBE_GRUEN);
+                        getDialogData(b2.get_text());
+                    }
+
                 }
             }
         }

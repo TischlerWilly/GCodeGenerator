@@ -183,6 +183,9 @@ private:
     QString         aktives_wkz;
     letzte_dateien  letzte_geoefnete_dateien;
     QAction *oefneLetzteDateien[ANZAHL_LETZTER_DATEIEN];
+    QString         dxf_klasse_wstnp;
+    QString         dxf_klasse_geo;
+    QString         dxf_klasse_geo_beachten;
 
         //Eigene Datentypen:
 
