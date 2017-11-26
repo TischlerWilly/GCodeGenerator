@@ -175,6 +175,7 @@ private:
     QString         vorlage_werkzeug;
     bool            DateiIstOffen;
     QString         nameOfTheOpenFile;
+    QString         nameOfTheOpenFile_backup;
     QStringList     werkzeugnamen;
     programmtext    t;
     werkzeug        w;
@@ -183,6 +184,12 @@ private:
     QString         aktives_wkz;
     letzte_dateien  letzte_geoefnete_dateien;
     QAction *oefneLetzteDateien[ANZAHL_LETZTER_DATEIEN];
+    QString         dxf_klasse_wstnp;
+    QString         dxf_klasse_geo;
+    QString         dxf_klasse_geo_beachten;
+    QString         pfad_import_dxf;
+    QString         pfad_import_ggf;
+    QString         pfad_oefne_ggf;
 
         //Eigene Datentypen:
 

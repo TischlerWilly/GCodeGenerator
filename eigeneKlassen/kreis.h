@@ -4,11 +4,14 @@
 #include "punkt3d.h"
 #include "punkt2d.h"
 #include "darstellungsatribute.h"
+#include "../eigeneDefines/defines_geometrie.h"
+#include "../eigeneKlassen/text_zeilenweise.h"
 
 class kreis : public darstellungsatribute
 {
 public:
     kreis();
+    kreis(QString geotext);
     inline  kreis(punkt3d mittelpunkt, double radius)
     {
         set_mittelpunkt(mittelpunkt);
@@ -50,6 +53,8 @@ public:
     {
         return double_to_qstring(rad);
     }
+
+    QString get_text();
 
 private:
     punkt3d     mittelp;

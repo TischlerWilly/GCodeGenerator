@@ -50,6 +50,24 @@ void dialog_settings::on_pushButton_save_clicked()
     msg += ui->spinBox_anz_undo_w->text();
     msg += ENDE_ZEILE;
     msg += "\n";
+    msg += SETTINGS_DXF_KLASSE_WSTNP;
+    msg += ui->lineEdit_dxf_wstnp->text();
+    msg += ENDE_ZEILE;
+    msg += "\n";
+    msg += SETTINGS_DXF_KLASSE_GEO;
+    msg += ui->lineEdit_dxf_klasse->text();
+    msg += ENDE_ZEILE;
+    msg += "\n";
+    msg += SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
+    if(ui->checkBox_dxf_klasse->isChecked())
+    {
+        msg += "ja";
+    }else
+    {
+        msg += "nein";
+    }
+    msg += ENDE_ZEILE;
+    msg += "\n";
     emit signalSaveConfig(msg);
 }
 
@@ -76,6 +94,18 @@ void dialog_settings::getDialogData(QString text, bool openToChangeData)
     ui->spinBox_anz_undo_t->setValue(tmp.toInt());
     tmp = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
     ui->spinBox_anz_undo_w->setValue(tmp.toInt());
+    tmp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_WSTNP, ENDE_ZEILE);
+    ui->lineEdit_dxf_wstnp->setText(tmp);
+    tmp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO, ENDE_ZEILE);
+    ui->lineEdit_dxf_klasse->setText(tmp);
+    tmp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
+    if(tmp == "ja")
+    {
+        ui->checkBox_dxf_klasse->setChecked(true);
+    }else
+    {
+        ui->checkBox_dxf_klasse->setChecked(false);
+    }
 
     this->show();
 }

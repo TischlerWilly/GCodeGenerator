@@ -34,6 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
     letzte_geoefnete_dateien.set_anz_eintreage(ANZAHL_LETZTER_DATEIEN);
+    dxf_klasse_wstnp                = "werkstuecknullpunkt";
+    dxf_klasse_geo                  = "fraeskontur";
+    dxf_klasse_geo_beachten         = "ja";
+    pfad_import_dxf                 = QDir::homePath();
+    pfad_import_ggf                 = QDir::homePath() + "/Dokumente/CNC-Programme";
+    pfad_oefne_ggf                  = QDir::homePath() + "/Dokumente/CNC-Programme";
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
@@ -188,14 +194,21 @@ QString MainWindow::loadConfig()
                 if(text.contains(SETTINGS_PFAD_WERKZEUGE))
                 {
                     tooltable_path = selektiereEintrag(text, SETTINGS_PFAD_WERKZEUGE, ENDE_ZEILE);
-                }
-                if(text.contains(SETTINGS_ANZ_UNDO_T))
+                }else if(text.contains(SETTINGS_ANZ_UNDO_T))
                 {
                     settings_anz_undo_t = selektiereEintrag(text, SETTINGS_ANZ_UNDO_T, ENDE_ZEILE);
-                }
-                if(text.contains(SETTINGS_ANZ_UNDO_W))
+                }else if(text.contains(SETTINGS_ANZ_UNDO_W))
                 {
                     settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_WSTNP))
+                {
+                    dxf_klasse_wstnp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_WSTNP, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_GEO))
+                {
+                    dxf_klasse_geo = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_DXF_KLASSE_GEO_BEACHTEN))
+                {
+                    dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
                 }
                 //-----------------------------------------------------Dialoge:
                 if(text.contains(PROGRAMMKOPF_DIALOG))
@@ -268,6 +281,21 @@ QString MainWindow::saveConfig()
     //----------------------------------------------------
     inhaltVonKonfiguration +=       SETTINGS_ANZ_UNDO_W;
     inhaltVonKonfiguration +=       settings_anz_undo_w;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_WSTNP;
+    inhaltVonKonfiguration +=       dxf_klasse_wstnp;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_GEO;
+    inhaltVonKonfiguration +=       dxf_klasse_geo;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
+    inhaltVonKonfiguration +=       dxf_klasse_geo_beachten;
     inhaltVonKonfiguration +=       ENDE_ZEILE;
     inhaltVonKonfiguration +=       "\n";
     //----------------------------------------------------
@@ -727,6 +755,18 @@ void MainWindow::slotSaveConfig(QString text)
         {
             settings_anz_undo_w = selektiereEintrag(text, SETTINGS_ANZ_UNDO_W, ENDE_ZEILE);
         }
+        if(text.contains(SETTINGS_DXF_KLASSE_WSTNP))
+        {
+            dxf_klasse_wstnp = selektiereEintrag(text, SETTINGS_DXF_KLASSE_WSTNP, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_DXF_KLASSE_GEO))
+        {
+            dxf_klasse_geo = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO, ENDE_ZEILE);
+        }
+        if(text.contains(SETTINGS_DXF_KLASSE_GEO_BEACHTEN))
+        {
+            dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
+        }
         //------------------------------------------------Dialoge:
         if(text.contains(PROGRAMMKOPF_DIALOG))
         {
@@ -762,7 +802,6 @@ void MainWindow::slotSaveConfig(QString text)
         {
             vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
         }
-
 
         //Daten in Datei sichern:
         saveConfig();
@@ -1679,6 +1718,15 @@ void MainWindow::on_actionEinstellungen_triggered()
     msg += SETTINGS_ANZ_UNDO_W;
     msg += settings_anz_undo_w;
     msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_WSTNP;
+    msg += dxf_klasse_wstnp;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_GEO;
+    msg += dxf_klasse_geo;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
+    msg += dxf_klasse_geo_beachten;
+    msg += ENDE_ZEILE;
     emit sendDialogData(msg, false);
 }
 
@@ -1892,7 +1940,12 @@ void MainWindow::on_actionDateiOefnen_triggered()
     }else
     {
         //Dialog öffnen zum Wählen der Datei:
-        openFile(QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath()+"/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)")));
+        QString pfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), \
+                                                    pfad_oefne_ggf, tr("ggf Dateien (*.ggf)"));
+        if(!pfad.isEmpty())
+        {
+            openFile(pfad);
+        }
     }
 }
 
@@ -1964,6 +2017,8 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
 
 void MainWindow::openFile(QString pfad)
 {
+    QFileInfo info = pfad;
+    pfad_oefne_ggf = info.path();
     nameOfTheOpenFile = pfad;
     QFile file(pfad);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -2009,52 +2064,281 @@ void MainWindow::openFile(QString pfad)
 void MainWindow::on_import_GGF_triggered()
 {
     //Dialog öffnen zum Wählen der Datei:
-    //QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
-    QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath()+ "/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
-    QFile file(dateipfad);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), \
+                                                     pfad_import_ggf, tr("ggf Dateien (*.ggf)"));
+    if(!dateipfad.isEmpty())
     {
-        //QApplication::setOverrideCursor(Qt::WaitCursor);
-        text_zeilenweise tz;
-        while(!file.atEnd())
+        QFileInfo info = dateipfad;
+        pfad_import_ggf = info.path();
+
+        QFile file(dateipfad);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            QString line = file.readLine();
-            if(line.contains(PROGRAMMKOPF_DIALOG) ||\
-               line.contains(PROGRAMMENDE_DIALOG))
+            //QApplication::setOverrideCursor(Qt::WaitCursor);
+            text_zeilenweise tz;
+            while(!file.atEnd())
             {
-                continue;
+                QString line = file.readLine();
+                if(line.contains(PROGRAMMKOPF_DIALOG) ||\
+                   line.contains(PROGRAMMENDE_DIALOG))
+                {
+                    continue;
+                }
+                if(line.contains(LISTENENDE))
+                {
+                    break;
+                }
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(tz.zeilenanzahl() == 0)
+                {
+                    tz.set_text(line);
+                }else
+                {
+                    tz.zeilen_anhaengen(line);
+                }
             }
-            if(line.contains(LISTENENDE))
-            {
-                break;
-            }
-            if(line.right(1) == "\n")
-            {
-                line = line.left(line.length()-1);
-            }
-            if(tz.zeilenanzahl() == 0)
-            {
-                tz.set_text(line);
-            }else
-            {
-                tz.zeilen_anhaengen(line);
-            }
+            file.close();
+
+            emit sendTextToImportGGF(tz.get_text());
+
+            //QApplication::restoreOverrideCursor();
         }
-        file.close();
-
-        emit sendTextToImportGGF(tz.get_text());
-
-        //QApplication::restoreOverrideCursor();
     }
 }
 
 void MainWindow::on_import_DXF_triggered()
 {
     //Dialog öffnen zum Wählen der Datei:
-    //QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), QDir::homePath() , tr("DXF Dateien (*.dxf)"));
-    QMessageBox mb;
-    mb.setText("Der Import von DXF-Dateien wird leider noch nicht unterstuetzt.");
-    mb.exec();
+    QString dateipfad = QFileDialog::getOpenFileName(this, tr("Waehle GecodeGernerator-Datei"), \
+                                                     pfad_import_dxf , tr("DXF Dateien (*.dxf)"));
+    if(!dateipfad.isEmpty())
+    {
+        QFileInfo info = dateipfad;
+        pfad_import_dxf = info.path();
+
+        QFile file(dateipfad);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            //QApplication::setOverrideCursor(Qt::WaitCursor);
+            text_zeilenweise tz;
+            bool bin_im_geometriebereich = false;
+
+            while(!file.atEnd())
+            {
+                QString line = file.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(line.contains("ENTITIES"))
+                {
+                    bin_im_geometriebereich = true;
+                }else if(line.contains("ENDSEC"))
+                {
+                    bin_im_geometriebereich = false;
+                }
+                if(bin_im_geometriebereich)
+                {
+                    tz.zeilen_anhaengen(line);
+                }
+            }
+            file.close();
+
+            punkt3d np; //Nullpunkt
+            uint anz_np = 0;
+
+            for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+            {
+                if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)==dxf_klasse_wstnp)
+                {
+                    anz_np++;
+                    np.set_x(tz.zeile(i+16));
+                    np.set_y(tz.zeile(i+18));
+                }
+            }
+
+            uint anz_importierter_geometrieen = 0;
+
+            for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+            {
+                if(tz.zeile(i).contains("LINE") && !tz.zeile(i).contains("POLY"))
+                {
+                    QString klasse = tz.zeile(i+8);
+                    if(dxf_klasse_geo_beachten != "ja")
+                    {
+                        klasse = dxf_klasse_geo;
+                    }
+
+                    if(klasse == dxf_klasse_geo && anz_np!=1)
+                    {
+                        strecke s;
+                        punkt3d p;
+                        p.set_x(tz.zeile(i+16));
+                        p.set_y(tz.zeile(i+18));
+                        p.set_z(0);
+                        s.set_start(p);
+                        p.set_x(tz.zeile(i+22));
+                        p.set_y(tz.zeile(i+24));
+                        s.set_ende(p);
+                        s.set_farbe(FARBE_GRUEN);
+                        getDialogData(s.get_text());
+                        anz_importierter_geometrieen++;
+                    }else if(klasse == dxf_klasse_geo)
+                    {
+                        strecke s;
+                        punkt3d p;
+                        p.set_x(tz.zeile(i+16).toDouble()-np.x());
+                        p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                        p.set_z(0);
+                        s.set_start(p);
+                        p.set_x(tz.zeile(i+22).toDouble()-np.x());
+                        p.set_y(tz.zeile(i+24).toDouble()-np.y());
+                        s.set_ende(p);
+                        s.set_farbe(FARBE_GRUEN);
+                        getDialogData(s.get_text());
+                        anz_importierter_geometrieen++;
+                    }
+                }else if(tz.zeile(i).contains("CIRCLE"))
+                {
+                    QString klasse = tz.zeile(i+8);
+                    if(dxf_klasse_geo_beachten != "ja")
+                    {
+                        klasse = dxf_klasse_geo;
+                    }
+
+                    if(klasse == dxf_klasse_geo && anz_np!=1)
+                    {
+                        kreis k;
+                        punkt3d p;
+                        p.set_x(tz.zeile(i+16));
+                        p.set_y(tz.zeile(i+18));
+                        p.set_z(0);
+                        k.set_mittelpunkt(p);
+                        k.set_radius(tz.zeile(i+22));
+                        k.set_farbe(FARBE_GRUEN);
+                        getDialogData(k.get_text());
+                        anz_importierter_geometrieen++;
+                    }else if(klasse == dxf_klasse_geo)
+                    {
+                        kreis k;
+                        punkt3d p;
+                        p.set_x(tz.zeile(i+16).toDouble()-np.x());
+                        p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                        p.set_z(0);
+                        k.set_mittelpunkt(p);
+                        k.set_radius(tz.zeile(i+22));
+                        k.set_farbe(FARBE_GRUEN);
+                        getDialogData(k.get_text());
+                        anz_importierter_geometrieen++;
+                    }
+                }else if(tz.zeile(i).contains("ARC"))//Bogen
+                {
+                    QString klasse = tz.zeile(i+6);
+                    if(dxf_klasse_geo_beachten != "ja")
+                    {
+                        klasse = dxf_klasse_geo;
+                    }
+
+                    if(klasse == dxf_klasse_geo && anz_np!=1)
+                    {
+                        punkt2d mipu;
+                        mipu.set_x(tz.zeile(i+16));
+                        mipu.set_y(tz.zeile(i+18));
+                        double rad = tz.zeile(i+22).toDouble();
+                        double stawi = tz.zeile(i+26).toDouble();
+                        double endwi = tz.zeile(i+28).toDouble();
+                        double gesamtwinkel;
+                        if(stawi < endwi)
+                        {
+                            gesamtwinkel = endwi - stawi;
+                        }else
+                        {
+                            gesamtwinkel = 360-(stawi-endwi);
+                        }
+                        if(gesamtwinkel<180)
+                        {
+                            bogen b(mipu,rad,stawi,endwi);
+                            b.set_farbe(FARBE_GRUEN);
+                            getDialogData(b.get_text());
+                            anz_importierter_geometrieen++;
+                        }else
+                        {
+                            bogen b(mipu,rad,stawi,stawi+gesamtwinkel/2);
+                            b.set_farbe(FARBE_GRUEN);
+                            getDialogData(b.get_text());
+                            anz_importierter_geometrieen++;
+                            bogen b2(mipu,rad,stawi+gesamtwinkel/2,endwi);
+                            b2.set_farbe(FARBE_GRUEN);
+                            getDialogData(b2.get_text());
+                            anz_importierter_geometrieen++;
+                        }
+                    }else if(klasse == dxf_klasse_geo)
+                    {
+                        punkt2d mipu;
+                        mipu.set_x(tz.zeile(i+16).toDouble()-np.x());
+                        mipu.set_y(tz.zeile(i+18).toDouble()-np.y());
+                        double rad = tz.zeile(i+22).toDouble();
+                        double stawi = tz.zeile(i+26).toDouble();
+                        double endwi = tz.zeile(i+28).toDouble();
+                        double gesamtwinkel;
+                        if(stawi < endwi)
+                        {
+                            gesamtwinkel = endwi - stawi;
+                        }else
+                        {
+                            gesamtwinkel = 360-(stawi-endwi);
+                        }
+                        if(gesamtwinkel<180)
+                        {
+                            bogen b(mipu,rad,stawi,endwi);
+                            b.set_farbe(FARBE_GRUEN);
+                            getDialogData(b.get_text());
+                            anz_importierter_geometrieen++;
+                        }else
+                        {
+                            bogen b(mipu,rad,stawi,stawi+gesamtwinkel/2);
+                            b.set_farbe(FARBE_GRUEN);
+                            getDialogData(b.get_text());
+                            anz_importierter_geometrieen++;
+                            bogen b2(mipu,rad,stawi+gesamtwinkel/2,endwi);
+                            b2.set_farbe(FARBE_GRUEN);
+                            getDialogData(b2.get_text());
+                            anz_importierter_geometrieen++;
+                        }
+
+                    }
+                }
+            }
+
+            if(anz_importierter_geometrieen == 0)
+            {
+                QString msg;
+                msg = "Es wurden keine geeigneten Geometrieen in der Zeichnung gefunden.";
+                msg += " ";
+                msg += "Bitte ueberpruefen Sie den Inhalt der Zeichnung und die Programmeinstellungen.";
+
+                QMessageBox mb;
+                mb.setText(msg);
+                mb.exec();
+            }else
+            {
+                QString msg;
+                msg = "Es wurden ";
+                msg += int_to_qstring(anz_importierter_geometrieen);
+                msg += " Geometrien importiert";
+
+                QMessageBox mb;
+                mb.setText(msg);
+                mb.exec();
+            }
+
+            //QApplication::restoreOverrideCursor();
+        }
+
+    }
 }
 
 void MainWindow::on_actionDateiSchliessen_triggered()
@@ -2105,18 +2389,24 @@ void MainWindow::on_actionDateiSpeichern_triggered()
     if(nameOfTheOpenFile == NICHT_DEFINIERT)
     {
         //Dialog öffnen zum Wählen des Speicherortes und des Namens:
-        fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), "/home/oliver/Dokumente/CNC-Programme", tr("ggf Dateien (*.ggf)"));
-        if(!fileName.contains(DATEIENDUNG_EIGENE))
+        fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), \
+                                                pfad_oefne_ggf, tr("ggf Dateien (*.ggf)"));
+        if(!fileName.isEmpty())
         {
-            fileName += DATEIENDUNG_EIGENE;
-        }
-        if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
-        {
-            nameOfTheOpenFile = NICHT_DEFINIERT;
-            return;
-        }else
-        {
-            nameOfTheOpenFile = fileName;
+            QFileInfo info = fileName;
+            pfad_oefne_ggf = info.path();
+            if(!fileName.contains(DATEIENDUNG_EIGENE))
+            {
+                fileName += DATEIENDUNG_EIGENE;
+            }
+            if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
+            {
+                nameOfTheOpenFile = NICHT_DEFINIERT;
+                return;
+            }else
+            {
+                nameOfTheOpenFile = fileName;
+            }
         }
     }else
     {
@@ -2132,31 +2422,39 @@ void MainWindow::on_actionDateiSpeichern_triggered()
     //Programmliste in String schreiben
     QString dateiInhalt = t.get_text();
     //Datei füllen und speichern
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+    if(!fileName.isEmpty())
     {
-        QMessageBox mb;
-        mb.setText("Fehler beim Dateizugriff");
-        mb.exec();
-    } else
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+        {
+            QMessageBox mb;
+            mb.setText("Fehler beim Dateizugriff");
+            mb.exec();
+        } else
+        {
+            file.remove(); //lösche alte Datei wenn vorhanden
+            file.close(); //beende Zugriff
+            file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+            file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
+            file.close(); //beende Zugriff
+            QFileInfo info = nameOfTheOpenFile;
+            QString tmp = PROGRAMMNAME;
+            tmp += " ( " + info.baseName() + " )";
+            this->setWindowTitle(tmp);
+            hat_ungesicherte_inhalte = false;
+            aktuelisiere_letzte_dateien_inifile();
+            aktualisiere_letzte_dateien_menu();
+            nameOfTheOpenFile_backup = "";
+        }
+    }else if(nameOfTheOpenFile == NICHT_DEFINIERT && !nameOfTheOpenFile_backup.isEmpty())
     {
-        file.remove(); //lösche alte Datei wenn vorhanden
-        file.close(); //beende Zugriff
-        file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
-        file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
-        file.close(); //beende Zugriff
-        QFileInfo info = nameOfTheOpenFile;
-        QString tmp = PROGRAMMNAME;
-        tmp += " ( " + info.baseName() + " )";
-        this->setWindowTitle(tmp);
-        hat_ungesicherte_inhalte = false;
-        aktuelisiere_letzte_dateien_inifile();
-        aktualisiere_letzte_dateien_menu();
+        nameOfTheOpenFile = nameOfTheOpenFile_backup;
     }
 }
 
 void MainWindow::on_actionDateiSpeichern_unter_triggered()
 {
+    nameOfTheOpenFile_backup = nameOfTheOpenFile;
     nameOfTheOpenFile = NICHT_DEFINIERT;
     on_actionDateiSpeichern_triggered();
     QFileInfo info = nameOfTheOpenFile;
@@ -2660,6 +2958,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             rechtecktasche tasche_tmp;
@@ -2753,6 +3052,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 //G-Code ausgabe abbreche mit Fehlermeldung
                 //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
                 ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                QApplication::restoreOverrideCursor();
                 return ;
             }
 
@@ -2771,6 +3071,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             rechtecktasche tasche_tmp;
@@ -2860,6 +3161,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 //G-Code ausgabe abbreche mit Fehlermeldung
                 //"(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)"
                 ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
+                QApplication::restoreOverrideCursor();
                 return ;
             }
 
@@ -2880,6 +3182,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         //tmp += aktives_wkz + " != " + werkzeugname;
                 ui->plainTextEdit_GCode->clear();
                 ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
                 return;
             }
             QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);

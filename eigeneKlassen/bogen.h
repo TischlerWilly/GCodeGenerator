@@ -6,6 +6,7 @@
 #include "strecke.h"
 #include "darstellungsatribute.h"
 
+
 class bogen : public darstellungsatribute
 {
 public:
@@ -13,6 +14,7 @@ public:
     bogen(QString geotext);
     bogen(punkt3d startpunkt, punkt3d endpunkt);
     bogen(punkt3d startpunkt, punkt3d endpunkt, float radiuswert, bool im_uhrzeigersinn);
+    bogen(punkt2d mipu, double rad, double startwinkel, double endwinkel);
 
     void set_startpunkt(punkt3d startpunkt);
     void set_endpunkt(punkt3d endpunkt);

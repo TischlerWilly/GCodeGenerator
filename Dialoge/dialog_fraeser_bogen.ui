@@ -199,6 +199,19 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit_ende_x</tabstop>
+  <tabstop>lineEdit_ende_y</tabstop>
+  <tabstop>lineEdit_ende_z</tabstop>
+  <tabstop>lineEdit_radius</tabstop>
+  <tabstop>radioButton_im_UZS</tabstop>
+  <tabstop>radioButton_gegen_UZS</tabstop>
+  <tabstop>lineEdit_bezeichnung</tabstop>
+  <tabstop>lineEdit_ausfbed</tabstop>
+  <tabstop>pushButton_abbrechen</tabstop>
+  <tabstop>pushButton_speichern</tabstop>
+  <tabstop>pushButton_ok</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

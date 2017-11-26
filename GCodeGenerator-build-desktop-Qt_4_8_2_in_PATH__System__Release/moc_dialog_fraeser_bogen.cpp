@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'dialog_fraeser_bogen.h'
 **
-** Created: Fri Nov 17 21:29:20 2017
+** Created: Sun Nov 26 14:35:41 2017
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!
