@@ -26,9 +26,6 @@
 ----------Ideen für neue Funktionen:
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
--->Ort merken, von der die letzte Datei geöffnet wurde
--->Ort merken, von der die letzte ggf Datei importiert wurde
--->Ort merken, von der die letzte dxf Datei importiert wurde
 
 
 

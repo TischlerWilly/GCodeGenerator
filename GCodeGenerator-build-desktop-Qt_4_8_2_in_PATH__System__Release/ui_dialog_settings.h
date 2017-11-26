@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog_settings.ui'
 **
-** Created: Sun Nov 26 14:06:33 2017
+** Created: Sun Nov 26 20:01:18 2017
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -248,7 +248,7 @@ public:
 
         retranslateUi(dialog_settings);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(dialog_settings);
