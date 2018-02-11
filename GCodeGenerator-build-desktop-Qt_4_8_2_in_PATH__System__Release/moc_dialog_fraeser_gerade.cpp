@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'dialog_fraeser_gerade.h'
 **
-** Created: Sun Nov 26 14:35:40 2017
+** Created: Sun Feb 11 14:55:59 2018
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!

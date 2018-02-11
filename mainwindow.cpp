@@ -4124,6 +4124,28 @@ void MainWindow::pruefe_benutzereingaben(int zeilennummer)
             mb.setText("Achtung!\nTaschentiefe ist groesser als Nutzlaenge des Fraesers");
             mb.exec();
         }
+    }else if(programmzeile.contains(KREISTASCHE_DIALOG))
+    {
+        QString tmp = text_mitte(programmzeile, WKZ_NAME, ENDE_EINTRAG);
+        QString wkz = w.get_werkzeug(tmp);
+        tmp = text_mitte(wkz, WKZ_DURCHMESSER, ENDE_EINTRAG);
+        float wkz_dm = tmp.toFloat();
+        tmp = text_mitte(klartextzeile, DURCHMESSER, ENDE_EINTRAG);
+        float dm = tmp.toFloat();
+        if(dm<wkz_dm)
+        {
+            mb.setText("Achtung!\nTaschendurchmesser ist kleiner als Fraeserdurchmesser");
+            mb.exec();
+        }
+        tmp = text_mitte(klartextzeile, TASCHENTIEFE, ENDE_EINTRAG);
+        float tati = tmp.toFloat();
+        tmp = text_mitte(wkz, WKZ_NUTZLAENGE, ENDE_EINTRAG);
+        float wkz_nutzl = tmp.toFloat();
+        if(tati>wkz_nutzl)
+        {
+            mb.setText("Achtung!\nTaschentiefe ist groesser als Nutzlaenge des Fraesers");
+            mb.exec();
+        }
     }
 }
 
