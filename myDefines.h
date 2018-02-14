@@ -26,6 +26,7 @@
 #define SETTINGS_DXF_KLASSE_WSTNP           "[Klasse Werkstuecknullpunkt]"
 #define SETTINGS_DXF_KLASSE_GEO             "[Klasse Geometrieen]"
 #define SETTINGS_DXF_KLASSE_GEO_BEACHTEN    "[Klasse der Geometrieen beachten]"
+#define SETTINGS_FKON_BERECHNEN             "[Fraeskonturen grafisch darstellen]"
 #define ENDE_ZEILE                          "#ENDE#"
 
 //-------------------------------------------------------------------------------------------------------------------------------

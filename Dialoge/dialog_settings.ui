@@ -112,7 +112,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -159,20 +159,28 @@
       </item>
      </layout>
     </widget>
-    <zorder>label_tooltable</zorder>
-    <zorder>lineEdit_tooltable</zorder>
-    <zorder>label_tooltable</zorder>
-    <zorder>lineEdit_tooltable</zorder>
-    <zorder>pushButton_tooltable</zorder>
-    <zorder>line_3</zorder>
-    <zorder>label_werkzeugliste_pfad</zorder>
+    <widget class="QCheckBox" name="checkBox_fkon_berechnen">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>691</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fräskonturen grafisch darstellen</string>
+     </property>
+    </widget>
     <zorder>layoutWidget</zorder>
+    <zorder>layoutWidget</zorder>
+    <zorder>checkBox_fkon_berechnen</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
      <string>Import DXF</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>

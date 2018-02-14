@@ -2647,6 +2647,10 @@ void programmtext::aktualisiere_fkon()
     {
         return;
     }
+    if(!aktualisieren_fkon_eingeschaltet)
+    {
+        return;
+    }
 
     QString bahnkorr = BAHNRORREKTUR_keine;
     QString wkz_aktuell = "";

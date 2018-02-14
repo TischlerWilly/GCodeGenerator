@@ -187,6 +187,7 @@ private:
     QString         dxf_klasse_wstnp;
     QString         dxf_klasse_geo;
     QString         dxf_klasse_geo_beachten;
+    QString         fkon_berechnen;
     QString         pfad_import_dxf;
     QString         pfad_import_ggf;
     QString         pfad_oefne_ggf;

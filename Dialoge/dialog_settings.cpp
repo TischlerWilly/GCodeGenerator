@@ -68,6 +68,16 @@ void dialog_settings::on_pushButton_save_clicked()
     }
     msg += ENDE_ZEILE;
     msg += "\n";
+    msg += SETTINGS_FKON_BERECHNEN;
+    if(ui->checkBox_fkon_berechnen->isChecked())
+    {
+        msg += "ja";
+    }else
+    {
+        msg += "nein";
+    }
+    msg += ENDE_ZEILE;
+    msg += "\n";
     emit signalSaveConfig(msg);
 }
 
@@ -106,6 +116,16 @@ void dialog_settings::getDialogData(QString text, bool openToChangeData)
     {
         ui->checkBox_dxf_klasse->setChecked(false);
     }
+    tmp = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
+    if(tmp == "ja")
+    {
+        ui->checkBox_fkon_berechnen->setChecked(true);
+    }else
+    {
+        ui->checkBox_fkon_berechnen->setChecked(false);
+    }
 
     this->show();
 }
+
+
