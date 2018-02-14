@@ -209,6 +209,16 @@ QString MainWindow::loadConfig()
                 }else if(text.contains(SETTINGS_DXF_KLASSE_GEO_BEACHTEN))
                 {
                     dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
+                }else if(text.contains(SETTINGS_FKON_BERECHNEN))
+                {
+                    fkon_berechnen = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
+                    if(fkon_berechnen == "ja")
+                    {
+                        t.aktualisieren_fkon_ein_aus(true);
+                    }else
+                    {
+                        t.aktualisieren_fkon_ein_aus(false);
+                    }
                 }
                 //-----------------------------------------------------Dialoge:
                 if(text.contains(PROGRAMMKOPF_DIALOG))
@@ -296,6 +306,11 @@ QString MainWindow::saveConfig()
     //----------------------------------------------------
     inhaltVonKonfiguration +=       SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
     inhaltVonKonfiguration +=       dxf_klasse_geo_beachten;
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+    //----------------------------------------------------
+    inhaltVonKonfiguration +=       SETTINGS_FKON_BERECHNEN;
+    inhaltVonKonfiguration +=       fkon_berechnen;
     inhaltVonKonfiguration +=       ENDE_ZEILE;
     inhaltVonKonfiguration +=       "\n";
     //----------------------------------------------------
@@ -767,6 +782,10 @@ void MainWindow::slotSaveConfig(QString text)
         {
             dxf_klasse_geo_beachten = selektiereEintrag(text, SETTINGS_DXF_KLASSE_GEO_BEACHTEN, ENDE_ZEILE);
         }
+        if(text.contains(SETTINGS_FKON_BERECHNEN))
+        {
+            fkon_berechnen = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
+        }
         //------------------------------------------------Dialoge:
         if(text.contains(PROGRAMMKOPF_DIALOG))
         {
@@ -807,6 +826,9 @@ void MainWindow::slotSaveConfig(QString text)
         saveConfig();
         //Konfiguration neu laden:
         loadConfig();
+        //Anzeige aktualisieren:
+        t.aktualisieren();
+        vorschauAktualisieren();
     }else
     {
         QMessageBox mb2;
@@ -1726,6 +1748,9 @@ void MainWindow::on_actionEinstellungen_triggered()
     msg += ENDE_ZEILE;
     msg += SETTINGS_DXF_KLASSE_GEO_BEACHTEN;
     msg += dxf_klasse_geo_beachten;
+    msg += ENDE_ZEILE;
+    msg += SETTINGS_FKON_BERECHNEN;
+    msg += fkon_berechnen;
     msg += ENDE_ZEILE;
     emit sendDialogData(msg, false);
 }
@@ -2903,6 +2928,13 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::on_actionGCode_berechnen_triggered()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    bool tmp_fkon_ein = t.ist_aktualisieren_fkon_ein();
+    if(tmp_fkon_ein == false)
+    {
+        t.aktualisieren_fkon_ein_aus(true);
+    }
+
     ui->plainTextEdit_GCode->clear();
     ui->tabWidget->setCurrentWidget(ui->tab_GCode);//Tab G-Code aktivieren
     aktives_wkz = NICHT_DEFINIERT;
@@ -3811,6 +3843,12 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     }
 
     ui->plainTextEdit_GCode->insertPlainText(gcode);
+
+    if(tmp_fkon_ein == false)
+    {
+        t.aktualisieren_fkon_ein_aus(false);
+    }
+
     QApplication::restoreOverrideCursor();
 }
 
@@ -3864,7 +3902,7 @@ void MainWindow::on_actionGCode_exportieren_triggered()
         file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
         file.close(); //beende Zugriff
         QMessageBox mb;
-        mb.setText("G-Code derfolgreich exportiert.");
+        mb.setText("G-Code erfolgreich exportiert.\nDatei wurde gespeichert.");
         mb.exec();
     }
 

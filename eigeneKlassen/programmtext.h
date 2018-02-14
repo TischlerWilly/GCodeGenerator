@@ -122,8 +122,27 @@ public:
         }
     }
 
-
-
+    inline  void aktualisieren_fkon_ein_aus(bool einschalten)
+    {
+        if(einschalten)
+        {
+            aktualisieren_fkon_eingeschaltet = true;
+            aktualisiere_fkon();
+        }else
+        {
+            aktualisieren_fkon_eingeschaltet = false;
+        }
+    }
+    inline  bool ist_aktualisieren_fkon_ein()
+    {
+        return aktualisieren_fkon_eingeschaltet;
+    }
+    inline void aktualisieren()
+    {
+        aktualisiere_klartext_var_geo();
+        aktualisiere_fkon();
+        aktualisiere_anzeigetext();
+    }
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
@@ -145,6 +164,7 @@ private:
     bool    warnungen_sind_eingeschaltet;
     bool    warnung_frDial;
     bool    aktualisieren_eingeschaltet;
+    bool    aktualisieren_fkon_eingeschaltet;
 
             void    clear_ausser_text();
     inline  void    set_werkstuecklaenge(float neue_laenge)
