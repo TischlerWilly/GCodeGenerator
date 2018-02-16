@@ -388,6 +388,60 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
+                zeile_klartext += VERSATZ_X;
+                tmp = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                set_versatz_x(tmp.toFloat());
+                if(!variablen.contains(VERSATZ_X))
+                {
+                    variablen += VERSATZ_X;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, VERSATZ_X, ENDE_EINTRAG);
+                    variablen.replace(VERSATZ_X+alterWert, VERSATZ_X+tmp);
+                }
+
+                zeile_klartext += VERSATZ_Y;
+                tmp = text_mitte(zeile, VERSATZ_Y, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                set_versatz_y(tmp.toFloat());
+                if(!variablen.contains(VERSATZ_Y))
+                {
+                    variablen += VERSATZ_Y;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, VERSATZ_Y, ENDE_EINTRAG);
+                    variablen.replace(VERSATZ_Y+alterWert, VERSATZ_Y+tmp);
+                }
+
+                zeile_klartext += VERSATZ_Z;
+                tmp = text_mitte(zeile, VERSATZ_Z, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                set_versatz_z(tmp.toFloat());
+                if(!variablen.contains(VERSATZ_Z))
+                {
+                    variablen += VERSATZ_Z;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, VERSATZ_Z, ENDE_EINTRAG);
+                    variablen.replace(VERSATZ_Z+alterWert, VERSATZ_Z+tmp);
+                }
+
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
             }else
@@ -530,7 +584,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -547,7 +601,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -706,6 +760,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ENDE_EINTRAG;
 
                 tmp = text_mitte(variablen, DICKE, ENDE_EINTRAG);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
                 zeile_klartext += BEZUGSHOEHE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -739,7 +794,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -756,7 +811,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -879,6 +934,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += ENDE_EINTRAG;
 
                 tmp = text_mitte(variablen, DICKE, ENDE_EINTRAG);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
                 zeile_klartext += BEZUGSHOEHE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -893,6 +949,7 @@ void programmtext::aktualisiere_klartext_var_geo()
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
             QString tmp;
+            QString tmp_var;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
             tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
             tmp = ausdruck_auswerten(tmp);
@@ -918,53 +975,56 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_X))
                 {
                     variablen += POSITION_X;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_X, ENDE_EINTRAG);
-                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp);
+                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Y))
                 {
                     variablen += POSITION_Y;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Y, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp);
+                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Z))
                 {
                     variablen += POSITION_Z;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Z, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp);
+                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, ECKENRUNDENGLOBAL, ENDE_EINTRAG);
@@ -1063,6 +1123,7 @@ void programmtext::aktualisiere_klartext_var_geo()
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
             QString tmp;
+            QString tmp_var;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
             tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
             tmp = ausdruck_auswerten(tmp);
@@ -1086,53 +1147,56 @@ void programmtext::aktualisiere_klartext_var_geo()
                 zeile_klartext += FRAESERGERADE_DIALOG;
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_X))
                 {
                     variablen += POSITION_X;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_X, ENDE_EINTRAG);
-                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp);
+                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Y))
                 {
                     variablen += POSITION_Y;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Y, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp);
+                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Z))
                 {
                     variablen += POSITION_Z;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Z, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp);
+                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
@@ -1152,6 +1216,7 @@ void programmtext::aktualisiere_klartext_var_geo()
         }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
             QString tmp;
+            QString tmp_var;
             tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
             tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
             tmp = ausdruck_auswerten(tmp);
@@ -1176,53 +1241,56 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_X))
                 {
                     variablen += POSITION_X;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_X, ENDE_EINTRAG);
-                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp);
+                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Y))
                 {
                     variablen += POSITION_Y;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Y, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp);
+                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp_var = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(POSITION_Z))
                 {
                     variablen += POSITION_Z;
-                    variablen += tmp;
+                    variablen += tmp_var;
                     variablen += ENDE_EINTRAG;
                 }else
                 {
                     QString alterWert = text_mitte(variablen, POSITION_Z, ENDE_EINTRAG);
-                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp);
+                    variablen.replace(POSITION_Z+alterWert, POSITION_Z+tmp_var);
                 }
 
                 tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
@@ -1314,7 +1382,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 rechteck3d rec;
                 rec.set_bezugspunkt(UNTEN_LINKS);
-                rec.set_einfuegepunkt(0,0,0);
+                rec.set_einfuegepunkt(versatz_x,versatz_y,0);
                 rec.set_laenge(text_mitte(zeile, LAENGE, ENDE_EINTRAG));
                 rec.set_breite(text_mitte(zeile, BREITE, ENDE_EINTRAG));
                 rec.set_farbe_fuellung(FARBE_GRAU);
@@ -1483,7 +1551,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
                             //Startpunkt in Z setzen:
                             punkt3d startpunkt = s.startp();
-                            startpunkt.set_z(werkstueckdicke + sicherheitsabstand);
+                            startpunkt.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             s.set_start(startpunkt);
                             //Endpunkt setzen:
                             s.set_ende(startpDial);//Damit auch Z stimmt und weniger gerechent werden muss
@@ -1509,7 +1577,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             punkt3d startpu;
                             startpu.set_x(b.mittelpunkt().x());
                             startpu.set_y(b.mittelpunkt().y());
-                            startpu.set_z(werkstueckdicke + sicherheitsabstand);
+                            startpu.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             strecke s;
                             s.set_start(startpu);
                             s.set_ende(startpDial);
@@ -1564,7 +1632,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
@@ -1577,7 +1645,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
@@ -1632,7 +1700,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
@@ -1649,7 +1717,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
@@ -2059,7 +2127,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                         s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
                         //Endpunkt in Z setzen:
                         punkt3d endpunkt = s.endp();
-                        endpunkt.set_z(werkstueckdicke + sicherheitsabstand);
+                        endpunkt.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                         s.set_ende(endpunkt);
                         //Startpunkt setzen:
                         s.set_start(punkt_davor);//Damit auch Z stimmt und weniger gerechent werden muss
@@ -2081,7 +2149,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                         punkt3d endpu;
                         endpu.set_x(b.mittelpunkt().x());
                         endpu.set_y(b.mittelpunkt().y());
-                        endpu.set_z(werkstueckdicke + sicherheitsabstand);
+                        endpu.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                         strecke s;
                         s.set_start(punkt_davor);
                         s.set_ende(endpu);
@@ -2108,7 +2176,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
@@ -2121,7 +2189,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
@@ -2163,7 +2231,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
@@ -2180,7 +2248,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);

@@ -343,6 +343,15 @@ QString MainWindow::saveConfig()
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
         inhaltVonKonfiguration +=   "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VERSATZ_X;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VERSATZ_Y;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VERSATZ_Z;
+        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
     }else
     {
         inhaltVonKonfiguration +=   vorlage_pkopf;

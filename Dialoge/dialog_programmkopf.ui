@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>435</width>
-    <height>405</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>370</y>
+     <y>440</y>
      <width>321</width>
      <height>29</height>
     </rect>
@@ -49,165 +49,222 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>11</x>
-     <y>11</y>
+     <y>10</y>
      <width>411</width>
-     <height>291</height>
+     <height>411</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_laenge">
-        <property name="text">
-         <string>Laenge</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_breite">
-        <property name="text">
-         <string>Breite</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_dicke">
-        <property name="text">
-         <string>Dicke</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_kommentar1">
-        <property name="text">
-         <string>Kommentar</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_sicherheitsabstand">
-        <property name="text">
-         <string>Sicherheitsabstand</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_bezeichnung">
-        <property name="text">
-         <string>Bezeichnung</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_Ausfuehrbedingung">
-        <property name="text">
-         <string>Ausfuehrbedingung</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="lineEdit_laenge">
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="QLabel" name="label_laenge_var">
-        <property name="text">
-         <string>*[L]</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_breite_var">
-        <property name="text">
-         <string>*[B]</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_dicke_var">
-        <property name="text">
-         <string>*[D]</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_kommentar1_var">
-        <property name="text">
-         <string>[KOM]</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label__sicherheitsabstand_var">
-        <property name="text">
-         <string>[SIA]</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label__bezeichnung_var">
-        <property name="text">
-         <string>[BEZ]</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>[AFB]</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_sicherheitsabstand">
+      <property name="text">
+       <string>Sicherheitsabstand</string>
+      </property>
+     </widget>
     </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLineEdit" name="lineEdit_laenge">
-        <property name="frame">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_breite"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_dicke"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_kommentar1"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_sicherheitsabstand"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit__bezeichnung"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_AFB"/>
-      </item>
-     </layout>
+    <item row="4" column="2">
+     <widget class="QLineEdit" name="lineEdit_sicherheitsabstand"/>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_ay">
+      <property name="text">
+       <string>Y-Versatz</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_ax">
+      <property name="text">
+       <string>X-Versatz</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_laenge">
+      <property name="text">
+       <string>Laenge</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_breite">
+      <property name="text">
+       <string>Breite</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_kommentar1">
+      <property name="text">
+       <string>Kommentar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="label_dicke_var">
+      <property name="text">
+       <string>*[D]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLineEdit" name="lineEdit_kommentar1"/>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLineEdit" name="lineEdit_dicke"/>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLineEdit" name="lineEdit_ax"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_Ausfuehrbedingung">
+      <property name="text">
+       <string>Ausfuehrbedingung</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_bezeichnung">
+      <property name="text">
+       <string>Bezeichnung</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLabel" name="label_ay_var">
+      <property name="text">
+       <string>[AY]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_dicke">
+      <property name="text">
+       <string>Dicke</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="label_Ausfuehrbedingung_var">
+      <property name="text">
+       <string>[AFB]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLineEdit" name="lineEdit_ay"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_laenge_var">
+      <property name="text">
+       <string>*[L]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="label_breite_var">
+      <property name="text">
+       <string>*[B]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="lineEdit_breite"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="label_kommentar1_var">
+      <property name="text">
+       <string>[KOM]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QLineEdit" name="lineEdit__bezeichnung"/>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLabel" name="label_ax_var">
+      <property name="text">
+       <string>[AX]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QLineEdit" name="lineEdit_AFB"/>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="label__bezeichnung_var">
+      <property name="text">
+       <string>[BEZ]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="label__sicherheitsabstand_var">
+      <property name="text">
+       <string>[SIA]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QLineEdit" name="lineEdit_schabl"/>
+    </item>
+    <item row="9" column="1">
+     <widget class="QLabel" name="label_schabl_var">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>[SH]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_schabl">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schablonenhöhe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -220,6 +277,9 @@
   <tabstop>lineEdit_sicherheitsabstand</tabstop>
   <tabstop>lineEdit__bezeichnung</tabstop>
   <tabstop>lineEdit_AFB</tabstop>
+  <tabstop>lineEdit_ax</tabstop>
+  <tabstop>lineEdit_ay</tabstop>
+  <tabstop>lineEdit_schabl</tabstop>
   <tabstop>pushButton_Abbrechen</tabstop>
   <tabstop>pushButton_save</tabstop>
   <tabstop>pushButton_OK</tabstop>
