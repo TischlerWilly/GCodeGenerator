@@ -31,9 +31,6 @@
 ----------Ideen für neue Funktionen:
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
 
--->WST-Versatz-Eingabe möglich machen
-    ->Programmkopf-Dialog erweitern um ax und ay
-    ->Versatz berücksichtigen
 
 
 

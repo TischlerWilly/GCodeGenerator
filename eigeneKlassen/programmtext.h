@@ -157,6 +157,9 @@ private:
     float   werkstueckbreite;
     float   werkstueckdicke;
     float   sicherheitsabstand;
+    float   versatz_x;
+    float   versatz_y;
+    float   versatz_z;
     bool    hat_programmkopf;
     bool    hat_programmende;
     float   min_x, min_y, max_x, max_y;
@@ -178,6 +181,18 @@ private:
     inline  void    set_werkstueckdicke(float neue_dicke)
     {
         werkstueckdicke = neue_dicke;
+    }
+    inline  void    set_versatz_x(float versatz)
+    {
+        versatz_x = versatz;
+    }
+    inline  void    set_versatz_y(float versatz)
+    {
+        versatz_y = versatz;
+    }
+    inline  void    set_versatz_z(float versatz)
+    {
+        versatz_z = versatz;
     }
             void    set_sicherheitsabstand(float neuer_Abstand);
 

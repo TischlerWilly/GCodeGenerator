@@ -46,6 +46,18 @@ QString Dialog_Programmkopf::dialogDataToString()
     msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_AFB->text());
     msg += ENDE_EINTRAG;
 
+    msg += VERSATZ_X;
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ax->text());
+    msg += ENDE_EINTRAG;
+
+    msg += VERSATZ_Y;
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ay->text());
+    msg += ENDE_EINTRAG;
+
+    msg += VERSATZ_Z;
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_schabl->text());
+    msg += ENDE_EINTRAG;
+
     msg += ENDE_ZEILE;
     return msg;
 }
@@ -79,6 +91,9 @@ void Dialog_Programmkopf::getDialogData(QString text, bool openToChangeData)
     ui->lineEdit_sicherheitsabstand->setText(selektiereEintrag(text, SICHERHEITSABSTAND, ENDE_EINTRAG));
     ui->lineEdit__bezeichnung->setText(selektiereEintrag(text, BEZEICHNUNG, ENDE_EINTRAG));
     ui->lineEdit_AFB->setText(selektiereEintrag(text, AUSFUEHRBEDINGUNG, ENDE_EINTRAG));
+    ui->lineEdit_ax->setText(selektiereEintrag(text, VERSATZ_X, ENDE_EINTRAG));
+    ui->lineEdit_ay->setText(selektiereEintrag(text, VERSATZ_Y, ENDE_EINTRAG));
+    ui->lineEdit_schabl->setText(selektiereEintrag(text, VERSATZ_Z, ENDE_EINTRAG));
     this->show();
 }
 

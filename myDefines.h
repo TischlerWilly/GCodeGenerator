@@ -115,6 +115,9 @@
 #define RADIUS              "[RAD]"
 #define WINKEL              "[W]"
 #define AUTOMATISCH                 "AUTO"
+#define VERSATZ_X           "[AX]"
+#define VERSATZ_Y           "[AY]"
+#define VERSATZ_Z           "[SH]"
 #define ENDE_EINTRAG        ";"
 
 #define FEHLER              "Fehler"
