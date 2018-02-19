@@ -145,6 +145,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fabfa, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&werkzeug_dialog, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
 
+    connect(&dkreis, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+
+    connect(&dkreis, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+
     connect(&ktasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
     connect(&rtasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
     connect(&variablenwerte_anzeigen, SIGNAL(brauche_variablen()), this, SLOT(slotAnfrageVariablen()));
@@ -1618,6 +1622,10 @@ void MainWindow::on_actionAendern_triggered()
             {
                 connect(this, SIGNAL(sendDialogData(QString, bool)), &fabfa, SLOT(getDialogData(QString, bool)));
                 emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(KREIS))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
             }
         }
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -1946,6 +1954,22 @@ void MainWindow::on_actionMakeAbfahren_triggered()
         connect(this, SIGNAL(sendDialogData(QString, bool)), &fabfa, SLOT(getDialogData(QString, bool)));
         QString msg = vorlage_Fabfa;
         emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeKreis_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
+        kreis k;
+        emit sendDialogData(k.get_text(), false);
     }
 }
 
@@ -3936,6 +3960,120 @@ void MainWindow::on_listWidget_Programmliste_currentRowChanged(int currentRow)
     emit sendAktiveProgrammzeile(currentRow+1);
 }
 
+//---------------------------------------------------Umwandeln:
+void MainWindow::on_actionKreis_in_Kreistasche_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(KREIS))
+            {
+                kreis k(programmzeile);
+                QString msg = vorlage_Ktasche;
+                QString alt;
+                alt  = POSITION_X;
+                alt += text_mitte(vorlage_Ktasche, POSITION_X, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_X + k.mitte2d().x_QString() + ENDE_EINTRAG);
+
+                alt  = POSITION_Y;
+                alt += text_mitte(vorlage_Ktasche, POSITION_Y, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_Y + k.mitte2d().y_QString() + ENDE_EINTRAG);
+
+                alt  = DURCHMESSER;
+                alt += text_mitte(vorlage_Ktasche, DURCHMESSER, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, DURCHMESSER + double_to_qstring(k.radius()*2) + ENDE_EINTRAG);
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(msg, true, werkzeugnamen);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die aktive Zeile enthaellt keinen Kreis!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
+
+void MainWindow::on_actionKreistasche_in_Kreis_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(KREISTASCHE_DIALOG))
+            {
+                kreis k;
+
+                punkt3d mipu;
+                mipu.set_x(text_mitte(programmzeile, POSITION_X, ENDE_EINTRAG));
+                mipu.set_y(text_mitte(programmzeile, POSITION_Y, ENDE_EINTRAG));
+                k.set_mittelpunkt(mipu);
+                k.set_radius(ausdruck_auswerten("(" + \
+                                                text_mitte(programmzeile, DURCHMESSER, ENDE_EINTRAG) + \
+                                                ")/2"));
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(k.get_text(), true);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die aktive Zeile enthaellt keine Kreistasche!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
 //---------------------------------------------------nicht zugeordnet
 int MainWindow::loadToolInteger(QString keyword, int index)
 {
@@ -4266,6 +4404,12 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.exec();
 
 }
+
+
+
+
+
+
 
 
 

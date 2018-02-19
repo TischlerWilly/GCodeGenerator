@@ -220,6 +220,7 @@
     <addaction name="actionMakeKommentar"/>
     <addaction name="actionMakeVariable"/>
     <addaction name="separator"/>
+    <addaction name="actionMakeKreis"/>
     <addaction name="actionMakeKreistasche"/>
     <addaction name="actionMakeRechtecktasche"/>
     <addaction name="separator"/>
@@ -228,9 +229,17 @@
     <addaction name="actionMakeGebogene_Fraesbahn"/>
     <addaction name="actionMakeAbfahren"/>
    </widget>
+   <widget class="QMenu" name="menuUmwandeln">
+    <property name="title">
+     <string>Umwandeln</string>
+    </property>
+    <addaction name="actionKreis_in_Kreistasche_umwandeln"/>
+    <addaction name="actionKreistasche_in_Kreis_umwandeln"/>
+   </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuBearbeiten"/>
    <addaction name="menuHinzufuegen"/>
+   <addaction name="menuUmwandeln"/>
    <addaction name="menuMen"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -470,6 +479,21 @@
   <action name="import_DXF">
    <property name="text">
     <string>aus DXF-Datei</string>
+   </property>
+  </action>
+  <action name="actionKreis_in_Kreistasche_umwandeln">
+   <property name="text">
+    <string>Kreis in Kreistasche umwandeln</string>
+   </property>
+  </action>
+  <action name="actionMakeKreis">
+   <property name="text">
+    <string>Kreis</string>
+   </property>
+  </action>
+  <action name="actionKreistasche_in_Kreis_umwandeln">
+   <property name="text">
+    <string>Kreistasche in Kreis umwandeln</string>
    </property>
   </action>
  </widget>

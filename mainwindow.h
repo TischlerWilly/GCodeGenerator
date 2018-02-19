@@ -39,6 +39,7 @@
 #include "Dialoge/dialog_programmlisten.h"
 #include "Dialoge/dialog_import_ggf.h"
 #include "eigeneKlassen/letzte_dateien.h"
+#include "Dialoge/dialog_kreis.h"
 
 
 #define INDEX_PROGRAMMLISTE 0
@@ -104,6 +105,9 @@ private slots:
     void on_actionTestfunktion_triggered();
     void on_import_GGF_triggered();
     void on_import_DXF_triggered();
+    void on_actionKreis_in_Kreistasche_umwandeln_triggered();
+    void on_actionMakeKreis_triggered();
+    void on_actionKreistasche_in_Kreis_umwandeln_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -140,6 +144,7 @@ private:
     Dialog_Variable variable;
     Dialog_variablenwerte_anzeigen variablenwerte_anzeigen;
     Dialog_Kreistasche ktasche;
+    Dialog_Kreis dkreis;
     Dialog_Rechtecktasche rtasche;
     Dialog_import_ggf import_ggf;
     vorschau vorschaufenster;
