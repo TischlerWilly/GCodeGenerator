@@ -7,7 +7,9 @@
 -->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
 
 
-
+-->Dialoge für CAD-Bearbeitung bereitstellen
+    ->Bogen
+    ->Strecke
 
 
 
@@ -23,13 +25,15 @@
 -->Dialog Include
 -->Dialog Spiegeln
 -->Dialog Verschieben
--->Dialgo Drehen
+-->Dialog Drehen
 -->Ankörnen (mit V-Fräser?)
 
 
 
 ----------Ideen für neue Funktionen:
 -->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
+    ->evtl. durch den Include einer Zeichnungsdatei
+    ->diese kann z.B. direkt durch den GCodeGenerator erzeugt werden
 
 
 

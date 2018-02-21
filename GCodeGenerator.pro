@@ -56,7 +56,8 @@ SOURCES += \
     eigeneKlassen/wuerfel.cpp \
     eigeneKlassen/tabelle_tz3.cpp \
     eigeneKlassen/letzte_dateien.cpp \
-    Dialoge/dialog_import_ggf.cpp
+    Dialoge/dialog_import_ggf.cpp \
+    Dialoge/dialog_kreis.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -106,7 +107,8 @@ HEADERS  += \
     eigeneKlassen/wuerfel.h \
     eigeneKlassen/tabelle_tz3.h \
     eigeneKlassen/letzte_dateien.h \
-    Dialoge/dialog_import_ggf.h
+    Dialoge/dialog_import_ggf.h \
+    Dialoge/dialog_kreis.h
 
 FORMS    += \
     mainwindow.ui \
@@ -124,4 +126,5 @@ FORMS    += \
     Dialoge/dialog_fraeser_aufruf.ui \
     Dialoge/dialog_fraeser_abfahren.ui \
     Dialoge/dialog_programmlisten.ui \
-    Dialoge/dialog_import_ggf.ui
+    Dialoge/dialog_import_ggf.ui \
+    Dialoge/dialog_kreis.ui
