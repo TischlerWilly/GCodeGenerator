@@ -1344,13 +1344,48 @@ void programmtext::aktualisiere_klartext_var_geo()
             }
         }else if(zeile.contains(STRECKE))
         {
-            klartext.zeilen_anhaengen(zeile);
+            strecke s(zeile);
+            punkt3d sp = s.startp();
+            punkt3d ep = s.endp();
+            punkt3d p = sp;
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            s.set_start(p);
+            p = ep;
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            s.set_ende(p);
+
+            klartext.zeilen_anhaengen(s.get_text());
         }else if(zeile.contains(KREIS))
         {
-            klartext.zeilen_anhaengen(zeile);
+            kreis k(zeile);
+            punkt3d p = k.mitte3d();
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            k.set_mittelpunkt(p);
+
+            klartext.zeilen_anhaengen(k.get_text());
         }else if(zeile.contains(BOGEN))
         {
-            klartext.zeilen_anhaengen(zeile);
+            bogen b(zeile);
+            punkt3d sp = b.start();
+            punkt3d ep = b.ende();
+            punkt3d p = sp;
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            b.set_startpunkt(p);
+            p = ep;
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            b.set_endpunkt(p);
+
+            klartext.zeilen_anhaengen(b.get_text());
         }else
         {
             klartext.zeilen_anhaengen("");

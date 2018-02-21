@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>723</height>
+    <height>375</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -17,7 +17,7 @@
       <x>10</x>
       <y>10</y>
       <width>681</width>
-      <height>641</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -39,7 +39,7 @@
         <x>5</x>
         <y>11</y>
         <width>241</width>
-        <height>591</height>
+        <height>221</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -158,6 +158,7 @@
     <property name="title">
      <string>Diverses</string>
     </property>
+    <addaction name="actionInfo"/>
     <addaction name="actionEinstellungen"/>
     <addaction name="actionWerkzeugliste"/>
     <addaction name="actionProgrammliste_anzeigen"/>
@@ -212,7 +213,7 @@
    </widget>
    <widget class="QMenu" name="menuHinzufuegen">
     <property name="title">
-     <string>Hinzufuegen</string>
+     <string>CAM</string>
     </property>
     <addaction name="actionMakeProgrammkopf"/>
     <addaction name="actionMakeProgrammende"/>
@@ -220,7 +221,6 @@
     <addaction name="actionMakeKommentar"/>
     <addaction name="actionMakeVariable"/>
     <addaction name="separator"/>
-    <addaction name="actionMakeKreis"/>
     <addaction name="actionMakeKreistasche"/>
     <addaction name="actionMakeRechtecktasche"/>
     <addaction name="separator"/>
@@ -236,9 +236,16 @@
     <addaction name="actionKreis_in_Kreistasche_umwandeln"/>
     <addaction name="actionKreistasche_in_Kreis_umwandeln"/>
    </widget>
+   <widget class="QMenu" name="menuCAD">
+    <property name="title">
+     <string>CAD</string>
+    </property>
+    <addaction name="actionMakeKreis"/>
+   </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuBearbeiten"/>
    <addaction name="menuHinzufuegen"/>
+   <addaction name="menuCAD"/>
    <addaction name="menuUmwandeln"/>
    <addaction name="menuMen"/>
   </widget>
@@ -494,6 +501,11 @@
   <action name="actionKreistasche_in_Kreis_umwandeln">
    <property name="text">
     <string>Kreistasche in Kreis umwandeln</string>
+   </property>
+  </action>
+  <action name="actionInfo">
+   <property name="text">
+    <string>Info</string>
    </property>
   </action>
  </widget>

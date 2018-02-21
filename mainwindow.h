@@ -108,6 +108,7 @@ private slots:
     void on_actionKreis_in_Kreistasche_umwandeln_triggered();
     void on_actionMakeKreis_triggered();
     void on_actionKreistasche_in_Kreis_umwandeln_triggered();
+    void on_actionInfo_triggered();
 
 public slots:
     void getDialogData(QString text);

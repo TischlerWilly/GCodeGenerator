@@ -1969,6 +1969,7 @@ void MainWindow::on_actionMakeKreis_triggered()
         disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
         connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
         kreis k;
+        k.set_farbe(FARBE_GRUEN);
         emit sendDialogData(k.get_text(), false);
     }
 }
@@ -2547,7 +2548,9 @@ void MainWindow::hideElemets_noFileIsOpen()
         ui->actionEntfernen->setDisabled(true);
     }
     ui->actionEin_Ausblenden->setDisabled(true);
-    //Menü Hinzufügen:
+    ui->actionAuswahl_Einblenden->setDisabled(true);
+    ui->actionAuswahl_Ausblenden->setDisabled(true);
+    //Menü CAM:
     ui->actionMakeProgrammkopf->setDisabled(true);
     ui->actionMakeProgrammende->setDisabled(true);
     ui->actionMakeKommentar->setDisabled(true);
@@ -2558,6 +2561,11 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionMakeGerade_Fraesbahn->setDisabled(true);
     ui->actionMakeGebogene_Fraesbahn->setDisabled(true);
     ui->actionMakeAbfahren->setDisabled(true);
+    //Menü CAD:
+    ui->actionMakeKreis->setDisabled(true);
+    //Menü Umwandeln:
+    ui->actionKreistasche_in_Kreis_umwandeln->setDisabled(true);
+    ui->actionKreis_in_Kreistasche_umwandeln->setDisabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setDisabled(true);
     ui->actionProgrammliste_anzeigen->setDisabled(true);
@@ -2590,7 +2598,9 @@ void MainWindow::showElements_aFileIsOpen()
         ui->actionEntfernen->setEnabled(true);
     }
     ui->actionEin_Ausblenden->setEnabled(true);
-    //Menü Hinzufügen:
+    ui->actionAuswahl_Einblenden->setEnabled(true);
+    ui->actionAuswahl_Ausblenden->setEnabled(true);
+    //Menü CAM:
     ui->actionMakeProgrammkopf->setEnabled(true);
     ui->actionMakeProgrammende->setEnabled(true);
     ui->actionMakeKommentar->setEnabled(true);
@@ -2601,6 +2611,11 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionMakeGerade_Fraesbahn->setEnabled(true);
     ui->actionMakeGebogene_Fraesbahn->setEnabled(true);
     ui->actionMakeAbfahren->setEnabled(true);
+    //Menü CAD:
+    ui->actionMakeKreis->setEnabled(true);
+    //Menü Umwandeln:
+    ui->actionKreistasche_in_Kreis_umwandeln->setEnabled(true);
+    ui->actionKreis_in_Kreistasche_umwandeln->setEnabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setEnabled(true);
     ui->actionProgrammliste_anzeigen->setEnabled(true);
@@ -4048,6 +4063,7 @@ void MainWindow::on_actionKreistasche_in_Kreis_umwandeln_triggered()
             if(programmzeile.contains(KREISTASCHE_DIALOG))
             {
                 kreis k;
+                k.set_farbe(FARBE_GRUEN);
 
                 punkt3d mipu;
                 mipu.set_x(text_mitte(programmzeile, POSITION_X, ENDE_EINTRAG));
@@ -4386,7 +4402,20 @@ void MainWindow::on_actionWiederholen_triggered()
     }
 }
 
-//---------------------------------------------------
+void MainWindow::on_actionInfo_triggered()
+{
+    QString msg;
+    msg  = PROGRAMMNAME;
+    msg += "\n";
+    msg += "Autor: Oliver Schuft";
+    msg += "\n";
+    msg += "Repositorry: ";
+    msg += "https://github.com/TischlerWilly/GCodeGenerator.git";
+
+    QMessageBox mb;
+    mb.setText(msg);
+    mb.exec();
+}
 
 void MainWindow::slot_maus_pos(QPoint p)
 {
@@ -4397,6 +4426,8 @@ void MainWindow::slot_maus_pos(QPoint p)
     ui->statusBar->showMessage("X:" + x_ + " / Y:" + y_);
 }
 
+//---------------------------------------------------
+
 void MainWindow::on_actionTestfunktion_triggered()
 {
     QMessageBox mb;
@@ -4404,6 +4435,8 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.exec();
 
 }
+
+
 
 
 
