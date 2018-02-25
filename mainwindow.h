@@ -40,6 +40,8 @@
 #include "Dialoge/dialog_import_ggf.h"
 #include "eigeneKlassen/letzte_dateien.h"
 #include "Dialoge/dialog_kreis.h"
+#include "Dialoge/dialog_strecke.h"
+#include "Dialoge/dialog_bogen.h"
 
 
 #define INDEX_PROGRAMMLISTE 0
@@ -109,6 +111,9 @@ private slots:
     void on_actionMakeKreis_triggered();
     void on_actionKreistasche_in_Kreis_umwandeln_triggered();
     void on_actionInfo_triggered();
+    void on_actionMakeStrecke_triggered();
+
+    void on_actionMakeBogen_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -117,8 +122,10 @@ public slots:
     void slotAnfrageWerkzeugnamen(QString dialogName);
     void slotAnfrageWerkzeugdaten(QString Werkzeugname, QString Dialog);
     void slotAnfrageVariablen();
+    void slotAnfrageVariablenZeile(QString kennung);
     void slot_maus_pos(QPoint p);
     void getImportGGF(QString text);
+
 
 signals:
     //void sendDialogData(QString text);
@@ -130,6 +137,7 @@ signals:
     void sendVorschauAktualisieren(QString neuer_programmtext, int aktuelle_programmzeile);
     void sendVorschauAktualisieren(programmtext t_neu, int aktuelle_programmzeile);
     void sendVariablen(text_zeilenweise variablen);
+    void sendVariablenZeile(QString var);
     void sendAktiveProgrammzeile(int zeilennummer);
     void send_an_programmlisten(QString prgtext, QString klartext, \
                         QString variabel, QString geotext, QString fkon);
@@ -146,6 +154,8 @@ private:
     Dialog_variablenwerte_anzeigen variablenwerte_anzeigen;
     Dialog_Kreistasche ktasche;
     Dialog_Kreis dkreis;
+    Dialog_strecke dstrecke;
+    Dialog_Bogen dbogen;
     Dialog_Rechtecktasche rtasche;
     Dialog_import_ggf import_ggf;
     vorschau vorschaufenster;

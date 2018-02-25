@@ -7,9 +7,6 @@
 -->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
 
 
--->Dialoge für CAD-Bearbeitung bereitstellen
-    ->Bogen
-    ->Strecke
 
 
 

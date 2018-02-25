@@ -146,8 +146,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&werkzeug_dialog, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
 
     connect(&dkreis, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&dstrecke, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&dbogen, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
 
     connect(&dkreis, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&dstrecke, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&dbogen, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+
+    connect(&dstrecke, SIGNAL(sendBraucheVariablen(QString)), this, SLOT(slotAnfrageVariablenZeile(QString)));
+    connect(&dkreis, SIGNAL(sendBraucheVariablen(QString)), this, SLOT(slotAnfrageVariablenZeile(QString)));
+    connect(&dbogen, SIGNAL(sendBraucheVariablen(QString)), this, SLOT(slotAnfrageVariablenZeile(QString)));
 
     connect(&ktasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
     connect(&rtasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
@@ -1626,6 +1634,14 @@ void MainWindow::on_actionAendern_triggered()
             {
                 connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
                 emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(STRECKE))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dstrecke, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(BOGEN))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dbogen, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
             }
         }
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -1971,6 +1987,40 @@ void MainWindow::on_actionMakeKreis_triggered()
         kreis k;
         k.set_farbe(FARBE_GRUEN);
         emit sendDialogData(k.get_text(), false);
+    }
+}
+
+void MainWindow::on_actionMakeStrecke_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &dstrecke, SLOT(getDialogData(QString, bool)));
+        strecke s;
+        s.set_farbe(FARBE_GRUEN);
+        emit sendDialogData(s.get_text(), false);
+    }
+}
+
+void MainWindow::on_actionMakeBogen_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &dbogen, SLOT(getDialogData(QString, bool)));
+        bogen b;
+        b.set_farbe(FARBE_GRUEN);
+        emit sendDialogData(b.get_text(), false);
     }
 }
 
@@ -2563,6 +2613,8 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionMakeAbfahren->setDisabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setDisabled(true);
+    ui->actionMakeStrecke->setDisabled(true);
+    ui->actionMakeBogen->setDisabled(true);
     //Menü Umwandeln:
     ui->actionKreistasche_in_Kreis_umwandeln->setDisabled(true);
     ui->actionKreis_in_Kreistasche_umwandeln->setDisabled(true);
@@ -2613,6 +2665,8 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionMakeAbfahren->setEnabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setEnabled(true);
+    ui->actionMakeStrecke->setEnabled(true);
+    ui->actionMakeBogen->setEnabled(true);
     //Menü Umwandeln:
     ui->actionKreistasche_in_Kreis_umwandeln->setEnabled(true);
     ui->actionKreis_in_Kreistasche_umwandeln->setEnabled(true);
@@ -4369,6 +4423,29 @@ void MainWindow::slotAnfrageVariablen()
     emit sendVariablen(t.get_variablen_zeilenweise());
 }
 
+void MainWindow::slotAnfrageVariablenZeile(QString kennung)
+{
+    QString var;
+    text_zeilenweise tz = t.get_variablen_zeilenweise();
+    var = tz.zeile(ui->listWidget_Programmliste->currentRow());
+
+    disconnect(this, SIGNAL(sendVariablenZeile(QString)), 0, 0);
+
+    if(kennung == STRECKE)
+    {
+        connect(this, SIGNAL(sendVariablenZeile(QString)), &dstrecke, SLOT(getVariablen(QString)));
+        emit sendVariablenZeile(var);
+    }else if(kennung == KREIS)
+    {
+        connect(this, SIGNAL(sendVariablenZeile(QString)), &dkreis, SLOT(getVariablen(QString)));
+        emit sendVariablenZeile(var);
+    }else if(kennung == BOGEN)
+    {
+        connect(this, SIGNAL(sendVariablenZeile(QString)), &dbogen, SLOT(getVariablen(QString)));
+        emit sendVariablenZeile(var);
+    }
+}
+
 void MainWindow::on_actionVariablenwert_anzeigen_triggered()
 {
     variablenwerte_anzeigen.show();
@@ -4435,6 +4512,10 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.exec();
 
 }
+
+
+
+
 
 
 

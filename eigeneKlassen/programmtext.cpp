@@ -1359,6 +1359,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             s.set_ende(p);
 
             klartext.zeilen_anhaengen(s.get_text());
+            var.zeile_anhaengen(variablen);
         }else if(zeile.contains(KREIS))
         {
             kreis k(zeile);
@@ -1369,6 +1370,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             k.set_mittelpunkt(p);
 
             klartext.zeilen_anhaengen(k.get_text());
+            var.zeile_anhaengen(variablen);
         }else if(zeile.contains(BOGEN))
         {
             bogen b(zeile);
@@ -1386,6 +1388,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             b.set_endpunkt(p);
 
             klartext.zeilen_anhaengen(b.get_text());
+            var.zeile_anhaengen(variablen);
         }else
         {
             klartext.zeilen_anhaengen("");
