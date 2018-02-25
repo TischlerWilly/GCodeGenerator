@@ -57,7 +57,9 @@ SOURCES += \
     eigeneKlassen/tabelle_tz3.cpp \
     eigeneKlassen/letzte_dateien.cpp \
     Dialoge/dialog_import_ggf.cpp \
-    Dialoge/dialog_kreis.cpp
+    Dialoge/dialog_kreis.cpp \
+    Dialoge/dialog_strecke.cpp \
+    Dialoge/dialog_bogen.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -108,7 +110,9 @@ HEADERS  += \
     eigeneKlassen/tabelle_tz3.h \
     eigeneKlassen/letzte_dateien.h \
     Dialoge/dialog_import_ggf.h \
-    Dialoge/dialog_kreis.h
+    Dialoge/dialog_kreis.h \
+    Dialoge/dialog_strecke.h \
+    Dialoge/dialog_bogen.h
 
 FORMS    += \
     mainwindow.ui \
@@ -127,4 +131,6 @@ FORMS    += \
     Dialoge/dialog_fraeser_abfahren.ui \
     Dialoge/dialog_programmlisten.ui \
     Dialoge/dialog_import_ggf.ui \
-    Dialoge/dialog_kreis.ui
+    Dialoge/dialog_kreis.ui \
+    Dialoge/dialog_strecke.ui \
+    Dialoge/dialog_bogen.ui

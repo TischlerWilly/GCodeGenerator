@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog_Bogen</class>
+ <widget class="QDialog" name="Dialog_Bogen">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>341</width>
+    <height>516</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>480</y>
+     <width>321</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_abbrechen">
+      <property name="text">
+       <string>Abbrechen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_ok">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>321</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="lineEdit_spz"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="lineEdit_epx"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="lineEdit_spy"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_spx">
+      <property name="text">
+       <string>Startpunkt X</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEdit_spx"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_spz">
+      <property name="text">
+       <string>Startpunkt Z</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="lineEdit_epz"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="lineEdit_epy"/>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLineEdit" name="lineEdit_rad"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_spy">
+      <property name="text">
+       <string>Startpunkt Y</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_epx">
+      <property name="text">
+       <string>Endpunkt X</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_epy">
+      <property name="text">
+       <string>Endpunkt Y</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_epz">
+      <property name="text">
+       <string>Endpunkt Z</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_rad">
+      <property name="text">
+       <string>Radius</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>410</y>
+     <width>321</width>
+     <height>48</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="radioButton_uzs">
+      <property name="text">
+       <string>im Uhrzeigersinn</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton_guzs">
+      <property name="text">
+       <string>gegen den Uhrzeigersinn</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_spx</tabstop>
+  <tabstop>lineEdit_spy</tabstop>
+  <tabstop>lineEdit_spz</tabstop>
+  <tabstop>lineEdit_epx</tabstop>
+  <tabstop>lineEdit_epy</tabstop>
+  <tabstop>lineEdit_epz</tabstop>
+  <tabstop>lineEdit_rad</tabstop>
+  <tabstop>radioButton_uzs</tabstop>
+  <tabstop>radioButton_guzs</tabstop>
+  <tabstop>pushButton_ok</tabstop>
+  <tabstop>pushButton_abbrechen</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

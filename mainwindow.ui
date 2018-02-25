@@ -241,6 +241,8 @@
      <string>CAD</string>
     </property>
     <addaction name="actionMakeKreis"/>
+    <addaction name="actionMakeBogen"/>
+    <addaction name="actionMakeStrecke"/>
    </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuBearbeiten"/>
@@ -506,6 +508,16 @@
   <action name="actionInfo">
    <property name="text">
     <string>Info</string>
+   </property>
+  </action>
+  <action name="actionMakeStrecke">
+   <property name="text">
+    <string>Strecke</string>
+   </property>
+  </action>
+  <action name="actionMakeBogen">
+   <property name="text">
+    <string>Bogen</string>
    </property>
   </action>
  </widget>

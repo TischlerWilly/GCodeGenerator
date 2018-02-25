@@ -48,11 +48,22 @@ void Dialog_Kreis::getDialogData(QString text, bool openToChangeData)
 QString Dialog_Kreis::dialogDataToString()
 {
     punkt3d mipu;
-    mipu.set_x(ausdruck_auswerten(ui->lineEdit_x->text()));
-    mipu.set_y(ausdruck_auswerten(ui->lineEdit_y->text()));
-    mipu.set_z(ausdruck_auswerten(ui->lineEdit_z->text()));
+    mipu.set_x(ausdruck_auswerten(variablen_durch_werte_ersetzten(variablen, ui->lineEdit_x->text().toUpper())));
+    mipu.set_y(ausdruck_auswerten(variablen_durch_werte_ersetzten(variablen, ui->lineEdit_y->text().toUpper())));
+    mipu.set_z(ausdruck_auswerten(variablen_durch_werte_ersetzten(variablen, ui->lineEdit_z->text().toUpper())));
     k.set_mittelpunkt(mipu);
-    k.set_radius(ausdruck_auswerten(ui->lineEdit_r->text()));
+    k.set_radius(ausdruck_auswerten(variablen_durch_werte_ersetzten(variablen, ui->lineEdit_r->text().toUpper())));
 
     return k.get_text();
+}
+
+void Dialog_Kreis::show()
+{
+    this->setVisible(true);
+    emit sendBraucheVariablen(KREIS);
+}
+
+void Dialog_Kreis::getVariablen(QString var)
+{
+    variablen = var;
 }
