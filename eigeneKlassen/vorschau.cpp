@@ -27,8 +27,22 @@ void vorschau::paintEvent(QPaintEvent *)
     painter.setPen(Qt::black);
     painter.drawRect(0, 0, width(), height());
 
+    //Maschine darstellen:
+    text_zeilenweise geotext = t.get_maschinengeo().get_text_zeilenweise();
+    for(uint i=1;i<=geotext.zeilenanzahl();i++)
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(geotext.zeile(i));
+
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            zeichneGeotext(spalten.zeile(ii), 0);
+        }
+    }
+
     //Bearbeitungen darstellen:
-    text_zeilenweise geotext = t.get_geo().get_text_zeilenweise();
+    geotext = t.get_geo().get_text_zeilenweise();
     for(uint i=1;i<=geotext.zeilenanzahl();i++)
     {
         text_zeilenweise spalten;

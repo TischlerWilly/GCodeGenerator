@@ -47,6 +47,9 @@ void programmtext::clear_ausser_text()
     anz_faufr = 0;
     anz_fabfa = 0;
     warnung_frDial = false;
+    versatz_x = 0;
+    versatz_y = 0;
+    versatz_z = 0;
 }
 
 QString programmtext::get_klartext()
@@ -75,6 +78,32 @@ QString programmtext::get_variablen()
         }
     }
     return returnstring;
+}
+
+void programmtext::set_maschinengeometrie(text_zeilenweise tz)
+{
+    maschinengeo.clear();
+
+    for(uint i=1; i<=tz.zeilenanzahl();i++)
+    {
+        QString zeile = tz.zeile(i);
+        if(zeile.contains(STRECKE))
+        {
+            strecke s(zeile);
+            maschinengeo.add_strecke(s);
+            maschinengeo.zeilenvorschub();
+        }else if(zeile.contains(BOGEN))
+        {
+            bogen b(zeile);
+            maschinengeo.add_bogen(b);
+            maschinengeo.zeilenvorschub();
+        }else if (zeile.contains(KREIS))
+        {
+            kreis k(zeile);
+            maschinengeo.add_kreis(k);
+            maschinengeo.zeilenvorschub();
+        }
+    }
 }
 
 //---------------------------------------

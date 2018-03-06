@@ -208,6 +208,9 @@
     <addaction name="actionDateiSpeichern_unter"/>
     <addaction name="actionDateiSchliessen"/>
     <addaction name="separator"/>
+    <addaction name="actionMaschine_speichern"/>
+    <addaction name="actionMaschinengeometrie_bearbeiten"/>
+    <addaction name="separator"/>
     <addaction name="actionGCode_berechnen"/>
     <addaction name="actionGCode_exportieren"/>
    </widget>
@@ -518,6 +521,16 @@
   <action name="actionMakeBogen">
    <property name="text">
     <string>Bogen</string>
+   </property>
+  </action>
+  <action name="actionMaschine_speichern">
+   <property name="text">
+    <string>Maschinengeometrie speichern</string>
+   </property>
+  </action>
+  <action name="actionMaschinengeometrie_bearbeiten">
+   <property name="text">
+    <string>Maschinengeometrie bearbeiten</string>
    </property>
   </action>
  </widget>
