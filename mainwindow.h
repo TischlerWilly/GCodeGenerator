@@ -115,6 +115,10 @@ private slots:
 
     void on_actionMakeBogen_triggered();
 
+    void on_actionMaschine_speichern_triggered();
+
+    void on_actionMaschinengeometrie_bearbeiten_triggered();
+
 public slots:
     void getDialogData(QString text);
     void getDialogDataModify(QString text);

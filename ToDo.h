@@ -28,9 +28,7 @@
 
 
 ----------Ideen für neue Funktionen:
--->in den Voreinstellungen die Möglichkeit bereitstellen eine Maschine zu definieren mit Anschlägen
-    ->evtl. durch den Include einer Zeichnungsdatei
-    ->diese kann z.B. direkt durch den GCodeGenerator erzeugt werden
+
 
 
 

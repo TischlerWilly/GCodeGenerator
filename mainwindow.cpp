@@ -2126,6 +2126,29 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
 
 void MainWindow::openFile(QString pfad)
 {
+    //Maschinengeometrie laden:
+    QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
+    if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        text_zeilenweise tz;
+        while(!fileMaschiene.atEnd())
+        {
+            QString line = fileMaschiene.readLine();
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(tz.zeilenanzahl() == 0)
+            {
+                tz.set_text(line);
+            }else
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+        t.set_maschinengeometrie(tz);
+    }
+    //Programmdatei laden:
     QFileInfo info = pfad;
     pfad_oefne_ggf = info.path();
     nameOfTheOpenFile = pfad;
@@ -2572,6 +2595,103 @@ void MainWindow::on_actionDateiSpeichern_unter_triggered()
     this->setWindowTitle(tmp);
 }
 
+void MainWindow::on_actionMaschine_speichern_triggered()
+{
+    if(DateiIstOffen == false)
+    {
+        return;
+    }
+    bool nur_cad = true;
+    for(uint i=1; i<t.get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
+    {
+        QString zeile = t.get_text_zeilenweise().zeile(i);
+        if(zeile.contains(BOGEN)     || \
+           zeile.contains(STRECKE)   || \
+           zeile.contains(KREIS)        )
+        {
+            nur_cad = true;
+        }else
+        {
+            nur_cad = false;
+            break;
+        }
+    }
+    if(nur_cad == false)
+    {
+        QMessageBox mb;
+        mb.setText("Das offene Dokument darf nur CAD enthalten!");
+        mb.exec();
+    }
+    QString fileName = QDir::homePath() + QDir::separator() + CAD_Maschine;
+    //Programmliste in String schreiben
+    QString dateiInhalt = t.get_text();
+    //Datei füllen und speichern
+    if(!fileName.isEmpty())
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+        {
+            QMessageBox mb;
+            mb.setText("Fehler beim Dateizugriff");
+            mb.exec();
+        } else
+        {
+            file.remove(); //lösche alte Datei wenn vorhanden
+            file.close(); //beende Zugriff
+            file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
+            file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
+            file.close(); //beende Zugriff
+
+            QMessageBox mb;
+            mb.setText("Speichern erfolgreich.");
+            mb.exec();
+
+            on_actionDateiSchliessen_triggered();
+        }
+    }
+
+}
+
+void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
+{
+    QFile file(QDir::homePath() + QDir::separator() + CAD_Maschine);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        text_zeilenweise tz;
+
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            if(line.right(1) == "\n")
+            {
+                line = line.left(line.length()-1);
+            }
+            if(tz.zeilenanzahl() == 0)
+            {
+                tz.set_text(line);
+            }else
+            {
+                tz.zeilen_anhaengen(line);
+            }
+        }
+
+        t.set_text(tz.get_text());
+        file.close();
+        aktualisiere_anzeigetext();
+        DateiIstOffen = true;
+        showElements_aFileIsOpen();
+        vorschauAktualisieren();
+        hat_ungesicherte_inhalte = false;
+        QApplication::restoreOverrideCursor();
+    }else
+    {
+        QMessageBox mb;
+        mb.setText("Maschinen-CAD-Datei wurde nicht gefunden!");
+        mb.exec();
+    }
+}
+
 //---------------------------------------------------Sichtbarkeiten
 void MainWindow::hideElemets_noFileIsOpen()
 {
@@ -2588,6 +2708,8 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->menuImport->setDisabled(true);
     ui->import_GGF->setDisabled(true);
     ui->import_DXF->setDisabled(true);
+    ui->actionMaschine_speichern->setDisabled(true);
+    ui->actionMaschinengeometrie_bearbeiten->setEnabled(true);
     //Menü Bearbeiten:
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -2640,6 +2762,8 @@ void MainWindow::showElements_aFileIsOpen()
     ui->menuImport->setEnabled(true);
     ui->import_GGF->setEnabled(true);
     ui->import_DXF->setEnabled(true);
+    ui->actionMaschine_speichern->setEnabled(true);
+    ui->actionMaschinengeometrie_bearbeiten->setDisabled(true);
     //Menü Bearbeiten:
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -4512,6 +4636,10 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.exec();
 
 }
+
+
+
+
 
 
 

@@ -7,10 +7,11 @@
 #define WKZ_FILE                    "/.gcodegenerator/werkzeug.ini"
 #define WKZ_BILDER_PFAD             "/.gcodegenerator/werkzeugbilder/"
 #define PFAD_LETZTE_DATEIEN         "/.gcodegenerator/letzte_dateien.ini"
+#define CAD_Maschine                "/.gcodegenerator/maschine_cad.ini"
 #define DATEIENDUNG_EIGENE          ".ggf"
 #define DATEIENDUNG_BACKUP          ".bak_"
 #define DATEIENDUNG_GCODE           ".ngc"
-#define PROGRAMMNAME                "GCodeGenerator 1.2018.02.21"
+#define PROGRAMMNAME                "GCodeGenerator 1.2018.03.06"
 #define SICHERHEITSABSTAND_WERT     "5"
 #define ANZAHL_LETZTER_DATEIEN      15
 

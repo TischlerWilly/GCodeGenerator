@@ -19,6 +19,7 @@ public:
     programmtext();
             void                set_text(QString neuer_Text);
             void                set_wkz(werkzeug wkz);
+            void                set_maschinengeometrie(text_zeilenweise tz);
             void                clear();
     inline  void                warnungen_einschalten(bool einschalten)
     {
@@ -62,6 +63,10 @@ public:
     inline  geometrietext       get_fkon()
     {
         return fkon;
+    }
+    inline  geometrietext       get_maschinengeo()
+    {
+        return maschinengeo;
     }
 
     inline  float   get_werkstuecklaenge()
@@ -152,6 +157,7 @@ private:
     geometrietext       geo;            //Geometrieen zur Darstellung
     geometrietext       fkon;           //Fräskonturen
     werkzeug            w;              //Werkzeug
+    geometrietext       maschinengeo;   //Maschinengeometrie
 
     float   werkstuecklaenge;
     float   werkstueckbreite;
