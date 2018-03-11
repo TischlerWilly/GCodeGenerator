@@ -1,0 +1,10 @@
+1. exe-Datei in das Verzeichnis: "\usr\bin" kopieren
+    z.B. so: sudo mv GCodeGenerator /usr/bin/
+
+2. Eintrag im Startmenü erstellen
+    hierzu die Datei "gcodegenerator.desktop" in das Verzeichnis "/usr/share/application" kopieren
+    z.B. so: sudo mv gcodegenerator.desktop /usr/share/application
+
+    Soll ein anderes Icon im Startmenü zu sehen sein, so muss vorher die Datei
+    "gcodegenerator.desktop" angepasst werden und das entsprechende Icon im Ordner
+    "/usr/share/pixmaps" abgelegt werden
