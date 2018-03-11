@@ -11,8 +11,6 @@
 
 
 
-
-
 ----------Ideen für neue Dialoge:
 -->Dialog für das Zapfen-fräsen
     ->Dialog Rtasche erweitern

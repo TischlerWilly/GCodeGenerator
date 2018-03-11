@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=GCodeGenerator
+Icon=linuxcncicon
+X-GNOME-DocPath=
+Terminal=false
+Name=GCodeGenerator
+Comment=Dient dem menübasiertem Erstellen von GCode
+StartupNotify=false
+Categories=X-CNC;
+
