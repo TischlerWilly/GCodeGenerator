@@ -191,3 +191,11 @@ QString bogen::get_text()
 
     return msg;
 }
+
+void bogen::richtung_unkehren()
+{
+    punkt3d tmp = startp;
+    startp = endp;
+    endp = tmp;
+    bogen_im_uzs = -bogen_im_uzs;
+}
