@@ -149,6 +149,8 @@ public:
         aktualisiere_anzeigetext();
     }
 
+    void cad_sortieren(uint zeinumbeg, uint zeinumend);
+
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
     text_zeilenweise    klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)

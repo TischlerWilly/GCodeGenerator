@@ -272,6 +272,169 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
 }
 
 //------------------------------------------------------------
+void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
+{
+    //zeinumbeg: Nummer der ersten Zeile
+    //zeinumend: Nummer der letzten Zeile
+
+    //--------------------------------------------------Schritt 1 trennen der Auswahl:
+    text_zeilenweise potfkon; //potentielle Fräskontur
+    text_zeilenweise anderes;
+    for(uint i=zeinumbeg; i<=zeinumend; i++)
+    {
+        if(text.zeile(i).contains(LISTENENDE))
+        {
+            break;
+        }
+        if(text.zeile(i).contains(STRECKE) || \
+           text.zeile(i).contains(BOGEN)      )
+        {
+            potfkon.zeile_anhaengen(text.zeile(i));
+        }else
+        {
+            anderes.zeile_anhaengen(text.zeile(i));
+        }
+    }
+
+    //--------------------------------------------------Schritt 2 sortieren:
+    punkt3d sp;
+    punkt3d ep;
+    text_zeilenweise sortiert;
+
+    sortiert.zeile_anhaengen(potfkon.zeile(1));
+    potfkon.zeile_loeschen(1);
+    if(sortiert.zeile(1).contains(STRECKE))
+    {
+        strecke s(sortiert.zeile(1));
+        sp = s.startp();
+        ep = s.endp();
+    }else if(sortiert.zeile(1).contains(BOGEN))
+    {
+        bogen b(sortiert.zeile(1));
+        sp = b.start();
+        ep = b.ende();
+    }
+
+    while(potfkon.zeilenanzahl()>0)
+    {
+        QString vergleich = "1234567890";
+        while(vergleich != potfkon.get_text())
+        {
+            vergleich = potfkon.get_text();
+            for(uint i=1; i<=potfkon.zeilenanzahl() && i>0 ;i++)
+            {
+                if(potfkon.zeile(i).contains(STRECKE))
+                {
+                    strecke s(potfkon.zeile(i));
+                    if(s.startp() == ep)
+                    {
+                        sortiert.zeile_anhaengen(s.get_text());
+                        potfkon.zeile_loeschen(i);
+                        ep = s.endp();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }if(s.endp() == ep)
+                    {
+                        s.richtung_unkehren();
+                        sortiert.zeile_anhaengen(s.get_text());
+                        potfkon.zeile_loeschen(i);
+                        ep = s.endp();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }else if(s.endp() == sp)
+                    {
+                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        potfkon.zeile_loeschen(i);
+                        sp = s.startp();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }if(s.startp() == sp)
+                    {
+                        s.richtung_unkehren();
+                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        potfkon.zeile_loeschen(i);
+                        sp = s.startp();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }
+
+                }else if(potfkon.zeile(i).contains(BOGEN))
+                {
+                    bogen b(potfkon.zeile(i));
+                    if(b.start() == ep)
+                    {
+                        sortiert.zeile_anhaengen(b.get_text());
+                        potfkon.zeile_loeschen(i);
+                        ep = b.ende();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }if(b.ende() == ep)
+                    {
+                        b.richtung_unkehren();
+                        sortiert.zeile_anhaengen(b.get_text());
+                        potfkon.zeile_loeschen(i);
+                        ep = b.ende();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }else if(b.ende() == sp)
+                    {
+                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        potfkon.zeile_loeschen(i);
+                        sp = b.start();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }else if(b.start() == sp)
+                    {
+                        b.richtung_unkehren();
+                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        potfkon.zeile_loeschen(i);
+                        sp = b.start();
+                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        continue;  //erhöht i um eins
+                    }
+                }
+            }
+        }
+        if(potfkon.zeilenanzahl()>0)
+        {
+            sortiert.zeile_anhaengen(potfkon.zeile(1));
+            potfkon.zeile_loeschen(1);
+            if(sortiert.zeile(sortiert.zeilenanzahl()).contains(STRECKE))
+            {
+                strecke s(sortiert.zeile(sortiert.zeilenanzahl()));
+                sp = s.startp();
+                ep = s.endp();
+            }else if(sortiert.zeile(sortiert.zeilenanzahl()).contains(BOGEN))
+            {
+                bogen b(sortiert.zeile(sortiert.zeilenanzahl()));
+                sp = b.start();
+                ep = b.ende();
+            }
+        }
+    }
+
+    //--------------------------------------------------Schritt 3 rückspeichern:
+    uint ipot = 1;
+    uint iand = 1;
+    for(uint i=zeinumbeg; i<=zeinumend; i++)
+    {
+        if(iand <= anderes.zeilenanzahl())
+        {
+            text.zeile_ersaetzen(i, anderes.zeile(iand));
+            iand++;
+        }else
+        {
+            //text.zeile_ersaetzen(i, potfkon.zeile(ipot));
+            text.zeile_ersaetzen(i, sortiert.zeile(ipot));
+            ipot++;
+        }
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+//------------------------------------------------------------
 //private:
 
 void programmtext::set_sicherheitsabstand(float neuer_Abstand)

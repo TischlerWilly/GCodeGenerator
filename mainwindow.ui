@@ -183,6 +183,8 @@
     <addaction name="separator"/>
     <addaction name="actionRueckgaengig"/>
     <addaction name="actionWiederholen"/>
+    <addaction name="separator"/>
+    <addaction name="actionCAD_sortieren"/>
    </widget>
    <widget class="QMenu" name="menuDatei">
     <property name="title">
@@ -531,6 +533,11 @@
   <action name="actionMaschinengeometrie_bearbeiten">
    <property name="text">
     <string>Maschinengeometrie bearbeiten</string>
+   </property>
+  </action>
+  <action name="actionCAD_sortieren">
+   <property name="text">
+    <string>CAD sortieren</string>
    </property>
   </action>
  </widget>

@@ -112,12 +112,11 @@ private slots:
     void on_actionKreistasche_in_Kreis_umwandeln_triggered();
     void on_actionInfo_triggered();
     void on_actionMakeStrecke_triggered();
-
     void on_actionMakeBogen_triggered();
-
     void on_actionMaschine_speichern_triggered();
-
     void on_actionMaschinengeometrie_bearbeiten_triggered();
+
+    void on_actionCAD_sortieren_triggered();
 
 public slots:
     void getDialogData(QString text);
