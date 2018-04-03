@@ -19,6 +19,7 @@
     (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
      das Programm soll dann FAufruf und FAbfahr selbst finden)
 
+-->BUG: DXF-Export fehlerhaft wenn CAD Blöcke enthällt
 
 
 

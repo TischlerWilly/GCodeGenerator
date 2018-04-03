@@ -151,6 +151,8 @@ public:
 
     void cad_sortieren(uint zeinumbeg, uint zeinumend);
 
+    bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
+
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
     text_zeilenweise    klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)

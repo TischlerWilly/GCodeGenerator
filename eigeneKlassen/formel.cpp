@@ -91,6 +91,9 @@ bool Formel::ist_zahl(const QString text)
                 return false;
             }
         }
+    }else
+    {
+        return false;
     }
     //Wenn diese Stelle erreicht wird dann enthällt der Text nur Zahlen:
     return true;

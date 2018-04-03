@@ -315,6 +315,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
         ep = b.ende();
     }
 
+    double tolleranz = 0.1;
     while(potfkon.zeilenanzahl()>0)
     {
         QString vergleich = "1234567890";
@@ -326,14 +327,14 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                 if(potfkon.zeile(i).contains(STRECKE))
                 {
                     strecke s(potfkon.zeile(i));
-                    if(s.startp() == ep)
+                    if(cagleich(s.startp(), ep, tolleranz))
                     {
                         sortiert.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = s.endp();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }if(s.endp() == ep)
+                    }if(cagleich(s.endp(), ep, tolleranz))
                     {
                         s.richtung_unkehren();
                         sortiert.zeile_anhaengen(s.get_text());
@@ -341,14 +342,14 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                         ep = s.endp();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }else if(s.endp() == sp)
+                    }else if(cagleich(s.endp(), sp, tolleranz))
                     {
                         sortiert.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = s.startp();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }if(s.startp() == sp)
+                    }if(cagleich(s.startp(), sp, tolleranz))
                     {
                         s.richtung_unkehren();
                         sortiert.zeile_vorwegsetzen(s.get_text());
@@ -361,14 +362,14 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                 }else if(potfkon.zeile(i).contains(BOGEN))
                 {
                     bogen b(potfkon.zeile(i));
-                    if(b.start() == ep)
+                    if(b.start(), ep, tolleranz)
                     {
                         sortiert.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = b.ende();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }if(b.ende() == ep)
+                    }if(b.ende(), ep, tolleranz)
                     {
                         b.richtung_unkehren();
                         sortiert.zeile_anhaengen(b.get_text());
@@ -376,14 +377,14 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                         ep = b.ende();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }else if(b.ende() == sp)
+                    }else if(b.ende(), sp, tolleranz)
                     {
                         sortiert.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = b.start();
                         i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         continue;  //erhöht i um eins
-                    }else if(b.start() == sp)
+                    }else if(b.start(), sp, tolleranz)
                     {
                         b.richtung_unkehren();
                         sortiert.zeile_vorwegsetzen(b.get_text());
@@ -3323,7 +3324,21 @@ void programmtext::aktualisiere_fkon()
 
 }
 
-
+bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz)
+{
+    if(p1.x() - tolleranz <= p2.x()  && \
+       p1.x() + tolleranz >= p2.x()  && \
+       p1.y() - tolleranz <= p2.y()  && \
+       p1.y() + tolleranz >= p2.y()  && \
+       p1.z() - tolleranz <= p2.z()  && \
+       p1.z() + tolleranz >= p2.z()      )
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
 
 
 
