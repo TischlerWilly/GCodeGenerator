@@ -2287,8 +2287,8 @@ void MainWindow::on_import_DXF_triggered()
                 if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)==dxf_klasse_wstnp)
                 {
                     anz_np++;
-                    np.set_x(tz.zeile(i+16));
-                    np.set_y(tz.zeile(i+18));
+                    np.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                    np.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
                 }
             }
 
@@ -2308,12 +2308,12 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         strecke s;
                         punkt3d p;
-                        p.set_x(tz.zeile(i+16));
-                        p.set_y(tz.zeile(i+18));
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
                         p.set_z(0);
                         s.set_start(p);
-                        p.set_x(tz.zeile(i+22));
-                        p.set_y(tz.zeile(i+24));
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+24), 2));
                         s.set_ende(p);
                         s.set_farbe(FARBE_GRUEN);
                         getDialogData(s.get_text());
@@ -2322,12 +2322,12 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         strecke s;
                         punkt3d p;
-                        p.set_x(tz.zeile(i+16).toDouble()-np.x());
-                        p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16),2).toDouble()-np.x());
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18),2).toDouble()-np.y());
                         p.set_z(0);
                         s.set_start(p);
-                        p.set_x(tz.zeile(i+22).toDouble()-np.x());
-                        p.set_y(tz.zeile(i+24).toDouble()-np.y());
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+22),2).toDouble()-np.x());
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+24),2).toDouble()-np.y());
                         s.set_ende(p);
                         s.set_farbe(FARBE_GRUEN);
                         getDialogData(s.get_text());
@@ -2345,11 +2345,11 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         kreis k;
                         punkt3d p;
-                        p.set_x(tz.zeile(i+16));
-                        p.set_y(tz.zeile(i+18));
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
                         p.set_z(0);
                         k.set_mittelpunkt(p);
-                        k.set_radius(tz.zeile(i+22));
+                        k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
                         k.set_farbe(FARBE_GRUEN);
                         getDialogData(k.get_text());
                         anz_importierter_geometrieen++;
@@ -2357,11 +2357,11 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         kreis k;
                         punkt3d p;
-                        p.set_x(tz.zeile(i+16).toDouble()-np.x());
-                        p.set_y(tz.zeile(i+18).toDouble()-np.y());
+                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
                         p.set_z(0);
                         k.set_mittelpunkt(p);
-                        k.set_radius(tz.zeile(i+22));
+                        k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
                         k.set_farbe(FARBE_GRUEN);
                         getDialogData(k.get_text());
                         anz_importierter_geometrieen++;
@@ -2377,11 +2377,11 @@ void MainWindow::on_import_DXF_triggered()
                     if(klasse == dxf_klasse_geo && anz_np!=1)
                     {
                         punkt2d mipu;
-                        mipu.set_x(tz.zeile(i+16));
-                        mipu.set_y(tz.zeile(i+18));
-                        double rad = tz.zeile(i+22).toDouble();
-                        double stawi = tz.zeile(i+26).toDouble();
-                        double endwi = tz.zeile(i+28).toDouble();
+                        mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                        mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                        double rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
+                        double stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                        double endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
                         double gesamtwinkel;
                         if(stawi < endwi)
                         {
@@ -2410,11 +2410,11 @@ void MainWindow::on_import_DXF_triggered()
                     }else if(klasse == dxf_klasse_geo)
                     {
                         punkt2d mipu;
-                        mipu.set_x(tz.zeile(i+16).toDouble()-np.x());
-                        mipu.set_y(tz.zeile(i+18).toDouble()-np.y());
-                        double rad = tz.zeile(i+22).toDouble();
-                        double stawi = tz.zeile(i+26).toDouble();
-                        double endwi = tz.zeile(i+28).toDouble();
+                        mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                        mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
+                        double rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
+                        double stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                        double endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
                         double gesamtwinkel;
                         if(stawi < endwi)
                         {
@@ -4647,6 +4647,10 @@ void MainWindow::on_actionCAD_sortieren_triggered()
                     row_erstes = i;
                     break;
                 }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
             }
             if(items_menge > 1)
             {
