@@ -300,117 +300,148 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
     punkt3d sp;
     punkt3d ep;
     text_zeilenweise sortiert;
+    text_zeilenweise polylinie;
 
-    sortiert.zeile_anhaengen(potfkon.zeile(1));
+    polylinie.set_text(potfkon.zeile(1));
     potfkon.zeile_loeschen(1);
-    if(sortiert.zeile(1).contains(STRECKE))
-    {
-        strecke s(sortiert.zeile(1));
-        sp = s.startp();
-        ep = s.endp();
-    }else if(sortiert.zeile(1).contains(BOGEN))
-    {
-        bogen b(sortiert.zeile(1));
-        sp = b.start();
-        ep = b.ende();
-    }
 
     double tolleranz = 0.1;
     while(potfkon.zeilenanzahl()>0)
     {
         QString vergleich = "1234567890";
-        while(vergleich != potfkon.get_text())
+        while(vergleich != potfkon.get_text())//So lange wie sich potfkon verändert Schleife durchlaufen
         {
-            vergleich = potfkon.get_text();
-            for(uint i=1; i<=potfkon.zeilenanzahl() && i>0 ;i++)
+            vergleich = potfkon.get_text();//Inhalt von potfkon zu schleifenbeginn merken
+
+            for(uint i=1; i<=potfkon.zeilenanzahl() && i>0 ; )
             {
-                if(potfkon.zeile(i).contains(STRECKE))
+                //--------------------------------------Startpunkt bestimmen:
+                QString erstes = polylinie.zeile(1);
+                if(erstes.contains(STRECKE))
                 {
-                    strecke s(potfkon.zeile(i));
+                    strecke s(erstes);
+                    sp = s.startp();
+                }else if(erstes.contains(BOGEN))
+                {
+                    bogen b(erstes);
+                    sp = b.start();
+                }
+                //--------------------------------------Endpunkt bestimmen:
+                QString letztes = polylinie.zeile(sortiert.zeilenanzahl());
+                if(letztes.contains(STRECKE))
+                {
+                    strecke s(letztes);
+                    ep = s.endp();
+                }else if(letztes.contains(BOGEN))
+                {
+                    bogen b(letztes);
+                    ep = b.ende();
+                }
+                //--------------------------------------Folgegeometrie suchen:
+                QString zeile = potfkon.zeile(i);
+                if(zeile.contains(STRECKE))
+                {
+                    strecke s(zeile);
                     if(cagleich(s.startp(), ep, tolleranz))
                     {
-                        sortiert.zeile_anhaengen(s.get_text());
+                        polylinie.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = s.endp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }if(cagleich(s.endp(), ep, tolleranz))
                     {
                         s.richtung_unkehren();
-                        sortiert.zeile_anhaengen(s.get_text());
+                        polylinie.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = s.endp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }else if(cagleich(s.endp(), sp, tolleranz))
                     {
-                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        polylinie.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = s.startp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }if(cagleich(s.startp(), sp, tolleranz))
                     {
                         s.richtung_unkehren();
-                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        polylinie.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = s.startp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else
+                    {
+                        i++;
+                        continue;
                     }
 
-                }else if(potfkon.zeile(i).contains(BOGEN))
+                }else if(zeile.contains(BOGEN))
                 {
-                    bogen b(potfkon.zeile(i));
-                    if(b.start(), ep, tolleranz)
+                    bogen b(zeile);
+                    if(cagleich(b.start(), ep, tolleranz))
                     {
-                        sortiert.zeile_anhaengen(b.get_text());
+                        polylinie.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = b.ende();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }if(b.ende(), ep, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }if(cagleich(b.ende(), ep, tolleranz))
                     {
                         b.richtung_unkehren();
-                        sortiert.zeile_anhaengen(b.get_text());
+                        polylinie.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = b.ende();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }else if(b.ende(), sp, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else if(cagleich(b.ende(), sp, tolleranz))
                     {
-                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        polylinie.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = b.start();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }else if(b.start(), sp, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else if(cagleich(b.start(), sp, tolleranz))
                     {
                         b.richtung_unkehren();
-                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        polylinie.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = b.start();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else
+                    {
+                        i++;
+                        continue;
                     }
+                }else
+                {
+                    i++;
+                    continue;
                 }
             }
         }
-        if(potfkon.zeilenanzahl()>0)
+        if(potfkon.zeilenanzahl()>0)//Wenn noch geo übrig sind die nicht passen
         {
-            sortiert.zeile_anhaengen(potfkon.zeile(1));
+            sortiert.zeilen_anhaengen(polylinie.get_text());
+
+            //dann fange eine neue polylinie an:
+            polylinie.set_text(potfkon.zeile(1));
             potfkon.zeile_loeschen(1);
-            if(sortiert.zeile(sortiert.zeilenanzahl()).contains(STRECKE))
-            {
-                strecke s(sortiert.zeile(sortiert.zeilenanzahl()));
-                sp = s.startp();
-                ep = s.endp();
-            }else if(sortiert.zeile(sortiert.zeilenanzahl()).contains(BOGEN))
-            {
-                bogen b(sortiert.zeile(sortiert.zeilenanzahl()));
-                sp = b.start();
-                ep = b.ende();
-            }
+
+        }else //wir sind im letzten Schleifendurchlauf
+        {
+            sortiert.zeilen_anhaengen(polylinie.get_text());
         }
     }
 
@@ -3324,14 +3355,11 @@ void programmtext::aktualisiere_fkon()
 
 }
 
-bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz)
+bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
 {
-    if(p1.x() - tolleranz <= p2.x()  && \
-       p1.x() + tolleranz >= p2.x()  && \
-       p1.y() - tolleranz <= p2.y()  && \
-       p1.y() + tolleranz >= p2.y()  && \
-       p1.z() - tolleranz <= p2.z()  && \
-       p1.z() + tolleranz >= p2.z()      )
+    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
+         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )  && \
+         (  (p1.z() == p2.z()) || ((p1.z() - tolleranz <= p2.z()) && (p1.z() + tolleranz >= p2.z()))  )     )
     {
         return true;
     }else

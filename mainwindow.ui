@@ -494,6 +494,9 @@
    <property name="text">
     <string>aus DXF-Datei</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionKreis_in_Kreistasche_umwandeln">
    <property name="text">

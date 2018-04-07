@@ -197,5 +197,18 @@ void bogen::richtung_unkehren()
     punkt3d tmp = startp;
     startp = endp;
     endp = tmp;
-    bogen_im_uzs = -bogen_im_uzs;
+
+    if(bogen_im_uzs == true)
+    {
+        bogen_im_uzs = false;
+    }else
+    {
+        bogen_im_uzs = true;
+    }
 }
+
+
+
+
+
+
