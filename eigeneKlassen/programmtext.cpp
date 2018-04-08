@@ -466,6 +466,205 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge)
+{
+    //Schritt 1 prüfen, ob nur geeignete Zeilen aktiviert wurden:
+    bool auswahl_ok = true;
+    for(uint i=zeinumbeg; i<=zeinumend ;i++)
+    {
+        if(!text.zeile(i).contains(STRECKE) && \
+           !text.zeile(i).contains(BOGEN)      )
+        {
+            auswahl_ok = false;
+        }
+    }
+    if(auswahl_ok == false)
+    {
+        QMessageBox mb;
+        mb.setText("Auswahl ist nicht zulaessig!\n Funtion wurde abgebrochen.");
+        mb.exec();
+        return;
+    }else if(zeinumend >= zeinumbeg)
+    {
+        //Schritt 2 Linien in fkon umrechnen:
+        QString vorlage_faufr;
+        QString vorlage_fabfa;
+        QString vorlage_fgerade;
+        QString vorlage_fbogen;
+        punkt3d pend, pfolge;
+
+        for(uint i = 1; i<=defaultwerte_Dialoge.zeilenanzahl();i++)
+        {
+            QString aktuelle_zeile = defaultwerte_Dialoge.zeile(i);
+            if(aktuelle_zeile.contains(FRAESERAUFRUF_DIALOG))
+            {
+                vorlage_faufr = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERABFAHREN_DIALOG))
+            {
+                vorlage_fabfa = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERGERADE_DIALOG))
+            {
+                vorlage_fgerade = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                vorlage_fbogen = aktuelle_zeile;
+            }
+        }
+
+        text_zeilenweise tzfkon;
+        QString aktuelle_zeile = text.zeile(zeinumbeg);
+        if(aktuelle_zeile.contains(STRECKE))
+        {
+            strecke s(aktuelle_zeile);
+            QString faufr = vorlage_faufr;
+
+            QString tmp;
+            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_X + s.startp().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Y + s.startp().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Z + s.startp().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(faufr);
+
+            QString fgerde = vorlage_fgerade;
+            tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(fgerde);
+            pend = s.endp();
+        }else if(aktuelle_zeile.contains(BOGEN))
+        {
+            bogen b(aktuelle_zeile);
+            QString faufr = vorlage_faufr;
+
+            QString tmp;
+            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_X + b.start().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Y + b.start().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Z + b.start().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(faufr);
+
+            QString fbogen = vorlage_fbogen;
+            tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+            tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
+            tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
+            if(b.im_uzs() == true)
+            {
+                QString richtung = BOGENRICHTUNG_IM_UZS;
+                fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+            }else
+            {
+                QString richtung = BOGENRICHTUNG_IM_GUZS;
+                fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+            }
+            tzfkon.zeile_anhaengen(fbogen);
+            pend = b.ende();
+        }
+
+        for(uint i=zeinumbeg+1; i<=zeinumend ;i++)
+        {
+            aktuelle_zeile = text.zeile(i);
+            if(aktuelle_zeile.contains(STRECKE))
+            {
+                strecke s(aktuelle_zeile);
+                QString tmp;
+
+                pfolge = s.startp();
+                if(cagleich(pend, pfolge, 0.1) == false)
+                {
+                    tzfkon.zeile_anhaengen(vorlage_fabfa);
+                    QString faufr = vorlage_faufr;
+                    tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_X + s.startp().x_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Y + s.startp().y_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Z + s.startp().z_QString() + ENDE_EINTRAG);
+                    tzfkon.zeile_anhaengen(faufr);
+                }
+
+                QString fgerde = vorlage_fgerade;
+                tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+                tzfkon.zeile_anhaengen(fgerde);
+                pend = s.endp();
+            }else if(aktuelle_zeile.contains(BOGEN))
+            {
+                bogen b(aktuelle_zeile);
+                QString tmp;
+
+                pfolge = b.start();
+                if(cagleich(pend, pfolge, 0.1) == false)
+                {
+                    tzfkon.zeile_anhaengen(vorlage_fabfa);
+                    QString faufr = vorlage_faufr;
+                    tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_X + b.start().x_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Y + b.start().y_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Z + b.start().z_QString() + ENDE_EINTRAG);
+                    tzfkon.zeile_anhaengen(faufr);
+                }
+
+                QString fbogen = vorlage_fbogen;
+                tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+                tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
+                tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
+                if(b.im_uzs() == true)
+                {
+                    QString richtung = BOGENRICHTUNG_IM_UZS;
+                    fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                }else
+                {
+                    QString richtung = BOGENRICHTUNG_IM_GUZS;
+                    fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                }
+                tzfkon.zeile_anhaengen(fbogen);
+                pend = b.ende();
+            }
+        }
+        tzfkon.zeile_anhaengen(vorlage_fabfa);
+
+        //Schritt 3 CAD löschen und CAM einfügen:
+        text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+        if(zeinumbeg > 1)
+        {
+            text.zeilen_einfuegen(zeinumbeg-1, tzfkon.get_text());
+        }else
+        {
+            text.zeile_vorwegsetzen(tzfkon.zeile(1));
+            tzfkon.zeile_loeschen(1);
+            text.zeilen_einfuegen(1, tzfkon.get_text());
+        }
+        aktualisiere_klartext_var_geo();
+        aktualisiere_fkon();
+        aktualisiere_anzeigetext();
+    }
+}
+
 //------------------------------------------------------------
 //private:
 

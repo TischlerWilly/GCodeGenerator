@@ -2741,6 +2741,8 @@ void MainWindow::hideElemets_noFileIsOpen()
     //Menü Umwandeln:
     ui->actionKreistasche_in_Kreis_umwandeln->setDisabled(true);
     ui->actionKreis_in_Kreistasche_umwandeln->setDisabled(true);
+    ui->actionLinien_in_Fraeskonturen_umwandeln->setDisabled(true);
+    ui->actionFraeskonturen_in_Linien_umwandeln->setDisabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setDisabled(true);
     ui->actionProgrammliste_anzeigen->setDisabled(true);
@@ -2796,6 +2798,8 @@ void MainWindow::showElements_aFileIsOpen()
     //Menü Umwandeln:
     ui->actionKreistasche_in_Kreis_umwandeln->setEnabled(true);
     ui->actionKreis_in_Kreistasche_umwandeln->setEnabled(true);
+    ui->actionLinien_in_Fraeskonturen_umwandeln->setEnabled(true);
+    ui->actionFraeskonturen_in_Linien_umwandeln->setEnabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setEnabled(true);
     ui->actionProgrammliste_anzeigen->setEnabled(true);
@@ -4270,6 +4274,58 @@ void MainWindow::on_actionKreistasche_in_Kreis_umwandeln_triggered()
         }
     }
 }
+
+void MainWindow::on_actionLinien_in_Fraeskonturen_umwandeln_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
+            }
+            if(items_menge >= 1)
+            {
+                text_zeilenweise defaultwerte_Dialoge;
+                defaultwerte_Dialoge.zeile_anhaengen(FRAESERAUFRUF_DIALOG + vorlage_Faufruf + ENDE_ZEILE);
+                defaultwerte_Dialoge.zeile_anhaengen(FRAESERABFAHREN_DIALOG + vorlage_Fabfa + ENDE_ZEILE);
+                defaultwerte_Dialoge.zeile_anhaengen(FRAESERGERADE_DIALOG + vorlage_Fgerade + ENDE_ZEILE);
+                defaultwerte_Dialoge.zeile_anhaengen(FRAESERBOGEN_DIALOG + vorlage_Fbogen + ENDE_ZEILE);
+                t.linien_zu_fkon(row_erstes+1, row_erstes+items_menge, defaultwerte_Dialoge);
+                aktualisiere_anzeigetext();
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                vorschauAktualisieren();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+            mb.exec();
+        }
+    }
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
+{
+    QMessageBox mb;
+    mb.setText("Diese Funktion ist leider noch nicht Fertiggestellt!");
+    mb.exec();
+}
 //---------------------------------------------------nicht zugeordnet
 int MainWindow::loadToolInteger(QString keyword, int index)
 {
@@ -4677,6 +4733,8 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
 
 
 

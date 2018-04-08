@@ -240,6 +240,8 @@
     </property>
     <addaction name="actionKreis_in_Kreistasche_umwandeln"/>
     <addaction name="actionKreistasche_in_Kreis_umwandeln"/>
+    <addaction name="actionLinien_in_Fraeskonturen_umwandeln"/>
+    <addaction name="actionFraeskonturen_in_Linien_umwandeln"/>
    </widget>
    <widget class="QMenu" name="menuCAD">
     <property name="title">
@@ -541,6 +543,16 @@
   <action name="actionCAD_sortieren">
    <property name="text">
     <string>CAD sortieren</string>
+   </property>
+  </action>
+  <action name="actionLinien_in_Fraeskonturen_umwandeln">
+   <property name="text">
+    <string>Linien in Fraeskonturen umwandeln</string>
+   </property>
+  </action>
+  <action name="actionFraeskonturen_in_Linien_umwandeln">
+   <property name="text">
+    <string>Fraeskonturen in Linien umwandeln</string>
    </property>
   </action>
  </widget>

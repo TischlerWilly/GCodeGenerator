@@ -150,6 +150,7 @@ public:
     }
 
     void cad_sortieren(uint zeinumbeg, uint zeinumend);
+    void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
 

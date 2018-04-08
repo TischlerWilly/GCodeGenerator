@@ -9,8 +9,8 @@
 -->CAD in CAM umwandeln und umgekehrt
   ->fetig: Funktion zum CAD sortieren
             >void programmtext::cad_sortieren(...)
+  ->fertig: Funktion zum Umwandeln CAD zu CAM
 
-  ->Funktion zum Umwandeln CAD zu CAM
   ->Funktion zum Umwandeln CAM zu CAD
     (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
      das Programm soll dann FAufruf und FAbfahr selbst finden)
@@ -18,7 +18,7 @@
     (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
      das Programm soll dann FAufruf und FAbfahr selbst finden)
 
--->BUG: DXF-Export fehlerhaft wenn CAD Blöcke enthällt
+-->BUG: DXF-Export fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt
 
 
 
