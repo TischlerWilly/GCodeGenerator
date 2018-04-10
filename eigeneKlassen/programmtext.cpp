@@ -300,117 +300,148 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
     punkt3d sp;
     punkt3d ep;
     text_zeilenweise sortiert;
+    text_zeilenweise polylinie;
 
-    sortiert.zeile_anhaengen(potfkon.zeile(1));
+    polylinie.set_text(potfkon.zeile(1));
     potfkon.zeile_loeschen(1);
-    if(sortiert.zeile(1).contains(STRECKE))
-    {
-        strecke s(sortiert.zeile(1));
-        sp = s.startp();
-        ep = s.endp();
-    }else if(sortiert.zeile(1).contains(BOGEN))
-    {
-        bogen b(sortiert.zeile(1));
-        sp = b.start();
-        ep = b.ende();
-    }
 
     double tolleranz = 0.1;
     while(potfkon.zeilenanzahl()>0)
     {
         QString vergleich = "1234567890";
-        while(vergleich != potfkon.get_text())
+        while(vergleich != potfkon.get_text())//So lange wie sich potfkon verändert Schleife durchlaufen
         {
-            vergleich = potfkon.get_text();
-            for(uint i=1; i<=potfkon.zeilenanzahl() && i>0 ;i++)
+            vergleich = potfkon.get_text();//Inhalt von potfkon zu schleifenbeginn merken
+
+            for(uint i=1; i<=potfkon.zeilenanzahl() && i>0 ; )
             {
-                if(potfkon.zeile(i).contains(STRECKE))
+                //--------------------------------------Startpunkt bestimmen:
+                QString erstes = polylinie.zeile(1);
+                if(erstes.contains(STRECKE))
                 {
-                    strecke s(potfkon.zeile(i));
+                    strecke s(erstes);
+                    sp = s.startp();
+                }else if(erstes.contains(BOGEN))
+                {
+                    bogen b(erstes);
+                    sp = b.start();
+                }
+                //--------------------------------------Endpunkt bestimmen:
+                QString letztes = polylinie.zeile(sortiert.zeilenanzahl());
+                if(letztes.contains(STRECKE))
+                {
+                    strecke s(letztes);
+                    ep = s.endp();
+                }else if(letztes.contains(BOGEN))
+                {
+                    bogen b(letztes);
+                    ep = b.ende();
+                }
+                //--------------------------------------Folgegeometrie suchen:
+                QString zeile = potfkon.zeile(i);
+                if(zeile.contains(STRECKE))
+                {
+                    strecke s(zeile);
                     if(cagleich(s.startp(), ep, tolleranz))
                     {
-                        sortiert.zeile_anhaengen(s.get_text());
+                        polylinie.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = s.endp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }if(cagleich(s.endp(), ep, tolleranz))
                     {
                         s.richtung_unkehren();
-                        sortiert.zeile_anhaengen(s.get_text());
+                        polylinie.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = s.endp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }else if(cagleich(s.endp(), sp, tolleranz))
                     {
-                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        polylinie.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = s.startp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
                     }if(cagleich(s.startp(), sp, tolleranz))
                     {
                         s.richtung_unkehren();
-                        sortiert.zeile_vorwegsetzen(s.get_text());
+                        polylinie.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = s.startp();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else
+                    {
+                        i++;
+                        continue;
                     }
 
-                }else if(potfkon.zeile(i).contains(BOGEN))
+                }else if(zeile.contains(BOGEN))
                 {
-                    bogen b(potfkon.zeile(i));
-                    if(b.start(), ep, tolleranz)
+                    bogen b(zeile);
+                    if(cagleich(b.start(), ep, tolleranz))
                     {
-                        sortiert.zeile_anhaengen(b.get_text());
+                        polylinie.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = b.ende();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }if(b.ende(), ep, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }if(cagleich(b.ende(), ep, tolleranz))
                     {
                         b.richtung_unkehren();
-                        sortiert.zeile_anhaengen(b.get_text());
+                        polylinie.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         ep = b.ende();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }else if(b.ende(), sp, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else if(cagleich(b.ende(), sp, tolleranz))
                     {
-                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        polylinie.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = b.start();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
-                    }else if(b.start(), sp, tolleranz)
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else if(cagleich(b.start(), sp, tolleranz))
                     {
                         b.richtung_unkehren();
-                        sortiert.zeile_vorwegsetzen(b.get_text());
+                        polylinie.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
                         sp = b.start();
-                        i = i-2;   //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
-                        continue;  //erhöht i um eins
+                        //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
+                        //daher belibt i für den nächsten Schleifendurchlauf gleich
+                        continue;
+                    }else
+                    {
+                        i++;
+                        continue;
                     }
+                }else
+                {
+                    i++;
+                    continue;
                 }
             }
         }
-        if(potfkon.zeilenanzahl()>0)
+        if(potfkon.zeilenanzahl()>0)//Wenn noch geo übrig sind die nicht passen
         {
-            sortiert.zeile_anhaengen(potfkon.zeile(1));
+            sortiert.zeilen_anhaengen(polylinie.get_text());
+
+            //dann fange eine neue polylinie an:
+            polylinie.set_text(potfkon.zeile(1));
             potfkon.zeile_loeschen(1);
-            if(sortiert.zeile(sortiert.zeilenanzahl()).contains(STRECKE))
-            {
-                strecke s(sortiert.zeile(sortiert.zeilenanzahl()));
-                sp = s.startp();
-                ep = s.endp();
-            }else if(sortiert.zeile(sortiert.zeilenanzahl()).contains(BOGEN))
-            {
-                bogen b(sortiert.zeile(sortiert.zeilenanzahl()));
-                sp = b.start();
-                ep = b.ende();
-            }
+
+        }else //wir sind im letzten Schleifendurchlauf
+        {
+            sortiert.zeilen_anhaengen(polylinie.get_text());
         }
     }
 
@@ -429,6 +460,263 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
             text.zeile_ersaetzen(i, sortiert.zeile(ipot));
             ipot++;
         }
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge)
+{
+    //Schritt 1 prüfen, ob nur geeignete Zeilen aktiviert wurden:
+    bool auswahl_ok = true;
+    for(uint i=zeinumbeg; i<=zeinumend ;i++)
+    {
+        if(!text.zeile(i).contains(STRECKE) && \
+           !text.zeile(i).contains(BOGEN)      )
+        {
+            auswahl_ok = false;
+        }
+    }
+    if(auswahl_ok == false)
+    {
+        QMessageBox mb;
+        mb.setText("Auswahl ist nicht zulaessig!\n Funtion wurde abgebrochen.");
+        mb.exec();
+        return;
+    }else if(zeinumend >= zeinumbeg)
+    {
+        //Schritt 2 Linien in fkon umrechnen:
+        QString vorlage_faufr;
+        QString vorlage_fabfa;
+        QString vorlage_fgerade;
+        QString vorlage_fbogen;
+        punkt3d pend, pfolge;
+
+        for(uint i = 1; i<=defaultwerte_Dialoge.zeilenanzahl();i++)
+        {
+            QString aktuelle_zeile = defaultwerte_Dialoge.zeile(i);
+            if(aktuelle_zeile.contains(FRAESERAUFRUF_DIALOG))
+            {
+                vorlage_faufr = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERABFAHREN_DIALOG))
+            {
+                vorlage_fabfa = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERGERADE_DIALOG))
+            {
+                vorlage_fgerade = aktuelle_zeile;
+            }else if(aktuelle_zeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                vorlage_fbogen = aktuelle_zeile;
+            }
+        }
+
+        text_zeilenweise tzfkon;
+        QString aktuelle_zeile = text.zeile(zeinumbeg);
+        if(aktuelle_zeile.contains(STRECKE))
+        {
+            strecke s(aktuelle_zeile);
+            QString faufr = vorlage_faufr;
+
+            QString tmp;
+            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_X + s.startp().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Y + s.startp().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Z + s.startp().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(faufr);
+
+            QString fgerde = vorlage_fgerade;
+            tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(fgerde);
+            pend = s.endp();
+        }else if(aktuelle_zeile.contains(BOGEN))
+        {
+            bogen b(aktuelle_zeile);
+            QString faufr = vorlage_faufr;
+
+            QString tmp;
+            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_X + b.start().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Y + b.start().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            faufr.replace(tmp, POSITION_Z + b.start().z_QString() + ENDE_EINTRAG);
+            tzfkon.zeile_anhaengen(faufr);
+
+            QString fbogen = vorlage_fbogen;
+            tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+            tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
+            fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
+            tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
+            if(b.im_uzs() == true)
+            {
+                QString richtung = BOGENRICHTUNG_IM_UZS;
+                fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+            }else
+            {
+                QString richtung = BOGENRICHTUNG_IM_GUZS;
+                fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+            }
+            tzfkon.zeile_anhaengen(fbogen);
+            pend = b.ende();
+        }
+
+        for(uint i=zeinumbeg+1; i<=zeinumend ;i++)
+        {
+            aktuelle_zeile = text.zeile(i);
+            if(aktuelle_zeile.contains(STRECKE))
+            {
+                strecke s(aktuelle_zeile);
+                QString tmp;
+
+                pfolge = s.startp();
+                if(cagleich(pend, pfolge, 0.1) == false)
+                {
+                    tzfkon.zeile_anhaengen(vorlage_fabfa);
+                    QString faufr = vorlage_faufr;
+                    tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_X + s.startp().x_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Y + s.startp().y_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Z + s.startp().z_QString() + ENDE_EINTRAG);
+                    tzfkon.zeile_anhaengen(faufr);
+                }
+
+                QString fgerde = vorlage_fgerade;
+                tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+                tzfkon.zeile_anhaengen(fgerde);
+                pend = s.endp();
+            }else if(aktuelle_zeile.contains(BOGEN))
+            {
+                bogen b(aktuelle_zeile);
+                QString tmp;
+
+                pfolge = b.start();
+                if(cagleich(pend, pfolge, 0.1) == false)
+                {
+                    tzfkon.zeile_anhaengen(vorlage_fabfa);
+                    QString faufr = vorlage_faufr;
+                    tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_X + b.start().x_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Y + b.start().y_QString() + ENDE_EINTRAG);
+                    tmp = POSITION_Z + text_mitte(faufr, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                    faufr.replace(tmp, POSITION_Z + b.start().z_QString() + ENDE_EINTRAG);
+                    tzfkon.zeile_anhaengen(faufr);
+                }
+
+                QString fbogen = vorlage_fbogen;
+                tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+                tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
+                fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
+                tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
+                if(b.im_uzs() == true)
+                {
+                    QString richtung = BOGENRICHTUNG_IM_UZS;
+                    fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                }else
+                {
+                    QString richtung = BOGENRICHTUNG_IM_GUZS;
+                    fbogen.replace(tmp,BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                }
+                tzfkon.zeile_anhaengen(fbogen);
+                pend = b.ende();
+            }
+        }
+        tzfkon.zeile_anhaengen(vorlage_fabfa);
+
+        //Schritt 3 CAD löschen und CAM einfügen:
+        text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+        if(zeinumbeg > 1)
+        {
+            text.zeilen_einfuegen(zeinumbeg-1, tzfkon.get_text());
+        }else
+        {
+            text.zeile_vorwegsetzen(tzfkon.zeile(1));
+            tzfkon.zeile_loeschen(1);
+            text.zeilen_einfuegen(1, tzfkon.get_text());
+        }
+        aktualisiere_klartext_var_geo();
+        aktualisiere_fkon();
+        aktualisiere_anzeigetext();
+    }
+}
+
+void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
+{
+    punkt3d p;
+    QString aktzeil = klartext.zeile(zeinumbeg);
+    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+    text_zeilenweise tzgeo;
+    for(uint i =zeinumbeg+1; i<=zeinumend ;i++)
+    {
+        aktzeil = klartext.zeile(i);
+        if(aktzeil.contains(FRAESERGERADE_DIALOG))
+        {
+            strecke s;
+            s.set_farbe(FARBE_GRUEN);
+            s.set_start(p);
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            s.set_ende(p);
+            tzgeo.zeile_anhaengen(s.get_text());
+        }else if(aktzeil.contains(FRAESERBOGEN_DIALOG))
+        {
+            bogen b;
+            b.set_farbe(FARBE_GRUEN);
+            b.set_startpunkt(p);
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            b.set_endpunkt(p);
+            QString richtung = (text_mitte(aktzeil, BOGENRICHTUNG, ENDE_EINTRAG));
+            QString rad = (text_mitte(aktzeil, RADIUS, ENDE_EINTRAG));
+            if(richtung == BOGENRICHTUNG_IM_UZS)
+            {
+                b.set_radius(rad, true);
+            }else
+            {
+                b.set_radius(rad, false);
+            }
+            tzgeo.zeile_anhaengen(b.get_text());
+        }
+    }
+    //CAM löschen und CAD einfügen:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzgeo.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzgeo.zeile(1));
+        tzgeo.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzgeo.get_text());
     }
     aktualisiere_klartext_var_geo();
     aktualisiere_fkon();
@@ -3324,14 +3612,11 @@ void programmtext::aktualisiere_fkon()
 
 }
 
-bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz)
+bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
 {
-    if(p1.x() - tolleranz <= p2.x()  && \
-       p1.x() + tolleranz >= p2.x()  && \
-       p1.y() - tolleranz <= p2.y()  && \
-       p1.y() + tolleranz >= p2.y()  && \
-       p1.z() - tolleranz <= p2.z()  && \
-       p1.z() + tolleranz >= p2.z()      )
+    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
+         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )  && \
+         (  (p1.z() == p2.z()) || ((p1.z() - tolleranz <= p2.z()) && (p1.z() + tolleranz >= p2.z()))  )     )
     {
         return true;
     }else

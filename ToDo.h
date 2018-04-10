@@ -7,19 +7,21 @@
 -->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
 
 -->CAD in CAM umwandeln und umgekehrt
-  ->Funktion zum CAD sortieren
-        >void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
+  ->fetig: Funktion zum CAD sortieren
+            >void programmtext::cad_sortieren(...)
+  ->fertig: Funktion zum Umwandeln CAD zu CAM
 
-  ->Funktion zum Umwandeln CAD zu CAM
-    (CAD soll vorher automatisch sortiert werden)
-  ->Funktion zum Umwandeln CAM zu CAD
+  ->fertig: Funktion zum Umwandeln CAM zu CAD
+            (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
+             das Programm soll dann FAufruf und FAbfahr selbst finden)
+  ->Funktion zum Umkehren der Fräs-Richtung
     (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
      das Programm soll dann FAufruf und FAbfahr selbst finden)
-  ->Funktion zum umkehren der Fräs-Richtung
-    (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
-     das Programm soll dann FAufruf und FAbfahr selbst finden)
 
--->BUG: DXF-Export fehlerhaft wenn CAD Blöcke enthällt
+-->Funktion zum verschieben des Startpunktes der Fräsbahn
+    (bei geschlossenen Konturen)
+
+-->BUG: DXF-Export fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt
 
 
 
