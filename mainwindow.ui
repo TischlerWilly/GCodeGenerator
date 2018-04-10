@@ -185,6 +185,9 @@
     <addaction name="actionWiederholen"/>
     <addaction name="separator"/>
     <addaction name="actionCAD_sortieren"/>
+    <addaction name="actionFraesrichtung_umkehren"/>
+    <addaction name="actionFraesStartpunkt_vor"/>
+    <addaction name="actionFraesStartpunkt_nach"/>
    </widget>
    <widget class="QMenu" name="menuDatei">
     <property name="title">
@@ -553,6 +556,21 @@
   <action name="actionFraeskonturen_in_Linien_umwandeln">
    <property name="text">
     <string>Fraeskonturen in Linien umwandeln</string>
+   </property>
+  </action>
+  <action name="actionFraesrichtung_umkehren">
+   <property name="text">
+    <string>Fraesrichtung umkehren</string>
+   </property>
+  </action>
+  <action name="actionFraesStartpunkt_vor">
+   <property name="text">
+    <string>Fraes-Startpunkt vor</string>
+   </property>
+  </action>
+  <action name="actionFraesStartpunkt_nach">
+   <property name="text">
+    <string>Fraes-Startpunkt nach</string>
    </property>
   </action>
  </widget>

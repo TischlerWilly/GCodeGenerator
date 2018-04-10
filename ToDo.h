@@ -11,12 +11,15 @@
             >void programmtext::cad_sortieren(...)
   ->fertig: Funktion zum Umwandeln CAD zu CAM
 
-  ->Funktion zum Umwandeln CAM zu CAD
+  ->fertig: Funktion zum Umwandeln CAM zu CAD
+            (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
+             das Programm soll dann FAufruf und FAbfahr selbst finden)
+  ->Funktion zum Umkehren der Fräs-Richtung
     (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
      das Programm soll dann FAufruf und FAbfahr selbst finden)
-  ->Funktion zum umkehren der Fräs-Richtung
-    (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
-     das Programm soll dann FAufruf und FAbfahr selbst finden)
+
+-->Funktion zum verschieben des Startpunktes der Fräsbahn
+    (bei geschlossenen Konturen)
 
 -->BUG: DXF-Export fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt
 

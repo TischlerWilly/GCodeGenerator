@@ -115,12 +115,12 @@ private slots:
     void on_actionMakeBogen_triggered();
     void on_actionMaschine_speichern_triggered();
     void on_actionMaschinengeometrie_bearbeiten_triggered();
-
     void on_actionCAD_sortieren_triggered();
-
     void on_actionLinien_in_Fraeskonturen_umwandeln_triggered();
-
     void on_actionFraeskonturen_in_Linien_umwandeln_triggered();
+    void on_actionFraesrichtung_umkehren_triggered();
+    void on_actionFraesStartpunkt_vor_triggered();
+    void on_actionFraesStartpunkt_nach_triggered();
 
 public slots:
     void getDialogData(QString text);

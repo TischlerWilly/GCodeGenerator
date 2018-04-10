@@ -2723,6 +2723,9 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionAuswahl_Einblenden->setDisabled(true);
     ui->actionAuswahl_Ausblenden->setDisabled(true);
     ui->actionCAD_sortieren->setDisabled(true);
+    ui->actionFraesrichtung_umkehren->setDisabled(true);
+    ui->actionFraesStartpunkt_vor->setDisabled(true);
+    ui->actionFraesStartpunkt_nach->setDisabled(true);
     //Menü CAM:
     ui->actionMakeProgrammkopf->setDisabled(true);
     ui->actionMakeProgrammende->setDisabled(true);
@@ -2746,6 +2749,7 @@ void MainWindow::hideElemets_noFileIsOpen()
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setDisabled(true);
     ui->actionProgrammliste_anzeigen->setDisabled(true);
+    ui->actionVariablenwert_anzeigen->setDisabled(true);
     //anderes:
     vorschaufenster.hide();
 }
@@ -2780,6 +2784,9 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionAuswahl_Einblenden->setEnabled(true);
     ui->actionAuswahl_Ausblenden->setEnabled(true);
     ui->actionCAD_sortieren->setEnabled(true);
+    ui->actionFraesrichtung_umkehren->setEnabled(true);
+    ui->actionFraesStartpunkt_vor->setEnabled(true);
+    ui->actionFraesStartpunkt_nach->setEnabled(true);
     //Menü CAM:
     ui->actionMakeProgrammkopf->setEnabled(true);
     ui->actionMakeProgrammende->setEnabled(true);
@@ -2803,6 +2810,7 @@ void MainWindow::showElements_aFileIsOpen()
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setEnabled(true);
     ui->actionProgrammliste_anzeigen->setEnabled(true);
+    ui->actionVariablenwert_anzeigen->setEnabled(true);
     //anderes:
     vorschaufenster.show();
 }
@@ -4322,9 +4330,108 @@ void MainWindow::on_actionLinien_in_Fraeskonturen_umwandeln_triggered()
 
 void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
 {
-    QMessageBox mb;
-    mb.setText("Diese Funktion ist leider noch nicht Fertiggestellt!");
-    mb.exec();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
+            }
+            if(items_menge == 1)
+            {
+                uint ibeg = 0;
+                uint iend = 0;
+                bool gefunden = false;
+                for(int i = row_erstes; i>=0 ; i--)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        ibeg = i;
+                        gefunden = true;
+                        break;
+                    }
+                }
+                if(gefunden == false)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                    QApplication::restoreOverrideCursor();
+                    return;
+                }
+                gefunden = false;
+                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        iend = i;
+                        gefunden = true;
+                        break;
+                    }
+                }
+                if(gefunden == false)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                    QApplication::restoreOverrideCursor();
+                    return;
+                }
+                //Sicherheitsabfrage: Genau 1x Faufr und 1x Fabfah in der Auswahl?
+                //Oder anders ausgedrückt: Wurde ein Teil eine Fräskontur aktiviert oder z.B. ein Kommentar
+                uint anzaufr = 0;
+                uint anzabfa = 0;
+                for(uint i=ibeg; i<=iend ;i++)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        anzaufr++;
+                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        anzabfa++;
+                    }
+                }
+                if(anzaufr!=1 || anzabfa!=1)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                }else
+                {
+                    t.fkon_zu_linien(ibeg+1, iend+1);
+                    aktualisiere_anzeigetext();
+                    ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                    vorschauAktualisieren();
+                }
+            }
+            if(items_menge > 1)
+            {
+                QMessageBox mb;
+                mb.setText("Bitte nur eine Zeile der Fraeskontur markieren!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+            mb.exec();
+        }
+    }
+    QApplication::restoreOverrideCursor();
 }
 //---------------------------------------------------nicht zugeordnet
 int MainWindow::loadToolInteger(QString keyword, int index)
@@ -4725,6 +4832,26 @@ void MainWindow::on_actionCAD_sortieren_triggered()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionFraesrichtung_umkehren_triggered()
+{
+    QMessageBox mb;
+    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
+    mb.exec();
+}
+
+void MainWindow::on_actionFraesStartpunkt_vor_triggered()
+{
+    QMessageBox mb;
+    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
+    mb.exec();
+}
+
+void MainWindow::on_actionFraesStartpunkt_nach_triggered()
+{
+    QMessageBox mb;
+    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
+    mb.exec();
+}
 //---------------------------------------------------
 
 void MainWindow::on_actionTestfunktion_triggered()
@@ -4733,6 +4860,10 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
+
+
 
 
 

@@ -665,6 +665,64 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
     }
 }
 
+void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
+{
+    punkt3d p;
+    QString aktzeil = klartext.zeile(zeinumbeg);
+    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+    text_zeilenweise tzgeo;
+    for(uint i =zeinumbeg+1; i<=zeinumend ;i++)
+    {
+        aktzeil = klartext.zeile(i);
+        if(aktzeil.contains(FRAESERGERADE_DIALOG))
+        {
+            strecke s;
+            s.set_farbe(FARBE_GRUEN);
+            s.set_start(p);
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            s.set_ende(p);
+            tzgeo.zeile_anhaengen(s.get_text());
+        }else if(aktzeil.contains(FRAESERBOGEN_DIALOG))
+        {
+            bogen b;
+            b.set_farbe(FARBE_GRUEN);
+            b.set_startpunkt(p);
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            b.set_endpunkt(p);
+            QString richtung = (text_mitte(aktzeil, BOGENRICHTUNG, ENDE_EINTRAG));
+            QString rad = (text_mitte(aktzeil, RADIUS, ENDE_EINTRAG));
+            if(richtung == BOGENRICHTUNG_IM_UZS)
+            {
+                b.set_radius(rad, true);
+            }else
+            {
+                b.set_radius(rad, false);
+            }
+            tzgeo.zeile_anhaengen(b.get_text());
+        }
+    }
+    //CAM löschen und CAD einfügen:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzgeo.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzgeo.zeile(1));
+        tzgeo.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzgeo.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
 //------------------------------------------------------------
 //private:
 
