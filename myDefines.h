@@ -11,7 +11,7 @@
 #define DATEIENDUNG_EIGENE          ".ggf"
 #define DATEIENDUNG_BACKUP          ".bak_"
 #define DATEIENDUNG_GCODE           ".ngc"
-#define PROGRAMMNAME                "GCodeGenerator 1.2018.04.08"
+#define PROGRAMMNAME                "GCodeGenerator 1.2018.04.11"
 #define SICHERHEITSABSTAND_WERT     "5"
 #define ANZAHL_LETZTER_DATEIEN      15
 

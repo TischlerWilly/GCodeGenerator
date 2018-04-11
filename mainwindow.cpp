@@ -4834,9 +4834,108 @@ void MainWindow::on_actionCAD_sortieren_triggered()
 
 void MainWindow::on_actionFraesrichtung_umkehren_triggered()
 {
-    QMessageBox mb;
-    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
-    mb.exec();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
+            }
+            if(items_menge == 1)
+            {
+                uint ibeg = 0;
+                uint iend = 0;
+                bool gefunden = false;
+                for(int i = row_erstes; i>=0 ; i--)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        ibeg = i;
+                        gefunden = true;
+                        break;
+                    }
+                }
+                if(gefunden == false)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                    QApplication::restoreOverrideCursor();
+                    return;
+                }
+                gefunden = false;
+                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        iend = i;
+                        gefunden = true;
+                        break;
+                    }
+                }
+                if(gefunden == false)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                    QApplication::restoreOverrideCursor();
+                    return;
+                }
+                //Sicherheitsabfrage: Genau 1x Faufr und 1x Fabfah in der Auswahl?
+                //Oder anders ausgedrückt: Wurde ein Teil eine Fräskontur aktiviert oder z.B. ein Kommentar
+                uint anzaufr = 0;
+                uint anzabfa = 0;
+                for(uint i=ibeg; i<=iend ;i++)
+                {
+                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        anzaufr++;
+                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        anzabfa++;
+                    }
+                }
+                if(anzaufr!=1 || anzabfa!=1)
+                {
+                    QMessageBox mb;
+                    mb.setText("Auswahl ungueltig!\nBitte eine Zeile innerhalb einer Fraeskontur aktivieren.");
+                    mb.exec();
+                }else
+                {
+                    t.fkon_richtung_wechseln(ibeg+1, iend+1);
+                    aktualisiere_anzeigetext();
+                    ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                    vorschauAktualisieren();
+                }
+            }
+            if(items_menge > 1)
+            {
+                QMessageBox mb;
+                mb.setText("Bitte nur eine Zeile der Fraeskontur markieren!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+            mb.exec();
+        }
+    }
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionFraesStartpunkt_vor_triggered()

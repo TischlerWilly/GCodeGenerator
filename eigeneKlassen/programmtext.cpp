@@ -723,6 +723,103 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
+{
+    //Inhalt der Dialoge merken:
+    QString aufruf = text.zeile(zeinumbeg);
+    QString abfahen = text.zeile(zeinumend);
+
+    //Richtung umkehren:
+    text_zeilenweise tzcam;
+    QString akttext;
+    QString aktklartext;
+    QString vorklartext;
+    punkt3d p;
+    for(uint i=zeinumend-1; i>=zeinumbeg ;i--)
+    {
+        aktklartext = klartext.zeile(i);
+
+        if(i == zeinumend-1)//Letzter Punkt auf der Kontur = erster Punkt in Gegenrichtung
+        {
+            //Inhalt des Fräseraufrufes ändern und für später merken:
+            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG));
+            QString tmp;
+            tmp = POSITION_X + text_mitte(aufruf, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(aufruf, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(aufruf, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+        }
+
+        if(i == zeinumbeg)//faufruf vor umkehr der Richtung //letzter Schleifendurchlauf
+        {
+            //wird gegen fabfah getauscht
+            tzcam.zeile_vorwegsetzen(aufruf);
+            tzcam.zeile_anhaengen(abfahen);
+        }else//Fräsbahnen zwischen Aufruf und Abfahren
+        {
+            akttext = text.zeile(i);
+            vorklartext = klartext.zeile(i-1);
+
+            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG));
+            if(aktklartext.contains(FRAESERGERADE_DIALOG))
+            {
+                QString tmp;
+                tmp = POSITION_X + text_mitte(akttext, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(akttext, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(akttext, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+                tzcam.zeile_anhaengen(akttext);
+            }else if(aktklartext.contains(FRAESERBOGEN_DIALOG))
+            {
+                QString tmp;
+                tmp = POSITION_X + text_mitte(akttext, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(akttext, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(akttext, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+                QString richtung = text_mitte(akttext, BOGENRICHTUNG, ENDE_EINTRAG);
+                tmp = BOGENRICHTUNG + richtung + ENDE_EINTRAG;
+                if(richtung == BOGENRICHTUNG_IM_UZS)
+                {
+                    richtung = BOGENRICHTUNG_IM_GUZS;
+
+                }else
+                {
+                    richtung = BOGENRICHTUNG_IM_UZS;
+                }
+                akttext.replace(tmp, BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                tzcam.zeile_anhaengen(akttext);
+            }
+        }
+    }
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam.zeile(1));
+        tzcam.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+
+}
+
 //------------------------------------------------------------
 //private:
 
