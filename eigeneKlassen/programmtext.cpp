@@ -3198,6 +3198,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             }
         }
     }
+    aktualisiere_fraeserdarst();
 }
 
 void programmtext::aktualisiere_anzeigetext()
@@ -3722,7 +3723,163 @@ bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
     }
 }
 
-
+void programmtext::aktualisiere_fraeserdarst()
+{
+    fraeserdarst.clear();
+    QString farbe = FARBE_BLAU;
+    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    {
+        QString aktzei = klartext.zeile(i);
+        if(aktzei.contains(FRAESERAUFRUF_DIALOG))
+        {
+            punkt3d p;
+            p.set_x(text_mitte(aktzei, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzei, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzei, POSITION_Z, ENDE_EINTRAG));
+            double wkzdm = text_mitte(aktzei, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+            if(wkzdm < 2)
+            {
+                wkzdm =2;
+            }
+            QString bankor = text_mitte(aktzei, BAHNRORREKTUR, ENDE_EINTRAG);
+            if(bankor == BAHNRORREKTUR_keine)
+            {
+                kreis k;
+                k.set_farbe(farbe);
+                k.set_mittelpunkt(p);
+                k.set_radius(wkzdm/2);
+                fraeserdarst.add_kreis(k);
+            }else if(bankor == BAHNRORREKTUR_links)
+            {
+                if(i+1 <=text.zeilenanzahl())
+                {
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, false);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }
+                }
+            }else //if(bankor == BAHNRORREKTUR_rechts)
+            {
+                if(i+1 <=text.zeilenanzahl())
+                {
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, true);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }
+                }
+            }
+        }
+        fraeserdarst.zeilenvorschub();
+    }
+}
 
 
 

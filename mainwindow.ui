@@ -562,15 +562,24 @@
    <property name="text">
     <string>Fraesrichtung umkehren</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionFraesStartpunkt_vor">
    <property name="text">
     <string>Fraes-Startpunkt vor</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Right</string>
+   </property>
   </action>
   <action name="actionFraesStartpunkt_nach">
    <property name="text">
     <string>Fraes-Startpunkt nach</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Left</string>
    </property>
   </action>
  </widget>

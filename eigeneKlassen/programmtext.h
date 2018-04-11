@@ -68,6 +68,10 @@ public:
     {
         return maschinengeo;
     }
+    inline  geometrietext       get_fraeserdarst()
+    {
+        return fraeserdarst;
+    }
 
     inline  float   get_werkstuecklaenge()
     {
@@ -165,6 +169,7 @@ private:
     geometrietext       fkon;           //Fräskonturen
     werkzeug            w;              //Werkzeug
     geometrietext       maschinengeo;   //Maschinengeometrie
+    geometrietext       fraeserdarst;   //Darstellung des Fräsers
 
     float   werkstuecklaenge;
     float   werkstueckbreite;
@@ -213,6 +218,7 @@ private:
             void    aktualisiere_anzeigetext();
             void    aktualisiere_wkz();
             void    aktualisiere_fkon();
+            void    aktualisiere_fraeserdarst();
 
 
 
