@@ -157,6 +157,8 @@ public:
     void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
     void fkon_zu_linien(uint zeinumbeg, uint zeinumend);
     void fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend);
+    void fkon_vor(uint zeinumbeg, uint zeinumend);
+    void fkon_nach(uint zeinumbeg, uint zeinumend);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
 

@@ -820,6 +820,165 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
 
 }
 
+void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
+{
+    //Ist fkon mind 4 Zeilen lang (Aufruf + 2x Gerade oder Bogen + Abfahren)?:
+    int anz = zeinumend-zeinumbeg+1;
+    if(anz < 4)
+    {
+        return;
+    }
+
+    //Inhalt der Dialoge merken:
+    QString aufruf_t = text.zeile(zeinumbeg);
+    QString aufruf_kt = klartext.zeile(zeinumbeg);
+
+    //QString abfa_t = text.zeile(zeinumend);
+    //QString abfa_kt = klartext.zeile(zeinumend);
+
+    //QString camvorabfa_t = text.zeile(zeinumend-1);
+    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
+
+    QString camnachaufruf_t = text.zeile(zeinumbeg+1);
+    QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+
+    text_zeilenweise tzcam_t;
+    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+
+    //Prüfen, ob fkon eine geschlossene Kontur ist:
+    //Ist der Endpunkt der Startpunkt?:
+    punkt3d pstart;
+    punkt3d pend;
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    if(!cagleich(pstart, pend, 0.1))
+    {
+        return;
+    }
+
+    //Fräseraufruf um einen Punkt nach vorne verschieben:
+    QString tmp;
+    QString aufruf_t_neu = aufruf_t;
+    punkt3d p;
+    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG));
+
+    tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Y + text_mitte(aufruf_t_neu, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Z + text_mitte(aufruf_t_neu, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+    //Fräseraufruf + erste Gerade oder erster Bogen löschen:
+    tzcam_t.zeilen_loeschen(1,2);
+    //erste Gerade oder ersten Bogen vor dem Abfahren einfügen:
+    tzcam_t.zeile_einfuegen(tzcam_t.zeilenanzahl()-1, camnachaufruf_t);
+    //geänderten Fräseraufruf am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
+
+
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        tzcam_t.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam_t.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
+{
+    //Ist fkon mind 4 Zeilen lang (Aufruf + 2x Gerade oder Bogen + Abfahren)?:
+    int anz = zeinumend-zeinumbeg+1;
+    if(anz < 4)
+    {
+        return;
+    }
+
+    //Inhalt der Dialoge merken:
+    QString aufruf_t = text.zeile(zeinumbeg);
+    QString aufruf_kt = klartext.zeile(zeinumbeg);
+
+    //QString abfa_t = text.zeile(zeinumend);
+    //QString abfa_kt = klartext.zeile(zeinumend);
+
+    QString camvorabfa_t = text.zeile(zeinumend-1);
+    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
+    //QString cam2vorabfa_t = text.zeile(zeinumend-2);
+    QString cam2vorabfa_kt = klartext.zeile(zeinumend-2);
+
+    //QString camnachaufruf_t = text.zeile(zeinumbeg+1);
+    //QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+
+    text_zeilenweise tzcam_t;
+    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+
+    //Prüfen, ob fkon eine geschlossene Kontur ist:
+    //Ist der Endpunkt der Startpunkt?:
+    punkt3d pstart;
+    punkt3d pend;
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    if(!cagleich(pstart, pend, 0.1))
+    {
+        return;
+    }
+
+    //Fräseraufruf um einen Punkt zurück verschieben:
+    QString tmp;
+    QString aufruf_t_neu = aufruf_t;
+    punkt3d p;
+    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG));
+
+    tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Y + text_mitte(aufruf_t_neu, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Z + text_mitte(aufruf_t_neu, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+    //Fräseraufruf löschen:
+    tzcam_t.zeile_loeschen(1);
+    //Lete Gerade oder letzten Bogen löschen:
+    tzcam_t.zeile_loeschen(tzcam_t.zeilenanzahl()-1);
+
+    //letzte Gerade oder letzten Bogen am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(camvorabfa_t);
+    //geänderten Fräseraufruf am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        tzcam_t.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam_t.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
 //------------------------------------------------------------
 //private:
 

@@ -5,14 +5,11 @@
 ----------Aktuell in Arbeit:
 
 -->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
+-->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
 
--->Funktion zum verschieben des Startpunktes der Fräsbahn
-    (bei geschlossenen Konturen)
+-->4-Ecke in Rechtecktaschen umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
 
--->BUG: DXF-Export fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt
-
-
-
+-->Rechtecktaschen in 4-Ecke umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
 
 
 
