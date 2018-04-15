@@ -55,6 +55,7 @@ void vorschau::paintEvent(QPaintEvent *)
         }
     }
 
+    //Fräskontur darstellen:
     text_zeilenweise fkontext = t.get_fkon().get_text_zeilenweise();
     for(uint i=1;i<=fkontext.zeilenanzahl();i++)
     {
@@ -65,6 +66,20 @@ void vorschau::paintEvent(QPaintEvent *)
         for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
         {
             zeichneFkon(spalten.zeile(ii), i);
+        }
+    }
+
+    //Fräser darstellen:
+    text_zeilenweise fraeserdarsttext = t.get_fraeserdarst().get_text_zeilenweise();
+    for(uint i=1;i<=fraeserdarsttext.zeilenanzahl();i++)
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(fraeserdarsttext.zeile(i));
+
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            zeichneGeotext(spalten.zeile(ii), i);
         }
     }
 

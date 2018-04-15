@@ -68,6 +68,10 @@ public:
     {
         return maschinengeo;
     }
+    inline  geometrietext       get_fraeserdarst()
+    {
+        return fraeserdarst;
+    }
 
     inline  float   get_werkstuecklaenge()
     {
@@ -152,6 +156,10 @@ public:
     void cad_sortieren(uint zeinumbeg, uint zeinumend);
     void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
     void fkon_zu_linien(uint zeinumbeg, uint zeinumend);
+    void fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend);
+    void fkon_vor(uint zeinumbeg, uint zeinumend);
+    void fkon_nach(uint zeinumbeg, uint zeinumend);
+    void rta_zu_cad(uint zeinumakt);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
 
@@ -164,6 +172,7 @@ private:
     geometrietext       fkon;           //Fräskonturen
     werkzeug            w;              //Werkzeug
     geometrietext       maschinengeo;   //Maschinengeometrie
+    geometrietext       fraeserdarst;   //Darstellung des Fräsers
 
     float   werkstuecklaenge;
     float   werkstueckbreite;
@@ -212,6 +221,7 @@ private:
             void    aktualisiere_anzeigetext();
             void    aktualisiere_wkz();
             void    aktualisiere_fkon();
+            void    aktualisiere_fraeserdarst();
 
 
 

@@ -243,6 +243,10 @@
     </property>
     <addaction name="actionKreis_in_Kreistasche_umwandeln"/>
     <addaction name="actionKreistasche_in_Kreis_umwandeln"/>
+    <addaction name="separator"/>
+    <addaction name="action4_Eck_in_Rechtecktasche_umwandeln"/>
+    <addaction name="actionRechtecktasche_in_4_Eck_umwandeln"/>
+    <addaction name="separator"/>
     <addaction name="actionLinien_in_Fraeskonturen_umwandeln"/>
     <addaction name="actionFraeskonturen_in_Linien_umwandeln"/>
    </widget>
@@ -562,15 +566,34 @@
    <property name="text">
     <string>Fraesrichtung umkehren</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionFraesStartpunkt_vor">
    <property name="text">
     <string>Fraes-Startpunkt vor</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Right</string>
+   </property>
   </action>
   <action name="actionFraesStartpunkt_nach">
    <property name="text">
     <string>Fraes-Startpunkt nach</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Left</string>
+   </property>
+  </action>
+  <action name="action4_Eck_in_Rechtecktasche_umwandeln">
+   <property name="text">
+    <string>4-Eck in Rechtecktasche umwandeln</string>
+   </property>
+  </action>
+  <action name="actionRechtecktasche_in_4_Eck_umwandeln">
+   <property name="text">
+    <string>Rechtecktasche in 4-Eck umwandeln</string>
    </property>
   </action>
  </widget>

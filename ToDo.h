@@ -5,23 +5,15 @@
 ----------Aktuell in Arbeit:
 
 -->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
+-->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
 
--->CAD in CAM umwandeln und umgekehrt
-  ->fetig: Funktion zum CAD sortieren
-            >void programmtext::cad_sortieren(...)
-  ->fertig: Funktion zum Umwandeln CAD zu CAM
+-->4-Ecke in Rechtecktaschen umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
 
-  ->fertig: Funktion zum Umwandeln CAM zu CAD
-            (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
-             das Programm soll dann FAufruf und FAbfahr selbst finden)
-  ->Funktion zum Umkehren der Fräs-Richtung
-    (eine Zeile der Fräsbahn aktiviert zu haben soll reicht,
-     das Programm soll dann FAufruf und FAbfahr selbst finden)
 
--->Funktion zum verschieben des Startpunktes der Fräsbahn
-    (bei geschlossenen Konturen)
 
--->BUG: DXF-Export fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt
+
+-->Prüfung einbauen in dialog rta: eckenradius darf max teb/2 oder tal/2 sein!!
+
 
 
 

@@ -723,6 +723,501 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
+{
+    //Inhalt der Dialoge merken:
+    QString aufruf = text.zeile(zeinumbeg);
+    QString abfahen = text.zeile(zeinumend);
+
+    //Richtung umkehren:
+    text_zeilenweise tzcam;
+    QString akttext;
+    QString aktklartext;
+    QString vorklartext;
+    punkt3d p;
+    for(uint i=zeinumend-1; i>=zeinumbeg ;i--)
+    {
+        aktklartext = klartext.zeile(i);
+
+        if(i == zeinumend-1)//Letzter Punkt auf der Kontur = erster Punkt in Gegenrichtung
+        {
+            //Inhalt des Fräseraufrufes ändern und für später merken:
+            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG));
+            QString tmp;
+            tmp = POSITION_X + text_mitte(aufruf, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Y + text_mitte(aufruf, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+            tmp = POSITION_Z + text_mitte(aufruf, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+            aufruf.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+        }
+
+        if(i == zeinumbeg)//faufruf vor umkehr der Richtung //letzter Schleifendurchlauf
+        {
+            //wird gegen fabfah getauscht
+            tzcam.zeile_vorwegsetzen(aufruf);
+            tzcam.zeile_anhaengen(abfahen);
+        }else//Fräsbahnen zwischen Aufruf und Abfahren
+        {
+            akttext = text.zeile(i);
+            vorklartext = klartext.zeile(i-1);
+
+            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG));
+            if(aktklartext.contains(FRAESERGERADE_DIALOG))
+            {
+                QString tmp;
+                tmp = POSITION_X + text_mitte(akttext, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(akttext, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(akttext, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+                tzcam.zeile_anhaengen(akttext);
+            }else if(aktklartext.contains(FRAESERBOGEN_DIALOG))
+            {
+                QString tmp;
+                tmp = POSITION_X + text_mitte(akttext, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Y + text_mitte(akttext, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+                tmp = POSITION_Z + text_mitte(akttext, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+                akttext.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+                QString richtung = text_mitte(akttext, BOGENRICHTUNG, ENDE_EINTRAG);
+                tmp = BOGENRICHTUNG + richtung + ENDE_EINTRAG;
+                if(richtung == BOGENRICHTUNG_IM_UZS)
+                {
+                    richtung = BOGENRICHTUNG_IM_GUZS;
+
+                }else
+                {
+                    richtung = BOGENRICHTUNG_IM_UZS;
+                }
+                akttext.replace(tmp, BOGENRICHTUNG + richtung + ENDE_EINTRAG);
+                tzcam.zeile_anhaengen(akttext);
+            }
+        }
+    }
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam.zeile(1));
+        tzcam.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+
+}
+
+void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
+{
+    //Ist fkon mind 4 Zeilen lang (Aufruf + 2x Gerade oder Bogen + Abfahren)?:
+    int anz = zeinumend-zeinumbeg+1;
+    if(anz < 4)
+    {
+        return;
+    }
+
+    //Inhalt der Dialoge merken:
+    QString aufruf_t = text.zeile(zeinumbeg);
+    QString aufruf_kt = klartext.zeile(zeinumbeg);
+
+    //QString abfa_t = text.zeile(zeinumend);
+    //QString abfa_kt = klartext.zeile(zeinumend);
+
+    //QString camvorabfa_t = text.zeile(zeinumend-1);
+    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
+
+    QString camnachaufruf_t = text.zeile(zeinumbeg+1);
+    QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+
+    text_zeilenweise tzcam_t;
+    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+
+    //Prüfen, ob fkon eine geschlossene Kontur ist:
+    //Ist der Endpunkt der Startpunkt?:
+    punkt3d pstart;
+    punkt3d pend;
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    if(!cagleich(pstart, pend, 0.1))
+    {
+        return;
+    }
+
+    //Fräseraufruf um einen Punkt nach vorne verschieben:
+    QString tmp;
+    QString aufruf_t_neu = aufruf_t;
+    punkt3d p;
+    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG));
+
+    tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Y + text_mitte(aufruf_t_neu, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Z + text_mitte(aufruf_t_neu, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+    //Fräseraufruf + erste Gerade oder erster Bogen löschen:
+    tzcam_t.zeilen_loeschen(1,2);
+    //erste Gerade oder ersten Bogen vor dem Abfahren einfügen:
+    tzcam_t.zeile_einfuegen(tzcam_t.zeilenanzahl()-1, camnachaufruf_t);
+    //geänderten Fräseraufruf am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
+
+
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        tzcam_t.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam_t.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
+{
+    //Ist fkon mind 4 Zeilen lang (Aufruf + 2x Gerade oder Bogen + Abfahren)?:
+    int anz = zeinumend-zeinumbeg+1;
+    if(anz < 4)
+    {
+        return;
+    }
+
+    //Inhalt der Dialoge merken:
+    QString aufruf_t = text.zeile(zeinumbeg);
+    QString aufruf_kt = klartext.zeile(zeinumbeg);
+
+    //QString abfa_t = text.zeile(zeinumend);
+    //QString abfa_kt = klartext.zeile(zeinumend);
+
+    QString camvorabfa_t = text.zeile(zeinumend-1);
+    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
+    //QString cam2vorabfa_t = text.zeile(zeinumend-2);
+    QString cam2vorabfa_kt = klartext.zeile(zeinumend-2);
+
+    //QString camnachaufruf_t = text.zeile(zeinumbeg+1);
+    //QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+
+    text_zeilenweise tzcam_t;
+    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+
+    //Prüfen, ob fkon eine geschlossene Kontur ist:
+    //Ist der Endpunkt der Startpunkt?:
+    punkt3d pstart;
+    punkt3d pend;
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    if(!cagleich(pstart, pend, 0.1))
+    {
+        return;
+    }
+
+    //Fräseraufruf um einen Punkt zurück verschieben:
+    QString tmp;
+    QString aufruf_t_neu = aufruf_t;
+    punkt3d p;
+    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG));
+    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG));
+
+    tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Y + text_mitte(aufruf_t_neu, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Y + p.y_QString() + ENDE_EINTRAG);
+    tmp = POSITION_Z + text_mitte(aufruf_t_neu, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
+    aufruf_t_neu.replace(tmp, POSITION_Z + p.z_QString() + ENDE_EINTRAG);
+
+    //Fräseraufruf löschen:
+    tzcam_t.zeile_loeschen(1);
+    //Lete Gerade oder letzten Bogen löschen:
+    tzcam_t.zeile_loeschen(tzcam_t.zeilenanzahl()-1);
+
+    //letzte Gerade oder letzten Bogen am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(camvorabfa_t);
+    //geänderten Fräseraufruf am Anfang einfügen:
+    tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
+
+    //Änderungen zurück in programmtext schreiben:
+    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    if(zeinumbeg > 1)
+    {
+        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        tzcam_t.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcam_t.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::rta_zu_cad(uint zeinumakt)
+{
+    QString zeitex = klartext.zeile(zeinumakt);
+    if(!zeitex.contains(RECHTECKTASCHE_DIALOG))
+    {
+        return;
+    }
+    double eckrad = text_mitte(zeitex, RADIUS, ENDE_EINTRAG).toDouble();
+    double drewi = text_mitte(zeitex, WINKEL, ENDE_EINTRAG).toDouble();
+    //dreht rta immer um den mipu unabhängig vom Bezugspunkt
+    double tati = text_mitte(zeitex, TASCHENTIEFE, ENDE_EINTRAG).toDouble();
+    double posinz = werkstueckdicke - tati;
+    double tal = text_mitte(zeitex, TASCHENLAENGE, ENDE_EINTRAG).toDouble();
+    double tab = text_mitte(zeitex, TASCHENBREITE, ENDE_EINTRAG).toDouble();
+    QString bezpunkt = text_mitte(zeitex, BEZUGSPUNKT, ENDE_EINTRAG);
+    punkt3d mipu;
+    if(bezpunkt == BEZUGSPUNKT_MITTE)
+    {
+        double x;
+        double y;
+        mipu.set_x(text_mitte(zeitex, POSITION_X, ENDE_EINTRAG));
+        mipu.set_y(text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG));
+    }else if(bezpunkt == BEZUGSPUNKT_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y);
+    }else if(bezpunkt == BEZUGSPUNKT_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x);
+        mipu.set_y(y + tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y + tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y + tab/2);
+    }
+
+    mipu.set_z(posinz);
+
+    rechteck3d reck;
+    reck.set_bezugspunkt(BEZUGSPUNKT_MITTE);
+    reck.set_einfuegepunkt(mipu);
+    reck.set_laenge(tal);
+    reck.set_breite(tab);
+    reck.set_drewi(drewi * -1);
+    reck.set_z(posinz);
+
+    QString farbe = FARBE_GRUEN;
+
+    strecke sli;
+    sli.set_farbe(farbe);
+    sli.set_start(reck.unl(false));
+    sli.set_ende(reck.obl(false));
+    strecke sob;
+    sob.set_farbe(farbe);
+    sob.set_start(reck.obl(false));
+    sob.set_ende(reck.obr(false));
+    strecke sre;
+    sre.set_farbe(farbe);
+    sre.set_start(reck.obr(false));
+    sre.set_ende(reck.unr(false));
+    strecke sun;
+    sun.set_farbe(farbe);
+    sun.set_start(reck.unr(false));
+    sun.set_ende(reck.unl(false));
+
+    text_zeilenweise tzcad;
+
+    if(eckrad <= 0)
+    {
+        tzcad.set_text(sli.get_text());
+        tzcad.zeile_anhaengen(sob.get_text());
+        tzcad.zeile_anhaengen(sre.get_text());
+        tzcad.zeile_anhaengen(sun.get_text());
+    }else
+    {
+        double mindim;
+        if(tab < tal)
+        {
+            mindim = tab;
+        }else
+        {
+            mindim = tal;
+        }
+        if(eckrad*2 < mindim)
+        {
+            //Strecken und Bögen einfügen:
+            strecke_bezugspunkt sbez = strecke_bezugspunkt_mitte;
+            sli.set_laenge_2d(sli.laenge2dim() - 2*eckrad , sbez);
+            sob.set_laenge_2d(sob.laenge2dim() - 2*eckrad , sbez);
+            sre.set_laenge_2d(sre.laenge2dim() - 2*eckrad , sbez);
+            sun.set_laenge_2d(sun.laenge2dim() - 2*eckrad , sbez);
+
+            bogen bol;
+            bol.set_farbe(farbe);
+            bol.set_startpunkt(sli.endp());
+            bol.set_endpunkt(sob.startp());
+            bol.set_radius(eckrad, true);
+            bogen bor;
+            bor.set_farbe(farbe);
+            bor.set_startpunkt(sob.endp());
+            bor.set_endpunkt(sre.startp());
+            bor.set_radius(eckrad, true);
+            bogen bur;
+            bur.set_farbe(farbe);
+            bur.set_startpunkt(sre.endp());
+            bur.set_endpunkt(sun.startp());
+            bur.set_radius(eckrad, true);
+            bogen bul;
+            bul.set_farbe(farbe);
+            bul.set_startpunkt(sun.endp());
+            bul.set_endpunkt(sli.startp());
+            bul.set_radius(eckrad, true);
+
+            tzcad.set_text(sli.get_text());
+            tzcad.zeile_anhaengen(bol.get_text());
+            tzcad.zeile_anhaengen(sob.get_text());
+            tzcad.zeile_anhaengen(bor.get_text());
+            tzcad.zeile_anhaengen(sre.get_text());
+            tzcad.zeile_anhaengen(bur.get_text());
+            tzcad.zeile_anhaengen(sun.get_text());
+            tzcad.zeile_anhaengen(bul.get_text());
+
+        }else if(eckrad*2 == mindim)
+        {
+            //nur Bögen einfügen:
+            strecke_bezugspunkt sbez = strecke_bezugspunkt_mitte;
+            sli.set_laenge_2d(sli.laenge2dim() - 2*eckrad , sbez);
+            sob.set_laenge_2d(sob.laenge2dim() - 2*eckrad , sbez);
+            sre.set_laenge_2d(sre.laenge2dim() - 2*eckrad , sbez);
+            sun.set_laenge_2d(sun.laenge2dim() - 2*eckrad , sbez);
+
+            bogen bol;
+            bol.set_farbe(farbe);
+            bol.set_startpunkt(sli.endp());
+            bol.set_endpunkt(sob.startp());
+            bol.set_radius(eckrad, true);
+            bogen bor;
+            bor.set_farbe(farbe);
+            bor.set_startpunkt(sob.endp());
+            bor.set_endpunkt(sre.startp());
+            bor.set_radius(eckrad, true);
+            bogen bur;
+            bur.set_farbe(farbe);
+            bur.set_startpunkt(sre.endp());
+            bur.set_endpunkt(sun.startp());
+            bur.set_radius(eckrad, true);
+            bogen bul;
+            bul.set_farbe(farbe);
+            bul.set_startpunkt(sun.endp());
+            bul.set_endpunkt(sli.startp());
+            bul.set_radius(eckrad, true);
+
+            if(tal == tab)
+            {
+                tzcad.set_text(bol.get_text());
+                tzcad.zeile_anhaengen(bor.get_text());
+                tzcad.zeile_anhaengen(bur.get_text());
+                tzcad.zeile_anhaengen(bul.get_text());
+            }else if(tal == mindim)
+            {
+                tzcad.set_text(sli.get_text());
+                tzcad.zeile_anhaengen(bol.get_text());
+                //sob nicht
+                tzcad.zeile_anhaengen(bor.get_text());
+                tzcad.zeile_anhaengen(sre.get_text());
+                tzcad.zeile_anhaengen(bur.get_text());
+                //sun nicht
+                tzcad.zeile_anhaengen(bul.get_text());
+            }else //if(tab == mindim)
+            {
+                //sli nicht
+                tzcad.set_text(bol.get_text());
+                tzcad.zeile_anhaengen(sob.get_text());
+                tzcad.zeile_anhaengen(bor.get_text());
+                //sre nicht
+                tzcad.zeile_anhaengen(bur.get_text());
+                tzcad.zeile_anhaengen(sun.get_text());
+                tzcad.zeile_anhaengen(bul.get_text());
+            }
+
+
+        }else //(eckrad*2 > mindim) --> get technisch nicht
+        {
+            return;
+        }
+    }
+
+    //rta löschen und cad einfügen:
+    text.zeile_loeschen(zeinumakt);
+    if(zeinumakt > 1)
+    {
+        text.zeilen_einfuegen(zeinumakt-1, tzcad.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcad.zeile(1));
+        tzcad.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcad.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
 //------------------------------------------------------------
 //private:
 
@@ -3101,6 +3596,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             }
         }
     }
+    aktualisiere_fraeserdarst();
 }
 
 void programmtext::aktualisiere_anzeigetext()
@@ -3625,7 +4121,163 @@ bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
     }
 }
 
-
+void programmtext::aktualisiere_fraeserdarst()
+{
+    fraeserdarst.clear();
+    QString farbe = FARBE_BLAU;
+    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    {
+        QString aktzei = klartext.zeile(i);
+        if(aktzei.contains(FRAESERAUFRUF_DIALOG))
+        {
+            punkt3d p;
+            p.set_x(text_mitte(aktzei, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzei, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzei, POSITION_Z, ENDE_EINTRAG));
+            double wkzdm = text_mitte(aktzei, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+            if(wkzdm < 2)
+            {
+                wkzdm =2;
+            }
+            QString bankor = text_mitte(aktzei, BAHNRORREKTUR, ENDE_EINTRAG);
+            if(bankor == BAHNRORREKTUR_keine)
+            {
+                kreis k;
+                k.set_farbe(farbe);
+                k.set_mittelpunkt(p);
+                k.set_radius(wkzdm/2);
+                fraeserdarst.add_kreis(k);
+            }else if(bankor == BAHNRORREKTUR_links)
+            {
+                if(i+1 <=text.zeilenanzahl())
+                {
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, false);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }
+                }
+            }else //if(bankor == BAHNRORREKTUR_rechts)
+            {
+                if(i+1 <=text.zeilenanzahl())
+                {
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, true);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
+                    {
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }
+                }
+            }
+        }
+        fraeserdarst.zeilenvorschub();
+    }
+}
 
 
 
