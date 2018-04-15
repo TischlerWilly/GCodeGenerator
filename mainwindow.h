@@ -121,6 +121,8 @@ private slots:
     void on_actionFraesrichtung_umkehren_triggered();
     void on_actionFraesStartpunkt_vor_triggered();
     void on_actionFraesStartpunkt_nach_triggered();
+    void on_action4_Eck_in_Rechtecktasche_umwandeln_triggered();
+    void on_actionRechtecktasche_in_4_Eck_umwandeln_triggered();
 
 public slots:
     void getDialogData(QString text);

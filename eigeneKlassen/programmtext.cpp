@@ -979,6 +979,245 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::rta_zu_cad(uint zeinumakt)
+{
+    QString zeitex = klartext.zeile(zeinumakt);
+    if(!zeitex.contains(RECHTECKTASCHE_DIALOG))
+    {
+        return;
+    }
+    double eckrad = text_mitte(zeitex, RADIUS, ENDE_EINTRAG).toDouble();
+    double drewi = text_mitte(zeitex, WINKEL, ENDE_EINTRAG).toDouble();
+    //dreht rta immer um den mipu unabhängig vom Bezugspunkt
+    double tati = text_mitte(zeitex, TASCHENTIEFE, ENDE_EINTRAG).toDouble();
+    double posinz = werkstueckdicke - tati;
+    double tal = text_mitte(zeitex, TASCHENLAENGE, ENDE_EINTRAG).toDouble();
+    double tab = text_mitte(zeitex, TASCHENBREITE, ENDE_EINTRAG).toDouble();
+    QString bezpunkt = text_mitte(zeitex, BEZUGSPUNKT, ENDE_EINTRAG);
+    punkt3d mipu;
+    if(bezpunkt == BEZUGSPUNKT_MITTE)
+    {
+        double x;
+        double y;
+        mipu.set_x(text_mitte(zeitex, POSITION_X, ENDE_EINTRAG));
+        mipu.set_y(text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG));
+    }else if(bezpunkt == BEZUGSPUNKT_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y);
+    }else if(bezpunkt == BEZUGSPUNKT_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x);
+        mipu.set_y(y + tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_OBEN_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y - tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN_LINKS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x + tal/2);
+        mipu.set_y(y + tab/2);
+    }else if(bezpunkt == BEZUGSPUNKT_UNTEN_RECHTS)
+    {
+        double x = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG).toDouble();
+        double y = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG).toDouble();
+        mipu.set_x(x - tal/2);
+        mipu.set_y(y + tab/2);
+    }
+
+    mipu.set_z(posinz);
+
+    rechteck3d reck;
+    reck.set_bezugspunkt(BEZUGSPUNKT_MITTE);
+    reck.set_einfuegepunkt(mipu);
+    reck.set_laenge(tal);
+    reck.set_breite(tab);
+    reck.set_drewi(drewi * -1);
+    reck.set_z(posinz);
+
+    QString farbe = FARBE_GRUEN;
+
+    strecke sli;
+    sli.set_farbe(farbe);
+    sli.set_start(reck.unl(false));
+    sli.set_ende(reck.obl(false));
+    strecke sob;
+    sob.set_farbe(farbe);
+    sob.set_start(reck.obl(false));
+    sob.set_ende(reck.obr(false));
+    strecke sre;
+    sre.set_farbe(farbe);
+    sre.set_start(reck.obr(false));
+    sre.set_ende(reck.unr(false));
+    strecke sun;
+    sun.set_farbe(farbe);
+    sun.set_start(reck.unr(false));
+    sun.set_ende(reck.unl(false));
+
+    text_zeilenweise tzcad;
+
+    if(eckrad <= 0)
+    {
+        tzcad.set_text(sli.get_text());
+        tzcad.zeile_anhaengen(sob.get_text());
+        tzcad.zeile_anhaengen(sre.get_text());
+        tzcad.zeile_anhaengen(sun.get_text());
+    }else
+    {
+        double mindim;
+        if(tab < tal)
+        {
+            mindim = tab;
+        }else
+        {
+            mindim = tal;
+        }
+        if(eckrad*2 < mindim)
+        {
+            //Strecken und Bögen einfügen:
+            strecke_bezugspunkt sbez = strecke_bezugspunkt_mitte;
+            sli.set_laenge_2d(sli.laenge2dim() - 2*eckrad , sbez);
+            sob.set_laenge_2d(sob.laenge2dim() - 2*eckrad , sbez);
+            sre.set_laenge_2d(sre.laenge2dim() - 2*eckrad , sbez);
+            sun.set_laenge_2d(sun.laenge2dim() - 2*eckrad , sbez);
+
+            bogen bol;
+            bol.set_farbe(farbe);
+            bol.set_startpunkt(sli.endp());
+            bol.set_endpunkt(sob.startp());
+            bol.set_radius(eckrad, true);
+            bogen bor;
+            bor.set_farbe(farbe);
+            bor.set_startpunkt(sob.endp());
+            bor.set_endpunkt(sre.startp());
+            bor.set_radius(eckrad, true);
+            bogen bur;
+            bur.set_farbe(farbe);
+            bur.set_startpunkt(sre.endp());
+            bur.set_endpunkt(sun.startp());
+            bur.set_radius(eckrad, true);
+            bogen bul;
+            bul.set_farbe(farbe);
+            bul.set_startpunkt(sun.endp());
+            bul.set_endpunkt(sli.startp());
+            bul.set_radius(eckrad, true);
+
+            tzcad.set_text(sli.get_text());
+            tzcad.zeile_anhaengen(bol.get_text());
+            tzcad.zeile_anhaengen(sob.get_text());
+            tzcad.zeile_anhaengen(bor.get_text());
+            tzcad.zeile_anhaengen(sre.get_text());
+            tzcad.zeile_anhaengen(bur.get_text());
+            tzcad.zeile_anhaengen(sun.get_text());
+            tzcad.zeile_anhaengen(bul.get_text());
+
+        }else if(eckrad*2 == mindim)
+        {
+            //nur Bögen einfügen:
+            strecke_bezugspunkt sbez = strecke_bezugspunkt_mitte;
+            sli.set_laenge_2d(sli.laenge2dim() - 2*eckrad , sbez);
+            sob.set_laenge_2d(sob.laenge2dim() - 2*eckrad , sbez);
+            sre.set_laenge_2d(sre.laenge2dim() - 2*eckrad , sbez);
+            sun.set_laenge_2d(sun.laenge2dim() - 2*eckrad , sbez);
+
+            bogen bol;
+            bol.set_farbe(farbe);
+            bol.set_startpunkt(sli.endp());
+            bol.set_endpunkt(sob.startp());
+            bol.set_radius(eckrad, true);
+            bogen bor;
+            bor.set_farbe(farbe);
+            bor.set_startpunkt(sob.endp());
+            bor.set_endpunkt(sre.startp());
+            bor.set_radius(eckrad, true);
+            bogen bur;
+            bur.set_farbe(farbe);
+            bur.set_startpunkt(sre.endp());
+            bur.set_endpunkt(sun.startp());
+            bur.set_radius(eckrad, true);
+            bogen bul;
+            bul.set_farbe(farbe);
+            bul.set_startpunkt(sun.endp());
+            bul.set_endpunkt(sli.startp());
+            bul.set_radius(eckrad, true);
+
+            if(tal == tab)
+            {
+                tzcad.set_text(bol.get_text());
+                tzcad.zeile_anhaengen(bor.get_text());
+                tzcad.zeile_anhaengen(bur.get_text());
+                tzcad.zeile_anhaengen(bul.get_text());
+            }else if(tal == mindim)
+            {
+                tzcad.set_text(sli.get_text());
+                tzcad.zeile_anhaengen(bol.get_text());
+                //sob nicht
+                tzcad.zeile_anhaengen(bor.get_text());
+                tzcad.zeile_anhaengen(sre.get_text());
+                tzcad.zeile_anhaengen(bur.get_text());
+                //sun nicht
+                tzcad.zeile_anhaengen(bul.get_text());
+            }else //if(tab == mindim)
+            {
+                //sli nicht
+                tzcad.set_text(bol.get_text());
+                tzcad.zeile_anhaengen(sob.get_text());
+                tzcad.zeile_anhaengen(bor.get_text());
+                //sre nicht
+                tzcad.zeile_anhaengen(bur.get_text());
+                tzcad.zeile_anhaengen(sun.get_text());
+                tzcad.zeile_anhaengen(bul.get_text());
+            }
+
+
+        }else //(eckrad*2 > mindim) --> get technisch nicht
+        {
+            return;
+        }
+    }
+
+    //rta löschen und cad einfügen:
+    text.zeile_loeschen(zeinumakt);
+    if(zeinumakt > 1)
+    {
+        text.zeilen_einfuegen(zeinumakt-1, tzcad.get_text());
+    }else
+    {
+        text.zeile_vorwegsetzen(tzcad.zeile(1));
+        tzcad.zeile_loeschen(1);
+        text.zeilen_einfuegen(1, tzcad.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
 //------------------------------------------------------------
 //private:
 

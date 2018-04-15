@@ -159,6 +159,7 @@ public:
     void fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend);
     void fkon_vor(uint zeinumbeg, uint zeinumend);
     void fkon_nach(uint zeinumbeg, uint zeinumend);
+    void rta_zu_cad(uint zeinumakt);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
 

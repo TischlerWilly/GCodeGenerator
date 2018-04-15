@@ -68,6 +68,7 @@ punkt3d drehen(punkt3d drehzentrum, punkt3d alter_punkt, \
                           *sin_d(drehwinkel) + (alter_punkt.y() - drehzentrum.y())\
                           *cos_d(drehwinkel)\
                           );
+        neuer_punkt.set_z(alter_punkt.z());
         return neuer_punkt;
     }
 }

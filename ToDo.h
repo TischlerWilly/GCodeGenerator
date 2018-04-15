@@ -9,8 +9,10 @@
 
 -->4-Ecke in Rechtecktaschen umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
 
--->Rechtecktaschen in 4-Ecke umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
 
+
+
+-->Prüfung einbauen in dialog rta: eckenradius darf max teb/2 oder tal/2 sein!!
 
 
 

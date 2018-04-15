@@ -4436,6 +4436,58 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
     }
     QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
+{
+    QMessageBox mb;
+    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
+    mb.exec();
+}
+
+void MainWindow::on_actionRechtecktasche_in_4_Eck_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(RECHTECKTASCHE_DIALOG))
+            {
+                uint zeilennummer = ui->listWidget_Programmliste->currentRow()+1;
+                t.rta_zu_cad(zeilennummer);
+                aktualisiere_anzeigetext();
+                ui->listWidget_Programmliste->setCurrentRow(zeilennummer-1);
+                vorschauAktualisieren();
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die aktive Zeile enthaellt keine Rechtecktasche!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
 //---------------------------------------------------nicht zugeordnet
 int MainWindow::loadToolInteger(QString keyword, int index)
 {
@@ -5160,6 +5212,8 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
 
 
 
