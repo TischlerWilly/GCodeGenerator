@@ -109,3 +109,39 @@ QString genauigkeit_reduzieren(QString zahl, uint nachkommastellen)
     }
     return zahl;
 }
+
+bool cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
+{
+    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
+         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )  && \
+         (  (p1.z() == p2.z()) || ((p1.z() - tolleranz <= p2.z()) && (p1.z() + tolleranz >= p2.z()))  )     )
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
+bool cagleich(punkt2d p1, punkt2d p2, double tolleranz = 0.1)
+{
+    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
+         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )      )
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
+bool cagleich(double p1, double p2, double tolleranz = 0.1)
+{
+    if(    (p1 == p2) || ((p1 - tolleranz <= p2) && (p1 + tolleranz >= p2))  )
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
