@@ -8,7 +8,10 @@
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
 
 -->4-Ecke in Rechtecktaschen umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
-
+        ->Funktion:
+        void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
+        fertig stellen:
+        else if(items_menge==6)//evtl 4eck mit Radius (4 Linien + 2 Viertelkreisbögen)
 
 
 

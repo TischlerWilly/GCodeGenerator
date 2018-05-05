@@ -2748,6 +2748,8 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionKreis_in_Kreistasche_umwandeln->setDisabled(true);
     ui->actionLinien_in_Fraeskonturen_umwandeln->setDisabled(true);
     ui->actionFraeskonturen_in_Linien_umwandeln->setDisabled(true);
+    ui->action4_Eck_in_Rechtecktasche_umwandeln->setDisabled(true);
+    ui->actionRechtecktasche_in_4_Eck_umwandeln->setDisabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setDisabled(true);
     ui->actionProgrammliste_anzeigen->setDisabled(true);
@@ -2809,6 +2811,8 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionKreis_in_Kreistasche_umwandeln->setEnabled(true);
     ui->actionLinien_in_Fraeskonturen_umwandeln->setEnabled(true);
     ui->actionFraeskonturen_in_Linien_umwandeln->setEnabled(true);
+    ui->action4_Eck_in_Rechtecktasche_umwandeln->setEnabled(true);
+    ui->actionRechtecktasche_in_4_Eck_umwandeln->setEnabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setEnabled(true);
     ui->actionProgrammliste_anzeigen->setEnabled(true);
@@ -4439,9 +4443,848 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
 
 void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
 {
-    QMessageBox mb;
-    mb.setText("Diese Funktion ist leider noch nicht fertiggestellt.");
-    mb.exec();
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+        int row_erstes = 0;//Nummer des ersten Elementes
+        for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+        {
+            if(ui->listWidget_Programmliste->item(i)->isSelected())
+            {
+                row_erstes = i;
+                break;
+            }
+        }
+        if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+        {
+            items_menge = items_menge-1;
+        }
+        text_zeilenweise auswahl;
+        for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+        {
+            auswahl.zeile_anhaengen(t.get_klartext_zeilenweise().zeile(i+1));
+        }
+
+        if(items_menge==4)//evtl. 4eck (4 Linien) oder Kreis aus 4 Bögen(Eckenradius = tal/2)
+        {
+            //Prüfen ob die Auswahl nur Strecken enthällt:
+            bool linien = true;
+            bool boegen = true;
+            for(uint i=1; i<=auswahl.zeilenanzahl() ;i++)
+            {
+                if(!auswahl.zeile(i).contains(STRECKE))
+                {
+                    linien = false;
+                }
+                if(!auswahl.zeile(i).contains(BOGEN))
+                {
+                    boegen = false;
+                }
+            }
+            if(linien==false)
+            {
+                if(boegen==false)
+                {
+                    QMessageBox mb;
+                    mb.setText("Die 4 aktivierten Zellen enthalten nicht ausschließlich Strecken oder Boegen!");
+                    mb.exec();
+                    return;
+                }else
+                {
+                    bogen b1(auswahl.zeile(1));
+                    bogen b2(auswahl.zeile(2));
+                    bogen b3(auswahl.zeile(3));
+                    bogen b4(auswahl.zeile(4));
+
+                    if(cagleich(b1.mitte(), b2.mitte(), 0.1)  && \
+                       cagleich(b1.mitte(), b3.mitte(), 0.1)  && \
+                       cagleich(b1.mitte(), b4.mitte(), 0.1)     )
+                    {
+                        QString msg = vorlage_Rtasche;
+                        QString alt;
+                        alt  = BEZUGSPUNKT;
+                        alt += text_mitte(vorlage_Rtasche, BEZUGSPUNKT, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        QString bezpu = BEZUGSPUNKT_MITTE;
+                        msg.replace(alt, BEZUGSPUNKT + bezpu + ENDE_EINTRAG);
+
+                        alt  = POSITION_X;
+                        alt += text_mitte(vorlage_Rtasche, POSITION_X, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        msg.replace(alt, POSITION_X + b1.mitte().x_QString() + ENDE_EINTRAG);
+
+                        alt  = POSITION_Y;
+                        alt += text_mitte(vorlage_Rtasche, POSITION_Y, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        msg.replace(alt, POSITION_Y + b1.mitte().y_QString() + ENDE_EINTRAG);
+
+                        QString tal = double_to_qstring(b1.rad()*2);
+                        alt  = TASCHENLAENGE;
+                        alt += text_mitte(vorlage_Rtasche, TASCHENLAENGE, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        msg.replace(alt, TASCHENLAENGE + tal + ENDE_EINTRAG);
+
+                        alt  = TASCHENBREITE;
+                        alt += text_mitte(vorlage_Rtasche, TASCHENBREITE, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        msg.replace(alt, TASCHENBREITE + tal + ENDE_EINTRAG);
+
+                        alt  = RADIUS;
+                        alt += text_mitte(vorlage_Rtasche, RADIUS, ENDE_EINTRAG);
+                        alt += ENDE_EINTRAG;
+                        msg.replace(alt, RADIUS + b1.rad_qString() + ENDE_EINTRAG);
+
+                        disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                        connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+                        emit sendDialogData(msg, true, werkzeugnamen);
+
+                        t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                        aktualisiere_anzeigetext();
+                        ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die 4 aktivierten Boegen haben nicht den selben Mittelpunkt!");
+                        mb.exec();
+                        return;
+                    }
+                }
+
+            }else
+            {
+                strecke s1(auswahl.zeile(1));
+                strecke s2(auswahl.zeile(2));
+                strecke s3(auswahl.zeile(3));
+                strecke s4(auswahl.zeile(4));
+                //Prüfen ob die Endpunkte der Strecken deckungsgleich sind:
+                strecke sa,sb,sc,sd;
+                sa = s1;
+                if(s1.endp()==s2.startp())
+                {
+                    sb=s2;
+                }else if(sa.endp()==s2.endp())
+                {
+                    sb=s2;
+                    sb.richtung_unkehren();
+                }else if(sa.endp()==s3.startp())
+                {
+                    sb=s3;
+                }else if(sa.endp()==s3.endp())
+                {
+                    sb=s3;
+                    sb.richtung_unkehren();
+                }else if(sa.endp()==s4.startp())
+                {
+                    sb=s4;
+                }else if(sa.endp()==s4.endp())
+                {
+                    sb=s4;
+                    sb.richtung_unkehren();
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                    mb.exec();
+                    return;
+                }
+
+                if(  (sb.startp()==s2.startp()  &&  sb.endp()==s2.endp())  ||  \
+                     (sb.startp()==s2.endp()  &&  sb.endp()==s2.startp())      )
+                {
+                    //sa==s1
+                    //sb==s2
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s3,s4
+                    if(sb.endp()==s3.startp())
+                    {
+                        sc=s3;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s3.endp())
+                    {
+                        sc=s3;
+                    }else if(sb.endp()==s4.startp())
+                    {
+                        sc=s4;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s4.endp())
+                    {
+                        sc=s4;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    if(  (sc.startp()==s3.startp()  &&  sc.endp()==s3.endp())  ||  \
+                         (sc.startp()==s3.endp()  &&  sc.endp()==s3.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s2
+                        //sc==s3
+                        //sd==...
+                        //nicht zugewiesen: s4
+                        sd=s4;
+                    }else if(  (sc.startp()==s4.startp()  &&  sc.endp()==s4.endp())  ||  \
+                               (sc.startp()==s4.endp()  &&  sc.endp()==s4.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s2
+                        //sc==s4
+                        //sd==...
+                        //nicht zugewiesen: s3
+                        sd=s3;
+                    }
+
+                    if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }else if(  (sb.startp()==s3.startp()  &&  sb.endp()==s3.endp())  ||  \
+                           (sb.startp()==s3.endp()  &&  sb.endp()==s3.startp())      )
+                {
+                    //sa==s1
+                    //sb==s3
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s2,s4
+                    if(sb.endp()==s2.startp())
+                    {
+                        sc=s2;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s2.endp())
+                    {
+                        sc=s2;
+                    }else if(sb.endp()==s4.startp())
+                    {
+                        sc=s4;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s4.endp())
+                    {
+                        sc=s4;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    if(  (sc.startp()==s2.startp()  &&  sc.endp()==s2.endp())  ||  \
+                         (sc.startp()==s2.endp()  &&  sc.endp()==s2.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s3
+                        //sc==s2
+                        //sd==...
+                        //nicht zugewiesen: s4
+                        sd=s4;
+                    }else if(  (sc.startp()==s4.startp()  &&  sc.endp()==s4.endp())  ||  \
+                               (sc.startp()==s4.endp()  &&  sc.endp()==s4.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s3
+                        //sc==s4
+                        //sd==...
+                        //nicht zugewiesen: s2
+                        sd=s2;
+                    }
+
+                    if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }else if(  (sb.startp()==s4.startp()  &&  sb.endp()==s4.endp())  ||  \
+                           (sb.startp()==s4.endp()  &&  sb.endp()==s4.startp())      )
+                {
+                    //sa==s1
+                    //sb==s4
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s2,s3
+                    if(sb.endp()==s2.startp())
+                    {
+                        sc=s2;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s2.endp())
+                    {
+                        sc=s2;
+                    }else if(sb.endp()==s3.startp())
+                    {
+                        sc=s3;
+                        sc.richtung_unkehren();
+                    }else if(sb.endp()==s3.endp())
+                    {
+                        sc=s3;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    if(  (sc.startp()==s2.startp()  &&  sc.endp()==s2.endp())  ||  \
+                         (sc.startp()==s2.endp()  &&  sc.endp()==s2.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s4
+                        //sc==s2
+                        //sd==...
+                        //nicht zugewiesen: s3
+                        sd=s3;
+                    }else if(  (sc.startp()==s3.startp()  &&  sc.endp()==s3.endp())  ||  \
+                               (sc.startp()==s3.endp()  &&  sc.endp()==s3.startp())      )
+                    {
+                        //sa==s1
+                        //sb==s4
+                        //sc==s3
+                        //sd==...
+                        //nicht zugewiesen: s2
+                        sd=s2;
+                    }
+
+                    if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(sd.startp()==sa.startp()  &&  sd.endp()==sc.startp())
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }
+
+                //sa,sb,sc und sd konnten korrekt zugewiesen werden
+                //Prüfen ob 4eck einen rechten winkel hat:
+                double wi = winkel(sd.endp().x(), sd.endp().y(), \
+                                   sd.startp().x(), sd.startp().y(),
+                                   sa.endp().x(), sa.endp().y());
+                if(wi > 89.9  &&  wi < 90.1)
+                {
+                    //die strecken sa,sb,sc und sd beschreiben ein rechteck :-)
+                    //Rechteck in rta umwandeln:
+                    strecke diag;//Diagonale
+                    diag.set_start(sa.startp());
+                    diag.set_ende(sb.endp());
+
+                    QString msg = vorlage_Rtasche;
+                    QString alt;
+                    alt  = BEZUGSPUNKT;
+                    alt += text_mitte(vorlage_Rtasche, BEZUGSPUNKT, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    QString bezpu = BEZUGSPUNKT_MITTE;
+                    msg.replace(alt, BEZUGSPUNKT + bezpu + ENDE_EINTRAG);
+
+                    alt  = POSITION_X;
+                    alt += text_mitte(vorlage_Rtasche, POSITION_X, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, POSITION_X + diag.get_mittelpunkt2d().x_QString() + ENDE_EINTRAG);
+
+                    alt  = POSITION_Y;
+                    alt += text_mitte(vorlage_Rtasche, POSITION_Y, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, POSITION_Y + diag.get_mittelpunkt2d().y_QString() + ENDE_EINTRAG);
+
+                    alt  = TASCHENLAENGE;
+                    alt += text_mitte(vorlage_Rtasche, TASCHENLAENGE, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, TASCHENLAENGE + sa.laenge2dim_QString() + ENDE_EINTRAG);
+
+                    alt  = TASCHENBREITE;
+                    alt += text_mitte(vorlage_Rtasche, TASCHENBREITE, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, TASCHENBREITE + sb.laenge2dim_QString() + ENDE_EINTRAG);
+
+                    alt  = RADIUS;
+                    alt += text_mitte(vorlage_Rtasche, RADIUS, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    QString r = "0";
+                    msg.replace(alt, RADIUS + r + ENDE_EINTRAG);
+
+                    double drewi = winkel(sa.endp().x(), sa.endp().y(), \
+                                          sa.startp().x(), sa.startp().y());
+
+                    alt  = WINKEL;
+                    alt += text_mitte(vorlage_Rtasche, WINKEL, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, WINKEL + double_to_qstring(drewi) + ENDE_EINTRAG);
+
+                    disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                    connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+                    emit sendDialogData(msg, true, werkzeugnamen);
+
+                    t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                    aktualisiere_anzeigetext();
+                    ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText("Die 4 Geraden sind nicht rechtwinklig zu einander!");
+                    mb.exec();
+                    return;
+                }
+            }
+        }else if(items_menge==8)//evtl 4eck mit Radius (4 Linien + 4 Viertelkreisbögen)
+        {
+            text_zeilenweise tzstrecken, tzboegen;
+            uint anz_s=0;
+            uint anz_b=0;
+            for(uint i=1; i<=auswahl.zeilenanzahl() ;i++)
+            {
+                if(auswahl.zeile(i).contains(STRECKE))
+                {
+                    tzstrecken.zeile_anhaengen(auswahl.zeile(i));
+                    anz_s++;
+                }else if(auswahl.zeile(i).contains(BOGEN))
+                {
+                    tzboegen.zeile_anhaengen(auswahl.zeile(i));
+                    anz_b++;
+                }
+            }
+            if(anz_s!=4  ||  anz_b!=4)
+            {
+                QMessageBox mb;
+                mb.setText("Die 8 aktivierten Zellen enthalten nicht 4 Strecken und 4 Boegen!");
+                mb.exec();
+                return;
+            }
+            bogen b1(tzboegen.zeile(1));
+            bogen b2(tzboegen.zeile(2));
+            bogen b3(tzboegen.zeile(3));
+            bogen b4(tzboegen.zeile(4));
+
+            if(cagleich(b1.rad(), b2.rad(), 0.1)  && \
+               cagleich(b1.rad(), b3.rad(), 0.1)  && \
+               cagleich(b1.rad(), b4.rad(), 0.1)     )
+            {
+                strecke s1(tzstrecken.zeile(1));
+                strecke s2(tzstrecken.zeile(2));
+                strecke s3(tzstrecken.zeile(3));
+                strecke s4(tzstrecken.zeile(4));
+                strecke_bezugspunkt sbezpu = strecke_bezugspunkt_mitte;
+                s1.set_laenge_2d(s1.laenge2dim()+b1.rad()*2, sbezpu);
+                s2.set_laenge_2d(s2.laenge2dim()+b1.rad()*2, sbezpu);
+                s3.set_laenge_2d(s3.laenge2dim()+b1.rad()*2, sbezpu);
+                s4.set_laenge_2d(s4.laenge2dim()+b1.rad()*2, sbezpu);
+
+                //Prüfen ob die Endpunkte der Strecken deckungsgleich sind:
+                strecke sa,sb,sc,sd;
+                double tol = 0.1;
+                sa = s1;
+                if(cagleich(sa.endp(), s2.startp(), tol))
+                {
+                    sb=s2;
+                }else if(cagleich(sa.endp(), s2.endp(), tol))
+                {
+                    sb=s2;
+                    sb.richtung_unkehren();
+                }else if(cagleich(sa.endp(), s3.startp(), tol))
+                {
+                    sb=s3;
+                }else if(cagleich(sa.endp(), s3.endp(), tol))
+                {
+                    sb=s3;
+                    sb.richtung_unkehren();
+                }else if(cagleich(sa.endp(), s4.startp(), tol))
+                {
+                    sb=s4;
+                }else if(cagleich(sa.endp(), s4.endp(), tol))
+                {
+                    sb=s4;
+                    sb.richtung_unkehren();
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                    mb.exec();
+                    return;
+                }
+
+                if(  (cagleich(sb.startp(), s2.startp(), tol)  && \
+                      cagleich(sb.endp(), s2.endp(), tol))  ||  \
+                     (cagleich(sb.startp(), s2.endp(), tol)  &&  \
+                      cagleich(sb.endp(), s2.startp(), tol))      )
+                {
+                    //sa==s1
+                    //sb==s2
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s3,s4
+                    if(cagleich(sb.endp(), s3.startp(), tol))
+                    {
+                        sc=s3;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s3.endp(), tol))
+                    {
+                        sc=s3;
+                    }else if(cagleich(sb.endp(), s4.startp(), tol))
+                    {
+                        sc=s4;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s4.endp(), tol))
+                    {
+                        sc=s4;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    if(  (cagleich(sc.startp(), s3.startp(), tol)  &&
+                          cagleich(sc.endp(), s3.endp(), tol))  ||  \
+                         (cagleich(sc.startp(), s3.endp(), tol)  &&  \
+                          cagleich(sc.endp(), s3.startp(), tol))      )
+                    {
+                        //sa==s1
+                        //sb==s2
+                        //sc==s3
+                        //sd==...
+                        //nicht zugewiesen: s4
+                        sd=s4;
+                    }else if(  (cagleich(sc.startp(), s4.startp(), tol)  &&
+                                cagleich(sc.endp(), s4.endp(), tol))  ||  \
+                               (cagleich(sc.startp(), s4.endp(), tol)  &&  \
+                                cagleich(sc.endp(), s4.startp(), tol))      )
+                          {
+                        //sa==s1
+                        //sb==s2
+                        //sc==s4
+                        //sd==...
+                        //nicht zugewiesen: s3
+                        sd=s3;
+                    }
+
+                    if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                       cagleich(sd.endp(), sc.startp(), tol))
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                           cagleich(sd.endp(), sc.startp(), tol))
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }else if(  (cagleich(sb.startp(), s3.startp(), tol)  && \
+                            cagleich(sb.endp(), s3.endp(), tol))  ||  \
+                           (cagleich(sb.startp(), s3.endp(), tol)  &&  \
+                            cagleich(sb.endp(), s3.startp(), tol))      )
+                      {
+                    //sa==s1
+                    //sb==s3
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s2,s4
+                    if(cagleich(sb.endp(), s2.startp(), tol))
+                    {
+                        sc=s2;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s2.endp(), tol))
+                    {
+                        sc=s2;
+                    }else if(cagleich(sb.endp(), s4.startp(), tol))
+                    {
+                        sc=s4;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s4.endp(), tol))
+                    {
+                        sc=s4;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    if(  (cagleich(sc.startp(), s2.startp(), tol)  &&  \
+                          cagleich(sc.endp(), s2.endp(), tol))  ||  \
+                         (cagleich(sc.startp(), s2.endp(), tol)  &&  \
+                          cagleich(sc.endp(), s2.startp(), tol))      )
+                    {
+                        //sa==s1
+                        //sb==s3
+                        //sc==s2
+                        //sd==...
+                        //nicht zugewiesen: s4
+                        sd=s4;
+                    }else if(  (cagleich(sc.startp(), s4.startp(), tol)  &&  \
+                                cagleich(sc.endp(), s4.endp(), tol))  ||  \
+                               (cagleich(sc.startp(), s4.endp(), tol)  &&  \
+                                cagleich(sc.endp(), s4.startp(), tol))      )
+                    {
+                        //sa==s1
+                        //sb==s3
+                        //sc==s4
+                        //sd==...
+                        //nicht zugewiesen: s2
+                        sd=s2;
+                    }
+
+                    if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                       cagleich(sd.endp(), sc.startp(), tol))
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                           cagleich(sd.endp(), sc.startp(), tol))
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }else if(  (cagleich(sb.startp(), s4.startp(), tol)  && \
+                            cagleich(sb.endp(), s4.endp(), tol))  ||  \
+                           (cagleich(sb.startp(), s4.endp(), tol)  &&  \
+                            cagleich(sb.endp(), s4.startp(), tol))      )
+                      {
+                    //sa==s1
+                    //sb==s4
+                    //sc==...
+                    //sd==...
+                    //nicht zugewiesen: s2,s3
+                    if(cagleich(sb.endp(), s2.startp(), tol))
+                    {
+                        sc=s2;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s2.endp(), tol))
+                    {
+                        sc=s2;
+                    }else if(cagleich(sb.endp(), s3.startp(), tol))
+                    {
+                        sc=s3;
+                        sc.richtung_unkehren();
+                    }else if(cagleich(sb.endp(), s3.endp(), tol))
+                    {
+                        sc=s3;
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                        mb.exec();
+                        return;
+                    }
+
+                    cagleich(sc.endp(), s2.startp(), tol);
+
+                    if(  (cagleich(sc.startp(), s2.startp(), tol)  &&  \
+                          cagleich(sc.endp(), s2.endp(), tol))  ||  \
+                         (cagleich(sc.startp(), s2.endp(), tol)  &&  \
+                          cagleich(sc.endp(), s2.startp(), tol))      )
+                    {
+                        //sa==s1
+                        //sb==s4
+                        //sc==s2
+                        //sd==...
+                        //nicht zugewiesen: s3
+                        sd=s3;
+                    }else if(  (cagleich(sc.startp(), s3.startp(), tol)  &&  \
+                                cagleich(sc.endp(), s3.endp(), tol))  ||  \
+                               (cagleich(sc.startp(), s3.endp(), tol)  &&  \
+                                cagleich(sc.endp(), s3.startp(), tol))      )
+                    {
+                        //sa==s1
+                        //sb==s4
+                        //sc==s3
+                        //sd==...
+                        //nicht zugewiesen: s2
+                        sd=s2;
+                    }
+
+                    if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                       cagleich(sd.endp(), sc.startp(), tol))
+                    {
+                        ;
+                        //richtig zugewiesen
+                    }else
+                    {
+                        sd.richtung_unkehren();
+                        if(cagleich(sd.startp(), sa.startp(), tol)  &&  \
+                           cagleich(sd.endp(), sc.startp(), tol))
+                        {
+                            ;
+                            //richtig zugewiesen
+                        }else
+                        {
+                            QMessageBox mb;
+                            mb.setText("Die Endpunkte der verlaengerten Strecken sind nicht kongruent!");
+                            mb.exec();
+                            return;
+                        }
+                    }
+                }
+
+                //sa,sb,sc und sd konnten korrekt zugewiesen werden
+                //Prüfen ob 4eck einen rechten winkel hat:
+                double wi = winkel(sd.endp().x(), sd.endp().y(), \
+                                   sd.startp().x(), sd.startp().y(),
+                                   sa.endp().x(), sa.endp().y());
+                if(wi > 89.9  &&  wi < 90.1)
+                {
+                    //die strecken sa,sb,sc und sd beschreiben ein rechteck :-)
+                    //Rechteck in rta umwandeln:
+                    strecke diag;//Diagonale
+                    diag.set_start(sa.startp());
+                    diag.set_ende(sb.endp());
+
+                    QString msg = vorlage_Rtasche;
+                    QString alt;
+                    alt  = BEZUGSPUNKT;
+                    alt += text_mitte(vorlage_Rtasche, BEZUGSPUNKT, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    QString bezpu = BEZUGSPUNKT_MITTE;
+                    msg.replace(alt, BEZUGSPUNKT + bezpu + ENDE_EINTRAG);
+
+                    alt  = POSITION_X;
+                    alt += text_mitte(vorlage_Rtasche, POSITION_X, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, POSITION_X + diag.get_mittelpunkt2d().x_QString() + ENDE_EINTRAG);
+
+                    alt  = POSITION_Y;
+                    alt += text_mitte(vorlage_Rtasche, POSITION_Y, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, POSITION_Y + diag.get_mittelpunkt2d().y_QString() + ENDE_EINTRAG);
+
+                    alt  = TASCHENLAENGE;
+                    alt += text_mitte(vorlage_Rtasche, TASCHENLAENGE, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, TASCHENLAENGE + sa.laenge2dim_QString() + ENDE_EINTRAG);
+
+                    alt  = TASCHENBREITE;
+                    alt += text_mitte(vorlage_Rtasche, TASCHENBREITE, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, TASCHENBREITE + sb.laenge2dim_QString() + ENDE_EINTRAG);
+
+                    alt  = RADIUS;
+                    alt += text_mitte(vorlage_Rtasche, RADIUS, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    QString r = b1.rad_qString();
+                    msg.replace(alt, RADIUS + r + ENDE_EINTRAG);
+
+                    double drewi = winkel(sa.endp().x(), sa.endp().y(), \
+                                          sa.startp().x(), sa.startp().y());
+
+                    alt  = WINKEL;
+                    alt += text_mitte(vorlage_Rtasche, WINKEL, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, WINKEL + double_to_qstring(drewi) + ENDE_EINTRAG);
+
+                    disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                    connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+                    emit sendDialogData(msg, true, werkzeugnamen);
+
+                    t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                    aktualisiere_anzeigetext();
+                    ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText("Die 4 Geraden sind nicht rechtwinklig zu einander!");
+                    mb.exec();
+                    return;
+                }
+
+
+
+
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die Radien der 4 Boegen sind nicht gleich!");
+                mb.exec();
+                return;
+            }
+
+        }else if(items_menge==6)//evtl 4eck mit Radius (4 Linien + 2 Viertelkreisbögen)
+        {
+            //Noch programmieren!!!
+            //Noch programmieren!!!
+            //Noch programmieren!!!
+            //Noch programmieren!!!
+            //Noch programmieren!!!
+
+
+            QMessageBox mb;
+            mb.setText("Diese Variante ist leider noch nicht fertig programmiert!");
+            mb.exec();
+            return;
+
+
+
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Das Programm kann die aktivierten Zellen leider nicht umwandeln!");
+            mb.exec();
+        }
+    }
 }
 
 void MainWindow::on_actionRechtecktasche_in_4_Eck_umwandeln_triggered()
