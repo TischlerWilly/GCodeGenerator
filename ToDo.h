@@ -4,34 +4,21 @@
 /*
 ----------Aktuell in Arbeit:
 
--->Default-Vorlagen für Dialoge prüfen:  QString MainWindow::saveConfig()
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
-
--->4-Ecke in Rechtecktaschen umwandeln (ggf. mit 4 gleich stark verrundeten Ecken)
-        ->Funktion:
-        void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
-        fertig stellen:
-        else if(items_menge==6)//evtl 4eck mit Radius (4 Linien + 2 Viertelkreisbögen)
+    ->noch nicht genauer heraus gefunden wodurch der Import-Fehler verursacht wurde
 
 
-
--->Prüfung einbauen in dialog rta: eckenradius darf max teb/2 oder tal/2 sein!!
 
 
 
 
 
 ----------Ideen für neue Dialoge:
--->Dialog für das Zapfen-fräsen
-    ->Dialog Rtasche erweitern
-    ->Dialog Ktasche erweitern
--->Dialog für Vieleck-Taschen
--->Dialog für Vieleckt-Zapfen
 -->Dialog Include
--->Dialog Spiegeln
--->Dialog Verschieben
--->Dialog Drehen
--->Ankörnen (mit V-Fräser?)
+-->Dialog Bearbeitung spiegeln
+-->Dialog Bearbeitung verschieben
+-->Dialog Bearbeitung drehen
+-->Dialog zum Bohren, dann Bohrmaschine in die Aufname der Hauptspindel der CNC einsetzen
 
 
 

@@ -347,7 +347,7 @@ QString MainWindow::saveConfig()
         inhaltVonKonfiguration +=   KOMMENTAR;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   SICHERHEITSABSTAND;
-        inhaltVonKonfiguration +=   "5";
+        inhaltVonKonfiguration +=   "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
         inhaltVonKonfiguration +=   "Programmkopf";
@@ -404,6 +404,7 @@ QString MainWindow::saveConfig()
     if(vorlage_kommentar == NICHT_DEFINIERT)
     {
         inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=   "----------";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
         inhaltVonKonfiguration +=   "1";
@@ -448,16 +449,20 @@ QString MainWindow::saveConfig()
         inhaltVonKonfiguration +=   TASCHENTIEFE;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSRAEUMEN;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   GEGENLAUF;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VORSCHUB;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DREHZAHL;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KOMMENTAR;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
@@ -493,10 +498,12 @@ QString MainWindow::saveConfig()
         inhaltVonKonfiguration +=   RADIUS;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=   AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   GEGENLAUF;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   WINKEL;
+        inhaltVonKonfiguration +=   "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSRAEUMEN;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
@@ -588,7 +595,7 @@ QString MainWindow::saveConfig()
         inhaltVonKonfiguration +=   POSITION_Z;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   RADIUS;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=   "ERG";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
         inhaltVonKonfiguration +=   "--- gerade Fraesbahn";
@@ -5250,10 +5257,6 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                     mb.exec();
                     return;
                 }
-
-
-
-
             }else
             {
                 QMessageBox mb;
@@ -5262,21 +5265,162 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 return;
             }
 
-        }else if(items_menge==6)//evtl 4eck mit Radius (4 Linien + 2 Viertelkreisbögen)
+        }else if(items_menge==6)//evtl 4eck mit Radius (2 Linien + 4 Viertelkreisbögen)
         {
-            //Noch programmieren!!!
-            //Noch programmieren!!!
-            //Noch programmieren!!!
-            //Noch programmieren!!!
-            //Noch programmieren!!!
+            text_zeilenweise tzstrecken, tzboegen;
+            uint anz_s=0;
+            uint anz_b=0;
+            for(uint i=1; i<=auswahl.zeilenanzahl() ;i++)
+            {
+                if(auswahl.zeile(i).contains(STRECKE))
+                {
+                    tzstrecken.zeile_anhaengen(auswahl.zeile(i));
+                    anz_s++;
+                }else if(auswahl.zeile(i).contains(BOGEN))
+                {
+                    tzboegen.zeile_anhaengen(auswahl.zeile(i));
+                    anz_b++;
+                }
+            }
+            if(anz_s!=2  ||  anz_b!=4)
+            {
+                QMessageBox mb;
+                mb.setText("Die 6 aktivierten Zellen enthalten nicht 4 Strecken und 2 Boegen!");
+                mb.exec();
+                return;
+            }
+            bogen b1(tzboegen.zeile(1));
+            bogen b2(tzboegen.zeile(2));
+            bogen b3(tzboegen.zeile(3));
+            bogen b4(tzboegen.zeile(4));
 
+            if(cagleich(b1.rad(), b2.rad(), 0.1)  && \
+               cagleich(b1.rad(), b3.rad(), 0.1)  && \
+               cagleich(b1.rad(), b4.rad(), 0.1)     )
+            {
+                strecke sa(tzstrecken.zeile(1));
+                strecke sc(tzstrecken.zeile(2));
+                strecke_bezugspunkt sbezpu = strecke_bezugspunkt_mitte;
+                sa.set_laenge_2d(sa.laenge2dim()+b1.rad()*2, sbezpu);
+                sc.set_laenge_2d(sc.laenge2dim()+b1.rad()*2, sbezpu);
 
-            QMessageBox mb;
-            mb.setText("Diese Variante ist leider noch nicht fertig programmiert!");
-            mb.exec();
-            return;
+                if(!cagleich(sa.laenge2dim(), sc.laenge2dim(),0.1))
+                {
+                    QMessageBox mb;
+                    mb.setText("Die Laengen der beiden Strecken sind nicht gleich!");
+                    mb.exec();
+                    return;
+                }
 
+                //Prüfen ob sa und sc parallel sind:
+                strecke sb, sd;
+                sb.set_start(sa.endp());
+                sb.set_ende(sc.endp());
+                sd.set_start(sa.startp());
+                sd.set_ende(sc.startp());
+                if(!cagleich(sb.laenge2dim(), sd.laenge2dim(),0.1))
+                {
+                    QMessageBox mb;
+                    mb.setText("Die beiden Strecken sind nicht parallel!");
+                    mb.exec();
+                    return;
+                }
 
+                //Prüfen ob 4eck einen rechten winkel hat:
+                double wi = winkel(sd.endp().x(), sd.endp().y(), \
+                                   sd.startp().x(), sd.startp().y(),
+                                   sa.endp().x(), sa.endp().y());
+                if(wi > 89.9  &&  wi < 90.1)
+                {
+                    ;
+                    //die strecken sa,sb,sc und sd beschreiben ein rechteck :-)
+                }else
+                {
+                    //evtl. verlaufen sa und sc nicht in die selbe Richtung und
+                    //der Winkel ist desshalb nicht 90°
+                    sc.richtung_unkehren();
+                    sb.set_start(sa.endp());
+                    sb.set_ende(sc.endp());
+                    sd.set_start(sa.startp());
+                    sd.set_ende(sc.startp());
+
+                    wi = winkel(sd.endp().x(), sd.endp().y(), \
+                                sd.startp().x(), sd.startp().y(),
+                                sa.endp().x(), sa.endp().y());
+                    if(wi > 89.9  &&  wi < 90.1)
+                    {
+                        ;
+                        //die strecken sa,sb,sc und sd beschreiben ein rechteck :-)
+                    }else
+                    {
+                        QMessageBox mb;
+                        mb.setText("Die 2 Geraden und 4 Boegen beschreiben kein rechtwinkliges 4eck!");
+                        mb.exec();
+                        return;
+                    }
+                }
+                //die strecken sa,sb,sc und sd beschreiben ein rechteck :-)
+                //Rechteck in rta umwandeln:
+                strecke diag;//Diagonale
+                diag.set_start(sa.startp());
+                diag.set_ende(sb.endp());
+
+                QString msg = vorlage_Rtasche;
+                QString alt;
+                alt  = BEZUGSPUNKT;
+                alt += text_mitte(vorlage_Rtasche, BEZUGSPUNKT, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                QString bezpu = BEZUGSPUNKT_MITTE;
+                msg.replace(alt, BEZUGSPUNKT + bezpu + ENDE_EINTRAG);
+
+                alt  = POSITION_X;
+                alt += text_mitte(vorlage_Rtasche, POSITION_X, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_X + diag.get_mittelpunkt2d().x_QString() + ENDE_EINTRAG);
+
+                alt  = POSITION_Y;
+                alt += text_mitte(vorlage_Rtasche, POSITION_Y, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_Y + diag.get_mittelpunkt2d().y_QString() + ENDE_EINTRAG);
+
+                alt  = TASCHENLAENGE;
+                alt += text_mitte(vorlage_Rtasche, TASCHENLAENGE, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, TASCHENLAENGE + sa.laenge2dim_QString() + ENDE_EINTRAG);
+
+                alt  = TASCHENBREITE;
+                alt += text_mitte(vorlage_Rtasche, TASCHENBREITE, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, TASCHENBREITE + sb.laenge2dim_QString() + ENDE_EINTRAG);
+
+                alt  = RADIUS;
+                alt += text_mitte(vorlage_Rtasche, RADIUS, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                QString r = b1.rad_qString();
+                msg.replace(alt, RADIUS + r + ENDE_EINTRAG);
+
+                double drewi = winkel(sa.endp().x(), sa.endp().y(), \
+                                      sa.startp().x(), sa.startp().y());
+
+                alt  = WINKEL;
+                alt += text_mitte(vorlage_Rtasche, WINKEL, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, WINKEL + double_to_qstring(drewi) + ENDE_EINTRAG);
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(msg, true, werkzeugnamen);
+
+                t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                aktualisiere_anzeigetext();
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die Radien der 4 Boegen sind nicht gleich!");
+                mb.exec();
+                return;
+            }
 
         }else
         {
@@ -5566,6 +5710,22 @@ void MainWindow::pruefe_benutzereingaben(int zeilennummer)
             mb.setText("Achtung!\nTaschentiefe ist groesser als Nutzlaenge des Fraesers");
             mb.exec();
         }
+        tmp = text_mitte(klartextzeile, RADIUS, ENDE_EINTRAG);
+        float eckrad = tmp.toFloat();
+        float mindim;
+        if(tab < tal)
+        {
+            mindim = tab;
+        }else
+        {
+            mindim = tal;
+        }
+        if(eckrad*2 > mindim)
+        {
+            mb.setText("Achtung!\nEckradien der Tasche ist groesser als Laenge oder Breite der Tasche!");
+            mb.exec();
+        }
+
     }else if(programmzeile.contains(KREISTASCHE_DIALOG))
     {
         QString tmp = text_mitte(programmzeile, WKZ_NAME, ENDE_EINTRAG);
