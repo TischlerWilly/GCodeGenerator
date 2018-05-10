@@ -326,7 +326,6 @@ void Dialog_Werkzeug::on_pushButton_OK_clicked()
     }
 }
 
-
 void Dialog_Werkzeug::on_pushButton_bild_info_clicked()
 {
     QString nachricht;
@@ -336,4 +335,105 @@ void Dialog_Werkzeug::on_pushButton_bild_info_clicked()
     QMessageBox mb;
     mb.setText(nachricht);
     mb.exec();
+}
+
+QString Dialog_Werkzeug::getDefault()
+{
+    QString msg;
+
+    msg += WKZ_NAME;
+    msg += "WKZ1";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_Nummer;
+    msg += "1";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_STECKPLATZ;
+    msg += "1";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_X;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_Y;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_Z;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_A;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_B;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_C;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_U;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_V;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_OFFSET_W;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_DURCHMESSER;
+    msg += "10";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_FRONTWINKEL;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_RUECKWINKEL;
+    msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_RICHTUNG;
+    msg += "";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_KOMMENTAR;
+    msg += "";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_DREHRICHTUNG;
+    msg += WKZ_DREHRICHTUNG_RECHTS;
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_NUTZLAENGE;
+    msg += "30";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_EINTAUCHVORSCHUB;
+    msg += "500";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_VORSCHUB;
+    msg += "1000";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_DREHZAHL;
+    msg += "2000";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_ZUSTELLTIEFE;
+    msg += "5";
+    msg += ENDE_EINTRAG;
+
+    msg += ENDE_ZEILE;
+
+    return msg;
 }

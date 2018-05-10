@@ -1,6 +1,12 @@
 #ifndef TODO_H
 #define TODO_H
 
+
+
+
+
+#define PROGRAMMVERSION     "1.2018.05.10"
+
 /*
 ----------Aktuell in Arbeit:
 

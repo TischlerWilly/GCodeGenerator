@@ -20,6 +20,7 @@ class Dialog_Werkzeug : public QDialog
 public:
     explicit Dialog_Werkzeug(QWidget *parent = 0);
     ~Dialog_Werkzeug();
+    QString getDefault();
     
 private:
     Ui::Dialog_Werkzeug *ui;
@@ -33,7 +34,6 @@ private slots:
     void on_pushButton_Abbrechen_clicked();
     void on_pushButton_Speichern_clicked();
     void on_pushButton_OK_clicked();
-
     void on_pushButton_bild_info_clicked();
 
 signals:

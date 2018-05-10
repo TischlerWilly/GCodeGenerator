@@ -42,6 +42,7 @@
 #include "Dialoge/dialog_kreis.h"
 #include "Dialoge/dialog_strecke.h"
 #include "Dialoge/dialog_bogen.h"
+#include "ToDo.h"
 
 
 #define INDEX_PROGRAMMLISTE 0
@@ -184,7 +185,7 @@ private:
     QStringList     konfiguration_ini;
     bool            konfiguration_ini_ist_vorhanden;
     QStringList     tool_tbl;
-    QString         tooltable_path;
+    QString         tooltable_path;//Pfad zur Werkteugtabelle von EMC2
     QString         kopierterEintrag_t;
     QString         kopiertesWerkzeug;
     QString         vorlage_pkopf;
