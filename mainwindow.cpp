@@ -13,7 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle(PROGRAMMNAME);
+    QString titel = PROGRAMMNAME;
+    titel += " ";
+    titel += PROGRAMMVERSION;
+    this->setWindowTitle(titel);
     //Defaultwerte:
     kopierterEintrag_t              = NICHT_DEFINIERT;
     kopiertesWerkzeug               = NICHT_DEFINIERT;
@@ -67,8 +70,10 @@ MainWindow::MainWindow(QWidget *parent) :
             mb.exec();
         }else
         {
+
+            file.write(werkzeug_dialog.getDefault().toUtf8());
             QMessageBox mb;
-            mb.setText("Neue, leere Werkzeugdatei wurde erzeugt.");
+            mb.setText("Neue, Werkzeugdatei wurde erzeugt.");
             mb.exec();
         }
         file.close();
@@ -268,11 +273,13 @@ QString MainWindow::loadConfig()
                     vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
                 }
             }
+        /*
         //Sicherheitsabfragen:
-        if(tooltable_path == NICHT_DEFINIERT)
+        if(tooltable_path == NICHT_DEFINIERT  ||  tooltable_path.isEmpty())
         {
             returnString = "Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n";
         }
+        */
     }
 
     return returnString;
@@ -289,7 +296,10 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       "\n";
     //----------------------------------------------------Einstellungen:
     inhaltVonKonfiguration +=       SETTINGS_PFAD_WERKZEUGE;
-    if(tooltable_path != NICHT_DEFINIERT)
+    if(tooltable_path == NICHT_DEFINIERT  ||  tooltable_path.isEmpty())
+    {
+        returnString = "Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n";
+    }else
     {
         inhaltVonKonfiguration +=   tooltable_path;
     }
@@ -339,30 +349,34 @@ QString MainWindow::saveConfig()
     if(vorlage_pkopf == NICHT_DEFINIERT)
     {
         inhaltVonKonfiguration +=   LAENGE;
+        inhaltVonKonfiguration +=               "250";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BREITE;
+        inhaltVonKonfiguration +=               "250";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DICKE;
+        inhaltVonKonfiguration +=               "19";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   SICHERHEITSABSTAND;
-        inhaltVonKonfiguration +=   "20";
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
-        inhaltVonKonfiguration +=   "Programmkopf";
+        inhaltVonKonfiguration +=               "Programmkopf";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
-        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VERSATZ_X;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VERSATZ_Y;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VERSATZ_Z;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
     }else
     {
@@ -438,39 +452,47 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       KREISTASCHE_DIALOG;
     if(vorlage_Ktasche == NICHT_DEFINIERT)
     {
-        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   WKZ_NAME;
+        inhaltVonKonfiguration +=               "WKZ1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DURCHMESSER;
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   TASCHENTIEFE;
+        inhaltVonKonfiguration +=               "2";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ZUSTELLUNG;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSRAEUMEN;
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   GEGENLAUF;
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DREHZAHL;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
-        inhaltVonKonfiguration +=   "Kreistasche";
+        inhaltVonKonfiguration +=               "Kreistasche";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
-        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
     }else
     {
@@ -483,48 +505,59 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       RECHTECKTASCHE_DIALOG;
     if(vorlage_Rtasche == NICHT_DEFINIERT)
     {
-        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   WKZ_NAME;
+        inhaltVonKonfiguration +=               "WKZ1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   TASCHENLAENGE;
+        inhaltVonKonfiguration +=               "25";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   TASCHENBREITE;
+        inhaltVonKonfiguration +=               "15";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   TASCHENTIEFE;
+        inhaltVonKonfiguration +=               "2";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   RADIUS;
+        inhaltVonKonfiguration +=               "5";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ZUSTELLUNG;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   GEGENLAUF;
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   WINKEL;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSRAEUMEN;
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DREHZAHL;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZUGSPUNKT;
+        inhaltVonKonfiguration +=               BEZUGSPUNKT_MITTE;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
-        inhaltVonKonfiguration +=   "Rechtecktasche";
+        inhaltVonKonfiguration +=               "Rechtecktasche";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
-        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=               "1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
     }else
     {
@@ -537,45 +570,56 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       FRAESERAUFRUF_DIALOG;
     if(vorlage_Faufruf == NICHT_DEFINIERT)
     {
-        inhaltVonKonfiguration +=   WERKZEUG;
+        inhaltVonKonfiguration +=   WKZ_NAME;
+        inhaltVonKonfiguration +=               "WKZ1";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BAHNRORREKTUR;
-        inhaltVonKonfiguration +=   BAHNRORREKTUR_keine;
+        inhaltVonKonfiguration +=               BAHNRORREKTUR_keine;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=               "D-2";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ECKENRUNDENGLOBAL;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KANTENDICKE;
-        inhaltVonKonfiguration +=   "0";
+        inhaltVonKonfiguration +=               "0";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   VORSCHUB;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   DREHZAHL;
-        inhaltVonKonfiguration +=   AUTOMATISCH;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ANFAHRTYP;
-        inhaltVonKonfiguration +=   ANABFAHRTYP_KEIN;
+        inhaltVonKonfiguration +=               ANABFAHRTYP_KEIN;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   ABFAHRTYP;
-        inhaltVonKonfiguration +=   ANABFAHRTYP_KEIN;
+        inhaltVonKonfiguration +=               ANABFAHRTYP_KEIN;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BEZEICHNUNG;
-        inhaltVonKonfiguration +=   "Aufruf Fraeser";
+        inhaltVonKonfiguration +=               "Aufruf Fraeser";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
-        inhaltVonKonfiguration +=   "1";
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   WKZ_DURCHMESSER;
+        inhaltVonKonfiguration +=               "10";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
     }else
     {
@@ -589,10 +633,13 @@ QString MainWindow::saveConfig()
     if(vorlage_Fgerade == NICHT_DEFINIERT)
     {
         inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "X";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "Y";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=               "Z";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   RADIUS;
         inhaltVonKonfiguration +=   "ERG";
@@ -615,13 +662,16 @@ QString MainWindow::saveConfig()
     if(vorlage_Fbogen == NICHT_DEFINIERT)
     {
         inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "X+20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "Y+20";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   POSITION_Z;
+        inhaltVonKonfiguration +=               "Z";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   RADIUS;
-        inhaltVonKonfiguration +=   "10";
+        inhaltVonKonfiguration +=   "15";
         inhaltVonKonfiguration +=   ENDE_EINTRAG;
         inhaltVonKonfiguration +=   BOGENRICHTUNG;
         inhaltVonKonfiguration +=   BOGENRICHTUNG_IM_UZS;
@@ -954,6 +1004,47 @@ void MainWindow::on_pushButton_WKZ_Laden_clicked()
         QMessageBox mb;
         mb.setText("Konnte Werkzeugdatei nicht finden!");
         mb.exec();
+
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
+        {
+            QMessageBox mb;
+            mb.setText("Fehler beim Datei-Zugriff");
+            mb.exec();
+        }else
+        {
+            file.write(werkzeug_dialog.getDefault().toUtf8());
+            QMessageBox mb;
+            mb.setText("Neue, Werkzeugdatei wurde erzeugt.");
+            mb.exec();
+            file.close();
+
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                QMessageBox mb;
+                mb.setText("Konnte Werkzeugdatei nicht finden!");
+                mb.exec();
+            }else
+            {
+                text_zeilenweise tz;
+                while(!file.atEnd())
+                {
+                    QString line = file.readLine();
+                    if(line.right(1) == "\n")
+                    {
+                        line = line.left(line.length()-1);
+                    }
+                    if(tz.zeilenanzahl() == 0)
+                    {
+                        tz.set_text(line);
+                    }else
+                    {
+                        tz.zeilen_anhaengen(line);
+                    }
+                }
+                w.set_werkezuge(tz.get_text());
+                aktualisiere_anzeigetext_wkz();
+            }
+        }
         file.close();
     } else
     {
@@ -987,7 +1078,7 @@ void MainWindow::on_pushButton_WKZ_Export_an_EMC2_clicked()
     }
 
     //Prüfen ob Einstellungen stimmen:
-    if(tooltable_path == NICHT_DEFINIERT)
+    if(tooltable_path == NICHT_DEFINIERT  ||  tooltable_path.isEmpty())
     {
         QMessageBox mb;
         mb.setText("Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n");
