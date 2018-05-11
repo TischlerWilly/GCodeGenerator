@@ -110,6 +110,13 @@ QString genauigkeit_reduzieren(QString zahl, uint nachkommastellen)
     return zahl;
 }
 
+QString genauigkeit_reduzieren(double zahl, uint nachkommastellen)
+{
+    int zahlalsint = zahl*(10*nachkommastellen);
+    zahl = zahlalsint/(10*nachkommastellen);
+    return double_to_qstring(zahl);
+}
+
 bool cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
 {
     if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \

@@ -378,8 +378,16 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                         continue;
                     }else
                     {
-                        i++;
-                        continue;
+                        if(i+1 <= potfkon.zeilenanzahl())
+                        {
+                            i++;
+                            continue;
+                        }else
+                        {
+                            polylinie.zeilen_anhaengen(potfkon.zeile(1));
+                            potfkon.zeile_loeschen(1);
+                            break;
+                        }
                     }
 
                 }else if(zeile.contains(BOGEN))
@@ -421,11 +429,19 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
                         continue;
                     }else
                     {
-                        i++;
-                        continue;
+                        if(i+1 <= potfkon.zeilenanzahl())
+                        {
+                            i++;
+                            continue;
+                        }else
+                        {
+                            polylinie.zeilen_anhaengen(potfkon.zeile(1));
+                            potfkon.zeile_loeschen(1);
+                            break;
+                        }
                     }
-                }else
-                {
+                }else//Wenn in potfkon etwas nicht Strecke oder Bogen ist, dann ist etwas grundsätzlich
+                {    //flasch gelaufen!!! weil dann gehört es in tz->anderes
                     i++;
                     continue;
                 }

@@ -5,6 +5,7 @@
 #include "punkt2d.h"
 #include "strecke.h"
 #include "darstellungsatribute.h"
+#include "../eigeneFunktionen/myfunktion.h"
 
 
 class bogen : public darstellungsatribute
