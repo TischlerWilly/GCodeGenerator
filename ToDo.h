@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "1.2018.05.10"
+#define PROGRAMMVERSION     "1.2018.05.11"
 
 /*
 ----------Aktuell in Arbeit:
@@ -23,6 +23,8 @@
 -->Dialog Include
 -->Dialog Bearbeitung spiegeln
 -->Dialog Bearbeitung verschieben
+    ->Umsetzung durch vorwecksetzen von 2 Variablen
+    ->Automatisches Einfügen dieser Versatz-Variablen in den markierten Zeilen
 -->Dialog Bearbeitung drehen
 -->Dialog zum Bohren, dann Bohrmaschine in die Aufname der Hauptspindel der CNC einsetzen
 

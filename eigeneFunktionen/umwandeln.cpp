@@ -48,9 +48,6 @@ std::string double_to_string(double zahl)
 
 QString double_to_qstring(double zahl)
 {
-    std::string returnstring;
-    std::stringstream ss;
-    ss << zahl;
-    returnstring = ss.str();
-    return QString::fromStdString(returnstring);
+    QString msg = QString::number(zahl, 'f', 6);//6 sorgt für 6 Nachkommastellen
+    return msg;
 }
