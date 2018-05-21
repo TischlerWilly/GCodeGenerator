@@ -272,10 +272,30 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
 }
 
 //------------------------------------------------------------
-void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
+void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe)
 {
     //zeinumbeg: Nummer der ersten Zeile
     //zeinumend: Nummer der letzten Zeile
+
+    //--------------------------------------------------Schritt 0 prüfen ob CAD in Auswahl ist:
+    bool hat_cad = false;
+    for(uint i=zeinumbeg; i<=zeinumend; i++)
+    {
+        if(text.zeile(i).contains(STRECKE) || \
+           (text.zeile(i).contains(BOGEN) && !text.zeile(i).contains(FRAESERBOGEN_DIALOG))   || \
+           text.zeile(i).contains(KREIS)   )
+        {
+           hat_cad = true;
+           break;
+        }
+    }
+    if(hat_cad == false)
+    {
+        QMessageBox mb;
+        mb.setText("Es sind keine CAD-Elemente aktiviert!");
+        mb.exec();
+        return;
+    }
 
     //--------------------------------------------------Schritt 1 trennen der Auswahl:
     text_zeilenweise potfkon; //potentielle Fräskontur
@@ -477,9 +497,16 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
             ipot++;
         }
     }
+
     aktualisiere_klartext_var_geo();
     aktualisiere_fkon();
     aktualisiere_anzeigetext();
+
+    anz_der_durchlaeufe--;
+    if(anz_der_durchlaeufe > 0)
+    {
+        cad_sortieren(zeinumbeg, zeinumend, anz_der_durchlaeufe);
+    }
 }
 
 void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge)
@@ -685,9 +712,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
 {
     punkt3d p;
     QString aktzeil = klartext.zeile(zeinumbeg);
-    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
     text_zeilenweise tzgeo;
     for(uint i =zeinumbeg+1; i<=zeinumend ;i++)
     {
@@ -697,9 +724,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
             strecke s;
             s.set_farbe(FARBE_GRUEN);
             s.set_start(p);
-            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             s.set_ende(p);
             tzgeo.zeile_anhaengen(s.get_text());
         }else if(aktzeil.contains(FRAESERBOGEN_DIALOG))
@@ -707,9 +734,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
             bogen b;
             b.set_farbe(FARBE_GRUEN);
             b.set_startpunkt(p);
-            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             b.set_endpunkt(p);
             QString richtung = (text_mitte(aktzeil, BOGENRICHTUNG, ENDE_EINTRAG));
             QString rad = (text_mitte(aktzeil, RADIUS, ENDE_EINTRAG));
@@ -758,9 +785,9 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
         if(i == zeinumend-1)//Letzter Punkt auf der Kontur = erster Punkt in Gegenrichtung
         {
             //Inhalt des Fräseraufrufes ändern und für später merken:
-            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             QString tmp;
             tmp = POSITION_X + text_mitte(aufruf, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
             aufruf.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
@@ -781,9 +808,9 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
             akttext = text.zeile(i);
             vorklartext = klartext.zeile(i-1);
 
-            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             if(aktklartext.contains(FRAESERGERADE_DIALOG))
             {
                 QString tmp;
@@ -865,10 +892,10 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     //Ist der Endpunkt der Startpunkt?:
     punkt3d pstart;
     punkt3d pend;
-    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
-    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
     if(!cagleich(pstart, pend, 0.1))
     {
         return;
@@ -878,9 +905,9 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     QString tmp;
     QString aufruf_t_neu = aufruf_t;
     punkt3d p;
-    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
 
     tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
     aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
@@ -945,10 +972,10 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     //Ist der Endpunkt der Startpunkt?:
     punkt3d pstart;
     punkt3d pend;
-    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
-    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
     if(!cagleich(pstart, pend, 0.1))
     {
         return;
@@ -958,9 +985,9 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     QString tmp;
     QString aufruf_t_neu = aufruf_t;
     punkt3d p;
-    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
 
     tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
     aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
@@ -1002,6 +1029,30 @@ void programmtext::rta_zu_cad(uint zeinumakt)
     {
         return;
     }
+
+    //AX + AY + Schablonenhöhe wieder abzeihen:
+    QString x_alt = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG);
+    QString tmp = x_alt;
+    tmp += "-";
+    tmp += get_ax_qstring();
+    QString x_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_X + x_alt + ENDE_EINTRAG, POSITION_X + x_neu + ENDE_EINTRAG);
+
+    QString y_alt = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG);
+    tmp = y_alt;
+    tmp += "-";
+    tmp += get_ay_qstring();
+    QString y_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_Y + y_alt + ENDE_EINTRAG, POSITION_Y + y_neu + ENDE_EINTRAG);
+
+    QString z_alt = text_mitte(zeitex, POSITION_Z, ENDE_EINTRAG);
+    tmp = z_alt;
+    tmp += "-";
+    tmp += get_az_qstring();
+    QString z_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_Z + z_alt + ENDE_EINTRAG, POSITION_Z + z_neu + ENDE_EINTRAG);
+
+
     double eckrad = text_mitte(zeitex, RADIUS, ENDE_EINTRAG).toDouble();
     double drewi = text_mitte(zeitex, WINKEL, ENDE_EINTRAG).toDouble();
     //dreht rta immer um den mipu unabhängig vom Bezugspunkt
@@ -1228,6 +1279,65 @@ void programmtext::rta_zu_cad(uint zeinumakt)
         text.zeile_vorwegsetzen(tzcad.zeile(1));
         tzcad.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzcad.get_text());
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
+{
+    QString varname_ax = "VX";
+    QString varname_ay = "VY";
+
+    Dialog_Variable dialvar;
+    QString variable_ax = dialvar.get_variable(varname_ax, "0");
+    QString variable_ay = dialvar.get_variable(varname_ay, "0");
+
+    for(uint i=zeinumbeg; i<=zeinumend ; i++)
+    {
+        QString zeile = text.zeile(i);
+        if(zeile.contains(KREISTASCHE_DIALOG)       || \
+           zeile.contains(RECHTECKTASCHE_DIALOG)    || \
+           zeile.contains(FRAESERAUFRUF_DIALOG)     || \
+           zeile.contains(FRAESERGERADE_DIALOG)     || \
+           zeile.contains(FRAESERBOGEN_DIALOG)              )
+        {
+            QString xalt;
+            xalt = POSITION_X;
+            xalt += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            xalt += ENDE_EINTRAG;
+            QString xneu;
+            xneu = POSITION_X;
+            xneu += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            xneu += "+";
+            xneu += varname_ax;
+            xneu += ENDE_EINTRAG;
+            zeile.replace(xalt, xneu);
+
+            QString yalt;
+            yalt = POSITION_Y;
+            yalt += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            yalt += ENDE_EINTRAG;
+            QString yneu;
+            yneu = POSITION_Y;
+            yneu += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            yneu += "+";
+            yneu += varname_ay;
+            yneu += ENDE_EINTRAG;
+            zeile.replace(yalt, yneu);
+        }
+        text.zeile_ersaetzen(i, zeile);
+    }
+
+    if(zeinumbeg >= 2)
+    {
+        text.zeile_einfuegen(zeinumbeg-1, variable_ax);
+        text.zeile_einfuegen(zeinumbeg-1, variable_ay);
+    }else
+    {
+        text.zeile_vorwegsetzen(variable_ay);
+        text.zeile_vorwegsetzen(variable_ax);
     }
     aktualisiere_klartext_var_geo();
     aktualisiere_fkon();
@@ -4294,7 +4404,6 @@ void programmtext::aktualisiere_fraeserdarst()
         fraeserdarst.zeilenvorschub();
     }
 }
-
 
 
 

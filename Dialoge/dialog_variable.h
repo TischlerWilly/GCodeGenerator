@@ -18,6 +18,7 @@ class Dialog_Variable : public QDialog
 public:
     explicit Dialog_Variable(QWidget *parent = 0);
     ~Dialog_Variable();
+    QString get_variable(QString name, QString wert);
     
 private:
     Ui::Dialog_Variable *ui;

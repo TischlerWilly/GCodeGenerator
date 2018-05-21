@@ -124,6 +124,7 @@ private slots:
     void on_actionFraesStartpunkt_nach_triggered();
     void on_action4_Eck_in_Rechtecktasche_umwandeln_triggered();
     void on_actionRechtecktasche_in_4_Eck_umwandeln_triggered();
+    void on_actionVerastzvariablen_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -250,7 +251,7 @@ private:
     void aktuelisiere_letzte_dateien_inifile();
     void aktualisiere_letzte_dateien_menu();
     void openFile(QString pfad);
-
+    QString dateitext_ggf();
 
 };
 

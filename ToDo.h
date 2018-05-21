@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "1.2018.05.11"
+#define PROGRAMMVERSION     "2.2018.05.21"
 
 /*
 ----------Aktuell in Arbeit:
@@ -15,16 +15,9 @@
 
 
 
-
-
-
-
 ----------Ideen für neue Dialoge:
 -->Dialog Include
 -->Dialog Bearbeitung spiegeln
--->Dialog Bearbeitung verschieben
-    ->Umsetzung durch vorwecksetzen von 2 Variablen
-    ->Automatisches Einfügen dieser Versatz-Variablen in den markierten Zeilen
 -->Dialog Bearbeitung drehen
 -->Dialog zum Bohren, dann Bohrmaschine in die Aufname der Hauptspindel der CNC einsetzen
 
@@ -60,8 +53,22 @@
 ###        berücksichtigt werden wenn neue Elemente hinzukommen
 
 
+---------------------------------------------------
+QT-Fehlermeldung:
+X Error: BadDrawable (invalid Pixmap or Window parameter) 9
+  Major opcode: 62 (X_CopyArea)
+  Resource id:  0x0
+Lösung:
+sudo gedit /etc/environment
+Add this line
+QT_X11_NO_MITSHM=1
 
-
+------------------------------------------------------
+Zur Erinnerung Einlesen deutscher Umlaute:
+while(!file.atEnd())
+{
+    tmp += QString::fromUtf8(file.readLine());
+}
 
 
 */

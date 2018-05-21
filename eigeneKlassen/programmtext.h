@@ -11,6 +11,7 @@
 #include "geometrietext.h"
 #include "werkzeug.h"
 #include "tabelle_tz3.h"
+#include "../Dialoge/dialog_variable.h"
 
 
 class programmtext
@@ -106,6 +107,31 @@ public:
         return max_y;
     }
 
+    inline  float   get_ax()
+    {
+        return versatz_x;
+    }
+    inline  float   get_ay()
+    {
+        return versatz_y;
+    }
+    inline  float   get_az()
+    {
+        return versatz_z;
+    }
+    inline  QString   get_ax_qstring()
+    {
+        return double_to_qstring(versatz_x);
+    }
+    inline  QString   get_ay_qstring()
+    {
+        return double_to_qstring(versatz_y);
+    }
+    inline  QString   get_az_qstring()
+    {
+        return double_to_qstring(versatz_z);
+    }
+
     QString     zeile(uint zeilennummer);
     QString     zeilen(uint zeilennummer_beginn, uint zeilenmenge);
     int         zeile_loeschen(uint zeilennummer);
@@ -153,7 +179,7 @@ public:
         aktualisiere_anzeigetext();
     }
 
-    void cad_sortieren(uint zeinumbeg, uint zeinumend);
+    void cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe);
     void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
     void fkon_zu_linien(uint zeinumbeg, uint zeinumend);
     void fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend);
@@ -162,6 +188,7 @@ public:
     void rta_zu_cad(uint zeinumakt);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
+    void versatzvar(uint zeinumbeg, uint zeinumend);
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)

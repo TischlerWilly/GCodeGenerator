@@ -26,6 +26,10 @@ public:
     }
     void set_radius(float radiuswert, punkt2d bogenrichtung);
     void    richtung_unkehren();
+    inline void aktualisieren()
+    {
+        set_radius(radius, bogen_im_uzs);
+    }
 
     inline punkt3d start()
     {
