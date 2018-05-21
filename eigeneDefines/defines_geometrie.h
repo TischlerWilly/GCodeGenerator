@@ -6,7 +6,7 @@
 #define TRZ_EL         ";"     //Trennt Geometrieelemente
 #define TRZ_EL_        ';'
 
-#define PUNKT       "punkt"
+#define PUNKT       "cadpunkt"
 /*
  2) x
  3) y
@@ -14,7 +14,7 @@
  5) Farbe des Punktes
  6) Breite des Punktes = Punktgröße
 */
-#define STRECKE     "strecke"
+#define STRECKE     "cadstrecke"
 /*
  2) x-Start
  3) y-Start
@@ -26,7 +26,7 @@
  9) Breite der Linie
 10) Stil der Linie
 */
-#define BOGEN       "bogen"
+#define BOGEN       "cadbogen"
 /*
  2) x-Start
  3) y-Start
@@ -46,7 +46,7 @@
 13) Breite der Linie
 14) Stil der Linie
 */
-#define KREIS       "kreis"
+#define KREIS       "cadkreis"
 /*
  2) x-Mitte
  3) y-Mitte
@@ -57,7 +57,7 @@
  8) Breite der Linie
  9) Stil der Linie
 */
-#define ZYLINDER    "zylinder"
+#define ZYLINDER    "cadzylinder"
 /*
  2) x-Mitte der Grundfläche
  3) y-Mitte der Grundfläche
@@ -69,7 +69,7 @@
  9) Breite der Linie
 10) Stil der Linie
 */
-#define RECHTECK3D  "rechteck3d"
+#define RECHTECK3D  "cadrechteck3d"
 /*
  2) Bezugspunkt
  3) x-Einfügepunkt
@@ -84,7 +84,7 @@
 12) Breite der Linie
 13) Stil der Linie
 */
-#define WUERFEL     "wuerfel"
+#define WUERFEL     "cadwuerfel"
 /*
  2) Bezugspunkt-Nummer
  3) x-Einfügepunkt

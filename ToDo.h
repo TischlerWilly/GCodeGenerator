@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "1.2018.05.21"
+#define PROGRAMMVERSION     "2.2018.05.21"
 
 /*
 ----------Aktuell in Arbeit:
@@ -13,9 +13,8 @@
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
     ->noch nicht genauer heraus gefunden wodurch der Import-Fehler verursacht wurde
 
-
-
-
+-->void MainWindow::on_actionVerastzvariablen_triggered()
+   fertig stellen
 
 
 ----------Ideen für neue Dialoge:

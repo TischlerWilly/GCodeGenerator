@@ -277,6 +277,26 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
     //zeinumbeg: Nummer der ersten Zeile
     //zeinumend: Nummer der letzten Zeile
 
+    //--------------------------------------------------Schritt 0 prüfen ob CAD in Auswahl ist:
+    bool hat_cad = false;
+    for(uint i=zeinumbeg; i<=zeinumend; i++)
+    {
+        if(text.zeile(i).contains(STRECKE) || \
+           (text.zeile(i).contains(BOGEN) && !text.zeile(i).contains(FRAESERBOGEN_DIALOG))   || \
+           text.zeile(i).contains(KREIS)   )
+        {
+           hat_cad = true;
+           break;
+        }
+    }
+    if(hat_cad == false)
+    {
+        QMessageBox mb;
+        mb.setText("Es sind keine CAD-Elemente aktiviert!");
+        mb.exec();
+        return;
+    }
+
     //--------------------------------------------------Schritt 1 trennen der Auswahl:
     text_zeilenweise potfkon; //potentielle Fräskontur
     text_zeilenweise anderes;
@@ -765,9 +785,9 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
         if(i == zeinumend-1)//Letzter Punkt auf der Kontur = erster Punkt in Gegenrichtung
         {
             //Inhalt des Fräseraufrufes ändern und für später merken:
-            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktklartext, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktklartext, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktklartext, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             QString tmp;
             tmp = POSITION_X + text_mitte(aufruf, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
             aufruf.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
@@ -788,9 +808,9 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
             akttext = text.zeile(i);
             vorklartext = klartext.zeile(i-1);
 
-            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(vorklartext, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             if(aktklartext.contains(FRAESERGERADE_DIALOG))
             {
                 QString tmp;
@@ -872,10 +892,10 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     //Ist der Endpunkt der Startpunkt?:
     punkt3d pstart;
     punkt3d pend;
-    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
-    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
     if(!cagleich(pstart, pend, 0.1))
     {
         return;
@@ -885,9 +905,9 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     QString tmp;
     QString aufruf_t_neu = aufruf_t;
     punkt3d p;
-    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(camnachaufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(camnachaufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(camnachaufruf_kt, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
 
     tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
     aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);
@@ -952,10 +972,10 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     //Ist der Endpunkt der Startpunkt?:
     punkt3d pstart;
     punkt3d pend;
-    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG));
-    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG));
-    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG));
+    pstart.set_x(text_mitte(aufruf_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pstart.set_y(text_mitte(aufruf_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    pend.set_x(text_mitte(camvorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    pend.set_y(text_mitte(camvorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
     if(!cagleich(pstart, pend, 0.1))
     {
         return;
@@ -965,9 +985,9 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     QString tmp;
     QString aufruf_t_neu = aufruf_t;
     punkt3d p;
-    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(cam2vorabfa_kt, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(cam2vorabfa_kt, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(cam2vorabfa_kt, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
 
     tmp = POSITION_X + text_mitte(aufruf_t_neu, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
     aufruf_t_neu.replace(tmp, POSITION_X + p.x_QString() + ENDE_EINTRAG);

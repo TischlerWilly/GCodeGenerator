@@ -183,11 +183,6 @@
     <addaction name="separator"/>
     <addaction name="actionRueckgaengig"/>
     <addaction name="actionWiederholen"/>
-    <addaction name="separator"/>
-    <addaction name="actionCAD_sortieren"/>
-    <addaction name="actionFraesrichtung_umkehren"/>
-    <addaction name="actionFraesStartpunkt_vor"/>
-    <addaction name="actionFraesStartpunkt_nach"/>
    </widget>
    <widget class="QMenu" name="menuDatei">
     <property name="title">
@@ -195,7 +190,7 @@
     </property>
     <widget class="QMenu" name="menuLetzte_Dateien">
      <property name="title">
-      <string>erneut Oefnen</string>
+      <string>erneut Öfnen</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuImport">
@@ -258,11 +253,23 @@
     <addaction name="actionMakeBogen"/>
     <addaction name="actionMakeStrecke"/>
    </widget>
+   <widget class="QMenu" name="menuManipulation">
+    <property name="title">
+     <string>Manipulation</string>
+    </property>
+    <addaction name="actionCAD_sortieren"/>
+    <addaction name="actionFraesrichtung_umkehren"/>
+    <addaction name="actionFraesStartpunkt_vor"/>
+    <addaction name="actionFraesStartpunkt_nach"/>
+    <addaction name="separator"/>
+    <addaction name="actionVerastzvariablen"/>
+   </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuBearbeiten"/>
    <addaction name="menuHinzufuegen"/>
    <addaction name="menuCAD"/>
    <addaction name="menuUmwandeln"/>
+   <addaction name="menuManipulation"/>
    <addaction name="menuMen"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -289,7 +296,7 @@
   </action>
   <action name="actionAendern">
    <property name="text">
-    <string>Aendern</string>
+    <string>Ändern</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
@@ -305,7 +312,7 @@
   </action>
   <action name="actionDateiOefnen">
    <property name="text">
-    <string>Oefnen</string>
+    <string>Öfnen</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -355,7 +362,7 @@
   </action>
   <action name="actionEinfuegen">
    <property name="text">
-    <string>Einfuegen</string>
+    <string>Einfügen</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
@@ -450,7 +457,7 @@
   </action>
   <action name="actionRueckgaengig">
    <property name="text">
-    <string>Rueckgaengig</string>
+    <string>Rückgaengig</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -466,17 +473,17 @@
   </action>
   <action name="actionMakeFraeser_Aufruf">
    <property name="text">
-    <string>Fraeser-Aufruf</string>
+    <string>Fräser-Aufruf</string>
    </property>
   </action>
   <action name="actionMakeGerade_Fraesbahn">
    <property name="text">
-    <string>gerade Fraesbahn</string>
+    <string>gerade Fräsbahn</string>
    </property>
   </action>
   <action name="actionMakeGebogene_Fraesbahn">
    <property name="text">
-    <string>gebogene Fraesbahn</string>
+    <string>gebogene Fräsbahn</string>
    </property>
   </action>
   <action name="actionMakeAbfahren">
@@ -554,17 +561,17 @@
   </action>
   <action name="actionLinien_in_Fraeskonturen_umwandeln">
    <property name="text">
-    <string>Linien in Fraeskonturen umwandeln</string>
+    <string>Linien in Fräskonturen umwandeln</string>
    </property>
   </action>
   <action name="actionFraeskonturen_in_Linien_umwandeln">
    <property name="text">
-    <string>Fraeskonturen in Linien umwandeln</string>
+    <string>Fräskonturen in Linien umwandeln</string>
    </property>
   </action>
   <action name="actionFraesrichtung_umkehren">
    <property name="text">
-    <string>Fraesrichtung umkehren</string>
+    <string>Fräsrichtung umkehren</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
@@ -572,7 +579,7 @@
   </action>
   <action name="actionFraesStartpunkt_vor">
    <property name="text">
-    <string>Fraes-Startpunkt vor</string>
+    <string>Fräser-Startpunkt vor</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Right</string>
@@ -580,7 +587,7 @@
   </action>
   <action name="actionFraesStartpunkt_nach">
    <property name="text">
-    <string>Fraes-Startpunkt nach</string>
+    <string>Fräser-Startpunkt nach</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Left</string>
@@ -594,6 +601,11 @@
   <action name="actionRechtecktasche_in_4_Eck_umwandeln">
    <property name="text">
     <string>Rechtecktasche in 4-Eck umwandeln</string>
+   </property>
+  </action>
+  <action name="actionVerastzvariablen">
+   <property name="text">
+    <string>Versatzvariablen einfügen</string>
    </property>
   </action>
  </widget>
