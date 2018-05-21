@@ -69,6 +69,12 @@ sudo gedit /etc/environment
 Add this line
 QT_X11_NO_MITSHM=1
 
+------------------------------------------------------
+Zur Erinnerung Einlesen deutscher Umlaute:
+while(!file.atEnd())
+{
+    tmp += QString::fromUtf8(file.readLine());
+}
 
 
 */

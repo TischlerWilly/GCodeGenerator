@@ -806,7 +806,7 @@ void MainWindow::loadConfig_letzte_Dateien()
         QString tmp;
         while(!file.atEnd())
         {
-            tmp += file.readLine();
+            tmp += QString::fromUtf8(file.readLine());
         }
         file.close();
         text_zeilenweise tz;
