@@ -44,6 +44,26 @@ QString Dialog_Variable::dialogDataToString()
     return msg;
 }
 
+QString Dialog_Variable::get_variable(QString name, QString wert)
+{
+    QString msg = VARIABLE_DIALOG;
+
+    msg += BEZEICHNUNG;
+    msg += name;
+    msg += ENDE_EINTRAG;
+
+    msg += WERT;
+    msg += wert;
+    msg += ENDE_EINTRAG;
+
+    msg += AUSFUEHRBEDINGUNG;
+    msg += "1";
+    msg += ENDE_EINTRAG;
+
+    msg += ENDE_ZEILE;
+    return msg;
+}
+
 void Dialog_Variable::on_pushButton_OK_clicked()
 {
     if(ui->lineEdit_Bezeichnung->text().contains("_"))
@@ -92,3 +112,4 @@ void Dialog_Variable::on_pushButton_Abbrechen_clicked()
 {
     this->close();
 }
+

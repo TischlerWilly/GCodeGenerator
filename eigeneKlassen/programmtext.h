@@ -11,6 +11,7 @@
 #include "geometrietext.h"
 #include "werkzeug.h"
 #include "tabelle_tz3.h"
+#include "../Dialoge/dialog_variable.h"
 
 
 class programmtext
@@ -187,6 +188,7 @@ public:
     void rta_zu_cad(uint zeinumakt);
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
+    void versatzvar(uint zeinumbeg, uint zeinumend);
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)

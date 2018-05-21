@@ -13,16 +13,11 @@
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
     ->noch nicht genauer heraus gefunden wodurch der Import-Fehler verursacht wurde
 
--->void MainWindow::on_actionVerastzvariablen_triggered()
-   fertig stellen
 
 
 ----------Ideen für neue Dialoge:
 -->Dialog Include
 -->Dialog Bearbeitung spiegeln
--->Dialog Bearbeitung verschieben
-    ->Umsetzung durch vorwecksetzen von 2 Variablen
-    ->Automatisches Einfügen dieser Versatz-Variablen in den markierten Zeilen
 -->Dialog Bearbeitung drehen
 -->Dialog zum Bohren, dann Bohrmaschine in die Aufname der Hauptspindel der CNC einsetzen
 

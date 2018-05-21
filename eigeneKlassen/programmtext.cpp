@@ -1285,6 +1285,65 @@ void programmtext::rta_zu_cad(uint zeinumakt)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
+{
+    QString varname_ax = "VX";
+    QString varname_ay = "VY";
+
+    Dialog_Variable dialvar;
+    QString variable_ax = dialvar.get_variable(varname_ax, "0");
+    QString variable_ay = dialvar.get_variable(varname_ay, "0");
+
+    for(uint i=zeinumbeg; i<=zeinumend ; i++)
+    {
+        QString zeile = text.zeile(i);
+        if(zeile.contains(KREISTASCHE_DIALOG)       || \
+           zeile.contains(RECHTECKTASCHE_DIALOG)    || \
+           zeile.contains(FRAESERAUFRUF_DIALOG)     || \
+           zeile.contains(FRAESERGERADE_DIALOG)     || \
+           zeile.contains(FRAESERBOGEN_DIALOG)              )
+        {
+            QString xalt;
+            xalt = POSITION_X;
+            xalt += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            xalt += ENDE_EINTRAG;
+            QString xneu;
+            xneu = POSITION_X;
+            xneu += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            xneu += "+";
+            xneu += varname_ax;
+            xneu += ENDE_EINTRAG;
+            zeile.replace(xalt, xneu);
+
+            QString yalt;
+            yalt = POSITION_Y;
+            yalt += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            yalt += ENDE_EINTRAG;
+            QString yneu;
+            yneu = POSITION_Y;
+            yneu += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            yneu += "+";
+            yneu += varname_ay;
+            yneu += ENDE_EINTRAG;
+            zeile.replace(yalt, yneu);
+        }
+        text.zeile_ersaetzen(i, zeile);
+    }
+
+    if(zeinumbeg >= 2)
+    {
+        text.zeile_einfuegen(zeinumbeg-1, variable_ax);
+        text.zeile_einfuegen(zeinumbeg-1, variable_ay);
+    }else
+    {
+        text.zeile_vorwegsetzen(variable_ay);
+        text.zeile_vorwegsetzen(variable_ax);
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
 //------------------------------------------------------------
 //private:
 
@@ -4345,7 +4404,6 @@ void programmtext::aktualisiere_fraeserdarst()
         fraeserdarst.zeilenvorschub();
     }
 }
-
 
 
 
