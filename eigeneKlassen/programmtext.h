@@ -178,7 +178,7 @@ public:
         aktualisiere_anzeigetext();
     }
 
-    void cad_sortieren(uint zeinumbeg, uint zeinumend);
+    void cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe);
     void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
     void fkon_zu_linien(uint zeinumbeg, uint zeinumend);
     void fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend);

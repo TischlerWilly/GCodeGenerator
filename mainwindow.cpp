@@ -6017,7 +6017,7 @@ void MainWindow::on_actionCAD_sortieren_triggered()
             }
             if(items_menge > 1)
             {
-                t.cad_sortieren(row_erstes+1, row_erstes+items_menge);
+                t.cad_sortieren(row_erstes+1, row_erstes+items_menge, 3);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                 vorschauAktualisieren();

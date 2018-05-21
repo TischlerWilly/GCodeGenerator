@@ -272,7 +272,7 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
 }
 
 //------------------------------------------------------------
-void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
+void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe)
 {
     //zeinumbeg: Nummer der ersten Zeile
     //zeinumend: Nummer der letzten Zeile
@@ -477,9 +477,16 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend)
             ipot++;
         }
     }
+
     aktualisiere_klartext_var_geo();
     aktualisiere_fkon();
     aktualisiere_anzeigetext();
+
+    anz_der_durchlaeufe--;
+    if(anz_der_durchlaeufe > 0)
+    {
+        cad_sortieren(zeinumbeg, zeinumend, anz_der_durchlaeufe);
+    }
 }
 
 void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge)
