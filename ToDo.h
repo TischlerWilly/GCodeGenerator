@@ -18,7 +18,6 @@
 
 
 
-
 ----------Ideen für neue Dialoge:
 -->Dialog Include
 -->Dialog Bearbeitung spiegeln
@@ -60,7 +59,15 @@
 ###        berücksichtigt werden wenn neue Elemente hinzukommen
 
 
-
+---------------------------------------------------
+QT-Fehlermeldung:
+X Error: BadDrawable (invalid Pixmap or Window parameter) 9
+  Major opcode: 62 (X_CopyArea)
+  Resource id:  0x0
+Lösung:
+sudo gedit /etc/environment
+Add this line
+QT_X11_NO_MITSHM=1
 
 
 

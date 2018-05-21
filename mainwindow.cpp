@@ -4563,6 +4563,57 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
         {
             auswahl.zeile_anhaengen(t.get_klartext_zeilenweise().zeile(i+1));
         }
+        //AX + AY + Schablonenhöhe wieder abzeihen:
+        for(uint i=1; i<=auswahl.zeilenanzahl() ;i++)
+        {
+            QString zeile = auswahl.zeile(i);
+            if(zeile.contains(STRECKE))
+            {
+                strecke s(zeile);
+                punkt3d p1;
+                p1 = s.startp();
+                p1.set_x(p1.x()-t.get_ax());
+                p1.set_y(p1.y()-t.get_ay());
+                p1.set_z(p1.z()-t.get_az());
+                punkt3d p2;
+                p2 = s.endp();
+                p2.set_x(p2.x()-t.get_ax());
+                p2.set_y(p2.y()-t.get_ay());
+                p2.set_z(p2.z()-t.get_az());
+                s.set_start(p1);
+                s.set_ende(p2);
+                zeile = s.get_text();
+            }else if(zeile.contains(BOGEN))
+            {
+                bogen b(zeile);
+                punkt3d p1;
+                p1 = b.start();
+                p1.set_x(p1.x()-t.get_ax());
+                p1.set_y(p1.y()-t.get_ay());
+                p1.set_z(p1.z()-t.get_az());
+                punkt3d p2;
+                p2 = b.ende();
+                p2.set_x(p2.x()-t.get_ax());
+                p2.set_y(p2.y()-t.get_ay());
+                p2.set_z(p2.z()-t.get_az());
+                b.set_startpunkt(p1);
+                b.set_endpunkt(p2);
+                b.aktualisieren();
+                zeile = b.get_text();
+            }else if(zeile.contains(KREIS))
+            {
+                kreis k(zeile);
+                punkt3d p1;
+                p1 = k.mitte3d();
+                p1.set_x(p1.x()-t.get_ax());
+                p1.set_y(p1.y()-t.get_ay());
+                p1.set_z(p1.z()-t.get_az());
+                k.set_mittelpunkt(p1);
+                zeile = k.get_text();
+            }
+
+            auswahl.zeile_ersaetzen(i, zeile);
+        }
 
         if(items_menge==4)//evtl. 4eck (4 Linien) oder Kreis aus 4 Bögen(Eckenradius = tal/2)
         {

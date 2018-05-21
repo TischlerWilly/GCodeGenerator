@@ -106,6 +106,31 @@ public:
         return max_y;
     }
 
+    inline  float   get_ax()
+    {
+        return versatz_x;
+    }
+    inline  float   get_ay()
+    {
+        return versatz_y;
+    }
+    inline  float   get_az()
+    {
+        return versatz_z;
+    }
+    inline  QString   get_ax_qstring()
+    {
+        return double_to_qstring(versatz_x);
+    }
+    inline  QString   get_ay_qstring()
+    {
+        return double_to_qstring(versatz_y);
+    }
+    inline  QString   get_az_qstring()
+    {
+        return double_to_qstring(versatz_z);
+    }
+
     QString     zeile(uint zeilennummer);
     QString     zeilen(uint zeilennummer_beginn, uint zeilenmenge);
     int         zeile_loeschen(uint zeilennummer);

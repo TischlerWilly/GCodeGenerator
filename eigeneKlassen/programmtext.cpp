@@ -685,9 +685,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
 {
     punkt3d p;
     QString aktzeil = klartext.zeile(zeinumbeg);
-    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+    p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+    p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+    p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
     text_zeilenweise tzgeo;
     for(uint i =zeinumbeg+1; i<=zeinumend ;i++)
     {
@@ -697,9 +697,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
             strecke s;
             s.set_farbe(FARBE_GRUEN);
             s.set_start(p);
-            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             s.set_ende(p);
             tzgeo.zeile_anhaengen(s.get_text());
         }else if(aktzeil.contains(FRAESERBOGEN_DIALOG))
@@ -707,9 +707,9 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
             bogen b;
             b.set_farbe(FARBE_GRUEN);
             b.set_startpunkt(p);
-            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG));
+            p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
+            p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
+            p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
             b.set_endpunkt(p);
             QString richtung = (text_mitte(aktzeil, BOGENRICHTUNG, ENDE_EINTRAG));
             QString rad = (text_mitte(aktzeil, RADIUS, ENDE_EINTRAG));
@@ -1002,6 +1002,30 @@ void programmtext::rta_zu_cad(uint zeinumakt)
     {
         return;
     }
+
+    //AX + AY + Schablonenhöhe wieder abzeihen:
+    QString x_alt = text_mitte(zeitex, POSITION_X, ENDE_EINTRAG);
+    QString tmp = x_alt;
+    tmp += "-";
+    tmp += get_ax_qstring();
+    QString x_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_X + x_alt + ENDE_EINTRAG, POSITION_X + x_neu + ENDE_EINTRAG);
+
+    QString y_alt = text_mitte(zeitex, POSITION_Y, ENDE_EINTRAG);
+    tmp = y_alt;
+    tmp += "-";
+    tmp += get_ay_qstring();
+    QString y_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_Y + y_alt + ENDE_EINTRAG, POSITION_Y + y_neu + ENDE_EINTRAG);
+
+    QString z_alt = text_mitte(zeitex, POSITION_Z, ENDE_EINTRAG);
+    tmp = z_alt;
+    tmp += "-";
+    tmp += get_az_qstring();
+    QString z_neu = ausdruck_auswerten(tmp);
+    zeitex.replace(POSITION_Z + z_alt + ENDE_EINTRAG, POSITION_Z + z_neu + ENDE_EINTRAG);
+
+
     double eckrad = text_mitte(zeitex, RADIUS, ENDE_EINTRAG).toDouble();
     double drewi = text_mitte(zeitex, WINKEL, ENDE_EINTRAG).toDouble();
     //dreht rta immer um den mipu unabhängig vom Bezugspunkt
