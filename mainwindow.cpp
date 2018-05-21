@@ -2276,6 +2276,28 @@ void MainWindow::openFile(QString pfad)
                 tz.zeilen_anhaengen(line);
             }
         }
+        QString versionsinfo = PROGRAMMNAME;
+        if(!tz.zeile(1).contains(versionsinfo))//Programmversion 1
+        {
+            //Kompatibilität zur aktuellen Version wieder herstellen:
+            for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+            {
+                QString zeile = tz.zeile(i);
+                zeile.replace("punkt", "cadpunkt");
+                zeile.replace("strecke", "cadstrecke");
+                zeile.replace("bogen", "cadbogen");
+                zeile.replace("kreis", "cadkreis");
+                zeile.replace("zylinder", "cadzylinder");
+                zeile.replace("rechteck3d", "cadrechteck3d");
+                zeile.replace("wuerfel", "cadwuerfel");
+                tz.zeile_ersaetzen(i, zeile);
+            }
+        }else
+        {
+            //ab Version 2
+            versionsinfo = tz.zeile(1);
+            tz.zeile_loeschen(1);
+        }
 
         t.set_text(tz.get_text());
         file.close();
@@ -2652,7 +2674,7 @@ void MainWindow::on_actionDateiSpeichern_triggered()
     }
 
     //Programmliste in String schreiben
-    QString dateiInhalt = t.get_text();
+    QString dateiInhalt = dateitext_ggf();
     //Datei füllen und speichern
     if(!fileName.isEmpty())
     {
@@ -2724,7 +2746,7 @@ void MainWindow::on_actionMaschine_speichern_triggered()
     }
     QString fileName = QDir::homePath() + QDir::separator() + CAD_Maschine;
     //Programmliste in String schreiben
-    QString dateiInhalt = t.get_text();
+    QString dateiInhalt = dateitext_ggf();
     //Datei füllen und speichern
     if(!fileName.isEmpty())
     {
@@ -2750,6 +2772,16 @@ void MainWindow::on_actionMaschine_speichern_triggered()
         }
     }
 
+}
+
+QString MainWindow::dateitext_ggf()
+{
+    QString dateiInhalt;
+    dateiInhalt  = PROGRAMMNAME;
+    dateiInhalt += " Version 2\n";
+    dateiInhalt += t.get_text();
+
+    return dateiInhalt;
 }
 
 void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()

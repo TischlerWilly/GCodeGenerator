@@ -251,7 +251,7 @@ private:
     void aktuelisiere_letzte_dateien_inifile();
     void aktualisiere_letzte_dateien_menu();
     void openFile(QString pfad);
-
+    QString dateitext_ggf();
 
 };
 
