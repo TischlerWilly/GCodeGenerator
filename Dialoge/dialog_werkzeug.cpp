@@ -114,6 +114,16 @@ QString Dialog_Werkzeug::dialogDataToString()
     msg += ui->lineEdit_zustelltiefe->text();
     msg += ENDE_EINTRAG;
 
+    msg += WKZ_KANN_BOHREN;
+    if(ui->checkBox_kann_bohren->isChecked())
+    {
+        msg += "1";
+    }else
+    {
+        msg += "0";
+    }
+    msg += ENDE_EINTRAG;
+
     msg += ENDE_ZEILE;
     return msg;
 }
@@ -146,6 +156,14 @@ void Dialog_Werkzeug::getDialogData(QString text, bool openToChangeData)
     int index;
     index = ui->comboBox_Drehrichtung->findText(selektiereEintrag(text, WKZ_DREHRICHTUNG, ENDE_EINTRAG));
     ui->comboBox_Drehrichtung->setCurrentIndex(index);
+    QString kabo = selektiereEintrag(text, WKZ_KANN_BOHREN, ENDE_EINTRAG);
+    if(kabo == "1")
+    {
+        ui->checkBox_kann_bohren->setChecked(true);
+    }else
+    {
+        ui->checkBox_kann_bohren->setChecked(false);
+    }
 
     //QPixmap pix("./werkzeugbilder/testbild.jpg");
     QPixmap pix(QDir::homePath() + WKZ_BILDER_PFAD + text_mitte(text, WKZ_Nummer, ENDE_EINTRAG)+".jpg");
@@ -431,6 +449,10 @@ QString Dialog_Werkzeug::getDefault()
 
     msg += WKZ_ZUSTELLTIEFE;
     msg += "5";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_KANN_BOHREN;
+    msg += "0";
     msg += ENDE_EINTRAG;
 
     msg += ENDE_ZEILE;

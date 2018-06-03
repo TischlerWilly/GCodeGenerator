@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>546</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <x>10</x>
      <y>10</y>
      <width>471</width>
-     <height>491</height>
+     <height>531</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -49,13 +49,13 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
+      <item row="6" column="2">
        <widget class="QLineEdit" name="lineEdit_Kommentar"/>
       </item>
-      <item row="5" column="1">
+      <item row="5" column="2">
        <widget class="QComboBox" name="comboBox_Drehrichtung"/>
       </item>
-      <item row="1" column="1">
+      <item row="1" column="2">
        <widget class="QLineEdit" name="lineEdit_Werkzeugnummer"/>
       </item>
       <item row="3" column="0">
@@ -79,10 +79,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="3" column="2">
        <widget class="QLineEdit" name="lineEdit_Durchmesser"/>
       </item>
-      <item row="2" column="1">
+      <item row="2" column="2">
        <widget class="QLineEdit" name="lineEdit_Steckplatz"/>
       </item>
       <item row="5" column="0">
@@ -92,7 +92,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2">
        <widget class="QLineEdit" name="lineEdit_Werkzeugname"/>
       </item>
       <item row="0" column="0">
@@ -109,7 +109,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="4" column="2">
        <widget class="QLineEdit" name="lineEdit__Nutzlaenge"/>
       </item>
      </layout>
@@ -118,7 +118,7 @@
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>244</y>
+       <y>290</y>
        <width>301</width>
        <height>201</height>
       </rect>
@@ -131,13 +131,26 @@
      <property name="geometry">
       <rect>
        <x>410</x>
-       <y>330</y>
+       <y>360</y>
        <width>41</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text">
       <string>???</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_kann_bohren">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>250</y>
+       <width>312</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>kann bohren</string>
      </property>
     </widget>
    </widget>
@@ -357,7 +370,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>500</y>
+     <y>540</y>
      <width>471</width>
      <height>41</height>
     </rect>

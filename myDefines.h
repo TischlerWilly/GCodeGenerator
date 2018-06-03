@@ -80,6 +80,9 @@
 #define BOGENRICHTUNG       "[BRICH]"
 #define BOGENRICHTUNG_IM_UZS        "uzs"
 #define BOGENRICHTUNG_IM_GUZS       "guzs"
+#define BOHRTIEFE           "[BT]"
+#define ANBOHRTI            "[ANBT]"
+#define RESTBOHRTI          "[REBT]"
 #define CAD_BEGIN           "[CAD]"
 #define CAD_ENDE            "[CADEND]"
 #define CAD_PUNKT                   "{p}"   //x / y
@@ -175,6 +178,7 @@
 #define WKZ_VORSCHUB        "[wF]"
 #define WKZ_DREHZAHL        "[wN]"
 #define WKZ_ZUSTELLTIEFE    "[wZUTI]"
+#define WKZ_KANN_BOHREN     "[wKABO]"
 #define WKZ_ENDE_EINTRAG    ";"
 
 

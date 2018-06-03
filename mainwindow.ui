@@ -397,6 +397,9 @@
    <property name="text">
     <string>Neu</string>
    </property>
+   <property name="whatsThis">
+    <string extracomment="Öffnet eine neue Datei."/>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
