@@ -152,7 +152,6 @@ void Dialog_Kreistasche::getDialogData(QString text, bool openToChangeData, QStr
     this->show();
 }
 
-
 void Dialog_Kreistasche::on_tabWidget_currentChanged(int index)
 {
     if(index == 2) //2 = Werkzeug

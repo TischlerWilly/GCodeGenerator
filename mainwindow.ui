@@ -227,6 +227,8 @@
     <addaction name="actionMakeKreistasche"/>
     <addaction name="actionMakeRechtecktasche"/>
     <addaction name="separator"/>
+    <addaction name="actionMakeBohren"/>
+    <addaction name="separator"/>
     <addaction name="actionMakeFraeser_Aufruf"/>
     <addaction name="actionMakeGerade_Fraesbahn"/>
     <addaction name="actionMakeGebogene_Fraesbahn"/>
@@ -609,6 +611,11 @@
   <action name="actionVerastzvariablen">
    <property name="text">
     <string>Versatzvariablen einfügen</string>
+   </property>
+  </action>
+  <action name="actionMakeBohren">
+   <property name="text">
+    <string>Bohren</string>
    </property>
   </action>
  </widget>

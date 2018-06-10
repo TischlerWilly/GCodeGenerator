@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vorlage_Fbogen                  = NICHT_DEFINIERT;
     vorlage_Fabfa                   = NICHT_DEFINIERT;
     vorlage_werkzeug                = NICHT_DEFINIERT;
+    vorlage_dbohren                 = NICHT_DEFINIERT;
     nameOfTheOpenFile               = NICHT_DEFINIERT;
     settings_anz_undo_t             = "10";
     settings_anz_undo_w             = "30";
@@ -125,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fbogen, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
     connect(&fabfa, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
     connect(&werkzeug_dialog, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&dbohren, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
 
     connect(&pkopf, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&pende, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
@@ -137,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fbogen, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&fabfa, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&werkzeug_dialog, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&dbohren, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
 
     connect(&pkopf, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&pende, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
@@ -149,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fbogen, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&fabfa, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&werkzeug_dialog, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&dbohren, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
 
     connect(&dkreis, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&dstrecke, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
@@ -164,6 +168,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&ktasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
     connect(&rtasche, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
+    connect(&dbohren, SIGNAL(signalBraucheWerkzeugdaten(QString,QString)), this, SLOT(slotAnfrageWerkzeugdaten(QString,QString)));
     connect(&variablenwerte_anzeigen, SIGNAL(brauche_variablen()), this, SLOT(slotAnfrageVariablen()));
     connect(&vorschaufenster, SIGNAL(sende_maus_pos(QPoint)), this, SLOT(slot_maus_pos(QPoint)));
 
@@ -271,6 +276,9 @@ QString MainWindow::loadConfig()
                 }else if(text.contains(WERKZEUG_DIALOG))
                 {
                     vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(BOHREN_DIALOG))
+                {
+                    vorlage_dbohren = selektiereEintrag(text, BOHREN_DIALOG, ENDE_ZEILE);
                 }
             }
         /*
@@ -771,6 +779,59 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       ENDE_ZEILE;
     inhaltVonKonfiguration +=       "\n";
 
+    //----------------------------------------------------Dialog Bohren:
+    inhaltVonKonfiguration +=       BOHREN_DIALOG;
+    if(vorlage_dbohren == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   WKZ_NAME;
+        inhaltVonKonfiguration +=               "WKZ1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DURCHMESSER;
+        inhaltVonKonfiguration +=               "20";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_X;
+        inhaltVonKonfiguration +=               "20";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   POSITION_Y;
+        inhaltVonKonfiguration +=               "20";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BOHRTIEFE;
+        inhaltVonKonfiguration +=               "5";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANBOHRTI;
+        inhaltVonKonfiguration +=               "2";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   RESTBOHRTI;
+        inhaltVonKonfiguration +=               "2";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ZUSTELLUNG;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANFAHRVORSCHUB;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VORSCHUB;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   DREHZAHL;
+        inhaltVonKonfiguration +=               AUTOMATISCH;
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=               "Bohrung";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_dbohren;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
 
     //-------------------------------------------
     inhaltVonKonfiguration +=       ENDE_DIALOGE;
@@ -898,6 +959,9 @@ void MainWindow::slotSaveConfig(QString text)
         }else if(text.contains(WERKZEUG_DIALOG))
         {
             vorlage_werkzeug = selektiereEintrag(text, WERKZEUG_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(BOHREN_DIALOG))
+        {
+            vorlage_dbohren = selektiereEintrag(text, BOHREN_DIALOG, ENDE_ZEILE);
         }
 
         //Daten in Datei sichern:
@@ -1351,6 +1415,29 @@ bool MainWindow::ladeWerkzeugnamen()
                 werkzeugnamen.append(selektiereEintrag(tmp , WKZ_NAME, WKZ_ENDE_EINTRAG));
             }
         }
+        //-------------------------------------------------------------
+        wkznamen_nur_bohrer.clear();
+        text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
+        for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+        {
+            QString kannbohren = selektiereEintrag(tz.zeile(i), WKZ_KANN_BOHREN, ENDE_EINTRAG);
+            if(kannbohren == "1")
+            {
+                wkznamen_nur_bohrer.append(selektiereEintrag(tz.zeile(i), WKZ_NAME, ENDE_EINTRAG));
+            }
+        }
+        //-------------------------------------------------------------
+        wkznamen_nur_fraeser.clear();
+        //text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
+        for(uint i=1; i<=tz.zeilenanzahl() ;i++)
+        {
+            QString kannfraesen = selektiereEintrag(tz.zeile(i), WKZ_KANN_FRAESEN, ENDE_EINTRAG);
+            if(kannfraesen == "1")
+            {
+                wkznamen_nur_fraeser.append(selektiereEintrag(tz.zeile(i), WKZ_NAME, ENDE_EINTRAG));
+            }
+        }
+        //-------------------------------------------------------------
         return false; //Kein Fehler ist aufgetreten
     }
 }
@@ -1365,6 +1452,10 @@ void MainWindow::slotAnfrageWerkzeugnamen(QString dialogName)
     {
         connect(this, SIGNAL(sendWerkzeugNamen(QStringList)), &rtasche, SLOT(getWerkzeugNamen(QStringList)));
         emit sendWerkzeugNamen(werkzeugnamen);
+    }else if(dialogName == BOHREN_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugNamen(QStringList)), &dbohren, SLOT(getWerkzeugNamen(QStringList)));
+        emit sendWerkzeugNamen(wkznamen_nur_bohrer);
     }
 }
 
@@ -1380,6 +1471,10 @@ void MainWindow::slotAnfrageWerkzeugdaten(QString Werkzeugname, QString Dialog)
     }else if(Dialog == RECHTECKTASCHE_DIALOG)
     {
         connect(this, SIGNAL(sendWerkzeugdaten(QString)), &rtasche, SLOT(getWerkzeugdaten(QString)));
+        emit sendWerkzeugdaten(daten);
+    }else if(Dialog == BOHREN_DIALOG)
+    {
+        connect(this, SIGNAL(sendWerkzeugdaten(QString)), &dbohren, SLOT(getWerkzeugdaten(QString)));
         emit sendWerkzeugdaten(daten);
     }
 }
@@ -1740,6 +1835,10 @@ void MainWindow::on_actionAendern_triggered()
             {
                 connect(this, SIGNAL(sendDialogData(QString, bool)), &dbogen, SLOT(getDialogData(QString, bool)));
                 emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(BOHREN_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(programmzeile, true, wkznamen_nur_bohrer);
             }
         }
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -1988,6 +2087,7 @@ void MainWindow::on_actionMakeKreistasche_triggered()
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_Ktasche;
         emit sendDialogData(msg, false, werkzeugnamen);
+        //emit sendDialogData(msg, false, wkznamen_nur_fraeser);
     }
 }
 
@@ -2119,6 +2219,22 @@ void MainWindow::on_actionMakeBogen_triggered()
         bogen b;
         b.set_farbe(FARBE_GRUEN);
         emit sendDialogData(b.get_text(), false);
+    }
+}
+
+void MainWindow::on_actionMakeBohren_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
+        QString msg = vorlage_dbohren;
+        emit sendDialogData(msg, false, wkznamen_nur_bohrer);
     }
 }
 
@@ -2865,6 +2981,7 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionMakeGerade_Fraesbahn->setDisabled(true);
     ui->actionMakeGebogene_Fraesbahn->setDisabled(true);
     ui->actionMakeAbfahren->setDisabled(true);
+    ui->actionMakeBohren->setDisabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setDisabled(true);
     ui->actionMakeStrecke->setDisabled(true);
@@ -2930,6 +3047,7 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionMakeGerade_Fraesbahn->setEnabled(true);
     ui->actionMakeGebogene_Fraesbahn->setEnabled(true);
     ui->actionMakeAbfahren->setEnabled(true);
+    ui->actionMakeBohren->setEnabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setEnabled(true);
     ui->actionMakeStrecke->setEnabled(true);
@@ -6433,6 +6551,8 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
 
 
 

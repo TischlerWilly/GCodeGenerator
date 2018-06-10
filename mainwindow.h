@@ -42,6 +42,7 @@
 #include "Dialoge/dialog_kreis.h"
 #include "Dialoge/dialog_strecke.h"
 #include "Dialoge/dialog_bogen.h"
+#include "Dialoge/dialog_bohren.h"
 #include "ToDo.h"
 
 
@@ -126,6 +127,8 @@ private slots:
     void on_actionRechtecktasche_in_4_Eck_umwandeln_triggered();
     void on_actionVerastzvariablen_triggered();
 
+    void on_actionMakeBohren_triggered();
+
 public slots:
     void getDialogData(QString text);
     void getDialogDataModify(QString text);
@@ -169,6 +172,7 @@ private:
     Dialog_Bogen dbogen;
     Dialog_Rechtecktasche rtasche;
     Dialog_import_ggf import_ggf;
+    Dialog_bohren dbohren;
     vorschau vorschaufenster;
     undo_redo ur;
     undo_redo_wkz ur_wkz;
@@ -200,10 +204,13 @@ private:
     QString         vorlage_Fbogen;
     QString         vorlage_Fabfa;
     QString         vorlage_werkzeug;
+    QString         vorlage_dbohren;
     bool            DateiIstOffen;
     QString         nameOfTheOpenFile;
     QString         nameOfTheOpenFile_backup;
     QStringList     werkzeugnamen;
+    QStringList     wkznamen_nur_bohrer;
+    QStringList     wkznamen_nur_fraeser;
     programmtext    t;
     werkzeug        w;
     QString         settings_anz_undo_t;

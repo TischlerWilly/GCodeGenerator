@@ -45,8 +45,9 @@
 #define WERKZEUG_DIALOG         ">WERKZEUG:"
 #define FRAESERAUFRUF_DIALOG    ">FAUFR:"
 #define FRAESERGERADE_DIALOG    ">FGERADE:"
-#define FRAESERBOGEN_DIALOG    ">FBOGEN:"
-#define FRAESERABFAHREN_DIALOG    ">FABFA:"
+#define FRAESERBOGEN_DIALOG     ">FBOGEN:"
+#define FRAESERABFAHREN_DIALOG  ">FABFA:"
+#define BOHREN_DIALOG           ">BOHREN"
 #define LISTENENDE              ">ENDE"
 //#define ENDE_ZEILE            "#ENDE#"
 
@@ -179,6 +180,7 @@
 #define WKZ_DREHZAHL        "[wN]"
 #define WKZ_ZUSTELLTIEFE    "[wZUTI]"
 #define WKZ_KANN_BOHREN     "[wKABO]"
+#define WKZ_KANN_FRAESEN    "[wKAFRAES]"
 #define WKZ_ENDE_EINTRAG    ";"
 
 
