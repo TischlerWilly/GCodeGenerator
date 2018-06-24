@@ -59,7 +59,8 @@ SOURCES += \
     Dialoge/dialog_import_ggf.cpp \
     Dialoge/dialog_kreis.cpp \
     Dialoge/dialog_strecke.cpp \
-    Dialoge/dialog_bogen.cpp
+    Dialoge/dialog_bogen.cpp \
+    Dialoge/dialog_bohren.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -112,7 +113,8 @@ HEADERS  += \
     Dialoge/dialog_import_ggf.h \
     Dialoge/dialog_kreis.h \
     Dialoge/dialog_strecke.h \
-    Dialoge/dialog_bogen.h
+    Dialoge/dialog_bogen.h \
+    Dialoge/dialog_bohren.h
 
 FORMS    += \
     mainwindow.ui \
@@ -133,4 +135,5 @@ FORMS    += \
     Dialoge/dialog_import_ggf.ui \
     Dialoge/dialog_kreis.ui \
     Dialoge/dialog_strecke.ui \
-    Dialoge/dialog_bogen.ui
+    Dialoge/dialog_bogen.ui \
+    Dialoge/dialog_bohren.ui
