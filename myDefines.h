@@ -177,8 +177,13 @@
 #define WKZ_NUTZLAENGE      "[wNUTZL]"
 #define WKZ_EINTAUCHVORSCHUB "[wFAN]"
 #define WKZ_VORSCHUB        "[wF]"
+#define WKZ_ANBOHRVORSCHUB  "[wANBOF]"
+#define WKZ_BOHRVORSCHUB    "[wBOF]"
 #define WKZ_DREHZAHL        "[wN]"
 #define WKZ_ZUSTELLTIEFE    "[wZUTI]"
+#define WKZ_BOANBOTI        "[wBOANBOTI]"   //Bohren Anbohrtiefe
+#define WKZ_BOREBOTI        "[wBOREBOTI]"   //Bohren Restbohrmaß
+#define WKZ_BOZUTI          "[wBOZUTI]"     //Bohren Zustellmaß
 #define WKZ_KANN_BOHREN     "[wKABO]"
 #define WKZ_KANN_FRAESEN    "[wKAFRAES]"
 #define WKZ_ENDE_EINTRAG    ";"

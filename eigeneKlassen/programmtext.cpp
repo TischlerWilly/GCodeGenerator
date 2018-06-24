@@ -2491,6 +2491,184 @@ void programmtext::aktualisiere_klartext_var_geo()
 
             klartext.zeilen_anhaengen(b.get_text());
             var.zeile_anhaengen(variablen);
+        }else if(zeile.contains(BOHREN_DIALOG))
+        {
+            QString tmp;
+            tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
+            tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+            tmp = ausdruck_auswerten(tmp);
+            if(tmp.toFloat() == true)
+            {
+                QString zeile_klartext;
+                zeile_klartext += BOHREN_DIALOG;
+                tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+                zeile_klartext += WKZ_NAME;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile_klartext += WKZ_DURCHMESSER;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += DURCHMESSER;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                if(!variablen.contains(DURCHMESSER))
+                {
+                    variablen += DURCHMESSER;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, DURCHMESSER, ENDE_EINTRAG);
+                    variablen.replace(DURCHMESSER+alterWert, DURCHMESSER+tmp);
+                }
+
+                tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                zeile_klartext += POSITION_X;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                if(!variablen.contains(POSITION_X))
+                {
+                    variablen += POSITION_X;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, POSITION_X, ENDE_EINTRAG);
+                    variablen.replace(POSITION_X+alterWert, POSITION_X+tmp);
+                }
+
+                tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                zeile_klartext += POSITION_Y;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                if(!variablen.contains(POSITION_Y))
+                {
+                    variablen += POSITION_Y;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, POSITION_Y, ENDE_EINTRAG);
+                    variablen.replace(POSITION_Y+alterWert, POSITION_Y+tmp);
+                }
+
+                tmp = text_mitte(zeile, BOHRTIEFE, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += BOHRTIEFE;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+                if(!variablen.contains(BOHRTIEFE))
+                {
+                    variablen += BOHRTIEFE;
+                    variablen += tmp;
+                    variablen += ENDE_EINTRAG;
+                }else
+                {
+                    QString alterWert = text_mitte(variablen, BOHRTIEFE, ENDE_EINTRAG);
+                    variablen.replace(BOHRTIEFE+alterWert, BOHRTIEFE+tmp);
+                }
+
+
+
+
+
+
+                tmp = text_mitte(zeile, ANBOHRTI, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += ANBOHRTI;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, RESTBOHRTI, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += RESTBOHRTI;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += ZUSTELLUNG;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += ANFAHRVORSCHUB;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += VORSCHUB;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, DREHZAHL, ENDE_EINTRAG);
+                if(tmp == "AUTO")
+                {
+                    //AUTO so weitergeben
+                }else
+                {
+                    tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                    tmp = ausdruck_auswerten(tmp);
+                }
+                zeile_klartext += DREHZAHL;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                klartext.zeilen_anhaengen(zeile_klartext);
+                var.zeile_anhaengen(variablen);
+            }else
+            {//Wenn AFB == 0;
+                klartext.zeilen_anhaengen(" ");//leere Zeile
+                var.zeile_anhaengen(variablen);
+            }
         }else
         {
             klartext.zeilen_anhaengen("");
@@ -3416,6 +3594,37 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.add_bogen(b);
 
                 geo.zeilenvorschub();
+            }else if(zeile.contains(BOHREN_DIALOG))
+            {
+                zylinder z;
+                punkt3d p3;
+                p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
+                p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
+                p3.set_z(werkstueckdicke);
+                z.set_mittelpunkt(p3);
+                z.set_hoehe(text_mitte(zeile, BOHRTIEFE, ENDE_EINTRAG));
+                z.set_radius(text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG));
+                z.set_radius(z.radius()/2); //Zeile davor weist DM zu
+                if(p3.z()-z.get_hoehe() <= 0)
+                {//Wenn Tasche durchgefräst ist
+                    z.set_farbe_fuellung(FARBE_WEISS);
+                }else
+                {
+                     z.set_farbe_fuellung(FARBE_BLAU);
+                }
+                geo.add_zylinder(z);
+
+                strecke s;
+                p3.set_y(z.mitte3d().y() - z.radius() - 2);
+                s.set_start(p3);
+                p3.set_y(z.mitte3d().y() + z.radius() + 2);
+                s.set_ende(p3);
+                geo.add_strecke(s);
+
+                s.drenen_um_mittelpunkt_2d(90,true);
+                geo.add_strecke(s);
+
+                geo.zeilenvorschub();
             }
         }
 
@@ -3801,6 +4010,12 @@ void programmtext::aktualisiere_anzeigetext()
         }else if(zeile.contains(BOGEN))
         {
             tmp += "CAD / Bogen";
+        }else if(zeile.contains(BOHREN_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
         }else if(zeile.contains(LISTENENDE))
         {
             tmp += "...";
@@ -3900,6 +4115,9 @@ void programmtext::aktualisiere_fkon()
         {
             fkon.zeilenvorschub();
         }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+        {
+            fkon.zeilenvorschub();
+        }else if(zeile.contains(BOHREN_DIALOG))
         {
             fkon.zeilenvorschub();
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG)  || \

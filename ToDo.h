@@ -5,32 +5,14 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.05.21"
+#define PROGRAMMVERSION     "2.2018.06.24"
 
 /*
 ----------Aktuell in Arbeit:
--->Dialog zum Bohren
-    ->WKZ-Magazin erweitern "kann Bohren" --> fertig
-    ->Dialog-Layout erstellen --> fertrig
-    ->ComboBox mit Leben füllen --> fertig
-        >hier werkzeugliste anfordern und nur die wkz auflisten die Bohren können --> fertig
-        >beim wechseln des wkz lineEditDM aktualisieren --> fertig
-    ->Dialog-Buttons beleben --> fertig
-    ->Tab3 = wkz mit leben füllen --> fertig
-    ->Signals und Slots vorbereiten --> fertig
-    ->Dialog mit Mainwindow verbinden --> fertig
+-->DEBUGGING Bohrung AUTO-Werte
 
-    ->Einbindung in die Kasse Programmtext
-        >AUTO-Werte möglich machen
-    ->Visualisierung möglich machen
-    ->GCode-Export möglich machen
-        >AUTO-Werte möglich machen
 
--->Erweiterung WKZ-Magazin um Option "kann fräsen" um Bohrer in Fräsdialogen auszuschließen
-    ->#define WKZ_KANN_FRAESEN    "[wKAFRAES]"
-    ->dialog_werkzeug.ui ergänzen
-    ->emit sendDialogData(msg, false, werkzeugnamen); austauschen gegen
-      emit sendDialogData(msg, false, wkznamen_nur_fraeser); (mainwindow.cpp)
+
 
 
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?

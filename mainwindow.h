@@ -126,7 +126,6 @@ private slots:
     void on_action4_Eck_in_Rechtecktasche_umwandeln_triggered();
     void on_actionRechtecktasche_in_4_Eck_umwandeln_triggered();
     void on_actionVerastzvariablen_triggered();
-
     void on_actionMakeBohren_triggered();
 
 public slots:

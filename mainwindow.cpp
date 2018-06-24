@@ -2086,7 +2086,7 @@ void MainWindow::on_actionMakeKreistasche_triggered()
         disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_Ktasche;
-        emit sendDialogData(msg, false, werkzeugnamen);
+        emit sendDialogData(msg, false, wkznamen_nur_fraeser);
         //emit sendDialogData(msg, false, wkznamen_nur_fraeser);
     }
 }
@@ -2103,7 +2103,7 @@ void MainWindow::on_actionMakeRechtecktasche_triggered()
         disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_Rtasche;
-        emit sendDialogData(msg, false, werkzeugnamen);
+        emit sendDialogData(msg, false, wkznamen_nur_fraeser);
     }
 }
 
@@ -2119,7 +2119,7 @@ void MainWindow::on_actionMakeFraeser_Aufruf_triggered()
         disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList, werkzeug)), 0, 0);
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList, werkzeug)), &faufruf, SLOT(getDialogData(QString, bool, QStringList, werkzeug)));
         QString msg = vorlage_Faufruf;
-        emit sendDialogData(msg, false, werkzeugnamen, w);
+        emit sendDialogData(msg, false, wkznamen_nur_fraeser, w);
     }
 }
 
@@ -3699,6 +3699,262 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             tmp = QString::fromStdString(tasche);
             gcode += tmp;
             gcode += "\n";
+        }else if(zeile.contains(BOHREN_DIALOG))
+        {
+            QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            if(aktives_wkz == NICHT_DEFINIERT)
+            {
+                aktives_wkz = werkzeugname;
+            }else if(aktives_wkz != werkzeugname)
+            {
+                QString tmp = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
+                ui->plainTextEdit_GCode->clear();
+                ui->plainTextEdit_GCode->insertPlainText(tmp);
+                QApplication::restoreOverrideCursor();
+                return;
+            }
+            //Vorschübe setzen etc.:
+            QString tmp;
+            QString werkzeug = werkzeugdaten(werkzeugname);
+            tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_ANBOHRVORSCHUB, ENDE_EINTRAG);
+            }
+            eintauchvorschub = tmp.toDouble();
+            tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_BOHRVORSCHUB, ENDE_EINTRAG);
+            }
+            vorschub = tmp.toDouble();
+            tmp = text_mitte(zeile, DREHZAHL, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_DREHZAHL, ENDE_EINTRAG);
+            }
+            drehzahl = tmp.toDouble();
+            tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_BOZUTI, ENDE_EINTRAG);
+            }
+            zustellmass = tmp.toDouble();
+
+            tmp = text_mitte(zeile, ANBOHRTI, ENDE_EINTRAG).toDouble();
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_BOANBOTI, ENDE_EINTRAG);
+            }
+            double anboti = tmp.toDouble();
+
+            tmp = text_mitte(zeile, RESTBOHRTI, ENDE_EINTRAG).toDouble();
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_BOREBOTI, ENDE_EINTRAG);
+            }
+            double reboti = tmp.toDouble();
+
+            double boti = text_mitte(zeile, BOHRTIEFE, ENDE_EINTRAG).toDouble();
+
+            if(boti != 0)
+            {
+                //Anfahrpunkt:
+                punkt3d startpunkt;
+                startpunkt.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
+                startpunkt.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
+                startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                gcode += "G0 X";
+                gcode += double_to_qstring(runden(startpunkt.x(),2));
+                gcode += " Y";
+                gcode += double_to_qstring(runden(startpunkt.y(),2));
+                gcode += " Z";
+                gcode += double_to_qstring(runden(startpunkt.z(),2));
+                gcode += " (Beginn der Bohrung)";
+                gcode += "\n";
+
+                if(boti < 0)
+                {
+                    boti = t.get_werkstueckdicke() - boti; //z.B. boti == -2 --> 19 - -2 == 19+2 == 21
+                }
+                if(zustellmass <= 0)
+                {
+                    zustellmass = boti;
+                }
+                if(anboti <= 0)
+                {
+                    anboti = zustellmass;
+                }
+                if(anboti > boti)
+                {
+                    anboti = zustellmass;
+                }
+                if(reboti <= 0)
+                {
+                    reboti = 0;
+                }
+                if(reboti > boti)
+                {
+                    reboti = 0;
+                }
+                double z;
+                QString ausfahren;
+                ausfahren += "G1 Z";
+                ausfahren += double_to_qstring(runden(t.get_werkstueckdicke()+2,2));
+                ausfahren += " F";
+                ausfahren += double_to_qstring(eintauchvorschub);
+                ausfahren += "\n";
+
+                if(boti > anboti + reboti)
+                {
+                    //Anbohren:
+                    z = t.get_werkstueckdicke() - anboti;
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(z,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += " (Anbohren)";
+                    gcode += "\n";
+                    gcode += ausfahren;
+
+                    if(reboti > 0)
+                    {
+                        double restmass;
+                        restmass = boti - anboti - reboti;
+                        restmass = restmass - zustellmass;
+
+                        while(restmass > 0)
+                        {
+                            //Zustellen:
+                            z = t.get_werkstueckdicke() - boti + reboti + restmass;
+                            gcode += "G1 Z";
+                            gcode += double_to_qstring(runden(z,2));
+                            gcode += " F";
+                            gcode += double_to_qstring(vorschub);
+                            gcode += " (Zustellen)";
+                            gcode += "\n";
+                            gcode += ausfahren;
+                            restmass = restmass - zustellmass;
+                        }
+                        //letzte Zustellung:
+                        z = t.get_werkstueckdicke() - boti + anboti;
+                        gcode += "G1 Z";
+                        gcode += double_to_qstring(runden(z,2));
+                        gcode += " F";
+                        gcode += double_to_qstring(vorschub);
+                        gcode += " (letzte Zustellung)";
+                        gcode += "\n";
+                        gcode += ausfahren;
+
+                        //Restborung:
+                        z = t.get_werkstueckdicke() - boti;
+                        gcode += "G1 Z";
+                        gcode += double_to_qstring(runden(z,2));
+                        gcode += " F";
+                        gcode += double_to_qstring(vorschub);
+                        gcode += " (Restbohrmass)";
+                        gcode += "\n";
+                        gcode += ausfahren;
+                    }else
+                    {
+                        double restmass;
+                        restmass = boti - anboti;
+                        restmass = restmass - zustellmass;
+
+                        while(restmass > 0)
+                        {
+                            //Zustellen:
+                            z = t.get_werkstueckdicke() - boti + reboti + restmass;
+                            gcode += "G1 Z";
+                            gcode += double_to_qstring(runden(z,2));
+                            gcode += " F";
+                            gcode += double_to_qstring(vorschub);
+                            gcode += " (Zustellen)";
+                            gcode += "\n";
+                            gcode += ausfahren;
+                            restmass = restmass - zustellmass;
+                        }
+                        //Restborung:
+                        z = t.get_werkstueckdicke() - boti;
+                        gcode += "G1 Z";
+                        gcode += double_to_qstring(runden(z,2));
+                        gcode += " F";
+                        gcode += double_to_qstring(vorschub);
+                        gcode += " (Restbohrtiefe)";
+                        gcode += "\n";
+                        gcode += ausfahren;
+                    }
+                }else if(boti == anboti + reboti)
+                {
+                    //heißt keine Zustellungen:
+                    //Anbohren:
+                    z = t.get_werkstueckdicke() - anboti;
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(z,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += " (Anbohren)";
+                    gcode += "\n";
+                    gcode += ausfahren;
+                    if(reboti > 0)
+                    {
+                        //Restborung:
+                        z = t.get_werkstueckdicke() - boti;
+                        gcode += "G1 Z";
+                        gcode += double_to_qstring(runden(z,2));
+                        gcode += " F";
+                        gcode += double_to_qstring(vorschub);
+                        gcode += " (Restbohrmass)";
+                        gcode += "\n";
+                        gcode += ausfahren;
+                    }
+                }else if(boti-anboti > 0)
+                {
+                    //heißt keine Zustellungen und kein definiertes Restbohrmaß:
+                    //Anbohren:
+                    z = t.get_werkstueckdicke() - anboti;
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(z,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(eintauchvorschub);
+                    gcode += " (Anbohren)";
+                    gcode += "\n";
+                    gcode += ausfahren;
+                    //Restborung:
+                    z = t.get_werkstueckdicke() - boti;
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(z,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(vorschub);
+                    gcode += " (Resttiefe)";
+                    gcode += "\n";
+                    gcode += ausfahren;
+                }else
+                {
+                    //heiß Bohrung in einem Zug:
+                    //Restborung:
+                    z = t.get_werkstueckdicke() - boti;
+                    gcode += "G1 Z";
+                    gcode += double_to_qstring(runden(z,2));
+                    gcode += " F";
+                    gcode += double_to_qstring(vorschub);
+                    gcode += "\n";
+                    gcode += ausfahren;
+                }
+
+                //Abfahrpunkt:
+                gcode += "G0 X";
+                gcode += double_to_qstring(runden(startpunkt.x(),2));
+                gcode += " Y";
+                gcode += double_to_qstring(runden(startpunkt.y(),2));
+                gcode += " Z";
+                gcode += double_to_qstring(runden(startpunkt.z(),2));
+                gcode += " (Abfahren)";
+                gcode += "\n";
+
+                gcode += tmp;
+                gcode += "\n";
+            }
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
             QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);

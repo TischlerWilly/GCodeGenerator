@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Bohren</string>
   </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
@@ -505,9 +508,10 @@
   <tabstop>lineEdit_x</tabstop>
   <tabstop>lineEdit_y</tabstop>
   <tabstop>lineEdit_boti</tabstop>
-  <tabstop>pushButton_abbrechen</tabstop>
-  <tabstop>pushButton_speichern</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>pushButton_ok</tabstop>
+  <tabstop>pushButton_speichern</tabstop>
+  <tabstop>pushButton_abbrechen</tabstop>
   <tabstop>lineEdit_anboti</tabstop>
   <tabstop>lineEdit_zust</tabstop>
   <tabstop>lineEdit_reboma</tabstop>
@@ -517,7 +521,6 @@
   <tabstop>lineEdit_kom</tabstop>
   <tabstop>lineEdit_bez</tabstop>
   <tabstop>lineEdit_afb</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

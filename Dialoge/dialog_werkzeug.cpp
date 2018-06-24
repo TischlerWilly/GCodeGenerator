@@ -124,6 +124,36 @@ QString Dialog_Werkzeug::dialogDataToString()
     }
     msg += ENDE_EINTRAG;
 
+    msg += WKZ_KANN_FRAESEN;
+    if(ui->checkBox_kann_fraesen->isChecked())
+    {
+        msg += "1";
+    }else
+    {
+        msg += "0";
+    }
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_ANBOHRVORSCHUB;
+    msg += ui->lineEdit_anbohrvorschub->text();
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_BOHRVORSCHUB;
+    msg += ui->lineEdit_bohrvorschub->text();
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_BOANBOTI;
+    msg += ui->lineEdit_anbohrtiefe->text();
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_BOREBOTI;
+    msg += ui->lineEdit_restbohrtiefe->text();
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_BOZUTI;
+    msg += ui->lineEdit_bohrzustelltiefe->text();
+    msg += ENDE_EINTRAG;
+
     msg += ENDE_ZEILE;
     return msg;
 }
@@ -151,8 +181,13 @@ void Dialog_Werkzeug::getDialogData(QString text, bool openToChangeData)
     ui->lineEdit__Nutzlaenge->setText(selektiereEintrag(text, WKZ_NUTZLAENGE, ENDE_EINTRAG));
     ui->lineEdit_Eintauchvorschub->setText(selektiereEintrag(text, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_Vorschub_XY->setText(selektiereEintrag(text, WKZ_VORSCHUB, ENDE_EINTRAG));
+    ui->lineEdit_anbohrvorschub->setText(selektiereEintrag(text, WKZ_ANBOHRVORSCHUB, ENDE_EINTRAG));
+    ui->lineEdit_bohrvorschub->setText(selektiereEintrag(text, WKZ_BOHRVORSCHUB, ENDE_EINTRAG));
     ui->lineEdit_Drehzahl->setText(selektiereEintrag(text, WKZ_DREHZAHL, ENDE_EINTRAG));
     ui->lineEdit_zustelltiefe->setText(selektiereEintrag(text, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG));
+    ui->lineEdit_anbohrtiefe->setText(selektiereEintrag(text, WKZ_BOANBOTI, ENDE_EINTRAG));
+    ui->lineEdit_restbohrtiefe->setText(selektiereEintrag(text, WKZ_BOREBOTI, ENDE_EINTRAG));
+    ui->lineEdit_bohrzustelltiefe->setText(selektiereEintrag(text, WKZ_BOZUTI, ENDE_EINTRAG));
     int index;
     index = ui->comboBox_Drehrichtung->findText(selektiereEintrag(text, WKZ_DREHRICHTUNG, ENDE_EINTRAG));
     ui->comboBox_Drehrichtung->setCurrentIndex(index);
@@ -163,6 +198,14 @@ void Dialog_Werkzeug::getDialogData(QString text, bool openToChangeData)
     }else
     {
         ui->checkBox_kann_bohren->setChecked(false);
+    }
+    QString kafr = selektiereEintrag(text, WKZ_KANN_FRAESEN, ENDE_EINTRAG);
+    if(kafr == "1")
+    {
+        ui->checkBox_kann_fraesen->setChecked(true);
+    }else
+    {
+        ui->checkBox_kann_fraesen->setChecked(false);
     }
 
     //QPixmap pix("./werkzeugbilder/testbild.jpg");
@@ -453,6 +496,10 @@ QString Dialog_Werkzeug::getDefault()
 
     msg += WKZ_KANN_BOHREN;
     msg += "0";
+    msg += ENDE_EINTRAG;
+
+    msg += WKZ_KANN_FRAESEN;
+    msg += "1";
     msg += ENDE_EINTRAG;
 
     msg += ENDE_ZEILE;
