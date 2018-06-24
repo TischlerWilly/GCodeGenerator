@@ -3741,14 +3741,14 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             }
             zustellmass = tmp.toDouble();
 
-            tmp = text_mitte(zeile, ANBOHRTI, ENDE_EINTRAG).toDouble();
+            tmp = text_mitte(zeile, ANBOHRTI, ENDE_EINTRAG);
             if(tmp == "AUTO")
             {
                 tmp = text_mitte(werkzeug, WKZ_BOANBOTI, ENDE_EINTRAG);
             }
             double anboti = tmp.toDouble();
 
-            tmp = text_mitte(zeile, RESTBOHRTI, ENDE_EINTRAG).toDouble();
+            tmp = text_mitte(zeile, RESTBOHRTI, ENDE_EINTRAG);
             if(tmp == "AUTO")
             {
                 tmp = text_mitte(werkzeug, WKZ_BOREBOTI, ENDE_EINTRAG);
@@ -3837,7 +3837,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                             restmass = restmass - zustellmass;
                         }
                         //letzte Zustellung:
-                        z = t.get_werkstueckdicke() - boti + anboti;
+                        z = t.get_werkstueckdicke() - boti + reboti;
                         gcode += "G1 Z";
                         gcode += double_to_qstring(runden(z,2));
                         gcode += " F";
@@ -3952,7 +3952,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 gcode += " (Abfahren)";
                 gcode += "\n";
 
-                gcode += tmp;
                 gcode += "\n";
             }
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG))

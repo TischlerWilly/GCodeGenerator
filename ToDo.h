@@ -9,7 +9,10 @@
 
 /*
 ----------Aktuell in Arbeit:
--->DEBUGGING Bohrung AUTO-Werte
+-->Umwandeln Kreis in Bohrung
+-->Umwandeln Bohrung in Kreis
+-->Umwandeln Bohrung in KTA
+-->Umwandeln KTA in Bohrung
 
 
 
