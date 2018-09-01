@@ -556,10 +556,11 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
         text_zeilenweise tzfkon;
         QString aktuelle_zeile = text.zeile(zeinumbeg);
+
         if(aktuelle_zeile.contains(STRECKE))
         {
             strecke s(aktuelle_zeile);
-            QString faufr = vorlage_faufr;
+            QString faufr = vorlage_faufr;            
 
             QString tmp;
             tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
@@ -572,11 +573,32 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
             QString fgerde = vorlage_fgerade;
             tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+            if(s.startp().x() == s.endp().x())
+            {
+                QString wert = "X";
+                fgerde.replace(tmp, POSITION_X + wert + ENDE_EINTRAG);
+            }else
+            {
+                fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+            }
             tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+            if(s.startp().y() == s.endp().y())
+            {
+                QString wert = "Y";
+                fgerde.replace(tmp, POSITION_Y + wert + ENDE_EINTRAG);
+            }else
+            {
+                fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+            }
             tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+            if(s.startp().z() == s.endp().z())
+            {
+                QString wert = "Z";
+                fgerde.replace(tmp, POSITION_Z + wert + ENDE_EINTRAG);
+            }else
+            {
+                fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+            }
             tzfkon.zeile_anhaengen(fgerde);
             pend = s.endp();
         }else if(aktuelle_zeile.contains(BOGEN))
@@ -585,7 +607,7 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
             QString faufr = vorlage_faufr;
 
             QString tmp;
-            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
+            tmp = POSITION_X + text_mitte(faufr, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;            
             faufr.replace(tmp, POSITION_X + b.start().x_QString() + ENDE_EINTRAG);
             tmp = POSITION_Y + text_mitte(faufr, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
             faufr.replace(tmp, POSITION_Y + b.start().y_QString() + ENDE_EINTRAG);
@@ -595,11 +617,32 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
             QString fbogen = vorlage_fbogen;
             tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+            if(b.start().x() == b.ende().x())
+            {
+                QString wert = "X";
+                fbogen.replace(tmp, POSITION_X + wert + ENDE_EINTRAG);
+            }else
+            {
+                fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+            }
             tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+            if(b.start().y() == b.ende().y())
+            {
+                QString wert = "Y";
+                fbogen.replace(tmp, POSITION_Y + wert + ENDE_EINTRAG);
+            }else
+            {
+                fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+            }
             tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
-            fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+            if(b.start().z() == b.ende().z())
+            {
+                QString wert = "Z";
+                fbogen.replace(tmp, POSITION_Z + wert + ENDE_EINTRAG);
+            }else
+            {
+                fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+            }
             tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
             fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
             tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
@@ -640,11 +683,32 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
                 QString fgerde = vorlage_fgerade;
                 tmp = POSITION_X + text_mitte(fgerde, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+                if(s.startp().x() == s.endp().x())
+                {
+                    QString wert = "X";
+                    fgerde.replace(tmp, POSITION_X + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fgerde.replace(tmp, POSITION_X + s.endp().x_QString() + ENDE_EINTRAG);
+                }
                 tmp = POSITION_Y + text_mitte(fgerde, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+                if(s.startp().y() == s.endp().y())
+                {
+                    QString wert = "Y";
+                    fgerde.replace(tmp, POSITION_Y + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fgerde.replace(tmp, POSITION_Y + s.endp().y_QString() + ENDE_EINTRAG);
+                }
                 tmp = POSITION_Z + text_mitte(fgerde, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+                if(s.startp().z() == s.endp().z())
+                {
+                    QString wert = "Z";
+                    fgerde.replace(tmp, POSITION_Z + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fgerde.replace(tmp, POSITION_Z + s.endp().z_QString() + ENDE_EINTRAG);
+                }
                 tzfkon.zeile_anhaengen(fgerde);
                 pend = s.endp();
             }else if(aktuelle_zeile.contains(BOGEN))
@@ -668,11 +732,32 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
                 QString fbogen = vorlage_fbogen;
                 tmp = POSITION_X + text_mitte(fbogen, POSITION_X, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+                if(b.start().x() == b.ende().x())
+                {
+                    QString wert = "X";
+                    fbogen.replace(tmp, POSITION_X + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fbogen.replace(tmp, POSITION_X + b.ende().x_QString() + ENDE_EINTRAG);
+                }
                 tmp = POSITION_Y + text_mitte(fbogen, POSITION_Y, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+                if(b.start().y() == b.ende().y())
+                {
+                    QString wert = "Y";
+                    fbogen.replace(tmp, POSITION_Y + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fbogen.replace(tmp, POSITION_Y + b.ende().y_QString() + ENDE_EINTRAG);
+                }
                 tmp = POSITION_Z + text_mitte(fbogen, POSITION_Z, ENDE_EINTRAG) + ENDE_EINTRAG;
-                fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+                if(b.start().z() == b.ende().z())
+                {
+                    QString wert = "Z";
+                    fbogen.replace(tmp, POSITION_Z + wert + ENDE_EINTRAG);
+                }else
+                {
+                    fbogen.replace(tmp, POSITION_Z + b.ende().z_QString() + ENDE_EINTRAG);
+                }
                 tmp = RADIUS + text_mitte(fbogen, RADIUS, ENDE_EINTRAG) + ENDE_EINTRAG;
                 fbogen.replace(tmp, RADIUS + b.rad_qString() + ENDE_EINTRAG);
                 tmp = BOGENRICHTUNG + text_mitte(fbogen, BOGENRICHTUNG, ENDE_EINTRAG) + ENDE_EINTRAG;
