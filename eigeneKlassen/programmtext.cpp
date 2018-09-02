@@ -1386,7 +1386,8 @@ void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
            zeile.contains(RECHTECKTASCHE_DIALOG)    || \
            zeile.contains(FRAESERAUFRUF_DIALOG)     || \
            zeile.contains(FRAESERGERADE_DIALOG)     || \
-           zeile.contains(FRAESERBOGEN_DIALOG)              )
+           zeile.contains(FRAESERBOGEN_DIALOG)      || \
+           zeile.contains(BOHREN_DIALOG)             )
         {
             QString xalt;
             xalt = POSITION_X;
@@ -1429,6 +1430,129 @@ void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
+{
+    for(uint i=zeinumbeg; i<=zeinumend ; i++)
+    {
+        QString zeile = text.zeile(i);
+        QString zeilekt = klartext.zeile(i);
+
+        if(zeile.contains(KREISTASCHE_DIALOG)       || \
+           zeile.contains(RECHTECKTASCHE_DIALOG)    || \
+           zeile.contains(FRAESERAUFRUF_DIALOG)     || \
+           zeile.contains(FRAESERGERADE_DIALOG)     || \
+           zeile.contains(FRAESERBOGEN_DIALOG)      || \
+           zeile.contains(BOHREN_DIALOG)             )
+        {
+            QString xalt;
+            xalt = POSITION_X;
+            xalt += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            xalt += ENDE_EINTRAG;
+            double mass = text_mitte(zeilekt, POSITION_X, ENDE_EINTRAG).toDouble();
+            mass = werkstuecklaenge - mass;
+            QString xneu;
+            xneu = POSITION_X;
+            xneu += double_to_qstring(mass);
+            xneu += ENDE_EINTRAG;
+            zeile.replace(xalt, xneu);
+
+            if(zeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                QString bogenrichtung = text_mitte(zeile, BOGENRICHTUNG, ENDE_EINTRAG);
+                if(bogenrichtung == BOGENRICHTUNG_IM_UZS)
+                {
+                    QString richtung_alt;
+                    richtung_alt  = BOGENRICHTUNG;
+                    richtung_alt += BOGENRICHTUNG_IM_UZS;
+                    richtung_alt += ENDE_EINTRAG;
+                    QString richtung_neu;
+                    richtung_neu  = BOGENRICHTUNG;
+                    richtung_neu += BOGENRICHTUNG_IM_GUZS;
+                    richtung_neu += ENDE_EINTRAG;
+                    zeile.replace(richtung_alt, richtung_neu);
+                }else
+                {
+                    QString richtung_alt;
+                    richtung_alt  = BOGENRICHTUNG;
+                    richtung_alt += BOGENRICHTUNG_IM_GUZS;
+                    richtung_alt += ENDE_EINTRAG;
+                    QString richtung_neu;
+                    richtung_neu  = BOGENRICHTUNG;
+                    richtung_neu += BOGENRICHTUNG_IM_UZS;
+                    richtung_neu += ENDE_EINTRAG;
+                    zeile.replace(richtung_alt, richtung_neu);
+                }
+            }
+        }
+        //Spiegeln von CAD auch noch möglich machen....
+        text.zeile_ersaetzen(i, zeile);
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
+
+void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
+{
+    for(uint i=zeinumbeg; i<=zeinumend ; i++)
+    {
+        QString zeile = text.zeile(i);
+        QString zeilekt = klartext.zeile(i);
+
+        if(zeile.contains(KREISTASCHE_DIALOG)       || \
+           zeile.contains(RECHTECKTASCHE_DIALOG)    || \
+           zeile.contains(FRAESERAUFRUF_DIALOG)     || \
+           zeile.contains(FRAESERGERADE_DIALOG)     || \
+           zeile.contains(FRAESERBOGEN_DIALOG)      || \
+           zeile.contains(BOHREN_DIALOG)             )
+        {
+            QString yalt;
+            yalt = POSITION_Y;
+            yalt += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            yalt += ENDE_EINTRAG;
+            double mass = text_mitte(zeilekt, POSITION_Y, ENDE_EINTRAG).toDouble();
+            mass = werkstuecklaenge - mass;
+            QString yneu;
+            yneu = POSITION_Y;
+            yneu += double_to_qstring(mass);
+            yneu += ENDE_EINTRAG;
+            zeile.replace(yalt, yneu);
+
+            if(zeile.contains(FRAESERBOGEN_DIALOG))
+            {
+                QString bogenrichtung = text_mitte(zeile, BOGENRICHTUNG, ENDE_EINTRAG);
+                if(bogenrichtung == BOGENRICHTUNG_IM_UZS)
+                {
+                    QString richtung_alt;
+                    richtung_alt  = BOGENRICHTUNG;
+                    richtung_alt += BOGENRICHTUNG_IM_UZS;
+                    richtung_alt += ENDE_EINTRAG;
+                    QString richtung_neu;
+                    richtung_neu  = BOGENRICHTUNG;
+                    richtung_neu += BOGENRICHTUNG_IM_GUZS;
+                    richtung_neu += ENDE_EINTRAG;
+                    zeile.replace(richtung_alt, richtung_neu);
+                }else
+                {
+                    QString richtung_alt;
+                    richtung_alt  = BOGENRICHTUNG;
+                    richtung_alt += BOGENRICHTUNG_IM_GUZS;
+                    richtung_alt += ENDE_EINTRAG;
+                    QString richtung_neu;
+                    richtung_neu  = BOGENRICHTUNG;
+                    richtung_neu += BOGENRICHTUNG_IM_UZS;
+                    richtung_neu += ENDE_EINTRAG;
+                    zeile.replace(richtung_alt, richtung_neu);
+                }
+            }
+        }
+        //Spiegeln von CAD auch noch möglich machen....
+        text.zeile_ersaetzen(i, zeile);
+    }
+    aktualisiere_klartext_var_geo();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+}
 //------------------------------------------------------------
 //private:
 

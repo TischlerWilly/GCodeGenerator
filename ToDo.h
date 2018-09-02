@@ -14,19 +14,22 @@
 -->Umwandeln Bohrung in KTA
 -->Umwandeln KTA in Bohrung
 
+-->spiegeln:
+    ->Funktionen fertig stellen:
+        void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
+        void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
 
 
 
 
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
     ->noch nicht genauer heraus gefunden wodurch der Import-Fehler verursacht wurde
-
+-->DXF-Import derzeit nur aus LibreCAD 1.0.2 möglich
 
 
 ----------Ideen für neue Dialoge:
 -->Dialog Include
--->Dialog Bearbeitung spiegeln
--->Dialog Bearbeitung drehen
+-->drehen
 
 
 

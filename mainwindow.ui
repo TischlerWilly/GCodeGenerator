@@ -265,6 +265,9 @@
     <addaction name="actionFraesStartpunkt_nach"/>
     <addaction name="separator"/>
     <addaction name="actionVerastzvariablen"/>
+    <addaction name="separator"/>
+    <addaction name="actionSpiegeln_vertikel"/>
+    <addaction name="actionSpiegeln_horizontal"/>
    </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuBearbeiten"/>
@@ -508,12 +511,12 @@
   </action>
   <action name="import_GGF">
    <property name="text">
-    <string>aus GGF-Datei</string>
+    <string>GGF</string>
    </property>
   </action>
   <action name="import_DXF">
    <property name="text">
-    <string>aus DXF-Datei</string>
+    <string>DXF (LibreCad 1.0.2)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -616,6 +619,16 @@
   <action name="actionMakeBohren">
    <property name="text">
     <string>Bohren</string>
+   </property>
+  </action>
+  <action name="actionSpiegeln_vertikel">
+   <property name="text">
+    <string>spiegeln vertikel</string>
+   </property>
+  </action>
+  <action name="actionSpiegeln_horizontal">
+   <property name="text">
+    <string>spiegeln horizontal</string>
    </property>
   </action>
  </widget>

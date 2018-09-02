@@ -189,6 +189,8 @@ public:
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
     void versatzvar(uint zeinumbeg, uint zeinumend);
+    void spiegeln_verti(uint zeinumbeg, uint zeinumend);
+    void spiegeln_hori(uint zeinumbeg, uint zeinumend);
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
