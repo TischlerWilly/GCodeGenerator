@@ -851,6 +851,66 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
     aktualisiere_anzeigetext();
 }
 
+text_zeilenweise programmtext::fkon_use_values(text_zeilenweise cam)
+{
+    //Wo möglich Variablen statt fixer Werte eintragen:
+
+    //Erste Zeile ist Fräseraufruf:
+    double xvor = text_mitte(cam.zeile(1), POSITION_X, ENDE_EINTRAG).toDouble();
+    double yvor = text_mitte(cam.zeile(1), POSITION_Y, ENDE_EINTRAG).toDouble();
+    double zvor = text_mitte(cam.zeile(1), POSITION_Z, ENDE_EINTRAG).toDouble();
+
+    //Mit der 2. Zeile beginnt die Fräsbahn:
+    for(uint i=2; i<=cam.zeilenanzahl() ;i++)
+    {
+        QString zeile = cam.zeile(i);
+        double xakt = text_mitte(zeile, POSITION_X, ENDE_EINTRAG).toDouble();
+        double yakt = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG).toDouble();
+        double zakt = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG).toDouble();
+        if(xvor == xakt)
+        {
+            QString vor;
+            vor += POSITION_X;
+            vor += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
+            vor += ENDE_EINTRAG;
+            QString nach;
+            nach += POSITION_X;
+            nach += "X";
+            nach += ENDE_EINTRAG;
+            zeile.replace(vor, nach);
+        }
+        if(yvor == yakt)
+        {
+            QString vor;
+            vor += POSITION_Y;
+            vor += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
+            vor += ENDE_EINTRAG;
+            QString nach;
+            nach += POSITION_Y;
+            nach += "Y";
+            nach += ENDE_EINTRAG;
+            zeile.replace(vor, nach);
+        }
+        if(zvor == zakt)
+        {
+            QString vor;
+            vor += POSITION_Z;
+            vor += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            vor += ENDE_EINTRAG;
+            QString nach;
+            nach += POSITION_Z;
+            nach += "Z";
+            nach += ENDE_EINTRAG;
+            zeile.replace(vor, nach);
+        }
+        cam.zeile_ersaetzen(i, zeile);
+        xvor = xakt;
+        yvor = yakt;
+        zvor = zakt;
+    }
+    return cam;
+}
+
 void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
 {
     //Inhalt der Dialoge merken:
@@ -930,6 +990,8 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
             }
         }
     }
+    //Wo möglich Variablen statt fixer Werte eintragen:
+    tzcam = fkon_use_values(tzcam);
 
     //Änderungen zurück in programmtext schreiben:
     text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
@@ -1008,7 +1070,8 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     //geänderten Fräseraufruf am Anfang einfügen:
     tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
 
-
+    //Wo möglich Variablen statt fixer Werte eintragen:
+    tzcam_t = fkon_use_values(tzcam_t);
 
     //Änderungen zurück in programmtext schreiben:
     text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
@@ -1090,6 +1153,9 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     tzcam_t.zeile_vorwegsetzen(camvorabfa_t);
     //geänderten Fräseraufruf am Anfang einfügen:
     tzcam_t.zeile_vorwegsetzen(aufruf_t_neu);
+
+    //Wo möglich Variablen statt fixer Werte eintragen:
+    tzcam_t = fkon_use_values(tzcam_t);
 
     //Änderungen zurück in programmtext schreiben:
     text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
@@ -1482,9 +1548,21 @@ void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
                     richtung_neu += ENDE_EINTRAG;
                     zeile.replace(richtung_alt, richtung_neu);
                 }
+            }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+            {
+                double drewinkel = text_mitte(zeilekt, WINKEL, ENDE_EINTRAG).toDouble();
+                drewinkel = 180 - drewinkel;
+                QString alt;
+                alt  = WINKEL;
+                alt += text_mitte(zeile, WINKEL, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                QString neu;
+                neu  = WINKEL;
+                neu += double_to_qstring(drewinkel);
+                neu += ENDE_EINTRAG;
+                zeile.replace(alt, neu);
             }
         }
-        //Spiegeln von CAD auch noch möglich machen....
         text.zeile_ersaetzen(i, zeile);
     }
     aktualisiere_klartext_var_geo();
@@ -1511,7 +1589,7 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
             yalt += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
             yalt += ENDE_EINTRAG;
             double mass = text_mitte(zeilekt, POSITION_Y, ENDE_EINTRAG).toDouble();
-            mass = werkstuecklaenge - mass;
+            mass = werkstueckbreite - mass;
             QString yneu;
             yneu = POSITION_Y;
             yneu += double_to_qstring(mass);
@@ -1544,9 +1622,21 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
                     richtung_neu += ENDE_EINTRAG;
                     zeile.replace(richtung_alt, richtung_neu);
                 }
+            }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+            {
+                double drewinkel = text_mitte(zeilekt, WINKEL, ENDE_EINTRAG).toDouble();
+                drewinkel = 180 - drewinkel;
+                QString alt;
+                alt  = WINKEL;
+                alt += text_mitte(zeile, WINKEL, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                QString neu;
+                neu  = WINKEL;
+                neu += double_to_qstring(drewinkel);
+                neu += ENDE_EINTRAG;
+                zeile.replace(alt, neu);
             }
         }
-        //Spiegeln von CAD auch noch möglich machen....
         text.zeile_ersaetzen(i, zeile);
     }
     aktualisiere_klartext_var_geo();

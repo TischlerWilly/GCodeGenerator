@@ -623,12 +623,12 @@
   </action>
   <action name="actionSpiegeln_vertikel">
    <property name="text">
-    <string>spiegeln vertikel</string>
+    <string>spiegeln vertikel (CAM)</string>
    </property>
   </action>
   <action name="actionSpiegeln_horizontal">
    <property name="text">
-    <string>spiegeln horizontal</string>
+    <string>spiegeln horizontal (CAM)</string>
    </property>
   </action>
  </widget>

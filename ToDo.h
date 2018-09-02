@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.06.24"
+#define PROGRAMMVERSION     "2.2018.09.02"
 
 /*
 ----------Aktuell in Arbeit:
@@ -14,10 +14,6 @@
 -->Umwandeln Bohrung in KTA
 -->Umwandeln KTA in Bohrung
 
--->spiegeln:
-    ->Funktionen fertig stellen:
-        void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
-        void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
 
 
 

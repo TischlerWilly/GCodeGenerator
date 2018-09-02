@@ -6452,7 +6452,28 @@ void MainWindow::on_actionSpiegeln_vertikel_triggered()
             {
                 t.spiegeln_verti(row_erstes+1, row_erstes+items_menge);
                 aktualisiere_anzeigetext();
+                //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
+                text_zeilenweise faufruf_zeinum;
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    if(zeile.contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
+                    }
+                }
+                //Fräsrichtung umkehren:
+                for(uint i=1; i<=faufruf_zeinum.zeilenanzahl() ;i++)
+                {
+                    ui->listWidget_Programmliste->setCurrentRow(faufruf_zeinum.zeile(i).toInt());
+                    on_actionFraesrichtung_umkehren_triggered();
+                }
+                //Vorherige Auswahl wieder herstellen:
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    ui->listWidget_Programmliste->item(i)->setSelected(true);
+                }
                 vorschauAktualisieren();
             }
         }else
@@ -6492,7 +6513,28 @@ void MainWindow::on_actionSpiegeln_horizontal_triggered()
             {
                 t.spiegeln_hori(row_erstes+1, row_erstes+items_menge);
                 aktualisiere_anzeigetext();
+                //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
+                text_zeilenweise faufruf_zeinum;
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    if(zeile.contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
+                    }
+                }
+                //Fräsrichtung umkehren:
+                for(uint i=1; i<=faufruf_zeinum.zeilenanzahl() ;i++)
+                {
+                    ui->listWidget_Programmliste->setCurrentRow(faufruf_zeinum.zeile(i).toInt());
+                    on_actionFraesrichtung_umkehren_triggered();
+                }
+                //Vorherige Auswahl wieder herstellen:
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    ui->listWidget_Programmliste->item(i)->setSelected(true);
+                }
                 vorschauAktualisieren();
             }
         }else

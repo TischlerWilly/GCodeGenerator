@@ -252,6 +252,8 @@ private:
             void    aktualisiere_fkon();
             void    aktualisiere_fraeserdarst();
 
+            text_zeilenweise fkon_use_values(text_zeilenweise cam);
+
 
 
 
