@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.06.24"
+#define PROGRAMMVERSION     "2.2018.09.02"
 
 /*
 ----------Aktuell in Arbeit:
@@ -20,13 +20,12 @@
 
 -->BUG: DXF-Import fehlerhaft wenn CAD Blöcke aus FreeCAD enthällt?
     ->noch nicht genauer heraus gefunden wodurch der Import-Fehler verursacht wurde
-
+-->DXF-Import derzeit nur aus LibreCAD 1.0.2 möglich
 
 
 ----------Ideen für neue Dialoge:
 -->Dialog Include
--->Dialog Bearbeitung spiegeln
--->Dialog Bearbeitung drehen
+-->drehen
 
 
 

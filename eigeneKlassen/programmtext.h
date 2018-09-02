@@ -189,6 +189,8 @@ public:
 
     bool cagleich(punkt3d p1, punkt3d p2, double tolleranz);
     void versatzvar(uint zeinumbeg, uint zeinumend);
+    void spiegeln_verti(uint zeinumbeg, uint zeinumend);
+    void spiegeln_hori(uint zeinumbeg, uint zeinumend);
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
@@ -249,6 +251,8 @@ private:
             void    aktualisiere_wkz();
             void    aktualisiere_fkon();
             void    aktualisiere_fraeserdarst();
+
+            text_zeilenweise fkon_use_values(text_zeilenweise cam);
 
 
 

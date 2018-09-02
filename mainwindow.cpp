@@ -6424,6 +6424,128 @@ void MainWindow::on_actionVerastzvariablen_triggered()
     }
     QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_actionSpiegeln_vertikel_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
+            }
+            if(items_menge >= 1)
+            {
+                t.spiegeln_verti(row_erstes+1, row_erstes+items_menge);
+                aktualisiere_anzeigetext();
+                //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
+                text_zeilenweise faufruf_zeinum;
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    if(zeile.contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
+                    }
+                }
+                //Fräsrichtung umkehren:
+                for(uint i=1; i<=faufruf_zeinum.zeilenanzahl() ;i++)
+                {
+                    ui->listWidget_Programmliste->setCurrentRow(faufruf_zeinum.zeile(i).toInt());
+                    on_actionFraesrichtung_umkehren_triggered();
+                }
+                //Vorherige Auswahl wieder herstellen:
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    ui->listWidget_Programmliste->item(i)->setSelected(true);
+                }
+                vorschauAktualisieren();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+            mb.exec();
+        }
+    }
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionSpiegeln_horizontal_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        if((ui->listWidget_Programmliste->currentIndex().isValid())  &&  \
+                (ui->listWidget_Programmliste->currentItem()->isSelected()))
+        {
+            QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+            int items_menge = items.count();
+            int row_erstes = 0;//Nummer des ersten Elementes
+            for(int i=0; i<ui->listWidget_Programmliste->count() ;i++)
+            {
+                if(ui->listWidget_Programmliste->item(i)->isSelected())
+                {
+                    row_erstes = i;
+                    break;
+                }
+            }
+            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            {
+                items_menge = items_menge-1;
+            }
+            if(items_menge >= 1)
+            {
+                t.spiegeln_hori(row_erstes+1, row_erstes+items_menge);
+                aktualisiere_anzeigetext();
+                //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
+                text_zeilenweise faufruf_zeinum;
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    if(zeile.contains(FRAESERAUFRUF_DIALOG))
+                    {
+                        faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
+                    }
+                }
+                //Fräsrichtung umkehren:
+                for(uint i=1; i<=faufruf_zeinum.zeilenanzahl() ;i++)
+                {
+                    ui->listWidget_Programmliste->setCurrentRow(faufruf_zeinum.zeile(i).toInt());
+                    on_actionFraesrichtung_umkehren_triggered();
+                }
+                //Vorherige Auswahl wieder herstellen:
+                ui->listWidget_Programmliste->setCurrentRow(row_erstes);
+                for(int i=row_erstes; i<row_erstes+items_menge ;i++)
+                {
+                    ui->listWidget_Programmliste->item(i)->setSelected(true);
+                }
+                vorschauAktualisieren();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+            mb.exec();
+        }
+    }
+    QApplication::restoreOverrideCursor();
+}
 //---------------------------------------------------nicht zugeordnet
 int MainWindow::loadToolInteger(QString keyword, int index)
 {
@@ -6806,6 +6928,8 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
 
 
 

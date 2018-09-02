@@ -127,6 +127,8 @@ private slots:
     void on_actionRechtecktasche_in_4_Eck_umwandeln_triggered();
     void on_actionVerastzvariablen_triggered();
     void on_actionMakeBohren_triggered();
+    void on_actionSpiegeln_vertikel_triggered();
+    void on_actionSpiegeln_horizontal_triggered();
 
 public slots:
     void getDialogData(QString text);
