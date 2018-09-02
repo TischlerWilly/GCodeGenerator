@@ -4727,7 +4727,83 @@ void MainWindow::on_actionKreis_in_Kreistasche_umwandeln_triggered()
 
                 disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
                 connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
-                emit sendDialogData(msg, true, werkzeugnamen);
+                emit sendDialogData(msg, true, wkznamen_nur_fraeser);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die aktive Zeile enthaellt keinen Kreis!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
+
+void MainWindow::on_actionKreis_in_Bohrung_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(KREIS))
+            {
+                kreis k(programmzeile);
+                QString msg = vorlage_dbohren;
+                QString alt;
+                alt  = POSITION_X;
+                alt += text_mitte(vorlage_dbohren, POSITION_X, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_X + k.mitte2d().x_QString() + ENDE_EINTRAG);
+
+                alt  = POSITION_Y;
+                alt += text_mitte(vorlage_dbohren, POSITION_Y, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, POSITION_Y + k.mitte2d().y_QString() + ENDE_EINTRAG);
+
+                alt  = DURCHMESSER;
+                alt += text_mitte(vorlage_dbohren, DURCHMESSER, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                msg.replace(alt, DURCHMESSER + double_to_qstring(k.radius()*2) + ENDE_EINTRAG);
+
+                //werkzeug mit richtigem DM finden:
+                QString wkzname = w.get_bohrwkzname(k.radius()*2);
+                if(!wkzname.isEmpty())
+                {
+                    alt  = WKZ_NAME;
+                    alt += text_mitte(vorlage_dbohren, WKZ_NAME, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, WKZ_NAME + wkzname + ENDE_EINTRAG);
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText(tr("Es wurde kein Werkzeug mit passemdem DM gefunden!\nBitte ein passendes Werkzeug wählen."));
+                    mb.exec();
+                }
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(msg, true, wkznamen_nur_bohrer);
             }else
             {
                 QMessageBox mb;
@@ -4786,6 +4862,231 @@ void MainWindow::on_actionKreistasche_in_Kreis_umwandeln_triggered()
             {
                 QMessageBox mb;
                 mb.setText("Die aktive Zeile enthaellt keine Kreistasche!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
+
+void MainWindow::on_actionBohrung_in_Kreis_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(BOHREN_DIALOG))
+            {
+                kreis k;
+                k.set_farbe(FARBE_GRUEN);
+
+                punkt3d mipu;
+                mipu.set_x(text_mitte(programmzeile, POSITION_X, ENDE_EINTRAG));
+                mipu.set_y(text_mitte(programmzeile, POSITION_Y, ENDE_EINTRAG));
+                k.set_mittelpunkt(mipu);
+                k.set_radius(ausdruck_auswerten("(" + \
+                                                text_mitte(programmzeile, DURCHMESSER, ENDE_EINTRAG) + \
+                                                ")/2"));
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dkreis, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(k.get_text(), true);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText(tr("Die aktive Zeile enthaellt keine Bohrung!"));
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
+
+void MainWindow::on_actionKreistasche_in_Bohrung_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(KREISTASCHE_DIALOG))
+            {
+                QString msg = vorlage_dbohren;
+                QString alt;
+                QString neu;
+                alt  = POSITION_X;
+                alt += text_mitte(vorlage_dbohren, POSITION_X, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = POSITION_X;
+                neu += text_mitte(programmzeile, POSITION_X, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = POSITION_Y;
+                alt += text_mitte(vorlage_dbohren, POSITION_Y, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = POSITION_Y;
+                neu += text_mitte(programmzeile, POSITION_Y, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = BOHRTIEFE;
+                alt += text_mitte(vorlage_dbohren, BOHRTIEFE, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = BOHRTIEFE;
+                neu += text_mitte(programmzeile, TASCHENTIEFE, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = DURCHMESSER;
+                alt += text_mitte(vorlage_dbohren, DURCHMESSER, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = DURCHMESSER;
+                neu += text_mitte(programmzeile, DURCHMESSER, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                //werkzeug mit richtigem DM finden:
+                QString wkzname = w.get_bohrwkzname(text_mitte(programmzeile, DURCHMESSER, ENDE_EINTRAG).toDouble());
+                if(!wkzname.isEmpty())
+                {
+                    alt  = WKZ_NAME;
+                    alt += text_mitte(vorlage_dbohren, WKZ_NAME, ENDE_EINTRAG);
+                    alt += ENDE_EINTRAG;
+                    msg.replace(alt, WKZ_NAME + wkzname + ENDE_EINTRAG);
+                }else
+                {
+                    QMessageBox mb;
+                    mb.setText(tr("Es wurde kein Werkzeug mit passemdem DM gefunden!\nBitte ein passendes Werkzeug waehlen."));
+                    mb.exec();
+                }
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(msg, true, wkznamen_nur_bohrer);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Die aktive Zeile enthaellt keine Kreistasche!");
+                mb.exec();
+            }
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Bitte nur eine Zeile zum Umwandeln aktivieren!");
+            mb.exec();
+        }
+    }
+}
+
+void MainWindow::on_actionBohrung_in_Kreistasche_umwandeln_triggered()
+{
+    if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
+    {
+        QList<QListWidgetItem*> items = ui->listWidget_Programmliste->selectedItems();
+        int items_menge = items.count();
+
+        if(items_menge==1)
+        {
+            //text aus der aktiven Zeile in string speichern:
+            QString programmzeile;
+            if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
+                    (ui->listWidget_Programmliste->currentItem()->isSelected()))
+            {
+                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+            } else
+            {
+                QMessageBox mb;
+                mb.setText("Sie haben noch nichts ausgewaelt was umgewandelt werden kann!");
+                mb.exec();
+                return;
+            }
+            //Inhalt der Programmzeile prüfen:
+            if(programmzeile.contains(BOHREN_DIALOG))
+            {
+                QString msg = vorlage_Ktasche;
+                QString alt;
+                QString neu;
+                alt  = POSITION_X;
+                alt += text_mitte(vorlage_Ktasche, POSITION_X, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = POSITION_X;
+                neu += text_mitte(programmzeile, POSITION_X, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = POSITION_Y;
+                alt += text_mitte(vorlage_Ktasche, POSITION_Y, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = POSITION_Y;
+                neu += text_mitte(programmzeile, POSITION_Y, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = TASCHENTIEFE;
+                alt += text_mitte(vorlage_Ktasche, TASCHENTIEFE, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = TASCHENTIEFE;
+                neu += text_mitte(programmzeile, BOHRTIEFE, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                alt  = DURCHMESSER;
+                alt += text_mitte(vorlage_Ktasche, DURCHMESSER, ENDE_EINTRAG);
+                alt += ENDE_EINTRAG;
+                neu  = DURCHMESSER;
+                neu += text_mitte(programmzeile, DURCHMESSER, ENDE_EINTRAG);
+                neu += ENDE_EINTRAG;
+                msg.replace(alt, neu);
+
+                disconnect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), 0, 0);
+                connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
+                emit sendDialogData(msg, true, wkznamen_nur_fraeser);
+            }else
+            {
+                QMessageBox mb;
+                mb.setText(tr("Die aktive Zeile enthaellt keine Bohrung!"));
                 mb.exec();
             }
         }else
@@ -6928,6 +7229,12 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
+
+
+
+
 
 
 

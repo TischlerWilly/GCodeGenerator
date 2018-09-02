@@ -129,6 +129,10 @@ private slots:
     void on_actionMakeBohren_triggered();
     void on_actionSpiegeln_vertikel_triggered();
     void on_actionSpiegeln_horizontal_triggered();
+    void on_actionKreis_in_Bohrung_umwandeln_triggered();
+    void on_actionBohrung_in_Kreis_umwandeln_triggered();
+    void on_actionKreistasche_in_Bohrung_umwandeln_triggered();
+    void on_actionBohrung_in_Kreistasche_umwandeln_triggered();
 
 public slots:
     void getDialogData(QString text);
