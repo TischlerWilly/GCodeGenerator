@@ -241,6 +241,12 @@
     <addaction name="actionKreis_in_Kreistasche_umwandeln"/>
     <addaction name="actionKreistasche_in_Kreis_umwandeln"/>
     <addaction name="separator"/>
+    <addaction name="actionKreis_in_Bohrung_umwandeln"/>
+    <addaction name="actionBohrung_in_Kreis_umwandeln"/>
+    <addaction name="separator"/>
+    <addaction name="actionKreistasche_in_Bohrung_umwandeln"/>
+    <addaction name="actionBohrung_in_Kreistasche_umwandeln"/>
+    <addaction name="separator"/>
     <addaction name="action4_Eck_in_Rechtecktasche_umwandeln"/>
     <addaction name="actionRechtecktasche_in_4_Eck_umwandeln"/>
     <addaction name="separator"/>
@@ -629,6 +635,26 @@
   <action name="actionSpiegeln_horizontal">
    <property name="text">
     <string>spiegeln horizontal (CAM)</string>
+   </property>
+  </action>
+  <action name="actionKreis_in_Bohrung_umwandeln">
+   <property name="text">
+    <string>Kreis in Bohrung umwandeln</string>
+   </property>
+  </action>
+  <action name="actionBohrung_in_Kreis_umwandeln">
+   <property name="text">
+    <string>Bohrung in Kreis umwandeln</string>
+   </property>
+  </action>
+  <action name="actionKreistasche_in_Bohrung_umwandeln">
+   <property name="text">
+    <string>Kreistasche in Bohrung umwandeln</string>
+   </property>
+  </action>
+  <action name="actionBohrung_in_Kreistasche_umwandeln">
+   <property name="text">
+    <string>Bohrung in Kreistasche umwandeln</string>
    </property>
   </action>
  </widget>

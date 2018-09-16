@@ -187,7 +187,24 @@ text_zeilenweise werkzeug::get_anzeigetext_zeilenweise()
     return anzeigetext;
 }
 
-
+QString werkzeug::get_bohrwkzname(double durchmesser)
+{
+    QString name;
+    for(uint i=1; i<=werkzeuge.zeilenanzahl() ;i++)
+    {
+        QString zeile = werkzeuge.zeile(i);
+        QString kannbohren = text_mitte(zeile, WKZ_KANN_BOHREN, ENDE_EINTRAG);
+        if(kannbohren == "1")
+        {
+            double wkzdm = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+            if(durchmesser == wkzdm)
+            {
+                name = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            }
+        }
+    }
+    return name;
+}
 
 
 

@@ -9,10 +9,6 @@
 
 /*
 ----------Aktuell in Arbeit:
--->Umwandeln Kreis in Bohrung
--->Umwandeln Bohrung in Kreis
--->Umwandeln Bohrung in KTA
--->Umwandeln KTA in Bohrung
 
 
 
@@ -23,7 +19,7 @@
 
 
 ----------Ideen für neue Dialoge:
--->Dialog Include
+-->Include
 -->drehen
 
 

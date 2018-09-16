@@ -19,6 +19,7 @@ public:
     QString get_werkzeuge();
     QString get_werkzeug(QString werkzeugname);
     text_zeilenweise get_werkzeuge_zeilenweise();
+    QString get_bohrwkzname(double durchmesser);
     QString get_anzeigetext();
     text_zeilenweise get_anzeigetext_zeilenweise();
 
