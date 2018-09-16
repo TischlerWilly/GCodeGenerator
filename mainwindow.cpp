@@ -2495,13 +2495,24 @@ void MainWindow::on_import_DXF_triggered()
             //QApplication::setOverrideCursor(Qt::WaitCursor);
             text_zeilenweise tz;
             bool bin_im_geometriebereich = false;
+            uint zeilennummer = 0;
+            QString dxfversion;
+            //DXF 2000 von LibrecAD 1.0.2 == "dxflib 2.2.0.0"
+            //DXF 2007 von LibreCAD 2.0.9 == "dxfrw 0.6.3"
+            const QString dxf2000 = "dxflib 2.2.0.0";
+            const QString dxf2007 = "dxfrw 0.6.3";
 
             while(!file.atEnd())
             {
+                zeilennummer++;
                 QString line = file.readLine();
                 if(line.right(1) == "\n")
                 {
                     line = line.left(line.length()-1);
+                }
+                if(zeilennummer == 2)
+                {
+                    dxfversion = line;
                 }
                 if(line.contains("ENTITIES"))
                 {
@@ -2517,16 +2528,40 @@ void MainWindow::on_import_DXF_triggered()
             }
             file.close();
 
+            if(dxfversion != dxf2000 && \
+               dxfversion != dxf2007)
+            {
+                QMessageBox mb;
+                mb.setText("Diese DXF-Version wird nicht unterstuetzt!");
+                mb.exec();
+                return;
+            }
+
             punkt3d np; //Nullpunkt
             uint anz_np = 0;
 
             for(uint i=1; i<=tz.zeilenanzahl() ;i++)
             {
-                if(tz.zeile(i).contains("POINT") && tz.zeile(i+8)==dxf_klasse_wstnp)
+                QString klasse;
+                if(dxfversion == dxf2000)
+                {
+                    klasse = tz.zeile(i+8);
+                }else if(dxfversion == dxf2007)
+                {
+                    klasse = tz.zeile(i+6);
+                }
+                if(tz.zeile(i).contains("POINT") && klasse==dxf_klasse_wstnp)
                 {
                     anz_np++;
-                    np.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
-                    np.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                    if(dxfversion == dxf2000)
+                    {
+                        np.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                        np.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                    }else if(dxfversion == dxf2007)
+                    {
+                        np.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                        np.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                    }
                 }
             }
 
@@ -2536,7 +2571,14 @@ void MainWindow::on_import_DXF_triggered()
             {
                 if(tz.zeile(i).contains("LINE") && !tz.zeile(i).contains("POLY"))
                 {
-                    QString klasse = tz.zeile(i+8);
+                    QString klasse;
+                    if(dxfversion == dxf2000)
+                    {
+                        klasse = tz.zeile(i+8);
+                    }else if(dxfversion == dxf2007)
+                    {
+                        klasse = tz.zeile(i+6);
+                    }
                     if(dxf_klasse_geo_beachten != "ja")
                     {
                         klasse = dxf_klasse_geo;
@@ -2546,13 +2588,25 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         strecke s;
                         punkt3d p;
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
-                        p.set_z(0);
-                        s.set_start(p);
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+22), 2));
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+24), 2));
-                        s.set_ende(p);
+                        if(dxfversion == dxf2000)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            p.set_z(0);
+                            s.set_start(p);
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+24), 2));
+                            s.set_ende(p);
+                        }else if(dxfversion == dxf2007)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            p.set_z(0);
+                            s.set_start(p);
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+20), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                            s.set_ende(p);
+                        }
                         s.set_farbe(FARBE_GRUEN);
                         getDialogData(s.get_text());
                         anz_importierter_geometrieen++;
@@ -2560,20 +2614,39 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         strecke s;
                         punkt3d p;
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16),2).toDouble()-np.x());
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18),2).toDouble()-np.y());
-                        p.set_z(0);
-                        s.set_start(p);
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+22),2).toDouble()-np.x());
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+24),2).toDouble()-np.y());
-                        s.set_ende(p);
+                        if(dxfversion == dxf2000)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16),2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18),2).toDouble()-np.y());
+                            p.set_z(0);
+                            s.set_start(p);
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+22),2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+24),2).toDouble()-np.y());
+                            s.set_ende(p);
+                        }else if(dxfversion == dxf2007)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16),2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18),2).toDouble()-np.y());
+                            p.set_z(0);
+                            s.set_start(p);
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+20),2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+22),2).toDouble()-np.y());
+                            s.set_ende(p);
+                        }
                         s.set_farbe(FARBE_GRUEN);
                         getDialogData(s.get_text());
                         anz_importierter_geometrieen++;
                     }
                 }else if(tz.zeile(i).contains("CIRCLE"))
                 {
-                    QString klasse = tz.zeile(i+8);
+                    QString klasse;
+                    if(dxfversion == dxf2000)
+                    {
+                        klasse = tz.zeile(i+8);
+                    }else if(dxfversion == dxf2007)
+                    {
+                        klasse = tz.zeile(i+6);
+                    }
                     if(dxf_klasse_geo_beachten != "ja")
                     {
                         klasse = dxf_klasse_geo;
@@ -2583,11 +2656,21 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         kreis k;
                         punkt3d p;
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
-                        p.set_z(0);
-                        k.set_mittelpunkt(p);
-                        k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                        if(dxfversion == dxf2000)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            p.set_z(0);
+                            k.set_mittelpunkt(p);
+                            k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                        }else if(dxfversion == dxf2007)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            p.set_z(0);
+                            k.set_mittelpunkt(p);
+                            k.set_radius(genauigkeit_reduzieren(tz.zeile(i+20), 2));
+                        }
                         k.set_farbe(FARBE_GRUEN);
                         getDialogData(k.get_text());
                         anz_importierter_geometrieen++;
@@ -2595,18 +2678,35 @@ void MainWindow::on_import_DXF_triggered()
                     {
                         kreis k;
                         punkt3d p;
-                        p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
-                        p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
-                        p.set_z(0);
-                        k.set_mittelpunkt(p);
-                        k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                        if(dxfversion == dxf2000)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
+                            p.set_z(0);
+                            k.set_mittelpunkt(p);
+                            k.set_radius(genauigkeit_reduzieren(tz.zeile(i+22), 2));
+                        }else if(dxfversion == dxf2007)
+                        {
+                            p.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                            p.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
+                            p.set_z(0);
+                            k.set_mittelpunkt(p);
+                            k.set_radius(genauigkeit_reduzieren(tz.zeile(i+20), 2));
+                        }
                         k.set_farbe(FARBE_GRUEN);
                         getDialogData(k.get_text());
                         anz_importierter_geometrieen++;
                     }
                 }else if(tz.zeile(i).contains("ARC"))//Bogen
                 {
-                    QString klasse = tz.zeile(i+6);
+                    QString klasse;
+                    if(dxfversion == dxf2000)
+                    {
+                        klasse = tz.zeile(i+6);
+                    }else if(dxfversion == dxf2007)
+                    {
+                        klasse = tz.zeile(i+6);
+                    }
                     if(dxf_klasse_geo_beachten != "ja")
                     {
                         klasse = dxf_klasse_geo;
@@ -2615,12 +2715,25 @@ void MainWindow::on_import_DXF_triggered()
                     if(klasse == dxf_klasse_geo && anz_np!=1)
                     {
                         punkt2d mipu;
-                        mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
-                        mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
-                        double rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
-                        double stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
-                        double endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
+                        double rad;
+                        double stawi;
+                        double endwi;
                         double gesamtwinkel;
+                        if(dxfversion == dxf2000)
+                        {
+                            mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
+                            stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                            endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
+                        }else if(dxfversion == dxf2007)
+                        {
+                            mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
+                            mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2));
+                            rad = genauigkeit_reduzieren(tz.zeile(i+20), 2).toDouble();
+                            stawi = genauigkeit_reduzieren(tz.zeile(i+24), 2).toDouble();
+                            endwi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                        }
                         if(stawi < endwi)
                         {
                             gesamtwinkel = endwi - stawi;
@@ -2648,12 +2761,26 @@ void MainWindow::on_import_DXF_triggered()
                     }else if(klasse == dxf_klasse_geo)
                     {
                         punkt2d mipu;
-                        mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
-                        mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
-                        double rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
-                        double stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
-                        double endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
+                        double rad;
+                        double stawi;
+                        double endwi;
                         double gesamtwinkel;
+                        if(dxfversion == dxf2000)
+                        {
+                            mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                            mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
+                            rad = genauigkeit_reduzieren(tz.zeile(i+22), 2).toDouble();
+                            stawi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                            endwi = genauigkeit_reduzieren(tz.zeile(i+28), 2).toDouble();
+                        }else if(dxfversion == dxf2007)
+                        {
+                            mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
+                            mipu.set_y(genauigkeit_reduzieren(tz.zeile(i+18), 2).toDouble()-np.y());
+                            rad = genauigkeit_reduzieren(tz.zeile(i+20), 2).toDouble();
+                            stawi = genauigkeit_reduzieren(tz.zeile(i+24), 2).toDouble();
+                            endwi = genauigkeit_reduzieren(tz.zeile(i+26), 2).toDouble();
+                        }
+
                         if(stawi < endwi)
                         {
                             gesamtwinkel = endwi - stawi;
