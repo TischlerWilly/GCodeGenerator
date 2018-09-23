@@ -20,7 +20,15 @@ QString int_to_qstring(int zahl)
 }
 
 std::string float_to_string(float zahl)
-{
+{   
+    //Nachkommastellen reduzeiren:
+    uint genauigkeit = 6;
+    zahl = zahl * pow(10,genauigkeit);//pow == Potenzfuntion
+    uint tmp = zahl;//Nachkommastellen abschneiden
+    zahl = tmp;
+    zahl = zahl / pow(10,genauigkeit);//pow == Potenzfuntion
+
+    //umwandeln:
     std::string returnstring;
     std::stringstream ss;
     ss << zahl;
@@ -30,6 +38,14 @@ std::string float_to_string(float zahl)
 
 QString float_to_qstring(float zahl)
 {
+    //Nachkommastellen reduzeiren:
+    uint genauigkeit = 6;
+    zahl = zahl * pow(10,genauigkeit);//pow == Potenzfuntion
+    uint tmp = zahl;//Nachkommastellen abschneiden
+    zahl = tmp;
+    zahl = zahl / pow(10,genauigkeit);//pow == Potenzfuntion
+
+    //umwandeln:
     std::string returnstring;
     std::stringstream ss;
     ss << zahl;
@@ -39,6 +55,14 @@ QString float_to_qstring(float zahl)
 
 std::string double_to_string(double zahl)
 {
+    //Nachkommastellen reduzeiren:
+    uint genauigkeit = 6;
+    zahl = zahl * pow(10,genauigkeit);//pow == Potenzfuntion
+    uint tmp = zahl;//Nachkommastellen abschneiden
+    zahl = tmp;
+    zahl = zahl / pow(10,genauigkeit);//pow == Potenzfuntion
+
+    //umwandeln:
     std::string returnstring;
     std::stringstream ss;
     ss << zahl;

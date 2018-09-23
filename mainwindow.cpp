@@ -3120,12 +3120,18 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionFraeskonturen_in_Linien_umwandeln->setDisabled(true);
     ui->action4_Eck_in_Rechtecktasche_umwandeln->setDisabled(true);
     ui->actionRechtecktasche_in_4_Eck_umwandeln->setDisabled(true);
+    ui->actionKreis_in_Bohrung_umwandeln->setDisabled(true);
+    ui->actionBohrung_in_Kreis_umwandeln->setDisabled(true);
+    ui->actionKreistasche_in_Bohrung_umwandeln->setDisabled(true);
+    ui->actionBohrung_in_Kreistasche_umwandeln->setDisabled(true);
     //Menü Manipulation:
     ui->actionCAD_sortieren->setDisabled(true);
     ui->actionFraesrichtung_umkehren->setDisabled(true);
     ui->actionFraesStartpunkt_vor->setDisabled(true);
     ui->actionFraesStartpunkt_nach->setDisabled(true);
     ui->actionVerastzvariablen->setDisabled(true);
+    ui->actionSpiegeln_horizontal->setDisabled(true);
+    ui->actionSpiegeln_vertikel->setDisabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setDisabled(true);
     ui->actionProgrammliste_anzeigen->setDisabled(true);
@@ -3186,12 +3192,18 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionFraeskonturen_in_Linien_umwandeln->setEnabled(true);
     ui->action4_Eck_in_Rechtecktasche_umwandeln->setEnabled(true);
     ui->actionRechtecktasche_in_4_Eck_umwandeln->setEnabled(true);
+    ui->actionKreis_in_Bohrung_umwandeln->setEnabled(true);
+    ui->actionBohrung_in_Kreis_umwandeln->setEnabled(true);
+    ui->actionKreistasche_in_Bohrung_umwandeln->setEnabled(true);
+    ui->actionBohrung_in_Kreistasche_umwandeln->setEnabled(true);
     //Menü Manipulation:
     ui->actionCAD_sortieren->setEnabled(true);
     ui->actionFraesrichtung_umkehren->setEnabled(true);
     ui->actionFraesStartpunkt_vor->setEnabled(true);
     ui->actionFraesStartpunkt_nach->setEnabled(true);
     ui->actionVerastzvariablen->setEnabled(true);
+    ui->actionSpiegeln_horizontal->setEnabled(true);
+    ui->actionSpiegeln_vertikel->setEnabled(true);
     //Menü Diverses:
     ui->actionVorschaufenster_anzeigen->setEnabled(true);
     ui->actionProgrammliste_anzeigen->setEnabled(true);
