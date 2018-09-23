@@ -388,7 +388,8 @@ string rechtecktasche::get_gcode_ausraumen(rechteck r, float radius, float tiefe
     return gcode;
 }
 
-string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
+string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, \
+                                            float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
 {
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     string gcode;
