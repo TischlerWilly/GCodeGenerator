@@ -17,6 +17,7 @@ rechtecktasche::rechtecktasche()
     set_drehwinkel(0);
     set_fraesbahn_in_uhrzeigersinn(1);
     set_anz_nachkommastellen(2);
+    set_fraeser_kabo(false);
 }
 
 rechtecktasche::~rechtecktasche()
@@ -233,13 +234,22 @@ string rechtecktasche::get_gcode()
     {
         if(get_ausraemen_Wert()==true)
         {
-            returnstring += get_gcode_ausraumen(tmp, get_radius_taschenecken()-get_radius_fraeser(), tiefe_vor_zustellung, get_bezugshoehe()-aktuelle_zustellung);
+            returnstring += get_gcode_ausraumen(tmp, \
+                                                get_radius_taschenecken()-get_radius_fraeser(), \
+                                                tiefe_vor_zustellung, \
+                                                get_bezugshoehe()-aktuelle_zustellung);
         }else{
             if(get_fraesbahn_im_uhrzeigersinn() == true)
             {
-                returnstring += get_rechteckbahn_UZS(tmp, get_radius_taschenecken()-get_radius_fraeser(), tiefe_vor_zustellung, get_bezugshoehe()-aktuelle_zustellung);
+                returnstring += get_rechteckbahn_UZS(tmp, \
+                                                     get_radius_taschenecken()-get_radius_fraeser(), \
+                                                     tiefe_vor_zustellung, \
+                                                     get_bezugshoehe()-aktuelle_zustellung);
             }else{
-                returnstring += get_rechteckbahn_GUZS(tmp, get_radius_taschenecken()-get_radius_fraeser(), tiefe_vor_zustellung, get_bezugshoehe()-aktuelle_zustellung);
+                returnstring += get_rechteckbahn_GUZS(tmp,
+                                                      get_radius_taschenecken()-get_radius_fraeser(), \
+                                                      tiefe_vor_zustellung, \
+                                                      get_bezugshoehe()-aktuelle_zustellung);
             }
 
         }
@@ -255,73 +265,86 @@ string rechtecktasche::get_gcode()
         }
     }
     //Abfahren:
-    if(get_fraesbahn_im_uhrzeigersinn() == true)
-    {   //Abfahren im Uhrzeigersinn:
-        punkt p_xy;
-        p_xy.x = tmp.get_mittelpunkt_x() - get_radius_fraeser();
-        p_xy.y = tmp.get_eckpunkt_unten_rechts_y() + get_radius_fraeser();
-        p_xy = drehen(tmp.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
-        punkt p_ij;
-        p_ij.x = 0;
-        p_ij.y = +get_radius_fraeser();
-        punkt bezugspunkt_ij;
-        bezugspunkt_ij.x =tmp.get_mittelpunkt_x();
-        bezugspunkt_ij.y =tmp.get_eckpunkt_unten_rechts_y();
-        p_ij = drehen_ij(tmp.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
-        returnstring += "G02";
-        returnstring += " ";
-        returnstring += "X";
-        returnstring += float_to_string(p_xy.x);
-        returnstring += " ";
-        returnstring += "Y";
-        returnstring += float_to_string(p_xy.y);
+    if(tmp.get_laenge() > radius_freaser*2  &&
+       tmp.get_breite() > radius_freaser*2)
+    {
+        if(get_fraesbahn_im_uhrzeigersinn() == true)
+        {   //Abfahren im Uhrzeigersinn:
+            punkt p_xy;
+            p_xy.x = tmp.get_mittelpunkt_x() - get_radius_fraeser();
+            p_xy.y = tmp.get_eckpunkt_unten_rechts_y() + get_radius_fraeser();
+            p_xy = drehen(tmp.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
+            punkt p_ij;
+            p_ij.x = 0;
+            p_ij.y = +get_radius_fraeser();
+            punkt bezugspunkt_ij;
+            bezugspunkt_ij.x =tmp.get_mittelpunkt_x();
+            bezugspunkt_ij.y =tmp.get_eckpunkt_unten_rechts_y();
+            p_ij = drehen_ij(tmp.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
+            returnstring += "G02";
+            returnstring += " ";
+            returnstring += "X";
+            returnstring += float_to_string(p_xy.x);
+            returnstring += " ";
+            returnstring += "Y";
+            returnstring += float_to_string(p_xy.y);
+            returnstring += " ";
+            returnstring += "Z";
+            returnstring += float_to_string(get_bezugshoehe() + get_sicherheitsabstand());
+            returnstring += " ";
+            returnstring +="I";
+            returnstring += float_to_string(p_ij.x);
+            returnstring += " ";
+            returnstring += "J";
+            returnstring += float_to_string(p_ij.y);
+            returnstring += " (Abfahren)";
+            returnstring += "\n";
+        }else{
+            //Abfahren im Gegen-Uhrzeigersinn:
+            punkt p_xy;
+            p_xy.x = tmp.get_mittelpunkt_x() + get_radius_fraeser();
+            p_xy.y = tmp.get_eckpunkt_unten_rechts_y() + get_radius_fraeser();
+            p_xy = drehen(tmp.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
+            punkt p_ij;
+            p_ij.x = 0;
+            p_ij.y = +get_radius_fraeser();
+            punkt bezugspunkt_ij;
+            bezugspunkt_ij.x =tmp.get_mittelpunkt_x();
+            bezugspunkt_ij.y =tmp.get_eckpunkt_unten_rechts_y();
+            p_ij = drehen_ij(tmp.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
+            returnstring += "G03";
+            returnstring += " ";
+            returnstring += "X";
+            returnstring += float_to_string(p_xy.x);
+            returnstring += " ";
+            returnstring += "Y";
+            returnstring += float_to_string(p_xy.y);
+            returnstring += " ";
+            returnstring += "Z";
+            returnstring += float_to_string(get_bezugshoehe() + get_sicherheitsabstand());
+            returnstring += " ";
+            returnstring +="I";
+            returnstring += float_to_string(p_ij.x);
+            returnstring += " ";
+            returnstring += "J";
+            returnstring += float_to_string(p_ij.y);
+            returnstring += " (Abfahren)";
+            returnstring += "\n";
+        }
+    }else
+    {
+        returnstring += "G01";
         returnstring += " ";
         returnstring += "Z";
         returnstring += float_to_string(get_bezugshoehe() + get_sicherheitsabstand());
-        returnstring += " ";
-        returnstring +="I";
-        returnstring += float_to_string(p_ij.x);
-        returnstring += " ";
-        returnstring += "J";
-        returnstring += float_to_string(p_ij.y);
-        returnstring += " (Abfahren)";
-        returnstring += "\n";
-    }else{
-        //Abfahren im Gegen-Uhrzeigersinn:
-        punkt p_xy;
-        p_xy.x = tmp.get_mittelpunkt_x() + get_radius_fraeser();
-        p_xy.y = tmp.get_eckpunkt_unten_rechts_y() + get_radius_fraeser();
-        p_xy = drehen(tmp.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
-        punkt p_ij;
-        p_ij.x = 0;
-        p_ij.y = +get_radius_fraeser();
-        punkt bezugspunkt_ij;
-        bezugspunkt_ij.x =tmp.get_mittelpunkt_x();
-        bezugspunkt_ij.y =tmp.get_eckpunkt_unten_rechts_y();
-        p_ij = drehen_ij(tmp.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
-        returnstring += "G03";
-        returnstring += " ";
-        returnstring += "X";
-        returnstring += float_to_string(p_xy.x);
-        returnstring += " ";
-        returnstring += "Y";
-        returnstring += float_to_string(p_xy.y);
-        returnstring += " ";
-        returnstring += "Z";
-        returnstring += float_to_string(get_bezugshoehe() + get_sicherheitsabstand());
-        returnstring += " ";
-        returnstring +="I";
-        returnstring += float_to_string(p_ij.x);
-        returnstring += " ";
-        returnstring += "J";
-        returnstring += float_to_string(p_ij.y);
         returnstring += " (Abfahren)";
         returnstring += "\n";
     }
     return returnstring;
 }
 
-string rechtecktasche::get_gcode_ausraumen(rechteck r, float radius, float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
+string rechtecktasche::get_gcode_ausraumen(rechteck r, float radius, \
+                                           float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
 {
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     int anzahl_der_parallelbahnen = 0;
@@ -388,13 +411,30 @@ string rechtecktasche::get_gcode_ausraumen(rechteck r, float radius, float tiefe
     return gcode;
 }
 
-string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
+string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, \
+                                            float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
 {
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     string gcode;
     punkt startpunkt;
-    startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
-    startpunkt.x = r.get_mittelpunkt_x() + get_radius_fraeser();
+    if(r.get_laenge() > radius_freaser*2  &&
+       r.get_breite() > radius_freaser*2)
+    {
+        startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
+        startpunkt.x = r.get_mittelpunkt_x() + get_radius_fraeser();
+    }else
+    {
+        if(fraeser_kabo == true)
+        {
+            startpunkt.y = r.get_eckpunkt_unten_links_y();
+            startpunkt.x = r.get_mittelpunkt_x();
+        }else
+        {
+            startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
+            startpunkt.x = r.get_mittelpunkt_x() + get_radius_fraeser();
+        }
+    }
+
 
     //Fräser zum Startpunkt bringen:
     {
@@ -429,6 +469,8 @@ string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, float tief
     }
 
     //Eintauchen:
+    if(r.get_laenge() > radius_freaser*2  &&
+       r.get_breite() > radius_freaser*2)
     {
     punkt p_xy;
     p_xy.x = r.get_mittelpunkt_x();
@@ -467,6 +509,63 @@ string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, float tief
     }
     gcode += " (unten Mitte am Konturanfang)";
     gcode += "\n";
+    }else
+    {
+        if(fraeser_kabo == true)
+        {
+            gcode += "G01";
+            gcode += " ";
+            gcode += "Z";
+            gcode += float_to_string(tiefe_nach_eintauchen);
+            gcode += "F";
+            if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+            {
+                gcode += int_to_string(get_vorschubgeschwindigkeit());
+            }else{
+                gcode += int_to_string(get_anfahrvorschub());
+            }
+            gcode += " (unten Mitte am Konturanfang)";
+            gcode += "\n";
+        }else
+        {
+            punkt p_xy;
+            p_xy.x = r.get_mittelpunkt_x();
+            p_xy.y = r.get_eckpunkt_unten_links_y();
+            p_xy = drehen(r.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
+            punkt p_ij;
+            p_ij.x = -get_radius_fraeser();
+            p_ij.y = 0;
+            punkt bezugspunkt_ij;
+            bezugspunkt_ij.x =startpunkt.x;
+            bezugspunkt_ij.y =startpunkt.x;
+            p_ij = drehen_ij(r.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
+            gcode += "G02"; //Kreisbeweging CW
+            gcode += " ";
+            gcode += "X";
+            gcode += float_to_string(p_xy.x);
+            gcode += " ";
+            gcode += "Y";
+            gcode += float_to_string(p_xy.y);
+            gcode += " ";
+            gcode += "Z";
+            gcode += float_to_string(tiefe_nach_eintauchen);
+            gcode += " ";
+            gcode +="I";
+            gcode += float_to_string(p_ij.x);
+            gcode += " ";
+            gcode += "J";
+            gcode += float_to_string(p_ij.y);
+            gcode += " ";
+            gcode += "F";
+            if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+            {
+                gcode += int_to_string(get_vorschubgeschwindigkeit());
+            }else{
+                gcode += int_to_string(get_anfahrvorschub());
+            }
+            gcode += " (unten Mitte am Konturanfang)";
+            gcode += "\n";
+        }
     }
 
     if(radius > 0)
@@ -754,13 +853,30 @@ string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, float tief
 
 }
 
-string rechtecktasche::get_rechteckbahn_GUZS(rechteck r, float radius, float tiefe_vor_eintauchen, float tiefe_nach_eintauchen)
+string rechtecktasche::get_rechteckbahn_GUZS(rechteck r, float radius, float tiefe_vor_eintauchen, \
+                                             float tiefe_nach_eintauchen)
 {
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     string gcode;
     punkt startpunkt;
-    startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
-    startpunkt.x = r.get_mittelpunkt_x() - get_radius_fraeser();
+    if(r.get_laenge() > radius_freaser*2  &&
+       r.get_breite() > radius_freaser*2)
+    {
+        startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
+        startpunkt.x = r.get_mittelpunkt_x() - get_radius_fraeser();
+    }else
+    {
+        if(fraeser_kabo == true)
+        {
+            startpunkt.y = r.get_eckpunkt_unten_links_y();
+            startpunkt.x = r.get_mittelpunkt_x();
+        }else
+        {
+            startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
+            startpunkt.x = r.get_mittelpunkt_x() - get_radius_fraeser();
+        }
+    }
+
 
     //Fräser zum Startpunkt bringen:
     {
@@ -795,45 +911,105 @@ string rechtecktasche::get_rechteckbahn_GUZS(rechteck r, float radius, float tie
     }
 
     //Eintauchen:
+    if(r.get_laenge() > radius_freaser*2  &&
+       r.get_breite() > radius_freaser*2)
     {
-    punkt p_xy;
-    p_xy.x = r.get_mittelpunkt_x();
-    p_xy.y = r.get_eckpunkt_unten_links_y();
-    p_xy = drehen(r.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
-    punkt p_ij;
-    p_ij.x = get_radius_fraeser();
-    p_ij.y = 0;
-    punkt bezugspunkt_ij;
-    bezugspunkt_ij.x =startpunkt.x;
-    bezugspunkt_ij.y =startpunkt.x;
-    p_ij = drehen_ij(r.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
-    gcode += "G03"; //Kreisbeweging ACW
-    gcode += " ";
-    gcode += "X";
-    gcode += float_to_string(p_xy.x);
-    gcode += " ";
-    gcode += "Y";
-    gcode += float_to_string(p_xy.y);
-    gcode += " ";
-    gcode += "Z";
-    gcode += float_to_string(tiefe_nach_eintauchen);
-    gcode += " ";
-    gcode +="I";
-    gcode += float_to_string(p_ij.x);
-    gcode += " ";
-    gcode += "J";
-    gcode += float_to_string(p_ij.y);
-    gcode += " ";
-    gcode += "F";
-    if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+        punkt p_xy;
+        p_xy.x = r.get_mittelpunkt_x();
+        p_xy.y = r.get_eckpunkt_unten_links_y();
+        p_xy = drehen(r.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
+        punkt p_ij;
+        p_ij.x = get_radius_fraeser();
+        p_ij.y = 0;
+        punkt bezugspunkt_ij;
+        bezugspunkt_ij.x =startpunkt.x;
+        bezugspunkt_ij.y =startpunkt.x;
+        p_ij = drehen_ij(r.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
+        gcode += "G03"; //Kreisbeweging ACW
+        gcode += " ";
+        gcode += "X";
+        gcode += float_to_string(p_xy.x);
+        gcode += " ";
+        gcode += "Y";
+        gcode += float_to_string(p_xy.y);
+        gcode += " ";
+        gcode += "Z";
+        gcode += float_to_string(tiefe_nach_eintauchen);
+        gcode += " ";
+        gcode +="I";
+        gcode += float_to_string(p_ij.x);
+        gcode += " ";
+        gcode += "J";
+        gcode += float_to_string(p_ij.y);
+        gcode += " ";
+        gcode += "F";
+        if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+        {
+            gcode += int_to_string(get_vorschubgeschwindigkeit());
+        }else{
+            gcode += int_to_string(get_anfahrvorschub());
+        }
+        gcode += " (unten Mitte am Konturanfang)";
+        gcode += "\n";
+    }else
     {
-        gcode += int_to_string(get_vorschubgeschwindigkeit());
-    }else{
-        gcode += int_to_string(get_anfahrvorschub());
+        if(fraeser_kabo == true)
+        {
+            gcode += "G01";
+            gcode += " ";
+            gcode += "Z";
+            gcode += float_to_string(tiefe_nach_eintauchen);
+            gcode += "F";
+            if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+            {
+                gcode += int_to_string(get_vorschubgeschwindigkeit());
+            }else{
+                gcode += int_to_string(get_anfahrvorschub());
+            }
+            gcode += " (unten Mitte am Konturanfang)";
+            gcode += "\n";
+        }else
+        {
+            punkt p_xy;
+            p_xy.x = r.get_mittelpunkt_x();
+            p_xy.y = r.get_eckpunkt_unten_links_y();
+            p_xy = drehen(r.get_mittelpunkt(), p_xy, get_drehwinkel(), 0);
+            punkt p_ij;
+            p_ij.x = get_radius_fraeser();
+            p_ij.y = 0;
+            punkt bezugspunkt_ij;
+            bezugspunkt_ij.x =startpunkt.x;
+            bezugspunkt_ij.y =startpunkt.x;
+            p_ij = drehen_ij(r.get_mittelpunkt(), get_drehwinkel(), 0,bezugspunkt_ij, p_ij);
+            gcode += "G03"; //Kreisbeweging ACW
+            gcode += " ";
+            gcode += "X";
+            gcode += float_to_string(p_xy.x);
+            gcode += " ";
+            gcode += "Y";
+            gcode += float_to_string(p_xy.y);
+            gcode += " ";
+            gcode += "Z";
+            gcode += float_to_string(tiefe_nach_eintauchen);
+            gcode += " ";
+            gcode +="I";
+            gcode += float_to_string(p_ij.x);
+            gcode += " ";
+            gcode += "J";
+            gcode += float_to_string(p_ij.y);
+            gcode += " ";
+            gcode += "F";
+            if(tiefe_vor_eintauchen == tiefe_nach_eintauchen)
+            {
+                gcode += int_to_string(get_vorschubgeschwindigkeit());
+            }else{
+                gcode += int_to_string(get_anfahrvorschub());
+            }
+            gcode += " (unten Mitte am Konturanfang)";
+            gcode += "\n";
+        }
     }
-    gcode += " (unten Mitte am Konturanfang)";
-    gcode += "\n";
-    }
+
 
     if(radius > 0)
     {   //rechts unten mit Rundung:

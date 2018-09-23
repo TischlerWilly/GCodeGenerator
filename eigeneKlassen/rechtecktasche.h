@@ -37,6 +37,10 @@ class rechtecktasche : public rechteck
         void set_drehwinkel(float neuer_winkel);
         void set_fraesbahn_in_uhrzeigersinn(bool ist_im_urhzeigersinn);
         void set_anz_nachkommastellen(int anz_neu);
+        inline void set_fraeser_kabo(bool kabo)
+        {
+            fraeser_kabo = kabo;
+        }
 
         float get_tiefe();
         float get_zustellmass();
@@ -72,6 +76,7 @@ class rechtecktasche : public rechteck
         float drehwinkel;
         bool fraesbahn_im_uhrzeigersinn;
         int anz_nachkommastellen;
+        bool fraeser_kabo;
 
 
 };
