@@ -3842,6 +3842,14 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 return ;
             }
 
+            if(text_mitte(werkzeug, WKZ_KANN_BOHREN, ENDE_EINTRAG) == "1")
+            {
+                tasche_tmp.set_fraeser_kabo(true);
+            }else
+            {
+                tasche_tmp.set_fraeser_kabo(false);
+            }
+
             std::string tasche = tasche_tmp.get_gcode();
             tmp = QString::fromStdString(tasche);
             gcode += tmp;
