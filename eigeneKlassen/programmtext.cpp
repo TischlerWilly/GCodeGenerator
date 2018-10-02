@@ -2696,7 +2696,7 @@ void programmtext::aktualisiere_klartext_var_geo()
 
                 tmp = text_mitte(zeile, RADIUS, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten(tmp);
+                tmp = ausdruck_auswerten(tmp + "+0,0001");
                 zeile_klartext += RADIUS;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
