@@ -265,6 +265,8 @@ private:
     void openFile(QString pfad);
     QString dateitext_ggf();
 
+    text_zeilenweise kompatiblitaetspruefung(text_zeilenweise dateiinhalt);
+
 };
 
 #endif // MAINWINDOW_H

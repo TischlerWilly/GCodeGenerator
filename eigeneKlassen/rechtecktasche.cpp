@@ -417,8 +417,8 @@ string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, \
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     string gcode;
     punkt startpunkt;
-    if(r.get_laenge() > radius_freaser*2  &&
-       r.get_breite() > radius_freaser*2)
+    if(r.get_laenge()-radius*2 > radius_freaser*2  &&
+       r.get_breite()-radius*2 > radius_freaser*2)
     {
         startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
         startpunkt.x = r.get_mittelpunkt_x() + get_radius_fraeser();
@@ -469,8 +469,8 @@ string rechtecktasche::get_rechteckbahn_UZS(rechteck r, float radius, \
     }
 
     //Eintauchen:
-    if(r.get_laenge() > radius_freaser*2  &&
-       r.get_breite() > radius_freaser*2)
+    if(r.get_laenge()-radius*2 > radius_freaser*2  &&
+       r.get_breite()-radius*2 > radius_freaser*2)
     {
     punkt p_xy;
     p_xy.x = r.get_mittelpunkt_x();
@@ -859,8 +859,8 @@ string rechtecktasche::get_rechteckbahn_GUZS(rechteck r, float radius, float tie
     //Das an die Funktioen übergebene Rechteck beschreibt die größe der Fräsbahn auf Mitte des Fräsers
     string gcode;
     punkt startpunkt;
-    if(r.get_laenge() > radius_freaser*2  &&
-       r.get_breite() > radius_freaser*2)
+    if(r.get_laenge()-radius*2 > radius_freaser*2  &&
+       r.get_breite()-radius*2 > radius_freaser*2)
     {
         startpunkt.y = r.get_eckpunkt_unten_links_y() + get_radius_fraeser();
         startpunkt.x = r.get_mittelpunkt_x() - get_radius_fraeser();
@@ -911,8 +911,8 @@ string rechtecktasche::get_rechteckbahn_GUZS(rechteck r, float radius, float tie
     }
 
     //Eintauchen:
-    if(r.get_laenge() > radius_freaser*2  &&
-       r.get_breite() > radius_freaser*2)
+    if(r.get_laenge()-radius*2 > radius_freaser*2  &&
+       r.get_breite()-radius*2 > radius_freaser*2)
     {
         punkt p_xy;
         p_xy.x = r.get_mittelpunkt_x();

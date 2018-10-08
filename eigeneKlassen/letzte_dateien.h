@@ -18,6 +18,7 @@ public:
     void set_text(QString liste);
     void set_anz_eintreage(uint neue_anz);
     void datei_merken(QString name);
+    void datei_vergessen(QString name);
 
 
 

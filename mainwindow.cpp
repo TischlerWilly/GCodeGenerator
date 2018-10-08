@@ -2274,7 +2274,10 @@ void MainWindow::on_actionDateiOefnen_triggered()
 
 void MainWindow::aktuelisiere_letzte_dateien_inifile()
 {
-    letzte_geoefnete_dateien.datei_merken(nameOfTheOpenFile);
+    if(DateiIstOffen)
+    {
+        letzte_geoefnete_dateien.datei_merken(nameOfTheOpenFile);
+    }
     //Daten Speichern:
     QFile inifile(QDir::homePath() + PFAD_LETZTE_DATEIEN);
     if (!inifile.open(QIODevice::WriteOnly | QIODevice::Text)) //Wenn es nicht möglich ist die Datei zu öffnen oder neu anzulegen
@@ -2362,20 +2365,20 @@ void MainWindow::openFile(QString pfad)
                 tz.zeilen_anhaengen(line);
             }
         }
+        tz = kompatiblitaetspruefung(tz);
         t.set_maschinengeometrie(tz);
     }
-    //Programmdatei laden:
-    QFileInfo info = pfad;
-    pfad_oefne_ggf = info.path();
-    nameOfTheOpenFile = pfad;
+
     QFile file(pfad);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        text_zeilenweise tz;
+        //Programmdatei laden:
+        QFileInfo info = pfad;
+        pfad_oefne_ggf = info.path();
+        nameOfTheOpenFile = pfad;
 
-        aktuelisiere_letzte_dateien_inifile();
-        aktualisiere_letzte_dateien_menu();
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        text_zeilenweise tz;        
 
         while(!file.atEnd())
         {
@@ -2392,43 +2395,69 @@ void MainWindow::openFile(QString pfad)
                 tz.zeilen_anhaengen(line);
             }
         }
-        QString versionsinfo = PROGRAMMNAME;
-        if(!tz.zeile(1).contains(versionsinfo))//Programmversion 1
-        {
-            //Kompatibilität zur aktuellen Version wieder herstellen:
-            for(uint i=1; i<=tz.zeilenanzahl() ;i++)
-            {
-                QString zeile = tz.zeile(i);
-                zeile.replace("punkt", "cadpunkt");
-                zeile.replace("strecke", "cadstrecke");
-                zeile.replace("bogen", "cadbogen");
-                zeile.replace("kreis", "cadkreis");
-                zeile.replace("zylinder", "cadzylinder");
-                zeile.replace("rechteck3d", "cadrechteck3d");
-                zeile.replace("wuerfel", "cadwuerfel");
-                tz.zeile_ersaetzen(i, zeile);
-            }
-        }else
-        {
-            //ab Version 2
-            versionsinfo = tz.zeile(1);
-            tz.zeile_loeschen(1);
-        }
-
+        tz = kompatiblitaetspruefung(tz);
         t.set_text(tz.get_text());
         file.close();
         aktualisiere_anzeigetext();
         DateiIstOffen = true;
+        aktuelisiere_letzte_dateien_inifile();
+        aktualisiere_letzte_dateien_menu();
         showElements_aFileIsOpen();
         //Datei-Namen in Titelleiste anzeigen lassen:
-        QFileInfo info = nameOfTheOpenFile;
+        info = nameOfTheOpenFile;
         QString tmp = PROGRAMMNAME;
         tmp += " ( " + info.baseName() + " )";
         this->setWindowTitle(tmp);
         vorschauAktualisieren();
         hat_ungesicherte_inhalte = false;
         QApplication::restoreOverrideCursor();
+    }else
+    {
+
+        if(!file.exists())
+        {
+            QMessageBox mb;
+            mb.setText("Datei existiert nicht mehr oder wurde verschoben oder umbenannt!");
+            mb.exec();
+        }else
+        {
+            QMessageBox mb;
+            mb.setText("Datei existiert, konnte jedoch nicht geoeffnet werden!");
+            mb.exec();
+        }
+        letzte_geoefnete_dateien.datei_vergessen(pfad);
+        aktualisiere_letzte_dateien_menu();
+        aktuelisiere_letzte_dateien_inifile();
     }
+}
+
+text_zeilenweise MainWindow::kompatiblitaetspruefung(text_zeilenweise dateiinhalt)
+{
+    QString versionsinfo = PROGRAMMNAME;
+    if(!dateiinhalt.zeile(1).contains(versionsinfo))//Programmversion 1
+    {
+        //Kompatibilität zur aktuellen Version wieder herstellen:
+        for(uint i=1; i<=dateiinhalt.zeilenanzahl() ;i++)
+        {
+            QString zeile = dateiinhalt.zeile(i);
+            zeile.replace("punkt", "cadpunkt");
+            zeile.replace("strecke", "cadstrecke");
+            zeile.replace("bogen", "cadbogen");
+            zeile.replace("kreis", "cadkreis");
+            zeile.replace("zylinder", "cadzylinder");
+            zeile.replace("rechteck3d", "cadrechteck3d");
+            zeile.replace("wuerfel", "cadwuerfel");
+            dateiinhalt.zeile_ersaetzen(i, zeile);
+        }
+    }else
+    {
+        //ab Version 2 ist die Programmversion in den GGF-Dateien hinterlegt
+        versionsinfo = dateiinhalt.zeile(1);
+        //und muss vor weiterem Gebrauch entfernt werden:
+        dateiinhalt.zeile_loeschen(1);
+    }
+
+    return dateiinhalt;
 }
 
 void MainWindow::on_import_GGF_triggered()
@@ -2471,6 +2500,7 @@ void MainWindow::on_import_GGF_triggered()
                 }
             }
             file.close();
+            tz = kompatiblitaetspruefung(tz);
 
             emit sendTextToImportGGF(tz.get_text());
 
@@ -3840,6 +3870,14 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 ui->plainTextEdit_GCode->insertPlainText("(Ausgabe nicht moeglich weil Drehrichtung Fraeser unbekannt)");
                 QApplication::restoreOverrideCursor();
                 return ;
+            }
+
+            if(text_mitte(werkzeug, WKZ_KANN_BOHREN, ENDE_EINTRAG) == "1")
+            {
+                tasche_tmp.set_fraeser_kabo(true);
+            }else
+            {
+                tasche_tmp.set_fraeser_kabo(false);
             }
 
             std::string tasche = tasche_tmp.get_gcode();

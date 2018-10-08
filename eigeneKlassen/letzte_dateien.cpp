@@ -46,6 +46,18 @@ void letzte_dateien::datei_merken(QString name)
     }
 }
 
+void letzte_dateien::datei_vergessen(QString name)
+{
+    for(uint i=1; i<=dateinamen.zeilenanzahl() ;i++)
+    {
+        if(dateinamen.zeile(i) == name)
+        {
+            dateinamen.zeile_loeschen(i);
+            break;
+        }
+    }
+}
+
 QString letzte_dateien::get_text()
 {
     QString retstr;
