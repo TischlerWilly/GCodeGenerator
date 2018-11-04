@@ -1901,7 +1901,6 @@ void MainWindow::getDialogData(QString text)
             t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
             //aktualisieren und Element darunter aktivieren:
             int row = aktualisiere_anzeigetext() + 1;
-            //ui->listWidget_Programmliste->item(row)->setSelected(true);
             ui->listWidget_Programmliste->setCurrentRow(row);
             pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow());
         }

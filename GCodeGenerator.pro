@@ -60,7 +60,8 @@ SOURCES += \
     Dialoge/dialog_kreis.cpp \
     Dialoge/dialog_strecke.cpp \
     Dialoge/dialog_bogen.cpp \
-    Dialoge/dialog_bohren.cpp
+    Dialoge/dialog_bohren.cpp \
+    eigeneKlassen/programmtexte.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -114,7 +115,8 @@ HEADERS  += \
     Dialoge/dialog_kreis.h \
     Dialoge/dialog_strecke.h \
     Dialoge/dialog_bogen.h \
-    Dialoge/dialog_bohren.h
+    Dialoge/dialog_bohren.h \
+    eigeneKlassen/programmtexte.h
 
 FORMS    += \
     mainwindow.ui \
