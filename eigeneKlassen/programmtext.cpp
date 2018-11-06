@@ -26,6 +26,7 @@ void programmtext::clear()
 {
     text.clear();
     clear_ausser_text();
+    hat_ungesicherte_inhalte = false;
 }
 
 void programmtext::clear_ausser_text()

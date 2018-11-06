@@ -11,6 +11,7 @@
 ----------Aktuell in Arbeit:
 -->Programm fähig machen mehrere Dateien gleichzeitig zu öffnen
     ->programmtexte.cpp fertig stellen
+        >DateiIstOffen integrieren
     ->Einarbeitung in mainwindow.cpp
         >umschalten der dateien mit STRG+TAB
         >umschalten mit dynamischen Menüeinträgen

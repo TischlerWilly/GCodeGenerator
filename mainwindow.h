@@ -27,6 +27,7 @@
 #include "eigeneKlassen/rechtecktasche.h"
 #include "eigeneKlassen/vorschau.h"
 #include "eigeneKlassen/programmtext.h"
+#include "eigeneKlassen/programmtexte.h"
 #include "eigeneKlassen/text_zeilenweise.h"
 #include "eigeneKlassen/werkzeug.h"
 #include "Dialoge/dialog_variablenwerte_anzeigen.h"
@@ -179,9 +180,6 @@ private:
     Dialog_import_ggf import_ggf;
     Dialog_bohren dbohren;
     vorschau vorschaufenster;
-    undo_redo ur;
-    undo_redo_wkz ur_wkz;
-    bool hat_ungesicherte_inhalte;
     Dialog_Werkzeug werkzeug_dialog;
     Dialog_Fraeser_Aufruf faufruf;
     Dialog_fraeser_gerade fgerade;
@@ -216,8 +214,12 @@ private:
     QStringList     werkzeugnamen;
     QStringList     wkznamen_nur_bohrer;
     QStringList     wkznamen_nur_fraeser;
-    programmtext    t;
+    //programmtext    t;//weg
+    programmtexte   tt;
     werkzeug        w;
+    //undo_redo ur;//weg
+    undo_redo_wkz ur_wkz;
+    //bool hat_ungesicherte_inhalte;//weg
     QString         settings_anz_undo_t;
     QString         settings_anz_undo_w;
     QString         aktives_wkz;

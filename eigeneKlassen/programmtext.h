@@ -177,6 +177,15 @@ public:
         aktualisiere_klartext_var_geo();
         aktualisiere_fkon();
         aktualisiere_anzeigetext();
+        hat_ungesicherte_inhalte = true;
+    }
+    inline bool get_hat_ungesicherte_inhalte()
+    {
+        return hat_ungesicherte_inhalte;
+    }
+    inline void set_hat_ungesicherte_inhalte(bool ja_nein)
+    {
+        hat_ungesicherte_inhalte = ja_nein;
     }
 
     void cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe);
@@ -218,6 +227,7 @@ private:
     bool    warnung_frDial;
     bool    aktualisieren_eingeschaltet;
     bool    aktualisieren_fkon_eingeschaltet;
+    bool    hat_ungesicherte_inhalte;
 
             void    clear_ausser_text();
     inline  void    set_werkstuecklaenge(float neue_laenge)
