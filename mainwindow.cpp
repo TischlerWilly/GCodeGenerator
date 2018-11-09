@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     vorlage_Fabfa                   = NICHT_DEFINIERT;
     vorlage_werkzeug                = NICHT_DEFINIERT;
     vorlage_dbohren                 = NICHT_DEFINIERT;
-    nameOfTheOpenFile               = NICHT_DEFINIERT;
     settings_anz_undo_t             = "10";
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
@@ -44,10 +43,10 @@ MainWindow::MainWindow(QWidget *parent) :
     pfad_import_dxf                 = QDir::homePath();
     pfad_import_ggf                 = QDir::homePath() + "/Dokumente/CNC-Programme";
     pfad_oefne_ggf                  = QDir::homePath() + "/Dokumente/CNC-Programme";
+    speichern_unter_flag            = false;
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
-    DateiIstOffen = false;
     hideElemets_noFileIsOpen();
 
     QDir dir(QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER);
@@ -233,11 +232,9 @@ QString MainWindow::loadConfig()
                     fkon_berechnen = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
                     if(fkon_berechnen == "ja")
                     {
-                        //t.aktualisieren_fkon_ein_aus(true);
                         tt.get_prgtext()->aktualisieren_fkon_ein_aus(true);
                     }else
                     {
-                        //t.aktualisieren_fkon_ein_aus(false);
                         tt.get_prgtext()->aktualisieren_fkon_ein_aus(false);
                     }
                 }
@@ -1519,12 +1516,10 @@ void MainWindow::on_actionEntfernen_triggered()
                 {
                     return;
                 }
-                //t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 tt.get_prgtext()->zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 aktualisiere_anzeigetext();
             }else
             {
-                //t.zeilen_loeschen(row_erstes+1, items_menge);
                 tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
@@ -1579,7 +1574,6 @@ void MainWindow::on_actionKopieren_triggered()
 
             if(items_menge==1)
             {
-                //QString tmp =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
@@ -1588,7 +1582,6 @@ void MainWindow::on_actionKopieren_triggered()
                 kopierterEintrag_t = tmp;
             }else
             {
-                //QString tmp =tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 QString tmp = tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 kopierterEintrag_t = tmp;
             }
@@ -1643,14 +1636,12 @@ void MainWindow::on_actionEinfuegen_triggered()
             tmp_tz.set_text(kopierterEintrag_t);
             if(tmp_tz.zeilenanzahl()==1)
             {
-                //t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow()-items_menge+1 , kopierterEintrag_t);
                 tt.get_prgtext()->zeile_einfuegen(ui->listWidget_Programmliste->currentRow()-items_menge+1 \
                                                  , kopierterEintrag_t);
                 int row = aktualisiere_anzeigetext()-items_menge+2 ;
                 ui->listWidget_Programmliste->setCurrentRow(row);
             }else
             {
-                //t.zeilen_einfuegen(row_erstes, kopierterEintrag_t);
                 tt.get_prgtext()->zeilen_einfuegen(row_erstes, kopierterEintrag_t);
                 int row = aktualisiere_anzeigetext()-items_menge+2+tmp_tz.zeilenanzahl()-1 ;
                 ui->listWidget_Programmliste->setCurrentRow(row);
@@ -1705,29 +1696,23 @@ void MainWindow::on_actionAusschneiden_triggered()
                     break;
                 }
             }
-            //int row_letztes = row_erstes + items_menge-1;
 
             if(items_menge==1)
             {
-                //QString tmp =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
                     return;
                 }
-                //kopierterEintrag_t =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 kopierterEintrag_t = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
-                //t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 tt.get_prgtext()->zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 aktualisiere_anzeigetext();
             }else
             {
                 //Zeilen kopieren:
-                //QString tmp =tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 QString tmp = tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 kopierterEintrag_t = tmp;
                 //Zeilen löschen:
-                //t.zeilen_loeschen(row_erstes+1, items_menge);
                 tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
@@ -1778,7 +1763,6 @@ void MainWindow::on_actionAendern_triggered()
             QString programmzeile;
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                //programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 programmzeile = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
@@ -1894,18 +1878,15 @@ void MainWindow::getDialogData(QString text)
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        //text_zeilenweise at =tt.get_prgtext()->get_anzeigetext_zeilenweise();
         text_zeilenweise at = tt.get_prgtext()->get_anzeigetext_zeilenweise();
         if(at.zeilenanzahl() == 0)
         {
-            //t.zeile_anhaengen(text);
             tt.get_prgtext()->zeile_anhaengen(text);
             aktualisiere_anzeigetext();
             pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
         }else
         {
             //Zeile über aktiver Zeile einfügen:
-            //t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
             tt.get_prgtext()->zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
             //aktualisieren und Element darunter aktivieren:
             int row = aktualisiere_anzeigetext() + 1;
@@ -1938,19 +1919,16 @@ void MainWindow::getDialogDataModify(QString text)
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        //QString text_alt =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
         QString text_alt = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
         if(text != text_alt)
         {
             if(elementIstEingeblendet())
             {
-                //t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, text);
                 tt.get_prgtext()->zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, text);
                 aktualisiere_anzeigetext();
                 pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
             }else
             {
-                //t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, "//"+text);
                 tt.get_prgtext()->zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, "//"+text);
                 aktualisiere_anzeigetext();
             }
@@ -1959,7 +1937,6 @@ void MainWindow::getDialogDataModify(QString text)
     {
         w.zeile_ersaetzen(ui->listWidget_Werkzeug->currentRow()+1, text);
         aktualisiere_anzeigetext_wkz();
-        //ui->listWidget_Werkzeug->currentItem()->setText(text);
         ladeWerkzeugnamen();
         hat_werkzeugliste_fehler();
     }
@@ -2097,7 +2074,6 @@ void MainWindow::on_actionMakeKreistasche_triggered()
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_Ktasche;
         emit sendDialogData(msg, false, wkznamen_nur_fraeser);
-        //emit sendDialogData(msg, false, wkznamen_nur_fraeser);
     }
 }
 
@@ -2251,18 +2227,16 @@ void MainWindow::on_actionMakeBohren_triggered()
 //---------------------------------------------------Datei
 void MainWindow::on_actionDateiNeu_triggered()
 {
-    if(DateiIstOffen == true)
+    if(tt.dateien_sind_offen() == true)
     {
         return;
-        //aktuelle Datei in tt speichern befor neue Datei begonnen wird
+        //return später entfernen wenn öffnen mehrerer Dateien möglich ist
     }
-    DateiIstOffen = true;
     showElements_aFileIsOpen();
     this->setWindowTitle("Neue Datei");
     programmtext t;
     t.set_text("");
     QString name = NICHT_DEFINIERT;
-    nameOfTheOpenFile = NICHT_DEFINIERT;//diese Zeile später noch entfernen
     undo_redo tmpur;
     tmpur.set_groesse_max(settings_anz_undo_t.toInt());
     tt.add(t, name, tmpur);
@@ -2274,7 +2248,7 @@ void MainWindow::on_actionDateiNeu_triggered()
 
 void MainWindow::on_actionDateiOefnen_triggered()
 {
-    if(DateiIstOffen == true)
+    if(tt.dateien_sind_offen() == true)
     {
         return;
         //aktuelle Datei in tt speichern befor neue Datei begonnen wird
@@ -2292,9 +2266,9 @@ void MainWindow::on_actionDateiOefnen_triggered()
 
 void MainWindow::aktuelisiere_letzte_dateien_inifile()
 {
-    if(DateiIstOffen)
+    if(tt.dateien_sind_offen() == true)
     {
-        letzte_geoefnete_dateien.datei_merken(nameOfTheOpenFile);
+        letzte_geoefnete_dateien.datei_merken(tt.get_prgname());
     }
     //Daten Speichern:
     QFile inifile(QDir::homePath() + PFAD_LETZTE_DATEIEN);
@@ -2316,21 +2290,11 @@ void MainWindow::aktuelisiere_letzte_dateien_inifile()
 void MainWindow::aktualisiere_letzte_dateien_menu()
 {
     ui->menuLetzte_Dateien->clear();
-    //QMenu *meinMenu;
-    //meinMenu = ui->menuLetzte_Dateien->addMenu(tr("mein Menu"));
 
     text_zeilenweise namen;
     namen.set_text(letzte_geoefnete_dateien.get_text());
     for(uint i=1; i<=namen.zeilenanzahl() ;i++)
     {
-        /*
-        QAction *meineAction;
-        meineAction = new QAction(namen.zeile(i), this);
-                                                            //meinMenu->addAction(meineAction);
-        ui->menuLetzte_Dateien->addAction(meineAction);
-        connect(meineAction, SIGNAL(triggered()), \
-                this, SLOT(on_actionLetzteDateiOefnen_triggered()));
-        */
         oefneLetzteDateien[i-1] = new QAction(namen.zeile(i), this);
         ui->menuLetzte_Dateien->addAction(oefneLetzteDateien[i-1]);
         oefneLetzteDateien[i-1]->setData(namen.zeile(i));
@@ -2345,9 +2309,8 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-        QString msg = action->data().toString();
-
-        if(DateiIstOffen == true)
+        QString msg = action->data().toString();        
+        if(tt.dateien_sind_offen() == true)
         {
             QMessageBox mb;
             mb.setText("Bitte schiessen Sie zuerst die offene Datei.");
@@ -2364,10 +2327,10 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
 void MainWindow::openFile(QString pfad)
 {
     //Maschinengeometrie laden:
+    text_zeilenweise maschinengeometrie;
     QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
     if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        text_zeilenweise tz;
         while(!fileMaschiene.atEnd())
         {
             QString line = fileMaschiene.readLine();
@@ -2375,17 +2338,15 @@ void MainWindow::openFile(QString pfad)
             {
                 line = line.left(line.length()-1);
             }
-            if(tz.zeilenanzahl() == 0)
+            if(maschinengeometrie.zeilenanzahl() == 0)
             {
-                tz.set_text(line);
+                maschinengeometrie.set_text(line);
             }else
             {
-                tz.zeilen_anhaengen(line);
+                maschinengeometrie.zeilen_anhaengen(line);
             }
         }
-        tz = kompatiblitaetspruefung(tz);
-        //t.set_maschinengeometrie(tz);
-        tt.get_prgtext()->set_maschinengeometrie(tz);
+        maschinengeometrie = kompatiblitaetspruefung(maschinengeometrie);
     }
 
     QFile file(pfad);
@@ -2394,11 +2355,8 @@ void MainWindow::openFile(QString pfad)
         //Programmdatei laden:
         QFileInfo info = pfad;
         pfad_oefne_ggf = info.path();
-        nameOfTheOpenFile = pfad;//Diese Zeile später noch entfernen
-
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        text_zeilenweise tz;        
-
+        text_zeilenweise tz;
         while(!file.atEnd())
         {
             QString line = file.readLine();
@@ -2415,21 +2373,23 @@ void MainWindow::openFile(QString pfad)
             }
         }
         tz = kompatiblitaetspruefung(tz);
-        //t.set_text(tz.get_text());
-        tt.get_prgtext()->set_text(tz.get_text());
+        programmtext t;
+        t.set_text(tz.get_text());
+        undo_redo tmpur;
+        tmpur.set_groesse_max(settings_anz_undo_t.toInt());
+        tt.add(t, pfad, tmpur);
+        tt.get_prgtext()->set_maschinengeometrie(tz);
         file.close();
         aktualisiere_anzeigetext();
-        DateiIstOffen = true;//Dies muss noch in tt integriert werden
         aktuelisiere_letzte_dateien_inifile();
         aktualisiere_letzte_dateien_menu();
         showElements_aFileIsOpen();
         //Datei-Namen in Titelleiste anzeigen lassen:
-        info = nameOfTheOpenFile;
+        info = pfad;
         QString tmp = PROGRAMMNAME;
         tmp += " ( " + info.baseName() + " )";
         this->setWindowTitle(tmp);
         vorschauAktualisieren();
-        //hat_ungesicherte_inhalte = false;//kann zusammen mit t weg
         tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
         QApplication::restoreOverrideCursor();
     }else
@@ -2916,10 +2876,8 @@ void MainWindow::on_actionDateiSchliessen_triggered()
         }
     }
     //Datei schließen:
-    DateiIstOffen = false;
     hideElemets_noFileIsOpen();
     vorschaufenster.hide();
-    nameOfTheOpenFile = NICHT_DEFINIERT;
     ui->listWidget_Programmliste->clear();
     tt.del();
     vorschauAktualisieren();
@@ -2928,12 +2886,12 @@ void MainWindow::on_actionDateiSchliessen_triggered()
 
 void MainWindow::on_actionDateiSpeichern_triggered()
 {
-    if(DateiIstOffen == false)
+    if(tt.dateien_sind_offen() == false)
     {
         return;
     }
     QString fileName;
-    if(nameOfTheOpenFile == NICHT_DEFINIERT)
+    if(tt.get_prgname() == NICHT_DEFINIERT  ||  speichern_unter_flag == true)
     {
         //Dialog öffnen zum Wählen des Speicherortes und des Namens:
         fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), \
@@ -2948,18 +2906,17 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             }
             if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
             {
-                nameOfTheOpenFile = NICHT_DEFINIERT;
                 return;
             }else
             {
-                nameOfTheOpenFile = fileName;
+                tt.set_prgname(fileName);
             }
         }
     }else
     {
         //Namen der offenen Datei verwenden:
 
-        fileName = nameOfTheOpenFile;
+        fileName = tt.get_prgname();
         if(!fileName.contains(DATEIENDUNG_EIGENE))
         {
             fileName += DATEIENDUNG_EIGENE;
@@ -2968,6 +2925,7 @@ void MainWindow::on_actionDateiSpeichern_triggered()
 
     //Programmliste in String schreiben
     QString dateiInhalt = dateitext_ggf();
+
     //Datei füllen und speichern
     if(!fileName.isEmpty())
     {
@@ -2984,27 +2942,23 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
             file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
             file.close(); //beende Zugriff
-            QFileInfo info = nameOfTheOpenFile;
+            QFileInfo info = tt.get_prgname();
             QString tmp = PROGRAMMNAME;
             tmp += " ( " + info.baseName() + " )";
             this->setWindowTitle(tmp);
             tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
             aktuelisiere_letzte_dateien_inifile();
             aktualisiere_letzte_dateien_menu();
-            nameOfTheOpenFile_backup = "";
         }
-    }else if(nameOfTheOpenFile == NICHT_DEFINIERT && !nameOfTheOpenFile_backup.isEmpty())
-    {
-        nameOfTheOpenFile = nameOfTheOpenFile_backup;
     }
 }
 
 void MainWindow::on_actionDateiSpeichern_unter_triggered()
 {
-    nameOfTheOpenFile_backup = nameOfTheOpenFile;
-    nameOfTheOpenFile = NICHT_DEFINIERT;
+    speichern_unter_flag = true;
     on_actionDateiSpeichern_triggered();
-    QFileInfo info = nameOfTheOpenFile;
+    speichern_unter_flag = false;
+    QFileInfo info = tt.get_prgname();
     QString tmp = PROGRAMMNAME;
     tmp += " ( " + info.baseName() + " )";
     this->setWindowTitle(tmp);
@@ -3012,7 +2966,7 @@ void MainWindow::on_actionDateiSpeichern_unter_triggered()
 
 void MainWindow::on_actionMaschine_speichern_triggered()
 {
-    if(DateiIstOffen == false)
+    if(tt.dateien_sind_offen() == false)
     {
         return;
     }
@@ -3020,7 +2974,6 @@ void MainWindow::on_actionMaschine_speichern_triggered()
     //for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
     for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
     {
-        //QString zeile =tt.get_prgtext()->get_text_zeilenweise().zeile(i);
         QString zeile = tt.get_prgtext()->get_text_zeilenweise().zeile(i);
         if(zeile.contains(BOGEN)     || \
            zeile.contains(STRECKE)   || \
@@ -3074,7 +3027,6 @@ QString MainWindow::dateitext_ggf()
     QString dateiInhalt;
     dateiInhalt  = PROGRAMMNAME;
     dateiInhalt += " Version 2\n";
-    //dateiInhalt +=tt.get_prgtext()->get_text();
     dateiInhalt += tt.get_prgtext()->get_text();
 
     return dateiInhalt;
@@ -3103,15 +3055,11 @@ void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
                 tz.zeilen_anhaengen(line);
             }
         }
-
-        //t.set_text(tz.get_text());
         tt.get_prgtext()->set_text(tz.get_text());
         file.close();
         aktualisiere_anzeigetext();
-        DateiIstOffen = true;
         showElements_aFileIsOpen();
         vorschauAktualisieren();
-        //hat_ungesicherte_inhalte = false;//kann zusammen mit t weg
         tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
         QApplication::restoreOverrideCursor();
     }else
@@ -3269,7 +3217,6 @@ void MainWindow::showElements_aFileIsOpen()
 
 bool MainWindow::elementIstEingeblendet()
 {
-    //QString tmp =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
     QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
     if(tmp.left(2) == "//")
     {
@@ -3306,11 +3253,9 @@ bool MainWindow::elementIstEingeblendet(QListWidgetItem *item)
 void MainWindow::elementEinblenden()
 {
     uint i = ui->listWidget_Programmliste->currentRow()+1;
-    //QString tmp_t =tt.get_prgtext()->zeile(i);
     QString tmp_t = tt.get_prgtext()->zeile(i);
     int length_t = tmp_t.length();
     tmp_t = tmp_t.right(length_t-2);
-    //t.zeile_ersaetzen(i, tmp_t);
     tt.get_prgtext()->zeile_ersaetzen(i, tmp_t);
 
     QString tmp = ui->listWidget_Programmliste->currentItem()->text();
@@ -3324,10 +3269,8 @@ void MainWindow::elementEinblenden()
 void MainWindow::elementAusblenden()
 {
     uint i = ui->listWidget_Programmliste->currentRow()+1;
-    //QString tmp_t =tt.get_prgtext()->zeile(i);
     QString tmp_t = tt.get_prgtext()->zeile(i);
     tmp_t = "//" + tmp_t;
-    //t.zeile_ersaetzen(i, tmp_t);
     tt.get_prgtext()->zeile_ersaetzen(i, tmp_t);
 
     QString tmp = ui->listWidget_Programmliste->currentItem()->text();
@@ -3364,7 +3307,6 @@ void MainWindow::elementAusblendenSichtbarMachen(QListWidgetItem *item)
 
 void MainWindow::on_actionEin_Ausblenden_triggered()
 {
-    //t.warnungen_einschalten(false);
     tt.get_prgtext()->warnungen_einschalten(false);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
@@ -3389,7 +3331,6 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
             int menge_eingeblendet = 0;
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
-                //QString zeilentext =tt.get_prgtext()->zeile(i+1);
                 QString zeilentext = tt.get_prgtext()->zeile(i+1);
                 if(elementIstEingeblendet(zeilentext))
                 {
@@ -3418,14 +3359,12 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
-    //t.warnungen_einschalten(true);
     tt.get_prgtext()->warnungen_einschalten(true);
     QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAuswahl_Ausblenden_triggered()
 {
-    //t.warnungen_einschalten(false);
     tt.get_prgtext()->warnungen_einschalten(false);
     QApplication::setOverrideCursor(Qt::WaitCursor); 
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
@@ -3446,7 +3385,6 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
             }
             int row_letztes = row_erstes + items_menge-1;
 
-            //t.aktualisieren_ein_aus(false);
             tt.get_prgtext()->aktualisieren_ein_aus(false);
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
@@ -3458,8 +3396,7 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
                     ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
                 }                
             }
-            //t.aktualisieren_ein_aus(true);
-           tt.get_prgtext()->aktualisieren_ein_aus(true);
+            tt.get_prgtext()->aktualisieren_ein_aus(true);
             aktualisiere_anzeigetext();
             vorschauAktualisieren();
             for(int i=row_erstes ; i<=row_letztes ; i++)
@@ -3478,7 +3415,6 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
-    //t.warnungen_einschalten(true);
     tt.get_prgtext()->warnungen_einschalten(true);
     QApplication::restoreOverrideCursor();
 
@@ -3546,7 +3482,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if(index == INDEX_PROGRAMMLISTE)
     {
-        if(DateiIstOffen == false)
+        if(tt.dateien_sind_offen() == false)
         {
             //Menü Bearbeiten:
             ui->actionAendern->setDisabled(true);
@@ -3571,7 +3507,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 //---------------------------------------------------generell MainWindow
 void MainWindow::closeEvent(QCloseEvent *ce)
 {
-    if(DateiIstOffen == true)
+    if(tt.dateien_sind_offen() == true)
     {
         //Sicherheitsabfrage:
         QMessageBox mb;
@@ -3586,13 +3522,11 @@ void MainWindow::closeEvent(QCloseEvent *ce)
         if(mb_returnwert == QMessageBox::Yes)
         {
             on_actionDateiSpeichern_triggered();
-            DateiIstOffen = false;
             hideElemets_noFileIsOpen();
             vorschaufenster.close();
             ce->accept();
         }else if(mb_returnwert == QMessageBox::No)
         {
-            DateiIstOffen = false;
             hideElemets_noFileIsOpen();
             vorschaufenster.close();
             ce->accept();
@@ -4247,14 +4181,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     }
                 }
                 double fraestiefe_max =tt.get_prgtext()->get_werkstueckdicke()- tiefe_min;
-                /*
-                double fraestiefe_faufr =tt.get_prgtext()->get_werkstueckdicke() - \
-                        text_mitte(zeile, POSITION_Z, ENDE_EINTRAG).toDouble();
-                double tiefendiff_faufr_zu_max = fraestiefe_max - fraestiefe_faufr;
-                */
                 double verschiebung_z = fraestiefe_max - zustellmass;
-
-
 
                 for(uint ii=i ; \
                     verschiebung_z > 0;
@@ -4279,7 +4206,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                                     zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                                 }
                             }
-                            //QString zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i+1);
                             text_zeilenweise fkon_tz2;
                             fkon_tz2.set_trennzeichen(TRZ_EL_);
                             fkon_tz2.set_text(zeile_fkon2);
@@ -4558,7 +4484,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                     }
                 }
-                //QString zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i+1);
                 text_zeilenweise fkon_tz2;
                 fkon_tz2.set_trennzeichen(TRZ_EL_);
                 fkon_tz2.set_text(zeile_fkon2);
@@ -4838,7 +4763,7 @@ void MainWindow::on_actionGCode_exportieren_triggered()
 {
     QString fileName;
     on_actionDateiSpeichern_triggered();
-    fileName = nameOfTheOpenFile;
+    fileName = tt.get_prgname();
     if(fileName == NICHT_DEFINIERT)
     {
         QMessageBox mb;
@@ -7132,11 +7057,9 @@ int MainWindow::aktualisiere_anzeigetext(bool undo_redo_on)
 
     if(undo_redo_on == true)
     {
-        //ur.neu(t);
         tt.get_prg_undo_redo()->neu(*tt.get_prgtext());
     }
     tt.get_prgtext()->set_hat_ungesicherte_inhalte(true);
-    //hat_ungesicherte_inhalte = true;//kann zusammen mit t weg
     return row;
 }
 

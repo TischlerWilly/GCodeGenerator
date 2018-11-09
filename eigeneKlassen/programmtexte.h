@@ -1,10 +1,13 @@
 #ifndef PROGRAMMTEXTE_H
 #define PROGRAMMTEXTE_H
 
+
+#include <QString>
+#include <qvector.h>
+#include "../eigeneFunktionen/umwandeln.h"
 #include "programmtext.h"
 #include "undo_redo.h"
-#include <vector>
-#include <QString>
+
 
 class programmtexte
 {
@@ -18,32 +21,43 @@ public:
     void set_current_index(uint index);
     inline void set_prgname(QString name)
     {
-        vpname.at(current_index) = name;
+        vpname.replace(current_index, name);
     }
     inline void set_prgname(QString name, uint index)
     {
-        vpname.at(index) = name;
+        vpname.replace(index, name);
     }
 
-    inline uint get_size()
+    inline int get_size()
     {
         return vp.size();//gibt die Anzahl der Elemente wieder
     }
+    inline bool dateien_sind_offen()
+    {
+        if(get_size() > 1)
+        {
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
+
     inline programmtext *get_prgtext()
     {
-        return &vp.at(current_index);
+        return &vp[current_index];
     }
     inline programmtext *get_prgtext(uint index)
     {
-        return &vp.at(index);
+        return &vp[index];
     }
     inline undo_redo *get_prg_undo_redo()
     {
-        return &vur.at(current_index);
+        return &vur[current_index];
     }
     inline undo_redo *get_prg_undo_redo(uint index)
     {
-        return &vur.at(index);
+        return &vur[index];
     }
     inline QString get_prgname()
     {
@@ -60,9 +74,9 @@ public:
 
 
 private:
-    vector<programmtext> vp;    //Vector enthällt Programmtexte
-    vector<undo_redo> vur;      //Vector enthällt Wiederrufenschritte
-    vector<QString> vpname;     //Vektor enthällt Dateinahmen (Pfade)
+    QVector<programmtext> vp;    //Vector enthällt Programmtexte
+    QVector<undo_redo> vur;      //Vector enthällt Wiederrufenschritte
+    QVector<QString> vpname;     //Vektor enthällt Dateinahmen (Pfade)
     uint current_index;
 };
 

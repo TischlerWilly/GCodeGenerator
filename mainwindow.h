@@ -208,18 +208,13 @@ private:
     QString         vorlage_Fabfa;
     QString         vorlage_werkzeug;
     QString         vorlage_dbohren;
-    bool            DateiIstOffen;
-    QString         nameOfTheOpenFile;
-    QString         nameOfTheOpenFile_backup;
+    bool            speichern_unter_flag;
     QStringList     werkzeugnamen;
     QStringList     wkznamen_nur_bohrer;
     QStringList     wkznamen_nur_fraeser;
-    //programmtext    t;//weg
     programmtexte   tt;
     werkzeug        w;
-    //undo_redo ur;//weg
     undo_redo_wkz ur_wkz;
-    //bool hat_ungesicherte_inhalte;//weg
     QString         settings_anz_undo_t;
     QString         settings_anz_undo_w;
     QString         aktives_wkz;

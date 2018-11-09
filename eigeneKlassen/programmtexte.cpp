@@ -15,7 +15,7 @@ void programmtexte::add(programmtext p, QString name, undo_redo ur)
 
 void programmtexte::del()
 {
-    if(vp.size() > 0)
+    if(vp.size() > 1)//immer eine Instanz behalten
     {
         vp.erase(vp.begin() + current_index);
         vur.erase(vur.begin() + current_index);
