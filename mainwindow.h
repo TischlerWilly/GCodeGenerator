@@ -79,6 +79,7 @@ private slots:
     void on_actionDateiSpeichern_triggered();
     void on_actionDateiOefnen_triggered();
     void actionLetzteDateiOefnenTriggered();
+    void actionFokuswechselOffeneDateiTriggered();
     void on_actionDateiSpeichern_unter_triggered();
     void on_actionEin_Ausblenden_triggered();
     void resizeEvent(QResizeEvent *event);
@@ -220,6 +221,7 @@ private:
     QString         aktives_wkz;
     letzte_dateien  letzte_geoefnete_dateien;
     QAction *oefneLetzteDateien[ANZAHL_LETZTER_DATEIEN];
+    QAction *OffeneDateieFokus[ANZAHL_OFFENER_DATEIEN];
     QString         dxf_klasse_wstnp;
     QString         dxf_klasse_geo;
     QString         dxf_klasse_geo_beachten;
@@ -259,6 +261,7 @@ private:
     QString klammern_wecklassen(QString text);
     void aktuelisiere_letzte_dateien_inifile();
     void aktualisiere_letzte_dateien_menu();
+    void aktualisiere_offene_dateien_menu();
     void openFile(QString pfad);
     QString dateitext_ggf();
 

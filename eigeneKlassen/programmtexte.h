@@ -27,6 +27,22 @@ public:
     {
         vpname.replace(index, name);
     }
+    inline  void aktualisieren_fkon_ein_aus(bool einschalten)
+    {
+        if(einschalten)
+        {
+            aktualisieren_fkon_eingeschaltet = true;
+            get_prgtext()->aktualisieren_ein_aus(true);
+        }else
+        {
+            aktualisieren_fkon_eingeschaltet = false;
+            get_prgtext()->aktualisieren_ein_aus(false);
+        }
+    }
+    inline  bool get_aktualisieren_fkon_ein_aus()
+    {
+        return aktualisieren_fkon_eingeschaltet;
+    }
 
     inline int get_size()
     {
@@ -72,12 +88,14 @@ public:
         return current_index;
     }
 
+    text_zeilenweise get_names();
 
 private:
     QVector<programmtext> vp;    //Vector enthällt Programmtexte
     QVector<undo_redo> vur;      //Vector enthällt Wiederrufenschritte
     QVector<QString> vpname;     //Vektor enthällt Dateinahmen (Pfade)
     uint current_index;
+    bool    aktualisieren_fkon_eingeschaltet;
 };
 
 #endif // PROGRAMMTEXTE_H

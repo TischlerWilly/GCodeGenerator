@@ -13,6 +13,11 @@
     ->Einarbeitung in mainwindow.cpp
         >umschalten der dateien mit STRG+TAB
         >umschalten mit dynamischen Menüeinträgen
+            void MainWindow::actionFokuswechselOffeneDateiTriggered()
+        >dafür sorgen,das die selbe Datein nicht mehrfach geöffnet werden kann
+        >die Reihenfolge der Dateien beim Öffnen merken und beim Dateien schließen beachten
+
+    ->BUGFIX aktualisieren_fkon_ein_aus
 
 
 

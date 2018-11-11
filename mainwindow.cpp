@@ -232,10 +232,10 @@ QString MainWindow::loadConfig()
                     fkon_berechnen = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
                     if(fkon_berechnen == "ja")
                     {
-                        tt.get_prgtext()->aktualisieren_fkon_ein_aus(true);
+                        tt.aktualisieren_fkon_ein_aus(true);
                     }else
                     {
-                        tt.get_prgtext()->aktualisieren_fkon_ein_aus(false);
+                        tt.aktualisieren_fkon_ein_aus(false);
                     }
                 }
                 //-----------------------------------------------------Dialoge:
@@ -2227,10 +2227,18 @@ void MainWindow::on_actionMakeBohren_triggered()
 //---------------------------------------------------Datei
 void MainWindow::on_actionDateiNeu_triggered()
 {
-    if(tt.dateien_sind_offen() == true)
+    int max = ANZAHL_OFFENER_DATEIEN;
+    if(tt.get_size() >= max)
     {
+        QString msg;
+        msg += "Bitter zuerst eine Datei schliessen!\n";
+        msg += "Es koennen maximal ";
+        msg += int_to_qstring(max);
+        msg += " Dateien gleichzeitig offen sein!";
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
         return;
-        //return später entfernen wenn öffnen mehrerer Dateien möglich ist
     }
     showElements_aFileIsOpen();
     this->setWindowTitle("Neue Datei");
@@ -2248,10 +2256,18 @@ void MainWindow::on_actionDateiNeu_triggered()
 
 void MainWindow::on_actionDateiOefnen_triggered()
 {
-    if(tt.dateien_sind_offen() == true)
+    int max = ANZAHL_OFFENER_DATEIEN;
+    if(tt.get_size() >= max)
     {
+        QString msg;
+        msg += "Bitter zuerst eine Datei schliessen!\n";
+        msg += "Es koennen maximal ";
+        msg += int_to_qstring(max);
+        msg += " Dateien gleichzeitig offen sein!";
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
         return;
-        //aktuelle Datei in tt speichern befor neue Datei begonnen wird
     }else
     {
         //Dialog öffnen zum Wählen der Datei:
@@ -2304,16 +2320,43 @@ void MainWindow::aktualisiere_letzte_dateien_menu()
 
 }
 
+void MainWindow::aktualisiere_offene_dateien_menu()
+{
+    ui->menuOffene_Dateien->clear();
+
+    text_zeilenweise namen;
+    namen = tt.get_names();
+    for(uint i=1; i<=namen.zeilenanzahl() ;i++)
+    {
+        OffeneDateieFokus[i-1] = new QAction(namen.zeile(i), this);
+        ui->menuOffene_Dateien->addAction(OffeneDateieFokus[i-1]);
+        OffeneDateieFokus[i-1]->setData(namen.zeile(i));
+        connect(OffeneDateieFokus[i-1], SIGNAL(triggered(bool)),        \
+                this, SLOT(actionFokuswechselOffeneDateiTriggered())    );
+    }
+}
+
+void MainWindow::actionFokuswechselOffeneDateiTriggered()
+{
+
+}
+
 void MainWindow::actionLetzteDateiOefnenTriggered()
 {
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-        QString msg = action->data().toString();        
-        if(tt.dateien_sind_offen() == true)
+        QString msg = action->data().toString();
+        int max = ANZAHL_OFFENER_DATEIEN;
+        if(tt.get_size() >= max)
         {
+            QString msg;
+            msg += "Bitter zuerst eine Datei schliessen!\n";
+            msg += "Es koennen maximal ";
+            msg += int_to_qstring(max);
+            msg += " Dateien gleichzeitig offen sein!";
             QMessageBox mb;
-            mb.setText("Bitte schiessen Sie zuerst die offene Datei.");
+            mb.setText(msg);
             mb.exec();
             return;
         }else
@@ -2375,6 +2418,7 @@ void MainWindow::openFile(QString pfad)
         tz = kompatiblitaetspruefung(tz);
         programmtext t;
         t.set_text(tz.get_text());
+        t.aktualisieren_fkon_ein_aus(tt.get_aktualisieren_fkon_ein_aus());
         undo_redo tmpur;
         tmpur.set_groesse_max(settings_anz_undo_t.toInt());
         tt.add(t, pfad, tmpur);
@@ -2392,6 +2436,7 @@ void MainWindow::openFile(QString pfad)
         vorschauAktualisieren();
         tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
         QApplication::restoreOverrideCursor();
+        aktualisiere_offene_dateien_menu();
     }else
     {
 
@@ -2876,12 +2921,27 @@ void MainWindow::on_actionDateiSchliessen_triggered()
         }
     }
     //Datei schließen:
-    hideElemets_noFileIsOpen();
-    vorschaufenster.hide();
-    ui->listWidget_Programmliste->clear();
-    tt.del();
-    vorschauAktualisieren();
-    this->setWindowTitle(PROGRAMMNAME);
+    if(tt.get_size() <= 2)//Wenn nur noch die Platzhalter-Datei offen ist (also nichts)
+    {
+        hideElemets_noFileIsOpen();
+        vorschaufenster.hide();
+        ui->listWidget_Programmliste->clear();
+        tt.del();
+        vorschauAktualisieren();
+        this->setWindowTitle(PROGRAMMNAME);
+        aktualisiere_offene_dateien_menu();
+    }else
+    {
+        ui->listWidget_Programmliste->clear();
+        tt.del();
+        aktualisiere_anzeigetext();
+        vorschauAktualisieren();
+        QFileInfo info = tt.get_prgname();
+        QString tmp = PROGRAMMNAME;
+        tmp += " ( " + info.baseName() + " )";
+        this->setWindowTitle(tmp);
+        aktualisiere_offene_dateien_menu();
+    }
 }
 
 void MainWindow::on_actionDateiSpeichern_triggered()
@@ -3571,7 +3631,8 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     bool tmp_fkon_ein =tt.get_prgtext()->ist_aktualisieren_fkon_ein();
     if(tmp_fkon_ein == false)
     {
-       tt.get_prgtext()->aktualisieren_fkon_ein_aus(true);
+       //tt.get_prgtext()->aktualisieren_fkon_ein_aus(true);
+       tt.aktualisieren_fkon_ein_aus(true);
     }
 
     ui->plainTextEdit_GCode->clear();
@@ -4748,7 +4809,8 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
     if(tmp_fkon_ein == false)
     {
-       tt.get_prgtext()->aktualisieren_fkon_ein_aus(false);
+       //tt.get_prgtext()->aktualisieren_fkon_ein_aus(false);
+       tt.aktualisieren_fkon_ein_aus(false);
     }
 
     QApplication::restoreOverrideCursor();
