@@ -751,17 +751,6 @@ void vorschau::werkstueck_darstellung_berechnen()
 
 }
 
-void vorschau::slot_aktualisieren(QString neuer_programmtext, int aktive_zeile)
-{
-    t.set_text(neuer_programmtext);
-    wst.set_laenge(t.get_werkstuecklaenge());
-    wst.set_breite(t.get_werkstueckbreite());
-    aktuelle_zeilennummer = aktive_zeile;
-    werkstueck_darstellung_berechnen();
-    this->update();
-
-}
-
 void vorschau::slot_aktualisieren(programmtext t_neu, int aktive_zeile)
 {
     t = t_neu;

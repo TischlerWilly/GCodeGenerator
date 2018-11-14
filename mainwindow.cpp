@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pfad_import_ggf                 = QDir::homePath() + "/Dokumente/CNC-Programme";
     pfad_oefne_ggf                  = QDir::homePath() + "/Dokumente/CNC-Programme";
     speichern_unter_flag            = false;
+    tt.clear();
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
@@ -109,7 +110,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     on_pushButton_WKZ_Laden_clicked();
     ladeWerkzeugnamen();
-    //hat_ungesicherte_inhalte = false;
     loadConfig_letzte_Dateien();
 
     //SLOT(slotSaveConfig():
@@ -2248,10 +2248,9 @@ void MainWindow::on_actionDateiNeu_triggered()
     undo_redo tmpur;
     tmpur.set_groesse_max(settings_anz_undo_t.toInt());
     tt.add(t, name, tmpur);
-    aktualisiere_anzeigetext();
+    update_gui();
     ui->listWidget_Programmliste->item(0)->setSelected(true);
     ui->listWidget_Programmliste->setCurrentRow(0);
-    tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
 }
 
 void MainWindow::on_actionDateiOefnen_triggered()
@@ -2369,91 +2368,93 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
 
 void MainWindow::openFile(QString pfad)
 {
-    //Maschinengeometrie laden:
-    text_zeilenweise maschinengeometrie;
-    QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
-    if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
+    //Prüfen, ob Datei bereits geöffnet ist:
+    if(tt.isopen(pfad))
     {
-        while(!fileMaschiene.atEnd())
-        {
-            QString line = fileMaschiene.readLine();
-            if(line.right(1) == "\n")
-            {
-                line = line.left(line.length()-1);
-            }
-            if(maschinengeometrie.zeilenanzahl() == 0)
-            {
-                maschinengeometrie.set_text(line);
-            }else
-            {
-                maschinengeometrie.zeilen_anhaengen(line);
-            }
-        }
-        maschinengeometrie = kompatiblitaetspruefung(maschinengeometrie);
-    }
-
-    QFile file(pfad);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        //Programmdatei laden:
-        QFileInfo info = pfad;
-        pfad_oefne_ggf = info.path();
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        text_zeilenweise tz;
-        while(!file.atEnd())
-        {
-            QString line = file.readLine();
-            if(line.right(1) == "\n")
-            {
-                line = line.left(line.length()-1);
-            }
-            if(tz.zeilenanzahl() == 0)
-            {
-                tz.set_text(line);
-            }else
-            {
-                tz.zeilen_anhaengen(line);
-            }
-        }
-        tz = kompatiblitaetspruefung(tz);
-        programmtext t;
-        t.set_text(tz.get_text());
-        t.aktualisieren_fkon_ein_aus(tt.get_aktualisieren_fkon_ein_aus());
-        undo_redo tmpur;
-        tmpur.set_groesse_max(settings_anz_undo_t.toInt());
-        tt.add(t, pfad, tmpur);
-        tt.get_prgtext()->set_maschinengeometrie(tz);
-        file.close();
-        aktualisiere_anzeigetext();
-        aktuelisiere_letzte_dateien_inifile();
-        aktualisiere_letzte_dateien_menu();
-        showElements_aFileIsOpen();
-        //Datei-Namen in Titelleiste anzeigen lassen:
-        info = pfad;
-        QString tmp = PROGRAMMNAME;
-        tmp += " ( " + info.baseName() + " )";
-        this->setWindowTitle(tmp);
-        vorschauAktualisieren();
-        tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
-        QApplication::restoreOverrideCursor();
-        aktualisiere_offene_dateien_menu();
+        tt.set_current_index(pfad);
+        update_gui();
     }else
     {
-
-        if(!file.exists())
+        //Maschinengeometrie laden:
+        text_zeilenweise maschinengeometrie;
+        QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
+        if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            QMessageBox mb;
-            mb.setText("Datei existiert nicht mehr oder wurde verschoben oder umbenannt!");
-            mb.exec();
+            while(!fileMaschiene.atEnd())
+            {
+                QString line = fileMaschiene.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(maschinengeometrie.zeilenanzahl() == 0)
+                {
+                    maschinengeometrie.set_text(line);
+                }else
+                {
+                    maschinengeometrie.zeilen_anhaengen(line);
+                }
+            }
+            maschinengeometrie = kompatiblitaetspruefung(maschinengeometrie);
+        }
+
+        QFile file(pfad);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            //Programmdatei laden:
+            QFileInfo info = pfad;
+            pfad_oefne_ggf = info.path();
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+            text_zeilenweise tz;
+            while(!file.atEnd())
+            {
+                QString line = file.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(tz.zeilenanzahl() == 0)
+                {
+                    tz.set_text(line);
+                }else
+                {
+                    tz.zeilen_anhaengen(line);
+                }
+            }
+            tz = kompatiblitaetspruefung(tz);
+            programmtext t;
+            t.set_text(tz.get_text());
+            t.aktualisieren_fkon_ein_aus(tt.get_aktualisieren_fkon_ein_aus());
+            undo_redo tmpur;
+            tmpur.set_groesse_max(settings_anz_undo_t.toInt());
+            tt.add(t, pfad, tmpur);
+            tt.get_prgtext()->set_maschinengeometrie(tz);
+            file.close();
+            aktualisiere_anzeigetext();
+            aktuelisiere_letzte_dateien_inifile();
+            aktualisiere_letzte_dateien_menu();
+            showElements_aFileIsOpen();
+            tt.get_prgtext()->wurde_gespeichert();
+            update_gui();
+            QApplication::restoreOverrideCursor();
+            aktualisiere_offene_dateien_menu();
         }else
         {
-            QMessageBox mb;
-            mb.setText("Datei existiert, konnte jedoch nicht geoeffnet werden!");
-            mb.exec();
+            if(!file.exists())
+            {
+                QMessageBox mb;
+                mb.setText("Datei existiert nicht mehr oder wurde verschoben oder umbenannt!");
+                mb.exec();
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Datei existiert, konnte jedoch nicht geoeffnet werden!");
+                mb.exec();
+            }
+            letzte_geoefnete_dateien.datei_vergessen(pfad);
+            aktualisiere_letzte_dateien_menu();
+            aktuelisiere_letzte_dateien_inifile();
         }
-        letzte_geoefnete_dateien.datei_vergessen(pfad);
-        aktualisiere_letzte_dateien_menu();
-        aktuelisiere_letzte_dateien_inifile();
     }
 }
 
@@ -2894,14 +2895,28 @@ void MainWindow::on_import_DXF_triggered()
     }
 }
 
-void MainWindow::on_actionDateiSchliessen_triggered()
+bool MainWindow::on_actionDateiSchliessen_triggered()
 {
     //Sicherheitsabfrage:
     if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)
     {
+        QFileInfo info;
+        info = tt.get_prgname();
+        QString dateiname = info.baseName();
+        QString msg;
+
+        if(dateiname == NICHT_DEFINIERT)
+        {
+            msg = "Soll die neue Datei vor dem Schliessen gespeichert werden?";
+        }else
+        {
+            msg = "Soll die Datei \"";
+            msg += dateiname;
+            msg += "\" vor dem Schliessen gespeichert werden?";
+        }
         QMessageBox mb;
-        mb.setWindowTitle("Datei speichern");
-        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
+        mb.setWindowTitle("Datei schliessen");
+        mb.setText(msg);
         mb.setStandardButtons(QMessageBox::Yes);
         mb.addButton(QMessageBox::No);
         mb.addButton(QMessageBox::Abort);
@@ -2910,45 +2925,33 @@ void MainWindow::on_actionDateiSchliessen_triggered()
         int mb_returnwert = mb.exec();
         if(mb_returnwert == QMessageBox::Yes)
         {
-            on_actionDateiSpeichern_triggered();
-
+            if(on_actionDateiSpeichern_triggered() == false)//Speichern nicht erfolgreich abgeschlossen
+            {
+                return false;//Funktion nicht erfolgreich abgeschlossen
+            }
         }else if(mb_returnwert == QMessageBox::No)
         {
             ;//nichts tun = nicht speichern
         }else if(mb_returnwert == QMessageBox::Abort)
         {
-            return;
+            return false;//Funktion nicht erfolgreich abgeschlossen
         }
     }
     //Datei schließen:
-    if(tt.get_size() <= 2)//Wenn nur noch die Platzhalter-Datei offen ist (also nichts)
-    {
-        hideElemets_noFileIsOpen();
-        vorschaufenster.hide();
-        ui->listWidget_Programmliste->clear();
-        tt.del();
-        vorschauAktualisieren();
-        this->setWindowTitle(PROGRAMMNAME);
-        aktualisiere_offene_dateien_menu();
-    }else
-    {
-        ui->listWidget_Programmliste->clear();
-        tt.del();
-        aktualisiere_anzeigetext();
-        vorschauAktualisieren();
-        QFileInfo info = tt.get_prgname();
-        QString tmp = PROGRAMMNAME;
-        tmp += " ( " + info.baseName() + " )";
-        this->setWindowTitle(tmp);
-        aktualisiere_offene_dateien_menu();
-    }
+    tt.del();
+    ui->listWidget_Programmliste->clear();
+    aktualisiere_offene_dateien_menu();
+    //GUI aktualisieren:
+    update_gui();
+
+    return true;//Funktion erfolgreich abgeschlossen
 }
 
-void MainWindow::on_actionDateiSpeichern_triggered()
+bool MainWindow::on_actionDateiSpeichern_triggered()
 {
     if(tt.dateien_sind_offen() == false)
     {
-        return;
+        return true;//Funktion erfolgreich beendet
     }
     QString fileName;
     if(tt.get_prgname() == NICHT_DEFINIERT  ||  speichern_unter_flag == true)
@@ -2966,11 +2969,14 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             }
             if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
             {
-                return;
+                return false;//Funktion nicht erfolgreich beendet
             }else
             {
                 tt.set_prgname(fileName);
             }
+        }else //Speichen-Dialog wurde abgebrochen
+        {
+            return false;//Funktion nicht erfolgreich beendet
         }
     }else
     {
@@ -2995,6 +3001,7 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             QMessageBox mb;
             mb.setText("Fehler beim Dateizugriff");
             mb.exec();
+            return false;//Funktion nicht erfolgreich beendet
         } else
         {
             file.remove(); //lösche alte Datei wenn vorhanden
@@ -3006,11 +3013,12 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             QString tmp = PROGRAMMNAME;
             tmp += " ( " + info.baseName() + " )";
             this->setWindowTitle(tmp);
-            tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
+            tt.get_prgtext()->wurde_gespeichert();
             aktuelisiere_letzte_dateien_inifile();
             aktualisiere_letzte_dateien_menu();
         }
     }
+    return true;//Funktion erfolgreich beendet
 }
 
 void MainWindow::on_actionDateiSpeichern_unter_triggered()
@@ -3120,7 +3128,7 @@ void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
         aktualisiere_anzeigetext();
         showElements_aFileIsOpen();
         vorschauAktualisieren();
-        tt.get_prgtext()->set_hat_ungesicherte_inhalte(false);
+        //tt.get_prgtext()->wurde_gespeichert();
         QApplication::restoreOverrideCursor();
     }else
     {
@@ -3567,38 +3575,20 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 //---------------------------------------------------generell MainWindow
 void MainWindow::closeEvent(QCloseEvent *ce)
 {
+    while(tt.dateien_sind_offen() == true)
+    {
+        if(on_actionDateiSchliessen_triggered() == false)
+        {
+            break;
+        }
+    }
     if(tt.dateien_sind_offen() == true)
     {
-        //Sicherheitsabfrage:
-        QMessageBox mb;
-        mb.setWindowTitle("Programm schliessen");
-        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
-        mb.setStandardButtons(QMessageBox::Yes);
-        mb.addButton(QMessageBox::No);
-        mb.addButton(QMessageBox::Abort);
-        mb.setDefaultButton(QMessageBox::Abort);
-
-        int mb_returnwert = mb.exec();
-        if(mb_returnwert == QMessageBox::Yes)
-        {
-            on_actionDateiSpeichern_triggered();
-            hideElemets_noFileIsOpen();
-            vorschaufenster.close();
-            ce->accept();
-        }else if(mb_returnwert == QMessageBox::No)
-        {
-            hideElemets_noFileIsOpen();
-            vorschaufenster.close();
-            ce->accept();
-        }else if(mb_returnwert == QMessageBox::Abort)
-        {
-            ce->ignore();
-        }
+        ce->ignore();
     }else
     {
         ce->accept();
     }
-
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -3631,7 +3621,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     bool tmp_fkon_ein =tt.get_prgtext()->ist_aktualisieren_fkon_ein();
     if(tmp_fkon_ein == false)
     {
-       //tt.get_prgtext()->aktualisieren_fkon_ein_aus(true);
        tt.aktualisieren_fkon_ein_aus(true);
     }
 
@@ -4809,7 +4798,6 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
     if(tmp_fkon_ein == false)
     {
-       //tt.get_prgtext()->aktualisieren_fkon_ein_aus(false);
        tt.aktualisieren_fkon_ein_aus(false);
     }
 
@@ -7121,7 +7109,6 @@ int MainWindow::aktualisiere_anzeigetext(bool undo_redo_on)
     {
         tt.get_prg_undo_redo()->neu(*tt.get_prgtext());
     }
-    tt.get_prgtext()->set_hat_ungesicherte_inhalte(true);
     return row;
 }
 
@@ -7433,6 +7420,35 @@ void MainWindow::slot_maus_pos(QPoint p)
     QString y_ = QString::fromStdString(int_to_string(y));
     ui->statusBar->showMessage("X:" + x_ + " / Y:" + y_);
 }
+
+void MainWindow::update_gui()
+{
+    aktualisiere_offene_dateien_menu();
+
+    if(tt.dateien_sind_offen())
+    {
+        aktualisiere_anzeigetext();
+        vorschauAktualisieren();
+        QString name;
+        if(tt.get_prgname() == NICHT_DEFINIERT)
+        {
+            name = "Neue Datei";
+        }else
+        {
+            QFileInfo info = name;
+            name = info.baseName();
+        }
+        QString fenstertitel = PROGRAMMNAME;
+        fenstertitel += " ( " + name + " )";
+        this->setWindowTitle(fenstertitel);
+    }else
+    {
+        hideElemets_noFileIsOpen();
+        vorschaufenster.hide();
+        this->setWindowTitle(PROGRAMMNAME);
+    }
+}
+
 //---------------------------------------------------
 
 void MainWindow::on_actionTestfunktion_triggered()

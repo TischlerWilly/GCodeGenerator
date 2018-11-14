@@ -63,12 +63,36 @@ void programmtexte::clear()
     current_index = 0;
 }
 
-void programmtexte::set_current_index(uint index)
+void programmtexte::set_current_index(int index)
 {
     if(index <= vp.size()-1)
     {
         current_index = index;
         get_prgtext()->aktualisieren_fkon_ein_aus(aktualisieren_fkon_eingeschaltet);
+    }
+}
+
+void programmtexte::set_current_index(QString pfad)
+{
+    for(int i=0; i<vpname.size() ;i++)
+    {
+        if(vpname.at(i) == pfad)
+        {
+            set_current_index(i);
+        }
+    }
+}
+
+void programmtexte::aktualisieren_fkon_ein_aus(bool einschalten)
+{
+    if(einschalten)
+    {
+        aktualisieren_fkon_eingeschaltet = true;
+        get_prgtext()->aktualisieren_fkon_ein_aus(true);
+    }else
+    {
+        aktualisieren_fkon_eingeschaltet = false;
+        get_prgtext()->aktualisieren_fkon_ein_aus(false);
     }
 }
 
@@ -82,9 +106,37 @@ text_zeilenweise programmtexte::get_names()
     return namen;
 }
 
+int programmtexte::get_size()
+{
+    int size = vp.size();//gibt die Anzahl der Elemente wieder
+    size = size-1;//-1 weil immer 1 Element vorhanden bleibt was jedoch nicht mitgezählt werden soll
+    return size;
+}
 
+bool programmtexte::dateien_sind_offen()
+{
+    if(get_size() > 0)
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
 
-
+bool programmtexte::isopen(QString pfad)
+{
+    bool offen = false;
+    for(int i=0; i<vpname.size() ;i++)
+    {
+        if(vpname.at(i) == pfad)
+        {
+            offen = true;
+            break;
+        }
+    }
+    return offen;
+}
 
 
 

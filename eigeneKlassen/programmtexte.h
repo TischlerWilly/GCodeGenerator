@@ -18,7 +18,8 @@ public:
     void del(uint index);
     void clear();
 
-    void set_current_index(uint index);
+    void set_current_index(int index);
+    void set_current_index(QString pfad);
     inline void set_prgname(QString name)
     {
         vpname.replace(current_index, name);
@@ -27,37 +28,16 @@ public:
     {
         vpname.replace(index, name);
     }
-    inline  void aktualisieren_fkon_ein_aus(bool einschalten)
-    {
-        if(einschalten)
-        {
-            aktualisieren_fkon_eingeschaltet = true;
-            get_prgtext()->aktualisieren_ein_aus(true);
-        }else
-        {
-            aktualisieren_fkon_eingeschaltet = false;
-            get_prgtext()->aktualisieren_ein_aus(false);
-        }
-    }
+    void aktualisieren_fkon_ein_aus(bool einschalten);
+
     inline  bool get_aktualisieren_fkon_ein_aus()
     {
         return aktualisieren_fkon_eingeschaltet;
     }
 
-    inline int get_size()
-    {
-        return vp.size();//gibt die Anzahl der Elemente wieder
-    }
-    inline bool dateien_sind_offen()
-    {
-        if(get_size() > 1)
-        {
-            return true;
-        }else
-        {
-            return false;
-        }
-    }
+    int get_size();
+    bool dateien_sind_offen();
+    bool isopen(QString pfad);
 
     inline programmtext *get_prgtext()
     {

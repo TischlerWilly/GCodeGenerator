@@ -75,8 +75,8 @@ private slots:
     void on_actionMakeProgrammende_triggered();
     void on_listWidget_Programmliste_doubleClicked(const QModelIndex &index);
     void on_actionDateiNeu_triggered();
-    void on_actionDateiSchliessen_triggered();
-    void on_actionDateiSpeichern_triggered();
+    bool on_actionDateiSchliessen_triggered();
+    bool on_actionDateiSpeichern_triggered();
     void on_actionDateiOefnen_triggered();
     void actionLetzteDateiOefnenTriggered();
     void actionFokuswechselOffeneDateiTriggered();
@@ -264,6 +264,7 @@ private:
     void aktualisiere_offene_dateien_menu();
     void openFile(QString pfad);
     QString dateitext_ggf();
+    void update_gui();
 
     text_zeilenweise kompatiblitaetspruefung(text_zeilenweise dateiinhalt);
 
