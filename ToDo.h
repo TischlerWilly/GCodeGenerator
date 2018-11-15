@@ -11,12 +11,6 @@
 ----------Aktuell in Arbeit:
 -->Programm fähig machen mehrere Dateien gleichzeitig zu öffnen
     ->Einarbeitung in mainwindow.cpp
-        >Dopplungen mit "update_gui();" aus MainWindow löschen
-        >Neue Dateien werden im "offene Dateien"-Menü noch als "nicht Definiert" angezeigt
-        >Neue Dateien müssen ene ldf Nr bekommen damit der Name nicht mehrfach vergeben ist in programmtexte.cpp
-            >>Regelung innerhalb von programmtexte.cpp programmieren
-            >>maindow anpassen (NICHT_DEFINIERT-Abfragen) ->z.B. contains verwenden statt ==
-        >Dateien mit noch nicht gesichertem Inhalt mit einem * in der Tielleiste anzeigen lassen
         >umschalten der dateien mit STRG+TAB
         >umschalten mit dynamischen Menüeinträgen
             void MainWindow::actionFokuswechselOffeneDateiTriggered()

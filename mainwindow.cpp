@@ -13,10 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QString titel = PROGRAMMNAME;
-    titel += " ";
-    titel += PROGRAMMVERSION;
-    this->setWindowTitle(titel);
+    update_windowtitle();
+
     //Defaultwerte:
     kopierterEintrag_t              = NICHT_DEFINIERT;
     kopiertesWerkzeug               = NICHT_DEFINIERT;
@@ -45,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pfad_oefne_ggf                  = QDir::homePath() + "/Dokumente/CNC-Programme";
     speichern_unter_flag            = false;
     tt.clear();
+    anz_neue_dateien                = 0;//Zählung neuer Dateien mit 0 beginnen und dann raufzählen
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
@@ -1550,6 +1549,7 @@ void MainWindow::on_actionEntfernen_triggered()
         }
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1675,6 +1675,7 @@ void MainWindow::on_actionEinfuegen_triggered()
         on_listWidget_Werkzeug_itemDoubleClicked(item);
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1744,6 +1745,7 @@ void MainWindow::on_actionAusschneiden_triggered()
         }
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1913,6 +1915,7 @@ void MainWindow::getDialogData(QString text)
         hat_werkzeugliste_fehler();
     }
     vorschauAktualisieren();
+    update_windowtitle();
 }
 
 void MainWindow::getDialogDataModify(QString text)
@@ -1941,6 +1944,7 @@ void MainWindow::getDialogDataModify(QString text)
         hat_werkzeugliste_fehler();
     }
     vorschauAktualisieren();
+    update_windowtitle();
 }
 
 void MainWindow::on_actionEinstellungen_triggered()
@@ -2240,11 +2244,11 @@ void MainWindow::on_actionDateiNeu_triggered()
         mb.exec();
         return;
     }
-    showElements_aFileIsOpen();
-    this->setWindowTitle("Neue Datei");
     programmtext t;
     t.set_text("");
-    QString name = NICHT_DEFINIERT;
+    QString name = "Umbekannt ";
+    anz_neue_dateien++;
+    name += int_to_qstring(anz_neue_dateien);
     undo_redo tmpur;
     tmpur.set_groesse_max(settings_anz_undo_t.toInt());
     tt.add(t, name, tmpur);
@@ -2430,14 +2434,12 @@ void MainWindow::openFile(QString pfad)
             tt.add(t, pfad, tmpur);
             tt.get_prgtext()->set_maschinengeometrie(tz);
             file.close();
-            aktualisiere_anzeigetext();
+
             aktuelisiere_letzte_dateien_inifile();
             aktualisiere_letzte_dateien_menu();
-            showElements_aFileIsOpen();
             tt.get_prgtext()->wurde_gespeichert();
             update_gui();
             QApplication::restoreOverrideCursor();
-            aktualisiere_offene_dateien_menu();
         }else
         {
             if(!file.exists())
@@ -2954,7 +2956,7 @@ bool MainWindow::on_actionDateiSpeichern_triggered()
         return true;//Funktion erfolgreich beendet
     }
     QString fileName;
-    if(tt.get_prgname() == NICHT_DEFINIERT  ||  speichern_unter_flag == true)
+    if((tt.get_prgname().contains("Unbekannt ") && tt.get_prgname().length() <= 13)  ||  speichern_unter_flag == true)
     {
         //Dialog öffnen zum Wählen des Speicherortes und des Namens:
         fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), \
@@ -7423,14 +7425,26 @@ void MainWindow::slot_maus_pos(QPoint p)
 
 void MainWindow::update_gui()
 {
-    aktualisiere_offene_dateien_menu();
-
     if(tt.dateien_sind_offen())
     {
+        showElements_aFileIsOpen();
         aktualisiere_anzeigetext();
         vorschauAktualisieren();
-        QString name;
-        if(tt.get_prgname() == NICHT_DEFINIERT)
+    }else
+    {
+        hideElemets_noFileIsOpen();
+        vorschaufenster.hide();
+    }
+    aktualisiere_offene_dateien_menu();
+    update_windowtitle();
+}
+
+void MainWindow::update_windowtitle()
+{
+    if(tt.dateien_sind_offen())
+    {
+        QString name = tt.get_prgname();
+        if(name == NICHT_DEFINIERT)
         {
             name = "Neue Datei";
         }else
@@ -7438,14 +7452,19 @@ void MainWindow::update_gui()
             QFileInfo info = name;
             name = info.baseName();
         }
+        if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)
+        {
+            name += "*";
+        }
         QString fenstertitel = PROGRAMMNAME;
         fenstertitel += " ( " + name + " )";
         this->setWindowTitle(fenstertitel);
     }else
     {
-        hideElemets_noFileIsOpen();
-        vorschaufenster.hide();
-        this->setWindowTitle(PROGRAMMNAME);
+        QString titel = PROGRAMMNAME;
+        titel += " ";
+        titel += PROGRAMMVERSION;
+        this->setWindowTitle(titel);
     }
 }
 
@@ -7457,83 +7476,6 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

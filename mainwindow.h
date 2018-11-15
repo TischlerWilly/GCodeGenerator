@@ -229,6 +229,7 @@ private:
     QString         pfad_import_dxf;
     QString         pfad_import_ggf;
     QString         pfad_oefne_ggf;
+    uint            anz_neue_dateien;
 
         //Eigene Datentypen:
 
@@ -265,6 +266,7 @@ private:
     void openFile(QString pfad);
     QString dateitext_ggf();
     void update_gui();
+    void update_windowtitle();
 
     text_zeilenweise kompatiblitaetspruefung(text_zeilenweise dateiinhalt);
 
