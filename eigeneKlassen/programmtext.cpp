@@ -7,6 +7,7 @@ programmtext::programmtext()
     clear();
     warnungen_einschalten(true);
     aktualisieren_ein_aus(true);
+    aktualisieren_fkon_ein_aus(false);
 }
 
 void programmtext::set_text(QString neuer_Text)
@@ -25,6 +26,7 @@ void programmtext::set_text(QString neuer_Text)
 void programmtext::clear()
 {
     text.clear();
+    text_kopie.clear();
     clear_ausser_text();
 }
 
@@ -4692,63 +4694,6 @@ void programmtext::aktualisiere_fkon()
     //Daten in fkon zurückspeichern
     fkon.set_text(tab_fkon.get_text());
 
-
-
-
-
-/*
-
-
-    QString geometrie_aktuell, geometrie_dannach;
-
-    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
-    {
-        QString zeile = klartext.zeile(i);
-        uint anz_faufruf = 0;
-        uint anz_fabfahr = 0;
-
-        if(zeile.contains(FRAESERAUFRUF_DIALOG))
-        {
-            anz_faufruf++;
-        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
-        {
-            anz_fabfahr++;
-        }
-
-        if(  anz_faufr > anz_fabfahr  )
-        {
-            text_zeilenweise fkon_tz = fkon.get_text_zeilenweise();
-
-            text_zeilenweise fkon_tz_zeile;
-            fkon_tz_zeile.set_trennzeichen(TRZ_EL_);
-            fkon_tz_zeile.set_text(fkon_tz.zeile(i));
-
-            text_zeilenweise fkon_tz_zeile_danach;
-            fkon_tz_zeile_danach.set_trennzeichen(TRZ_EL_);
-            fkon_tz_zeile_danach.set_text(fkon_tz.zeile(i+1));
-
-            if(fkon_tz_zeile.zeilenanzahl() == 1)
-            {
-                geometrie_aktuell = fkon_tz_zeile.get_text();
-            }else
-            {
-
-            }
-
-
-
-
-
-
-        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
-        {
-
-        }
-    }
-
-    }
-*/
-
 }
 
 bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
@@ -4920,6 +4865,26 @@ void programmtext::aktualisiere_fraeserdarst()
         }
         fraeserdarst.zeilenvorschub();
     }
+}
+
+bool programmtext::get_hat_ungesicherte_inhalte()
+{
+    if(text.get_text().isEmpty())//Hat gar keine Inhalte
+    {
+        return false;
+    }
+    if(text_kopie.get_text() == text.get_text())//Inhalt wurde seit dem Speichern noch nicht verändert
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+}
+
+void programmtext::wurde_gespeichert()
+{
+    text_kopie = text;
 }
 
 

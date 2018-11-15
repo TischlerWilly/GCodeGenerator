@@ -159,15 +159,21 @@ public:
 
     inline  void aktualisieren_fkon_ein_aus(bool einschalten)
     {
-        if(einschalten)
+        if(einschalten == true)
         {
             aktualisieren_fkon_eingeschaltet = true;
             aktualisiere_fkon();
         }else
         {
             aktualisieren_fkon_eingeschaltet = false;
+            aktualisieren();
         }
     }
+    inline bool get_aktualisieren_fkon_ein_aus()
+    {
+        return aktualisieren_fkon_eingeschaltet;
+    }
+
     inline  bool ist_aktualisieren_fkon_ein()
     {
         return aktualisieren_fkon_eingeschaltet;
@@ -178,6 +184,8 @@ public:
         aktualisiere_fkon();
         aktualisiere_anzeigetext();
     }
+    void wurde_gespeichert();
+    bool get_hat_ungesicherte_inhalte();
 
     void cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_durchlaeufe);
     void linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenweise defaultwerte_Dialoge);
@@ -194,6 +202,7 @@ public:
 
 private:
     text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
+    text_zeilenweise    text_kopie;     //Zum Vergleichen ob sich die Datei geändert wurde seit dem Speichern
     text_zeilenweise    klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)
     text_zeilenweise    var;            //Variablen
     text_zeilenweise    anzeigetext;    //Programmliste

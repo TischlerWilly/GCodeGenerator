@@ -63,8 +63,6 @@ signals:
     void sende_maus_pos(QPoint p);
 
 public slots:
-    //void slot_get_Werkstueckmasse(float laenge, float breite);
-    void slot_aktualisieren(QString neuer_programmtext, int aktive_zeile);
     void slot_aktualisieren(programmtext t_neu, int aktive_zeile);
     void slot_aktives_Element_einfaerben(int zeilennummer);
 

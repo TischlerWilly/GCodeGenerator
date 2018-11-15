@@ -9,7 +9,8 @@
 
 /*
 ----------Aktuell in Arbeit:
-
+-->Bearbeitungen in Schleife Wiederholen lassen
+    ->Dialog entwerfen
 
 
 

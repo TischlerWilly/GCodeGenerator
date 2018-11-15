@@ -27,6 +27,7 @@
 #include "eigeneKlassen/rechtecktasche.h"
 #include "eigeneKlassen/vorschau.h"
 #include "eigeneKlassen/programmtext.h"
+#include "eigeneKlassen/programmtexte.h"
 #include "eigeneKlassen/text_zeilenweise.h"
 #include "eigeneKlassen/werkzeug.h"
 #include "Dialoge/dialog_variablenwerte_anzeigen.h"
@@ -74,10 +75,11 @@ private slots:
     void on_actionMakeProgrammende_triggered();
     void on_listWidget_Programmliste_doubleClicked(const QModelIndex &index);
     void on_actionDateiNeu_triggered();
-    void on_actionDateiSchliessen_triggered();
-    void on_actionDateiSpeichern_triggered();
+    bool on_actionDateiSchliessen_triggered();
+    bool on_actionDateiSpeichern_triggered();
     void on_actionDateiOefnen_triggered();
     void actionLetzteDateiOefnenTriggered();
+    void actionFokuswechselOffeneDateiTriggered();
     void on_actionDateiSpeichern_unter_triggered();
     void on_actionEin_Ausblenden_triggered();
     void resizeEvent(QResizeEvent *event);
@@ -133,6 +135,8 @@ private slots:
     void on_actionBohrung_in_Kreis_umwandeln_triggered();
     void on_actionKreistasche_in_Bohrung_umwandeln_triggered();
     void on_actionBohrung_in_Kreistasche_umwandeln_triggered();
+    void on_actionNaechste_offen_Datei_triggered();
+    void on_actionLetzte_offene_Datei_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -179,9 +183,6 @@ private:
     Dialog_import_ggf import_ggf;
     Dialog_bohren dbohren;
     vorschau vorschaufenster;
-    undo_redo ur;
-    undo_redo_wkz ur_wkz;
-    bool hat_ungesicherte_inhalte;
     Dialog_Werkzeug werkzeug_dialog;
     Dialog_Fraeser_Aufruf faufruf;
     Dialog_fraeser_gerade fgerade;
@@ -210,19 +211,19 @@ private:
     QString         vorlage_Fabfa;
     QString         vorlage_werkzeug;
     QString         vorlage_dbohren;
-    bool            DateiIstOffen;
-    QString         nameOfTheOpenFile;
-    QString         nameOfTheOpenFile_backup;
+    bool            speichern_unter_flag;
     QStringList     werkzeugnamen;
     QStringList     wkznamen_nur_bohrer;
     QStringList     wkznamen_nur_fraeser;
-    programmtext    t;
+    programmtexte   tt;
     werkzeug        w;
+    undo_redo_wkz ur_wkz;
     QString         settings_anz_undo_t;
     QString         settings_anz_undo_w;
     QString         aktives_wkz;
     letzte_dateien  letzte_geoefnete_dateien;
     QAction *oefneLetzteDateien[ANZAHL_LETZTER_DATEIEN];
+    QAction *OffeneDateieFokus[ANZAHL_OFFENER_DATEIEN];
     QString         dxf_klasse_wstnp;
     QString         dxf_klasse_geo;
     QString         dxf_klasse_geo_beachten;
@@ -230,6 +231,7 @@ private:
     QString         pfad_import_dxf;
     QString         pfad_import_ggf;
     QString         pfad_oefne_ggf;
+    uint            anz_neue_dateien;
 
         //Eigene Datentypen:
 
@@ -262,8 +264,11 @@ private:
     QString klammern_wecklassen(QString text);
     void aktuelisiere_letzte_dateien_inifile();
     void aktualisiere_letzte_dateien_menu();
+    void aktualisiere_offene_dateien_menu();
     void openFile(QString pfad);
     QString dateitext_ggf();
+    void update_gui();
+    void update_windowtitle();
 
     text_zeilenweise kompatiblitaetspruefung(text_zeilenweise dateiinhalt);
 

@@ -13,10 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QString titel = PROGRAMMNAME;
-    titel += " ";
-    titel += PROGRAMMVERSION;
-    this->setWindowTitle(titel);
+    update_windowtitle();
+
     //Defaultwerte:
     kopierterEintrag_t              = NICHT_DEFINIERT;
     kopiertesWerkzeug               = NICHT_DEFINIERT;
@@ -33,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
     vorlage_Fabfa                   = NICHT_DEFINIERT;
     vorlage_werkzeug                = NICHT_DEFINIERT;
     vorlage_dbohren                 = NICHT_DEFINIERT;
-    nameOfTheOpenFile               = NICHT_DEFINIERT;
     settings_anz_undo_t             = "10";
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
@@ -44,10 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
     pfad_import_dxf                 = QDir::homePath();
     pfad_import_ggf                 = QDir::homePath() + "/Dokumente/CNC-Programme";
     pfad_oefne_ggf                  = QDir::homePath() + "/Dokumente/CNC-Programme";
+    speichern_unter_flag            = false;
+    tt.clear();
+    anz_neue_dateien                = 0;//Zählung neuer Dateien mit 0 beginnen und dann raufzählen
 
     vorschaufenster.setParent(ui->tab_Programmliste);
 
-    DateiIstOffen = false;
     hideElemets_noFileIsOpen();
 
     QDir dir(QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER);
@@ -110,7 +109,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     on_pushButton_WKZ_Laden_clicked();
     ladeWerkzeugnamen();
-    hat_ungesicherte_inhalte = false;
     loadConfig_letzte_Dateien();
 
     //SLOT(slotSaveConfig():
@@ -178,9 +176,6 @@ MainWindow::MainWindow(QWidget *parent) :
     aktualisiere_letzte_dateien_menu();
 
     this->setWindowState(Qt::WindowMaximized);
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -236,10 +231,10 @@ QString MainWindow::loadConfig()
                     fkon_berechnen = selektiereEintrag(text, SETTINGS_FKON_BERECHNEN, ENDE_ZEILE);
                     if(fkon_berechnen == "ja")
                     {
-                        t.aktualisieren_fkon_ein_aus(true);
+                        tt.aktualisieren_fkon_ein_aus(true);
                     }else
                     {
-                        t.aktualisieren_fkon_ein_aus(false);
+                        tt.aktualisieren_fkon_ein_aus(false);
                     }
                 }
                 //-----------------------------------------------------Dialoge:
@@ -281,13 +276,6 @@ QString MainWindow::loadConfig()
                     vorlage_dbohren = selektiereEintrag(text, BOHREN_DIALOG, ENDE_ZEILE);
                 }
             }
-        /*
-        //Sicherheitsabfragen:
-        if(tooltable_path == NICHT_DEFINIERT  ||  tooltable_path.isEmpty())
-        {
-            returnString = "Pfad zur Werkzeugtabelle konnt nicht gefunden werden!\nBitte ueberpruefen Sie die Einstellungen.\n";
-        }
-        */
     }
 
     return returnString;
@@ -969,7 +957,8 @@ void MainWindow::slotSaveConfig(QString text)
         //Konfiguration neu laden:
         loadConfig();
         //Anzeige aktualisieren:
-        t.aktualisieren();
+        //t.aktualisieren();
+        tt.get_prgtext()->aktualisieren();
         vorschauAktualisieren();
     }else
     {
@@ -1520,16 +1509,17 @@ void MainWindow::on_actionEntfernen_triggered()
 
             if(items_menge == 1)
             {
-                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                //QString tmp =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
+                QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
                     return;
                 }
-                t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
+                tt.get_prgtext()->zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 aktualisiere_anzeigetext();
             }else
             {
-                t.zeilen_loeschen(row_erstes+1, items_menge);
+                tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
             }
@@ -1559,6 +1549,7 @@ void MainWindow::on_actionEntfernen_triggered()
         }
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1580,11 +1571,10 @@ void MainWindow::on_actionKopieren_triggered()
                     break;
                 }
             }
-            //int row_letztes = row_erstes + items_menge-1;
 
             if(items_menge==1)
             {
-                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
                     return;
@@ -1592,7 +1582,7 @@ void MainWindow::on_actionKopieren_triggered()
                 kopierterEintrag_t = tmp;
             }else
             {
-                QString tmp = t.zeilen(row_erstes+1, items_menge);
+                QString tmp = tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 kopierterEintrag_t = tmp;
             }
 
@@ -1640,19 +1630,19 @@ void MainWindow::on_actionEinfuegen_triggered()
                     break;
                 }
             }
-            //int row_letztes = row_erstes + items_menge-1;
 
             //Einfügen über ausgewähltem Eintrag:
             text_zeilenweise tmp_tz;
             tmp_tz.set_text(kopierterEintrag_t);
             if(tmp_tz.zeilenanzahl()==1)
             {
-                t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow()-items_menge+1 , kopierterEintrag_t);
+                tt.get_prgtext()->zeile_einfuegen(ui->listWidget_Programmliste->currentRow()-items_menge+1 \
+                                                 , kopierterEintrag_t);
                 int row = aktualisiere_anzeigetext()-items_menge+2 ;
                 ui->listWidget_Programmliste->setCurrentRow(row);
             }else
             {
-                t.zeilen_einfuegen(row_erstes, kopierterEintrag_t);
+                tt.get_prgtext()->zeilen_einfuegen(row_erstes, kopierterEintrag_t);
                 int row = aktualisiere_anzeigetext()-items_menge+2+tmp_tz.zeilenanzahl()-1 ;
                 ui->listWidget_Programmliste->setCurrentRow(row);
             }
@@ -1685,6 +1675,7 @@ void MainWindow::on_actionEinfuegen_triggered()
         on_listWidget_Werkzeug_itemDoubleClicked(item);
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1706,25 +1697,24 @@ void MainWindow::on_actionAusschneiden_triggered()
                     break;
                 }
             }
-            //int row_letztes = row_erstes + items_menge-1;
 
             if(items_menge==1)
             {
-                QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
                     return;
                 }
-                kopierterEintrag_t = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
-                t.zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
+                kopierterEintrag_t = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
+                tt.get_prgtext()->zeile_loeschen(ui->listWidget_Programmliste->currentRow()+1);
                 aktualisiere_anzeigetext();
             }else
             {
                 //Zeilen kopieren:
-                QString tmp = t.zeilen(row_erstes+1, items_menge);
+                QString tmp = tt.get_prgtext()->zeilen(row_erstes+1, items_menge);
                 kopierterEintrag_t = tmp;
                 //Zeilen löschen:
-                t.zeilen_loeschen(row_erstes+1, items_menge);
+                tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
             }
@@ -1755,6 +1745,7 @@ void MainWindow::on_actionAusschneiden_triggered()
         }
     }
     vorschauAktualisieren();
+    update_windowtitle();
     QApplication::restoreOverrideCursor();
 }
 
@@ -1774,7 +1765,7 @@ void MainWindow::on_actionAendern_triggered()
             QString programmzeile;
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -1889,19 +1880,18 @@ void MainWindow::getDialogData(QString text)
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        text_zeilenweise at = t.get_anzeigetext_zeilenweise();
+        text_zeilenweise at = tt.get_prgtext()->get_anzeigetext_zeilenweise();
         if(at.zeilenanzahl() == 0)
         {
-            t.zeile_anhaengen(text);
+            tt.get_prgtext()->zeile_anhaengen(text);
             aktualisiere_anzeigetext();
             pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
         }else
         {
             //Zeile über aktiver Zeile einfügen:
-            t.zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
+            tt.get_prgtext()->zeile_einfuegen(ui->listWidget_Programmliste->currentRow(), text);
             //aktualisieren und Element darunter aktivieren:
             int row = aktualisiere_anzeigetext() + 1;
-            //ui->listWidget_Programmliste->item(row)->setSelected(true);
             ui->listWidget_Programmliste->setCurrentRow(row);
             pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow());
         }
@@ -1925,23 +1915,24 @@ void MainWindow::getDialogData(QString text)
         hat_werkzeugliste_fehler();
     }
     vorschauAktualisieren();
+    update_windowtitle();
 }
 
 void MainWindow::getDialogDataModify(QString text)
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        QString text_alt = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+        QString text_alt = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
         if(text != text_alt)
         {
             if(elementIstEingeblendet())
             {
-                t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, text);
+                tt.get_prgtext()->zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, text);
                 aktualisiere_anzeigetext();
                 pruefe_benutzereingaben(ui->listWidget_Programmliste->currentRow()+1);
             }else
             {
-                t.zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, "//"+text);
+                tt.get_prgtext()->zeile_ersaetzen(ui->listWidget_Programmliste->currentRow()+1, "//"+text);
                 aktualisiere_anzeigetext();
             }
         }
@@ -1949,11 +1940,11 @@ void MainWindow::getDialogDataModify(QString text)
     {
         w.zeile_ersaetzen(ui->listWidget_Werkzeug->currentRow()+1, text);
         aktualisiere_anzeigetext_wkz();
-        //ui->listWidget_Werkzeug->currentItem()->setText(text);
         ladeWerkzeugnamen();
         hat_werkzeugliste_fehler();
     }
     vorschauAktualisieren();
+    update_windowtitle();
 }
 
 void MainWindow::on_actionEinstellungen_triggered()
@@ -2087,7 +2078,6 @@ void MainWindow::on_actionMakeKreistasche_triggered()
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &ktasche, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_Ktasche;
         emit sendDialogData(msg, false, wkznamen_nur_fraeser);
-        //emit sendDialogData(msg, false, wkznamen_nur_fraeser);
     }
 }
 
@@ -2241,24 +2231,45 @@ void MainWindow::on_actionMakeBohren_triggered()
 //---------------------------------------------------Datei
 void MainWindow::on_actionDateiNeu_triggered()
 {
-    if(DateiIstOffen == true)
+    int max = ANZAHL_OFFENER_DATEIEN;
+    if(tt.get_size() >= max)
     {
+        QString msg;
+        msg += "Bitter zuerst eine Datei schliessen!\n";
+        msg += "Es koennen maximal ";
+        msg += int_to_qstring(max);
+        msg += " Dateien gleichzeitig offen sein!";
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
         return;
     }
-    DateiIstOffen = true;
-    showElements_aFileIsOpen();
-    this->setWindowTitle("Neue Datei");
+    programmtext t;
     t.set_text("");
-    aktualisiere_anzeigetext();
+    QString name = "Umbekannt ";
+    anz_neue_dateien++;
+    name += int_to_qstring(anz_neue_dateien);
+    undo_redo tmpur;
+    tmpur.set_groesse_max(settings_anz_undo_t.toInt());
+    tt.add(t, name, tmpur);
+    update_gui();
     ui->listWidget_Programmliste->item(0)->setSelected(true);
     ui->listWidget_Programmliste->setCurrentRow(0);
-    hat_ungesicherte_inhalte = false;
 }
 
 void MainWindow::on_actionDateiOefnen_triggered()
 {
-    if(DateiIstOffen == true)
+    int max = ANZAHL_OFFENER_DATEIEN;
+    if(tt.get_size() >= max)
     {
+        QString msg;
+        msg += "Bitter zuerst eine Datei schliessen!\n";
+        msg += "Es koennen maximal ";
+        msg += int_to_qstring(max);
+        msg += " Dateien gleichzeitig offen sein!";
+        QMessageBox mb;
+        mb.setText(msg);
+        mb.exec();
         return;
     }else
     {
@@ -2274,9 +2285,9 @@ void MainWindow::on_actionDateiOefnen_triggered()
 
 void MainWindow::aktuelisiere_letzte_dateien_inifile()
 {
-    if(DateiIstOffen)
+    if(tt.dateien_sind_offen() == true)
     {
-        letzte_geoefnete_dateien.datei_merken(nameOfTheOpenFile);
+        letzte_geoefnete_dateien.datei_merken(tt.get_prgname());
     }
     //Daten Speichern:
     QFile inifile(QDir::homePath() + PFAD_LETZTE_DATEIEN);
@@ -2298,21 +2309,11 @@ void MainWindow::aktuelisiere_letzte_dateien_inifile()
 void MainWindow::aktualisiere_letzte_dateien_menu()
 {
     ui->menuLetzte_Dateien->clear();
-    //QMenu *meinMenu;
-    //meinMenu = ui->menuLetzte_Dateien->addMenu(tr("mein Menu"));
 
     text_zeilenweise namen;
     namen.set_text(letzte_geoefnete_dateien.get_text());
     for(uint i=1; i<=namen.zeilenanzahl() ;i++)
     {
-        /*
-        QAction *meineAction;
-        meineAction = new QAction(namen.zeile(i), this);
-                                                            //meinMenu->addAction(meineAction);
-        ui->menuLetzte_Dateien->addAction(meineAction);
-        connect(meineAction, SIGNAL(triggered()), \
-                this, SLOT(on_actionLetzteDateiOefnen_triggered()));
-        */
         oefneLetzteDateien[i-1] = new QAction(namen.zeile(i), this);
         ui->menuLetzte_Dateien->addAction(oefneLetzteDateien[i-1]);
         oefneLetzteDateien[i-1]->setData(namen.zeile(i));
@@ -2322,17 +2323,49 @@ void MainWindow::aktualisiere_letzte_dateien_menu()
 
 }
 
+void MainWindow::aktualisiere_offene_dateien_menu()
+{
+    ui->menuOffene_Dateien->clear();
+
+    text_zeilenweise namen;
+    namen = tt.get_names();
+    for(uint i=1; i<=namen.zeilenanzahl() ;i++)
+    {
+        OffeneDateieFokus[i-1] = new QAction(namen.zeile(i), this);
+        ui->menuOffene_Dateien->addAction(OffeneDateieFokus[i-1]);
+        OffeneDateieFokus[i-1]->setData(namen.zeile(i));
+        connect(OffeneDateieFokus[i-1], SIGNAL(triggered(bool)),        \
+                this, SLOT(actionFokuswechselOffeneDateiTriggered())    );
+    }
+}
+
+void MainWindow::actionFokuswechselOffeneDateiTriggered()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString msg = action->data().toString();
+        tt.set_current_index(msg);
+        update_gui();
+    }
+}
+
 void MainWindow::actionLetzteDateiOefnenTriggered()
 {
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
     {
         QString msg = action->data().toString();
-
-        if(DateiIstOffen == true)
+        int max = ANZAHL_OFFENER_DATEIEN;
+        if(tt.get_size() >= max)
         {
+            QString msg;
+            msg += "Bitter zuerst eine Datei schliessen!\n";
+            msg += "Es koennen maximal ";
+            msg += int_to_qstring(max);
+            msg += " Dateien gleichzeitig offen sein!";
             QMessageBox mb;
-            mb.setText("Bitte schiessen Sie zuerst die offene Datei.");
+            mb.setText(msg);
             mb.exec();
             return;
         }else
@@ -2345,89 +2378,91 @@ void MainWindow::actionLetzteDateiOefnenTriggered()
 
 void MainWindow::openFile(QString pfad)
 {
-    //Maschinengeometrie laden:
-    QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
-    if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
+    //Prüfen, ob Datei bereits geöffnet ist:
+    if(tt.isopen(pfad))
     {
-        text_zeilenweise tz;
-        while(!fileMaschiene.atEnd())
-        {
-            QString line = fileMaschiene.readLine();
-            if(line.right(1) == "\n")
-            {
-                line = line.left(line.length()-1);
-            }
-            if(tz.zeilenanzahl() == 0)
-            {
-                tz.set_text(line);
-            }else
-            {
-                tz.zeilen_anhaengen(line);
-            }
-        }
-        tz = kompatiblitaetspruefung(tz);
-        t.set_maschinengeometrie(tz);
-    }
-
-    QFile file(pfad);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        //Programmdatei laden:
-        QFileInfo info = pfad;
-        pfad_oefne_ggf = info.path();
-        nameOfTheOpenFile = pfad;
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        text_zeilenweise tz;        
-
-        while(!file.atEnd())
-        {
-            QString line = file.readLine();
-            if(line.right(1) == "\n")
-            {
-                line = line.left(line.length()-1);
-            }
-            if(tz.zeilenanzahl() == 0)
-            {
-                tz.set_text(line);
-            }else
-            {
-                tz.zeilen_anhaengen(line);
-            }
-        }
-        tz = kompatiblitaetspruefung(tz);
-        t.set_text(tz.get_text());
-        file.close();
-        aktualisiere_anzeigetext();
-        DateiIstOffen = true;
-        aktuelisiere_letzte_dateien_inifile();
-        aktualisiere_letzte_dateien_menu();
-        showElements_aFileIsOpen();
-        //Datei-Namen in Titelleiste anzeigen lassen:
-        info = nameOfTheOpenFile;
-        QString tmp = PROGRAMMNAME;
-        tmp += " ( " + info.baseName() + " )";
-        this->setWindowTitle(tmp);
-        vorschauAktualisieren();
-        hat_ungesicherte_inhalte = false;
-        QApplication::restoreOverrideCursor();
+        tt.set_current_index(pfad);
+        update_gui();
     }else
     {
-
-        if(!file.exists())
+        //Maschinengeometrie laden:
+        text_zeilenweise maschinengeometrie;
+        QFile fileMaschiene(QDir::homePath() + QDir::separator() + CAD_Maschine);
+        if (fileMaschiene.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            QMessageBox mb;
-            mb.setText("Datei existiert nicht mehr oder wurde verschoben oder umbenannt!");
-            mb.exec();
+            while(!fileMaschiene.atEnd())
+            {
+                QString line = fileMaschiene.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(maschinengeometrie.zeilenanzahl() == 0)
+                {
+                    maschinengeometrie.set_text(line);
+                }else
+                {
+                    maschinengeometrie.zeilen_anhaengen(line);
+                }
+            }
+            maschinengeometrie = kompatiblitaetspruefung(maschinengeometrie);
+        }
+
+        QFile file(pfad);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            //Programmdatei laden:
+            QFileInfo info = pfad;
+            pfad_oefne_ggf = info.path();
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+            text_zeilenweise tz;
+            while(!file.atEnd())
+            {
+                QString line = file.readLine();
+                if(line.right(1) == "\n")
+                {
+                    line = line.left(line.length()-1);
+                }
+                if(tz.zeilenanzahl() == 0)
+                {
+                    tz.set_text(line);
+                }else
+                {
+                    tz.zeilen_anhaengen(line);
+                }
+            }
+            tz = kompatiblitaetspruefung(tz);
+            programmtext t;
+            t.set_text(tz.get_text());
+            t.aktualisieren_fkon_ein_aus(tt.get_aktualisieren_fkon_ein_aus());
+            undo_redo tmpur;
+            tmpur.set_groesse_max(settings_anz_undo_t.toInt());
+            tt.add(t, pfad, tmpur);
+            tt.get_prgtext()->set_maschinengeometrie(tz);
+            file.close();
+
+            aktuelisiere_letzte_dateien_inifile();
+            aktualisiere_letzte_dateien_menu();
+            tt.get_prgtext()->wurde_gespeichert();
+            update_gui();
+            QApplication::restoreOverrideCursor();
         }else
         {
-            QMessageBox mb;
-            mb.setText("Datei existiert, konnte jedoch nicht geoeffnet werden!");
-            mb.exec();
+            if(!file.exists())
+            {
+                QMessageBox mb;
+                mb.setText("Datei existiert nicht mehr oder wurde verschoben oder umbenannt!");
+                mb.exec();
+            }else
+            {
+                QMessageBox mb;
+                mb.setText("Datei existiert, konnte jedoch nicht geoeffnet werden!");
+                mb.exec();
+            }
+            letzte_geoefnete_dateien.datei_vergessen(pfad);
+            aktualisiere_letzte_dateien_menu();
+            aktuelisiere_letzte_dateien_inifile();
         }
-        letzte_geoefnete_dateien.datei_vergessen(pfad);
-        aktualisiere_letzte_dateien_menu();
-        aktuelisiere_letzte_dateien_inifile();
     }
 }
 
@@ -2868,14 +2903,28 @@ void MainWindow::on_import_DXF_triggered()
     }
 }
 
-void MainWindow::on_actionDateiSchliessen_triggered()
+bool MainWindow::on_actionDateiSchliessen_triggered()
 {
     //Sicherheitsabfrage:
-    if(hat_ungesicherte_inhalte == true)
+    if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)
     {
+        QFileInfo info;
+        info = tt.get_prgname();
+        QString dateiname = info.baseName();
+        QString msg;
+
+        if(dateiname == NICHT_DEFINIERT)
+        {
+            msg = "Soll die neue Datei vor dem Schliessen gespeichert werden?";
+        }else
+        {
+            msg = "Soll die Datei \"";
+            msg += dateiname;
+            msg += "\" vor dem Schliessen gespeichert werden?";
+        }
         QMessageBox mb;
-        mb.setWindowTitle("Datei speichern");
-        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
+        mb.setWindowTitle("Datei schliessen");
+        mb.setText(msg);
         mb.setStandardButtons(QMessageBox::Yes);
         mb.addButton(QMessageBox::No);
         mb.addButton(QMessageBox::Abort);
@@ -2884,36 +2933,36 @@ void MainWindow::on_actionDateiSchliessen_triggered()
         int mb_returnwert = mb.exec();
         if(mb_returnwert == QMessageBox::Yes)
         {
-            on_actionDateiSpeichern_triggered();
-
+            if(on_actionDateiSpeichern_triggered() == false)//Speichern nicht erfolgreich abgeschlossen
+            {
+                return false;//Funktion nicht erfolgreich abgeschlossen
+            }
         }else if(mb_returnwert == QMessageBox::No)
         {
             ;//nichts tun = nicht speichern
         }else if(mb_returnwert == QMessageBox::Abort)
         {
-            return;
+            return false;//Funktion nicht erfolgreich abgeschlossen
         }
     }
     //Datei schließen:
-    DateiIstOffen = false;
-    hideElemets_noFileIsOpen();
-    vorschaufenster.hide();
-    nameOfTheOpenFile = NICHT_DEFINIERT;
+    tt.del();
     ui->listWidget_Programmliste->clear();
-    t.clear();
-    vorschauAktualisieren();
-    this->setWindowTitle(PROGRAMMNAME);
-    ur.clear();
+    aktualisiere_offene_dateien_menu();
+    //GUI aktualisieren:
+    update_gui();
+
+    return true;//Funktion erfolgreich abgeschlossen
 }
 
-void MainWindow::on_actionDateiSpeichern_triggered()
+bool MainWindow::on_actionDateiSpeichern_triggered()
 {
-    if(DateiIstOffen == false)
+    if(tt.dateien_sind_offen() == false)
     {
-        return;
+        return true;//Funktion erfolgreich beendet
     }
     QString fileName;
-    if(nameOfTheOpenFile == NICHT_DEFINIERT)
+    if((tt.get_prgname().contains("Unbekannt ") && tt.get_prgname().length() <= 13)  ||  speichern_unter_flag == true)
     {
         //Dialog öffnen zum Wählen des Speicherortes und des Namens:
         fileName = QFileDialog::getSaveFileName(this, tr("Datei Speichern"), \
@@ -2928,18 +2977,20 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             }
             if(fileName == DATEIENDUNG_EIGENE)//Wenn der Speichen-Dialog abgebrochen wurde
             {
-                nameOfTheOpenFile = NICHT_DEFINIERT;
-                return;
+                return false;//Funktion nicht erfolgreich beendet
             }else
             {
-                nameOfTheOpenFile = fileName;
+                tt.set_prgname(fileName);
             }
+        }else //Speichen-Dialog wurde abgebrochen
+        {
+            return false;//Funktion nicht erfolgreich beendet
         }
     }else
     {
         //Namen der offenen Datei verwenden:
 
-        fileName = nameOfTheOpenFile;
+        fileName = tt.get_prgname();
         if(!fileName.contains(DATEIENDUNG_EIGENE))
         {
             fileName += DATEIENDUNG_EIGENE;
@@ -2948,6 +2999,7 @@ void MainWindow::on_actionDateiSpeichern_triggered()
 
     //Programmliste in String schreiben
     QString dateiInhalt = dateitext_ggf();
+
     //Datei füllen und speichern
     if(!fileName.isEmpty())
     {
@@ -2957,6 +3009,7 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             QMessageBox mb;
             mb.setText("Fehler beim Dateizugriff");
             mb.exec();
+            return false;//Funktion nicht erfolgreich beendet
         } else
         {
             file.remove(); //lösche alte Datei wenn vorhanden
@@ -2964,27 +3017,24 @@ void MainWindow::on_actionDateiSpeichern_triggered()
             file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
             file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
             file.close(); //beende Zugriff
-            QFileInfo info = nameOfTheOpenFile;
+            QFileInfo info = tt.get_prgname();
             QString tmp = PROGRAMMNAME;
             tmp += " ( " + info.baseName() + " )";
             this->setWindowTitle(tmp);
-            hat_ungesicherte_inhalte = false;
+            tt.get_prgtext()->wurde_gespeichert();
             aktuelisiere_letzte_dateien_inifile();
             aktualisiere_letzte_dateien_menu();
-            nameOfTheOpenFile_backup = "";
         }
-    }else if(nameOfTheOpenFile == NICHT_DEFINIERT && !nameOfTheOpenFile_backup.isEmpty())
-    {
-        nameOfTheOpenFile = nameOfTheOpenFile_backup;
     }
+    return true;//Funktion erfolgreich beendet
 }
 
 void MainWindow::on_actionDateiSpeichern_unter_triggered()
 {
-    nameOfTheOpenFile_backup = nameOfTheOpenFile;
-    nameOfTheOpenFile = NICHT_DEFINIERT;
+    speichern_unter_flag = true;
     on_actionDateiSpeichern_triggered();
-    QFileInfo info = nameOfTheOpenFile;
+    speichern_unter_flag = false;
+    QFileInfo info = tt.get_prgname();
     QString tmp = PROGRAMMNAME;
     tmp += " ( " + info.baseName() + " )";
     this->setWindowTitle(tmp);
@@ -2992,14 +3042,15 @@ void MainWindow::on_actionDateiSpeichern_unter_triggered()
 
 void MainWindow::on_actionMaschine_speichern_triggered()
 {
-    if(DateiIstOffen == false)
+    if(tt.dateien_sind_offen() == false)
     {
         return;
     }
     bool nur_cad = true;
-    for(uint i=1; i<t.get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
+    //for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
+    for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
     {
-        QString zeile = t.get_text_zeilenweise().zeile(i);
+        QString zeile = tt.get_prgtext()->get_text_zeilenweise().zeile(i);
         if(zeile.contains(BOGEN)     || \
            zeile.contains(STRECKE)   || \
            zeile.contains(KREIS)        )
@@ -3052,7 +3103,7 @@ QString MainWindow::dateitext_ggf()
     QString dateiInhalt;
     dateiInhalt  = PROGRAMMNAME;
     dateiInhalt += " Version 2\n";
-    dateiInhalt += t.get_text();
+    dateiInhalt += tt.get_prgtext()->get_text();
 
     return dateiInhalt;
 }
@@ -3080,14 +3131,12 @@ void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
                 tz.zeilen_anhaengen(line);
             }
         }
-
-        t.set_text(tz.get_text());
+        tt.get_prgtext()->set_text(tz.get_text());
         file.close();
         aktualisiere_anzeigetext();
-        DateiIstOffen = true;
         showElements_aFileIsOpen();
         vorschauAktualisieren();
-        hat_ungesicherte_inhalte = false;
+        //tt.get_prgtext()->wurde_gespeichert();
         QApplication::restoreOverrideCursor();
     }else
     {
@@ -3095,6 +3144,18 @@ void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
         mb.setText("Maschinen-CAD-Datei wurde nicht gefunden!");
         mb.exec();
     }
+}
+
+void MainWindow::on_actionNaechste_offen_Datei_triggered()
+{
+    tt.set_index_nach();
+    update_gui();
+}
+
+void MainWindow::on_actionLetzte_offene_Datei_triggered()
+{
+    tt.set_index_vor();
+    update_gui();
 }
 
 //---------------------------------------------------Sichtbarkeiten
@@ -3244,7 +3305,7 @@ void MainWindow::showElements_aFileIsOpen()
 
 bool MainWindow::elementIstEingeblendet()
 {
-    QString tmp = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+    QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
     if(tmp.left(2) == "//")
     {
         return false;
@@ -3280,10 +3341,10 @@ bool MainWindow::elementIstEingeblendet(QListWidgetItem *item)
 void MainWindow::elementEinblenden()
 {
     uint i = ui->listWidget_Programmliste->currentRow()+1;
-    QString tmp_t = t.zeile(i);
+    QString tmp_t = tt.get_prgtext()->zeile(i);
     int length_t = tmp_t.length();
     tmp_t = tmp_t.right(length_t-2);
-    t.zeile_ersaetzen(i, tmp_t);
+    tt.get_prgtext()->zeile_ersaetzen(i, tmp_t);
 
     QString tmp = ui->listWidget_Programmliste->currentItem()->text();
     int length = tmp.length();
@@ -3296,9 +3357,9 @@ void MainWindow::elementEinblenden()
 void MainWindow::elementAusblenden()
 {
     uint i = ui->listWidget_Programmliste->currentRow()+1;
-    QString tmp_t = t.zeile(i);
+    QString tmp_t = tt.get_prgtext()->zeile(i);
     tmp_t = "//" + tmp_t;
-    t.zeile_ersaetzen(i, tmp_t);
+    tt.get_prgtext()->zeile_ersaetzen(i, tmp_t);
 
     QString tmp = ui->listWidget_Programmliste->currentItem()->text();
     QString newText = "//";
@@ -3334,7 +3395,7 @@ void MainWindow::elementAusblendenSichtbarMachen(QListWidgetItem *item)
 
 void MainWindow::on_actionEin_Ausblenden_triggered()
 {
-    t.warnungen_einschalten(false);
+    tt.get_prgtext()->warnungen_einschalten(false);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -3358,7 +3419,7 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
             int menge_eingeblendet = 0;
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
-                QString zeilentext = t.zeile(i+1);
+                QString zeilentext = tt.get_prgtext()->zeile(i+1);
                 if(elementIstEingeblendet(zeilentext))
                 {
                     menge_eingeblendet++;
@@ -3386,13 +3447,13 @@ void MainWindow::on_actionEin_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
-    t.warnungen_einschalten(true);
+    tt.get_prgtext()->warnungen_einschalten(true);
     QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionAuswahl_Ausblenden_triggered()
 {
-    t.warnungen_einschalten(false);
+    tt.get_prgtext()->warnungen_einschalten(false);
     QApplication::setOverrideCursor(Qt::WaitCursor); 
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -3412,18 +3473,18 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
             }
             int row_letztes = row_erstes + items_menge-1;
 
-            t.aktualisieren_ein_aus(false);
+            tt.get_prgtext()->aktualisieren_ein_aus(false);
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
-                QString zeilentext = t.zeile(i+1);
+                QString zeilentext =tt.get_prgtext()->zeile(i+1);
                 if(elementIstEingeblendet(zeilentext))
                 {
-                    t.zeile_ersaetzen(i+1,"//"+zeilentext);
+                   tt.get_prgtext()->zeile_ersaetzen(i+1,"//"+zeilentext);
                     QColor farbe(180,205,205);//grau
                     ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
                 }                
             }
-            t.aktualisieren_ein_aus(true);
+            tt.get_prgtext()->aktualisieren_ein_aus(true);
             aktualisiere_anzeigetext();
             vorschauAktualisieren();
             for(int i=row_erstes ; i<=row_letztes ; i++)
@@ -3442,13 +3503,14 @@ void MainWindow::on_actionAuswahl_Ausblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
-    t.warnungen_einschalten(true);
+    tt.get_prgtext()->warnungen_einschalten(true);
     QApplication::restoreOverrideCursor();
+
 }
 
 void MainWindow::on_actionAuswahl_Einblenden_triggered()
 {
-    t.warnungen_einschalten(false);
+   tt.get_prgtext()->warnungen_einschalten(false);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
@@ -3468,20 +3530,20 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
             }
             int row_letztes = row_erstes + items_menge-1;
 
-            t.aktualisieren_ein_aus(false);
+           tt.get_prgtext()->aktualisieren_ein_aus(false);
             for(int i=row_erstes ; i<=row_letztes ; i++)
             {
-                QString zeilentext = t.zeile(i+1);
+                QString zeilentext =tt.get_prgtext()->zeile(i+1);
                 if(!elementIstEingeblendet(zeilentext))
                 {
                     int laenge = zeilentext.length();
                     zeilentext = zeilentext.right(laenge-2);
-                    t.zeile_ersaetzen(i+1, zeilentext);
+                   tt.get_prgtext()->zeile_ersaetzen(i+1, zeilentext);
                     QColor farbe(180,205,205);//grau
                     ui->listWidget_Programmliste->item(i)->setForeground(QBrush(farbe));
                 }
             }
-            t.aktualisieren_ein_aus(true);
+           tt.get_prgtext()->aktualisieren_ein_aus(true);
             aktualisiere_anzeigetext();
             vorschauAktualisieren();
             for(int i=row_erstes ; i<=row_letztes ; i++)
@@ -3500,7 +3562,7 @@ void MainWindow::on_actionAuswahl_Einblenden_triggered()
         mb.setText("Dieser Befehl kann nur im TAB Programmliste verwendet werden!");
         mb.exec();
     }
-    t.warnungen_einschalten(true);
+   tt.get_prgtext()->warnungen_einschalten(true);
     QApplication::restoreOverrideCursor();
 }
 
@@ -3508,7 +3570,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if(index == INDEX_PROGRAMMLISTE)
     {
-        if(DateiIstOffen == false)
+        if(tt.dateien_sind_offen() == false)
         {
             //Menü Bearbeiten:
             ui->actionAendern->setDisabled(true);
@@ -3533,40 +3595,20 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 //---------------------------------------------------generell MainWindow
 void MainWindow::closeEvent(QCloseEvent *ce)
 {
-    if(DateiIstOffen == true)
+    while(tt.dateien_sind_offen() == true)
     {
-        //Sicherheitsabfrage:
-        QMessageBox mb;
-        mb.setWindowTitle("Programm schliessen");
-        mb.setText("Soll die Datei vor dem Schliessen gespeichert werden?");
-        mb.setStandardButtons(QMessageBox::Yes);
-        mb.addButton(QMessageBox::No);
-        mb.addButton(QMessageBox::Abort);
-        mb.setDefaultButton(QMessageBox::Abort);
-
-        int mb_returnwert = mb.exec();
-        if(mb_returnwert == QMessageBox::Yes)
+        if(on_actionDateiSchliessen_triggered() == false)
         {
-            on_actionDateiSpeichern_triggered();
-            DateiIstOffen = false;
-            hideElemets_noFileIsOpen();
-            vorschaufenster.close();
-            ce->accept();
-        }else if(mb_returnwert == QMessageBox::No)
-        {
-            DateiIstOffen = false;
-            hideElemets_noFileIsOpen();
-            vorschaufenster.close();
-            ce->accept();
-        }else if(mb_returnwert == QMessageBox::Abort)
-        {
-            ce->ignore();
+            break;
         }
+    }
+    if(tt.dateien_sind_offen() == true)
+    {
+        ce->ignore();
     }else
     {
         ce->accept();
     }
-
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -3596,10 +3638,10 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    bool tmp_fkon_ein = t.ist_aktualisieren_fkon_ein();
+    bool tmp_fkon_ein =tt.get_prgtext()->ist_aktualisieren_fkon_ein();
     if(tmp_fkon_ein == false)
     {
-        t.aktualisieren_fkon_ein_aus(true);
+       tt.aktualisieren_fkon_ein_aus(true);
     }
 
     ui->plainTextEdit_GCode->clear();
@@ -3610,7 +3652,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     double drehzahl = 0;
     double zustellmass = 0;
 
-    text_zeilenweise klartext = t.get_klartext_zeilenweise();
+    text_zeilenweise klartext =tt.get_prgtext()->get_klartext_zeilenweise();
     QString gcode;
     QString abfahrtyp;
 
@@ -3680,7 +3722,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             tmp = text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG);
             tasche_tmp.set_tiefe(tmp.toFloat());
 
-            tasche_tmp.set_sicherheitsabstand(t.get_sicherheitsabstand());
+            tasche_tmp.set_sicherheitsabstand(tt.get_prgtext()->get_sicherheitsabstand());
 
 
             //Fräserdurchmesser:
@@ -3799,7 +3841,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             tmp = text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG);
             tasche_tmp.set_tiefe(tmp.toFloat());
 
-            tasche_tmp.set_sicherheitsabstand(t.get_sicherheitsabstand());
+            tasche_tmp.set_sicherheitsabstand(tt.get_prgtext()->get_sicherheitsabstand());
 
 
             //Fräserdurchmesser:
@@ -3948,7 +3990,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 punkt3d startpunkt;
                 startpunkt.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
                 startpunkt.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
-                startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
                 gcode += "G0 X";
                 gcode += double_to_qstring(runden(startpunkt.x(),2));
                 gcode += " Y";
@@ -3960,7 +4002,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
                 if(boti < 0)
                 {
-                    boti = t.get_werkstueckdicke() - boti; //z.B. boti == -2 --> 19 - -2 == 19+2 == 21
+                    boti =tt.get_prgtext()->get_werkstueckdicke() - boti; //z.B. boti == -2 --> 19 - -2 == 19+2 == 21
                 }
                 if(zustellmass <= 0)
                 {
@@ -3985,7 +4027,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 double z;
                 QString ausfahren;
                 ausfahren += "G1 Z";
-                ausfahren += double_to_qstring(runden(t.get_werkstueckdicke()+2,2));
+                ausfahren += double_to_qstring(runden(tt.get_prgtext()->get_werkstueckdicke()+2,2));
                 ausfahren += " F";
                 ausfahren += double_to_qstring(eintauchvorschub);
                 ausfahren += "\n";
@@ -3993,7 +4035,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 if(boti > anboti + reboti)
                 {
                     //Anbohren:
-                    z = t.get_werkstueckdicke() - anboti;
+                    z =tt.get_prgtext()->get_werkstueckdicke() - anboti;
                     gcode += "G1 Z";
                     gcode += double_to_qstring(runden(z,2));
                     gcode += " F";
@@ -4011,7 +4053,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         while(restmass > 0)
                         {
                             //Zustellen:
-                            z = t.get_werkstueckdicke() - boti + reboti + restmass;
+                            z =tt.get_prgtext()->get_werkstueckdicke() - boti + reboti + restmass;
                             gcode += "G1 Z";
                             gcode += double_to_qstring(runden(z,2));
                             gcode += " F";
@@ -4022,7 +4064,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                             restmass = restmass - zustellmass;
                         }
                         //letzte Zustellung:
-                        z = t.get_werkstueckdicke() - boti + reboti;
+                        z =tt.get_prgtext()->get_werkstueckdicke() - boti + reboti;
                         gcode += "G1 Z";
                         gcode += double_to_qstring(runden(z,2));
                         gcode += " F";
@@ -4032,7 +4074,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         gcode += ausfahren;
 
                         //Restborung:
-                        z = t.get_werkstueckdicke() - boti;
+                        z =tt.get_prgtext()->get_werkstueckdicke() - boti;
                         gcode += "G1 Z";
                         gcode += double_to_qstring(runden(z,2));
                         gcode += " F";
@@ -4049,7 +4091,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         while(restmass > 0)
                         {
                             //Zustellen:
-                            z = t.get_werkstueckdicke() - boti + reboti + restmass;
+                            z =tt.get_prgtext()->get_werkstueckdicke() - boti + reboti + restmass;
                             gcode += "G1 Z";
                             gcode += double_to_qstring(runden(z,2));
                             gcode += " F";
@@ -4060,7 +4102,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                             restmass = restmass - zustellmass;
                         }
                         //Restborung:
-                        z = t.get_werkstueckdicke() - boti;
+                        z =tt.get_prgtext()->get_werkstueckdicke() - boti;
                         gcode += "G1 Z";
                         gcode += double_to_qstring(runden(z,2));
                         gcode += " F";
@@ -4073,7 +4115,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 {
                     //heißt keine Zustellungen:
                     //Anbohren:
-                    z = t.get_werkstueckdicke() - anboti;
+                    z =tt.get_prgtext()->get_werkstueckdicke() - anboti;
                     gcode += "G1 Z";
                     gcode += double_to_qstring(runden(z,2));
                     gcode += " F";
@@ -4084,7 +4126,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     if(reboti > 0)
                     {
                         //Restborung:
-                        z = t.get_werkstueckdicke() - boti;
+                        z =tt.get_prgtext()->get_werkstueckdicke() - boti;
                         gcode += "G1 Z";
                         gcode += double_to_qstring(runden(z,2));
                         gcode += " F";
@@ -4097,7 +4139,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 {
                     //heißt keine Zustellungen und kein definiertes Restbohrmaß:
                     //Anbohren:
-                    z = t.get_werkstueckdicke() - anboti;
+                    z =tt.get_prgtext()->get_werkstueckdicke() - anboti;
                     gcode += "G1 Z";
                     gcode += double_to_qstring(runden(z,2));
                     gcode += " F";
@@ -4106,7 +4148,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     gcode += "\n";
                     gcode += ausfahren;
                     //Restborung:
-                    z = t.get_werkstueckdicke() - boti;
+                    z =tt.get_prgtext()->get_werkstueckdicke() - boti;
                     gcode += "G1 Z";
                     gcode += double_to_qstring(runden(z,2));
                     gcode += " F";
@@ -4118,7 +4160,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 {
                     //heiß Bohrung in einem Zug:
                     //Restborung:
-                    z = t.get_werkstueckdicke() - boti;
+                    z =tt.get_prgtext()->get_werkstueckdicke() - boti;
                     gcode += "G1 Z";
                     gcode += double_to_qstring(runden(z,2));
                     gcode += " F";
@@ -4155,7 +4197,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 QApplication::restoreOverrideCursor();
                 return;
             }
-            QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
+            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
             fkon_tz.set_text(zeile_fkon);
@@ -4197,7 +4239,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             if(zustellmass > 0)
             {
                 //Gesamttiefe ermitteln:
-                double tiefe_min = t.get_werkstueckdicke();
+                double tiefe_min =tt.get_prgtext()->get_werkstueckdicke();
                 for(uint ii=i ; \
                     ii<=klartext.zeilenanzahl() && !klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG); \
                     ii++)
@@ -4208,15 +4250,8 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         tiefe_min = tmp;
                     }
                 }
-                double fraestiefe_max = t.get_werkstueckdicke()- tiefe_min;
-                /*
-                double fraestiefe_faufr = t.get_werkstueckdicke() - \
-                        text_mitte(zeile, POSITION_Z, ENDE_EINTRAG).toDouble();
-                double tiefendiff_faufr_zu_max = fraestiefe_max - fraestiefe_faufr;
-                */
+                double fraestiefe_max =tt.get_prgtext()->get_werkstueckdicke()- tiefe_min;
                 double verschiebung_z = fraestiefe_max - zustellmass;
-
-
 
                 for(uint ii=i ; \
                     verschiebung_z > 0;
@@ -4231,17 +4266,16 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         if(anfahrtyp == ANABFAHRTYP_KEIN)
                         {
                             QString zeile_fkon2;
-                            if(i+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
+                            if(i+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
                             {
                                 uint ii = i+1;
-                                zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
-                                while(klartext.zeile(ii).isEmpty()  &&  ii+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl()  )
+                                zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
+                                while(klartext.zeile(ii).isEmpty()  &&  ii+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl()  )
                                 {
                                     ii++;
-                                    zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                                    zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                                 }
                             }
-                            //QString zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(i+1);
                             text_zeilenweise fkon_tz2;
                             fkon_tz2.set_trennzeichen(TRZ_EL_);
                             fkon_tz2.set_text(zeile_fkon2);
@@ -4255,7 +4289,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                                 punkt3d startpunkt;
                                 startpunkt.set_x(geoelement2.zeile(2).toDouble());
                                 startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                                startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                                startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
                                 gcode += "G0 X";
                                 gcode += double_to_qstring(runden(startpunkt.x(),2));
                                 gcode += " Y";
@@ -4277,7 +4311,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                                 punkt3d startpunkt;
                                 startpunkt.set_x(geoelement2.zeile(2).toDouble());
                                 startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                                startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                                startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
                                 gcode += "G0 X";
                                 gcode += double_to_qstring(runden(startpunkt.x(),2));
                                 gcode += " Y";
@@ -4359,7 +4393,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         }
                     }else if(klartext.zeile(ii).contains(FRAESERGERADE_DIALOG))
                     {
-                        QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                        QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                         text_zeilenweise fkon_tz;
                         fkon_tz.set_trennzeichen(TRZ_EL_);
                         fkon_tz.set_text(zeile_fkon);
@@ -4406,7 +4440,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                         }
                     }else if(klartext.zeile(ii).contains(FRAESERBOGEN_DIALOG))
                     {
-                        QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                        QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                         text_zeilenweise fkon_tz;
                         fkon_tz.set_trennzeichen(TRZ_EL_);
                         fkon_tz.set_text(zeile_fkon);
@@ -4440,7 +4474,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     }else if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
                     {
                         punkt3d endpunkt;
-                        endpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                        endpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
 
                         if(abfahrtyp == ANABFAHRTYP_KEIN)
                         {
@@ -4451,7 +4485,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                             gcode += "\n";
                         }else
                         {
-                            QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                             text_zeilenweise fkon_tz;
                             fkon_tz.set_trennzeichen(TRZ_EL_);
                             fkon_tz.set_text(zeile_fkon);
@@ -4510,17 +4544,16 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             if(anfahrtyp == ANABFAHRTYP_KEIN)
             {
                 QString zeile_fkon2;
-                if(i+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
+                if(i+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
                 {
                     uint ii = i+1;
-                    zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
-                    while(klartext.zeile(ii).isEmpty()  &&  ii+1<=t.get_fkon().get_text_zeilenweise().zeilenanzahl()  )
+                    zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
+                    while(klartext.zeile(ii).isEmpty()  &&  ii+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl()  )
                     {
                         ii++;
-                        zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(ii);
+                        zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
                     }
                 }
-                //QString zeile_fkon2 = t.get_fkon().get_text_zeilenweise().zeile(i+1);
                 text_zeilenweise fkon_tz2;
                 fkon_tz2.set_trennzeichen(TRZ_EL_);
                 fkon_tz2.set_text(zeile_fkon2);
@@ -4534,7 +4567,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     punkt3d startpunkt;
                     startpunkt.set_x(geoelement2.zeile(2).toDouble());
                     startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                    startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                    startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
                     gcode += "G0 X";
                     gcode += double_to_qstring(runden(startpunkt.x(),2));
                     gcode += " Y";
@@ -4556,7 +4589,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                     punkt3d startpunkt;
                     startpunkt.set_x(geoelement2.zeile(2).toDouble());
                     startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                    startpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+                    startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
                     gcode += "G0 X";
                     gcode += double_to_qstring(runden(startpunkt.x(),2));
                     gcode += " Y";
@@ -4639,7 +4672,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
-            QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
+            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
             fkon_tz.set_text(zeile_fkon);
@@ -4686,7 +4719,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
             }
         }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
-            QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
+            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
             fkon_tz.set_text(zeile_fkon);
@@ -4721,7 +4754,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
             punkt3d endpunkt;
-            endpunkt.set_z(t.get_werkstueckdicke() + t.get_sicherheitsabstand());
+            endpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
 
             if(abfahrtyp == ANABFAHRTYP_KEIN)
             {
@@ -4732,7 +4765,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
                 gcode += "\n";
             }else
             {
-                QString zeile_fkon = t.get_fkon().get_text_zeilenweise().zeile(i);
+                QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
                 text_zeilenweise fkon_tz;
                 fkon_tz.set_trennzeichen(TRZ_EL_);
                 fkon_tz.set_text(zeile_fkon);
@@ -4785,7 +4818,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
 
     if(tmp_fkon_ein == false)
     {
-        t.aktualisieren_fkon_ein_aus(false);
+       tt.aktualisieren_fkon_ein_aus(false);
     }
 
     QApplication::restoreOverrideCursor();
@@ -4800,7 +4833,7 @@ void MainWindow::on_actionGCode_exportieren_triggered()
 {
     QString fileName;
     on_actionDateiSpeichern_triggered();
-    fileName = nameOfTheOpenFile;
+    fileName = tt.get_prgname();
     if(fileName == NICHT_DEFINIERT)
     {
         QMessageBox mb;
@@ -4857,7 +4890,7 @@ void MainWindow::on_pushButton_Exportieren_GCODE_clicked()
 void MainWindow::vorschauAktualisieren()
 {
     connect(this, SIGNAL(sendVorschauAktualisieren(programmtext,int)), &vorschaufenster, SLOT(slot_aktualisieren(programmtext,int)));
-    emit sendVorschauAktualisieren(t, ui->listWidget_Programmliste->currentRow()+1);
+    emit sendVorschauAktualisieren(*tt.get_prgtext(), ui->listWidget_Programmliste->currentRow()+1);
 }
 
 void MainWindow::on_listWidget_Programmliste_currentRowChanged(int currentRow)
@@ -4881,7 +4914,7 @@ void MainWindow::on_actionKreis_in_Kreistasche_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -4942,7 +4975,7 @@ void MainWindow::on_actionKreis_in_Bohrung_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -5018,7 +5051,7 @@ void MainWindow::on_actionKreistasche_in_Kreis_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -5072,7 +5105,7 @@ void MainWindow::on_actionBohrung_in_Kreis_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -5126,7 +5159,7 @@ void MainWindow::on_actionKreistasche_in_Bohrung_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -5219,7 +5252,7 @@ void MainWindow::on_actionBohrung_in_Kreistasche_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -5302,7 +5335,7 @@ void MainWindow::on_actionLinien_in_Fraeskonturen_umwandeln_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5313,7 +5346,7 @@ void MainWindow::on_actionLinien_in_Fraeskonturen_umwandeln_triggered()
                 defaultwerte_Dialoge.zeile_anhaengen(FRAESERABFAHREN_DIALOG + vorlage_Fabfa + ENDE_ZEILE);
                 defaultwerte_Dialoge.zeile_anhaengen(FRAESERGERADE_DIALOG + vorlage_Fgerade + ENDE_ZEILE);
                 defaultwerte_Dialoge.zeile_anhaengen(FRAESERBOGEN_DIALOG + vorlage_Fbogen + ENDE_ZEILE);
-                t.linien_zu_fkon(row_erstes+1, row_erstes+items_menge, defaultwerte_Dialoge);
+               tt.get_prgtext()->linien_zu_fkon(row_erstes+1, row_erstes+items_menge, defaultwerte_Dialoge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                 vorschauAktualisieren();
@@ -5347,7 +5380,7 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5358,7 +5391,7 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                 bool gefunden = false;
                 for(int i = row_erstes; i>=0 ; i--)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         ibeg = i;
                         gefunden = true;
@@ -5374,9 +5407,9 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         iend = i;
                         gefunden = true;
@@ -5397,10 +5430,10 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                 uint anzabfa = 0;
                 for(uint i=ibeg; i<=iend ;i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         anzaufr++;
-                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    }else if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         anzabfa++;
                     }
@@ -5412,7 +5445,7 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                     mb.exec();
                 }else
                 {
-                    t.fkon_zu_linien(ibeg+1, iend+1);
+                   tt.get_prgtext()->fkon_zu_linien(ibeg+1, iend+1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                     vorschauAktualisieren();
@@ -5449,14 +5482,14 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 break;
             }
         }
-        if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+        if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
         {
             items_menge = items_menge-1;
         }
         text_zeilenweise auswahl;
         for(int i=row_erstes; i<row_erstes+items_menge ;i++)
         {
-            auswahl.zeile_anhaengen(t.get_klartext_zeilenweise().zeile(i+1));
+            auswahl.zeile_anhaengen(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1));
         }
         //AX + AY + Schablonenhöhe wieder abzeihen:
         for(uint i=1; i<=auswahl.zeilenanzahl() ;i++)
@@ -5467,14 +5500,14 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 strecke s(zeile);
                 punkt3d p1;
                 p1 = s.startp();
-                p1.set_x(p1.x()-t.get_ax());
-                p1.set_y(p1.y()-t.get_ay());
-                p1.set_z(p1.z()-t.get_az());
+                p1.set_x(p1.x()-tt.get_prgtext()->get_ax());
+                p1.set_y(p1.y()-tt.get_prgtext()->get_ay());
+                p1.set_z(p1.z()-tt.get_prgtext()->get_az());
                 punkt3d p2;
                 p2 = s.endp();
-                p2.set_x(p2.x()-t.get_ax());
-                p2.set_y(p2.y()-t.get_ay());
-                p2.set_z(p2.z()-t.get_az());
+                p2.set_x(p2.x()-tt.get_prgtext()->get_ax());
+                p2.set_y(p2.y()-tt.get_prgtext()->get_ay());
+                p2.set_z(p2.z()-tt.get_prgtext()->get_az());
                 s.set_start(p1);
                 s.set_ende(p2);
                 zeile = s.get_text();
@@ -5483,14 +5516,14 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 bogen b(zeile);
                 punkt3d p1;
                 p1 = b.start();
-                p1.set_x(p1.x()-t.get_ax());
-                p1.set_y(p1.y()-t.get_ay());
-                p1.set_z(p1.z()-t.get_az());
+                p1.set_x(p1.x()-tt.get_prgtext()->get_ax());
+                p1.set_y(p1.y()-tt.get_prgtext()->get_ay());
+                p1.set_z(p1.z()-tt.get_prgtext()->get_az());
                 punkt3d p2;
                 p2 = b.ende();
-                p2.set_x(p2.x()-t.get_ax());
-                p2.set_y(p2.y()-t.get_ay());
-                p2.set_z(p2.z()-t.get_az());
+                p2.set_x(p2.x()-tt.get_prgtext()->get_ax());
+                p2.set_y(p2.y()-tt.get_prgtext()->get_ay());
+                p2.set_z(p2.z()-tt.get_prgtext()->get_az());
                 b.set_startpunkt(p1);
                 b.set_endpunkt(p2);
                 b.aktualisieren();
@@ -5500,9 +5533,9 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 kreis k(zeile);
                 punkt3d p1;
                 p1 = k.mitte3d();
-                p1.set_x(p1.x()-t.get_ax());
-                p1.set_y(p1.y()-t.get_ay());
-                p1.set_z(p1.z()-t.get_az());
+                p1.set_x(p1.x()-tt.get_prgtext()->get_ax());
+                p1.set_y(p1.y()-tt.get_prgtext()->get_ay());
+                p1.set_z(p1.z()-tt.get_prgtext()->get_az());
                 k.set_mittelpunkt(p1);
                 zeile = k.get_text();
             }
@@ -5583,7 +5616,7 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
                         emit sendDialogData(msg, true, werkzeugnamen);
 
-                        t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                       tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge-1);
                         aktualisiere_anzeigetext();
                         ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                     }else
@@ -5901,7 +5934,7 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                     connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
                     emit sendDialogData(msg, true, werkzeugnamen);
 
-                    t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                   tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge-1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
 
@@ -6283,7 +6316,7 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                     connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
                     emit sendDialogData(msg, true, werkzeugnamen);
 
-                    t.zeilen_loeschen(row_erstes+1, items_menge-1);
+                   tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge-1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
 
@@ -6448,7 +6481,7 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &rtasche, SLOT(getDialogData(QString, bool, QStringList)));
                 emit sendDialogData(msg, true, werkzeugnamen);
 
-                t.zeilen_loeschen(row_erstes+1, items_menge-1);
+               tt.get_prgtext()->zeilen_loeschen(row_erstes+1, items_menge-1);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
             }else
@@ -6482,7 +6515,7 @@ void MainWindow::on_actionRechtecktasche_in_4_Eck_umwandeln_triggered()
             if(ui->listWidget_Programmliste->currentIndex().isValid()  &&  \
                     (ui->listWidget_Programmliste->currentItem()->isSelected()))
             {
-                programmzeile = t.zeile(ui->listWidget_Programmliste->currentRow()+1);
+                programmzeile =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
             } else
             {
                 QMessageBox mb;
@@ -6494,7 +6527,7 @@ void MainWindow::on_actionRechtecktasche_in_4_Eck_umwandeln_triggered()
             if(programmzeile.contains(RECHTECKTASCHE_DIALOG))
             {
                 uint zeilennummer = ui->listWidget_Programmliste->currentRow()+1;
-                t.rta_zu_cad(zeilennummer);
+               tt.get_prgtext()->rta_zu_cad(zeilennummer);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(zeilennummer-1);
                 vorschauAktualisieren();
@@ -6532,13 +6565,13 @@ void MainWindow::on_actionCAD_sortieren_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
             if(items_menge > 1)
             {
-                t.cad_sortieren(row_erstes+1, row_erstes+items_menge, 3);
+               tt.get_prgtext()->cad_sortieren(row_erstes+1, row_erstes+items_menge, 3);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                 vorschauAktualisieren();
@@ -6572,7 +6605,7 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -6583,7 +6616,7 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                 bool gefunden = false;
                 for(int i = row_erstes; i>=0 ; i--)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         ibeg = i;
                         gefunden = true;
@@ -6599,9 +6632,9 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         iend = i;
                         gefunden = true;
@@ -6622,10 +6655,10 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                 uint anzabfa = 0;
                 for(uint i=ibeg; i<=iend ;i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         anzaufr++;
-                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    }else if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         anzabfa++;
                     }
@@ -6637,7 +6670,7 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                     mb.exec();
                 }else
                 {
-                    t.fkon_richtung_wechseln(ibeg+1, iend+1);
+                   tt.get_prgtext()->fkon_richtung_wechseln(ibeg+1, iend+1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                     vorschauAktualisieren();
@@ -6678,7 +6711,7 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -6689,7 +6722,7 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                 bool gefunden = false;
                 for(int i = row_erstes; i>=0 ; i--)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         ibeg = i;
                         gefunden = true;
@@ -6705,9 +6738,9 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         iend = i;
                         gefunden = true;
@@ -6728,10 +6761,10 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                 uint anzabfa = 0;
                 for(uint i=ibeg; i<=iend ;i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         anzaufr++;
-                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    }else if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         anzabfa++;
                     }
@@ -6743,7 +6776,7 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                     mb.exec();
                 }else
                 {
-                    t.fkon_vor(ibeg+1, iend+1);
+                   tt.get_prgtext()->fkon_vor(ibeg+1, iend+1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                     vorschauAktualisieren();
@@ -6784,7 +6817,7 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -6795,7 +6828,7 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                 bool gefunden = false;
                 for(int i = row_erstes; i>=0 ; i--)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         ibeg = i;
                         gefunden = true;
@@ -6811,9 +6844,9 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<t.get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         iend = i;
                         gefunden = true;
@@ -6834,10 +6867,10 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                 uint anzabfa = 0;
                 for(uint i=ibeg; i<=iend ;i++)
                 {
-                    if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
+                    if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERAUFRUF_DIALOG))
                     {
                         anzaufr++;
-                    }else if(t.get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
+                    }else if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
                         anzabfa++;
                     }
@@ -6849,7 +6882,7 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                     mb.exec();
                 }else
                 {
-                    t.fkon_nach(ibeg+1, iend+1);
+                   tt.get_prgtext()->fkon_nach(ibeg+1, iend+1);
                     aktualisiere_anzeigetext();
                     ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                     vorschauAktualisieren();
@@ -6890,13 +6923,13 @@ void MainWindow::on_actionVerastzvariablen_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
             if(items_menge >= 1)
             {
-                t.versatzvar(row_erstes+1, row_erstes+items_menge);
+               tt.get_prgtext()->versatzvar(row_erstes+1, row_erstes+items_menge);
                 aktualisiere_anzeigetext();
                 ui->listWidget_Programmliste->setCurrentRow(row_erstes);
                 vorschauAktualisieren();
@@ -6930,19 +6963,19 @@ void MainWindow::on_actionSpiegeln_vertikel_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
             if(items_menge >= 1)
             {
-                t.spiegeln_verti(row_erstes+1, row_erstes+items_menge);
+               tt.get_prgtext()->spiegeln_verti(row_erstes+1, row_erstes+items_menge);
                 aktualisiere_anzeigetext();
                 //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
                 text_zeilenweise faufruf_zeinum;
                 for(int i=row_erstes; i<row_erstes+items_menge ;i++)
                 {
-                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    QString zeile =tt.get_prgtext()->get_text_zeilenweise().zeile(i+1);
                     if(zeile.contains(FRAESERAUFRUF_DIALOG))
                     {
                         faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
@@ -6991,19 +7024,19 @@ void MainWindow::on_actionSpiegeln_horizontal_triggered()
                     break;
                 }
             }
-            if(t.get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
             if(items_menge >= 1)
             {
-                t.spiegeln_hori(row_erstes+1, row_erstes+items_menge);
+               tt.get_prgtext()->spiegeln_hori(row_erstes+1, row_erstes+items_menge);
                 aktualisiere_anzeigetext();
                 //Heraus bekommen wie viele Fräseraufrufe betroffen sind:
                 text_zeilenweise faufruf_zeinum;
                 for(int i=row_erstes; i<row_erstes+items_menge ;i++)
                 {
-                    QString zeile = t.get_text_zeilenweise().zeile(i+1);
+                    QString zeile =tt.get_prgtext()->get_text_zeilenweise().zeile(i+1);
                     if(zeile.contains(FRAESERAUFRUF_DIALOG))
                     {
                         faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
@@ -7066,7 +7099,7 @@ int MainWindow::aktualisiere_anzeigetext(bool undo_redo_on)
     }
     ui->listWidget_Programmliste->clear();
     text_zeilenweise tmp;
-    tmp = t.get_anzeigetext_zeilenweise();
+    tmp =tt.get_prgtext()->get_anzeigetext_zeilenweise();
     if(tmp.zeilenanzahl() == 0)
     {
         return -1;
@@ -7094,9 +7127,8 @@ int MainWindow::aktualisiere_anzeigetext(bool undo_redo_on)
 
     if(undo_redo_on == true)
     {
-        ur.neu(t);
+        tt.get_prg_undo_redo()->neu(*tt.get_prgtext());
     }
-    hat_ungesicherte_inhalte = true;
     return row;
 }
 
@@ -7138,7 +7170,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 {
     QString tmp_text;
     tmp_text = "";
-    text_zeilenweise te = t.get_text_zeilenweise();
+    text_zeilenweise te =tt.get_prgtext()->get_text_zeilenweise();
     for(uint i=1 ; i<=te.zeilenanzahl() ; i++)
     {
         tmp_text += QString::fromStdString(int_to_string(i));
@@ -7149,7 +7181,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 
     QString tmp_klartext;
     tmp_klartext = "";
-    text_zeilenweise kl = t.get_klartext_zeilenweise();
+    text_zeilenweise kl =tt.get_prgtext()->get_klartext_zeilenweise();
     for(uint i=1 ; i<=kl.zeilenanzahl() ; i++)
     {
         tmp_klartext += QString::fromStdString(int_to_string(i));
@@ -7160,7 +7192,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 
     QString tmp_var;
     tmp_var += "";
-    text_zeilenweise v = t.get_variablen_zeilenweise();
+    text_zeilenweise v =tt.get_prgtext()->get_variablen_zeilenweise();
     for(uint i=1 ; i<=v.zeilenanzahl() ; i++)
     {
         tmp_var += QString::fromStdString(int_to_string(i));
@@ -7171,7 +7203,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 
     QString tmp_geom;
     tmp_geom = "";
-    text_zeilenweise g = t.get_geo().get_text_zeilenweise();
+    text_zeilenweise g =tt.get_prgtext()->get_geo().get_text_zeilenweise();
     for(uint i=1 ; i<=g.zeilenanzahl() ; i++)
     {
         tmp_geom += QString::fromStdString(int_to_string(i));
@@ -7182,7 +7214,7 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 
     QString tmp_fkon;
     tmp_fkon = "";
-    text_zeilenweise fk = t.get_fkon().get_text_zeilenweise();
+    text_zeilenweise fk =tt.get_prgtext()->get_fkon().get_text_zeilenweise();
     for(uint i=1 ; i<=fk.zeilenanzahl() ; i++)
     {
         tmp_fkon += QString::fromStdString(int_to_string(i));
@@ -7234,9 +7266,9 @@ void MainWindow::on_actionWerkzeugliste_anzeigen_triggered()
 void MainWindow::pruefe_benutzereingaben(int zeilennummer)
 {
     QMessageBox mb;
-    text_zeilenweise tz_prg = t.get_text_zeilenweise();
+    text_zeilenweise tz_prg =tt.get_prgtext()->get_text_zeilenweise();
     QString programmzeile = tz_prg.zeile(zeilennummer);
-    text_zeilenweise tz_kt = t.get_klartext_zeilenweise();
+    text_zeilenweise tz_kt =tt.get_prgtext()->get_klartext_zeilenweise();
     QString klartextzeile = tz_kt.zeile(zeilennummer);
     if(programmzeile.contains(RECHTECKTASCHE_DIALOG))
     {
@@ -7324,13 +7356,13 @@ QString MainWindow::klammern_wecklassen(QString text)
 void MainWindow::slotAnfrageVariablen()
 {
     connect(this, SIGNAL(sendVariablen(text_zeilenweise)), &variablenwerte_anzeigen, SLOT(slot_bekomme_variablen(text_zeilenweise)));
-    emit sendVariablen(t.get_variablen_zeilenweise());
+    emit sendVariablen(tt.get_prgtext()->get_variablen_zeilenweise());
 }
 
 void MainWindow::slotAnfrageVariablenZeile(QString kennung)
 {
     QString var;
-    text_zeilenweise tz = t.get_variablen_zeilenweise();
+    text_zeilenweise tz =tt.get_prgtext()->get_variablen_zeilenweise();
     var = tz.zeile(ui->listWidget_Programmliste->currentRow());
 
     disconnect(this, SIGNAL(sendVariablenZeile(QString)), 0, 0);
@@ -7359,7 +7391,8 @@ void MainWindow::on_actionRueckgaengig_triggered()
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        t = ur.undo();
+        //t = ur.undo();
+        *tt.get_prgtext() = tt.get_prg_undo_redo()->undo();
         aktualisiere_anzeigetext(false);
         vorschauAktualisieren();
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -7373,7 +7406,8 @@ void MainWindow::on_actionWiederholen_triggered()
 {
     if(ui->tabWidget->currentIndex() == INDEX_PROGRAMMLISTE)
     {
-        t = ur.redo();
+        //t = ur.redo();
+        *tt.get_prgtext() = tt.get_prg_undo_redo()->redo();
         aktualisiere_anzeigetext(false);
         vorschauAktualisieren();
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -7406,6 +7440,52 @@ void MainWindow::slot_maus_pos(QPoint p)
     QString y_ = QString::fromStdString(int_to_string(y));
     ui->statusBar->showMessage("X:" + x_ + " / Y:" + y_);
 }
+
+void MainWindow::update_gui()
+{
+    if(tt.dateien_sind_offen())
+    {
+        showElements_aFileIsOpen();
+        aktualisiere_anzeigetext();
+        vorschauAktualisieren();
+    }else
+    {
+        hideElemets_noFileIsOpen();
+        vorschaufenster.hide();
+    }
+    aktualisiere_offene_dateien_menu();
+    update_windowtitle();
+}
+
+void MainWindow::update_windowtitle()
+{
+    if(tt.dateien_sind_offen())
+    {
+        QString name = tt.get_prgname();
+        if(name == NICHT_DEFINIERT)
+        {
+            name = "Neue Datei";
+        }else
+        {
+            QFileInfo info = name;
+            name = info.baseName();
+        }
+        if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)
+        {
+            name += "*";
+        }
+        QString fenstertitel = PROGRAMMNAME;
+        fenstertitel += " ( " + name + " )";
+        this->setWindowTitle(fenstertitel);
+    }else
+    {
+        QString titel = PROGRAMMNAME;
+        titel += " ";
+        titel += PROGRAMMVERSION;
+        this->setWindowTitle(titel);
+    }
+}
+
 //---------------------------------------------------
 
 void MainWindow::on_actionTestfunktion_triggered()
@@ -7414,79 +7494,6 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

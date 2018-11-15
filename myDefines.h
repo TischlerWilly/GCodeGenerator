@@ -14,6 +14,7 @@
 #define PROGRAMMNAME                "GCodeGenerator"
 #define SICHERHEITSABSTAND_WERT     "5"
 #define ANZAHL_LETZTER_DATEIEN      15
+#define ANZAHL_OFFENER_DATEIEN      20
 
 //-------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------Einstellungen:
