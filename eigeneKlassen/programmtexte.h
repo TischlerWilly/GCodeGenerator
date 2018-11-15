@@ -7,6 +7,7 @@
 #include "../eigeneFunktionen/umwandeln.h"
 #include "programmtext.h"
 #include "undo_redo.h"
+#include "indexhisory.h"
 
 
 class programmtexte
@@ -20,6 +21,8 @@ public:
 
     void set_current_index(int index);
     void set_current_index(QString pfad);
+    void set_index_vor();
+    void set_index_nach();
     inline void set_prgname(QString name)
     {
         vpname.replace(current_index, name);
@@ -75,6 +78,7 @@ private:
     QVector<undo_redo> vur;      //Vector enthällt Wiederrufenschritte
     QVector<QString> vpname;     //Vektor enthällt Dateinahmen (Pfade)
     uint current_index;
+    indexhisory ih;
     bool    aktualisieren_fkon_eingeschaltet;
 };
 

@@ -9,12 +9,8 @@
 
 /*
 ----------Aktuell in Arbeit:
--->Programm fähig machen mehrere Dateien gleichzeitig zu öffnen
-    ->Einarbeitung in mainwindow.cpp
-        >umschalten der dateien mit STRG+TAB
-        >umschalten mit dynamischen Menüeinträgen
-            void MainWindow::actionFokuswechselOffeneDateiTriggered()
-        >die Reihenfolge der Dateien beim Öffnen merken und beim Dateien schließen beachten
+-->Bearbeitungen in Schleife Wiederholen lassen
+    ->Dialog entwerfen
 
 
 

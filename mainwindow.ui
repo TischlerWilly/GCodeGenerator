@@ -209,6 +209,8 @@
     <addaction name="actionDateiOefnen"/>
     <addaction name="menuLetzte_Dateien"/>
     <addaction name="menuOffene_Dateien"/>
+    <addaction name="actionNaechste_offen_Datei"/>
+    <addaction name="actionLetzte_offene_Datei"/>
     <addaction name="menuImport"/>
     <addaction name="actionDateiSpeichern"/>
     <addaction name="actionDateiSpeichern_unter"/>
@@ -661,6 +663,22 @@
   <action name="actionBohrung_in_Kreistasche_umwandeln">
    <property name="text">
     <string>Bohrung in Kreistasche umwandeln</string>
+   </property>
+  </action>
+  <action name="actionNaechste_offen_Datei">
+   <property name="text">
+    <string>nächste offen Datei</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Up</string>
+   </property>
+  </action>
+  <action name="actionLetzte_offene_Datei">
+   <property name="text">
+    <string>letzte offene Datei</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Down</string>
    </property>
   </action>
  </widget>

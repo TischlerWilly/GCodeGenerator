@@ -2341,7 +2341,13 @@ void MainWindow::aktualisiere_offene_dateien_menu()
 
 void MainWindow::actionFokuswechselOffeneDateiTriggered()
 {
-
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString msg = action->data().toString();
+        tt.set_current_index(msg);
+        update_gui();
+    }
 }
 
 void MainWindow::actionLetzteDateiOefnenTriggered()
@@ -3138,6 +3144,18 @@ void MainWindow::on_actionMaschinengeometrie_bearbeiten_triggered()
         mb.setText("Maschinen-CAD-Datei wurde nicht gefunden!");
         mb.exec();
     }
+}
+
+void MainWindow::on_actionNaechste_offen_Datei_triggered()
+{
+    tt.set_index_nach();
+    update_gui();
+}
+
+void MainWindow::on_actionLetzte_offene_Datei_triggered()
+{
+    tt.set_index_vor();
+    update_gui();
 }
 
 //---------------------------------------------------Sichtbarkeiten
@@ -7476,6 +7494,10 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
+
+
+
 
 
 

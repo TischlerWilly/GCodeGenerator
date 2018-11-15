@@ -11,22 +11,18 @@ void programmtexte::add(programmtext p, QString name, undo_redo ur)
     vpname.push_back(name);
     vur.push_back(ur);
     set_current_index(vp.size()-1);
+    ih.add(vp.size()-1);
 }
 
 void programmtexte::del()
 {
     if(vp.size() > 1)//immer eine Instanz behalten
-    {
+    {        
         vp.erase(vp.begin() + current_index);
         vur.erase(vur.begin() + current_index);
         vpname.erase(vpname.begin() + current_index);
-        if(vp.size() >=2)
-        {
-            set_current_index(1);
-        }else
-        {
-            set_current_index(0);
-        }
+        ih.del(current_index);
+        set_current_index(ih.get_current());
     }
 }
 
@@ -37,13 +33,8 @@ void programmtexte::del(uint index)
         vp.erase(vp.begin() + index);
         vur.erase(vur.begin() + index);
         vpname.erase(vpname.begin() + index);
-        if(vp.size() >=2)
-        {
-            set_current_index(1);
-        }else
-        {
-            set_current_index(0);
-        }
+        ih.del(index);
+        set_current_index(ih.get_current());
     }
 }
 
@@ -52,6 +43,7 @@ void programmtexte::clear()
     vp.clear();
     vur.clear();
     vpname.clear();
+    ih.clear();
 
     //immer eine Instanz behalten:
     programmtext t;
@@ -68,6 +60,7 @@ void programmtexte::set_current_index(int index)
     if(index <= vp.size()-1)
     {
         current_index = index;
+        ih.add(index);
         get_prgtext()->aktualisieren_fkon_ein_aus(aktualisieren_fkon_eingeschaltet);
     }
 }
@@ -79,8 +72,19 @@ void programmtexte::set_current_index(QString pfad)
         if(vpname.at(i) == pfad)
         {
             set_current_index(i);
+            ih.add(i);
         }
     }
+}
+
+void programmtexte::set_index_vor()
+{
+    set_current_index(ih.index_vor());
+}
+
+void programmtexte::set_index_nach()
+{
+    set_current_index(ih.index_nach());
 }
 
 void programmtexte::aktualisieren_fkon_ein_aus(bool einschalten)

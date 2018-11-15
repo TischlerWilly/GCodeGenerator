@@ -135,6 +135,8 @@ private slots:
     void on_actionBohrung_in_Kreis_umwandeln_triggered();
     void on_actionKreistasche_in_Bohrung_umwandeln_triggered();
     void on_actionBohrung_in_Kreistasche_umwandeln_triggered();
+    void on_actionNaechste_offen_Datei_triggered();
+    void on_actionLetzte_offene_Datei_triggered();
 
 public slots:
     void getDialogData(QString text);
