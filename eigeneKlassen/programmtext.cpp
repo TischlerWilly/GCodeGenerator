@@ -4317,6 +4317,12 @@ void programmtext::aktualisiere_anzeigetext()
             tmp += " [";
             tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
             tmp += "]";
+        }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
         }else if(zeile.contains(LISTENENDE))
         {
             tmp += "...";

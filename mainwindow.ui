@@ -231,6 +231,8 @@
     <addaction name="separator"/>
     <addaction name="actionMakeKommentar"/>
     <addaction name="actionMakeVariable"/>
+    <addaction name="actionMakeSchleife_linear"/>
+    <addaction name="actionMakeSchleifenende"/>
     <addaction name="separator"/>
     <addaction name="actionMakeKreistasche"/>
     <addaction name="actionMakeRechtecktasche"/>
@@ -679,6 +681,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Down</string>
+   </property>
+  </action>
+  <action name="actionMakeSchleife_linear">
+   <property name="text">
+    <string>Schleife linear</string>
+   </property>
+  </action>
+  <action name="actionMakeSchleifenende">
+   <property name="text">
+    <string>Schleifenende</string>
    </property>
   </action>
  </widget>

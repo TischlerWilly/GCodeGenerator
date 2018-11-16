@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     vorlage_Fabfa                   = NICHT_DEFINIERT;
     vorlage_werkzeug                = NICHT_DEFINIERT;
     vorlage_dbohren                 = NICHT_DEFINIERT;
+    vorlage_schleilin               = NICHT_DEFINIERT;
+    vorlage_schleiend               = NICHT_DEFINIERT;
     settings_anz_undo_t             = "10";
     settings_anz_undo_w             = "30";
     aktives_wkz                     = NICHT_DEFINIERT;
@@ -125,6 +127,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fabfa, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
     connect(&werkzeug_dialog, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
     connect(&dbohren, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&dschleilin, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
+    connect(&dschleiend, SIGNAL(signalSaveConfig(QString)), this, SLOT(slotSaveConfig(QString)));
 
     connect(&pkopf, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&pende, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
@@ -138,6 +142,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fabfa, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&werkzeug_dialog, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&dbohren, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&dschleilin, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
+    connect(&dschleiend, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
 
     connect(&pkopf, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&pende, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
@@ -151,6 +157,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fabfa, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&werkzeug_dialog, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
     connect(&dbohren, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&dschleilin, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
+    connect(&dschleiend, SIGNAL(sendDialogDataModifyed(QString)), this, SLOT(getDialogDataModify(QString)));
 
     connect(&dkreis, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
     connect(&dstrecke, SIGNAL(sendDialogData(QString)), this, SLOT(getDialogData(QString)));
@@ -274,6 +282,12 @@ QString MainWindow::loadConfig()
                 }else if(text.contains(BOHREN_DIALOG))
                 {
                     vorlage_dbohren = selektiereEintrag(text, BOHREN_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(SCHLEIFELINEAR_DIALOG))
+                {
+                    vorlage_schleilin = selektiereEintrag(text, SCHLEIFELINEAR_DIALOG, ENDE_ZEILE);
+                }else if(text.contains(SCHLEIFENENDE_DIALOG))
+                {
+                    vorlage_schleiend = selektiereEintrag(text, SCHLEIFENENDE_DIALOG, ENDE_ZEILE);
                 }
             }
     }
@@ -820,6 +834,54 @@ QString MainWindow::saveConfig()
     inhaltVonKonfiguration +=       ENDE_ZEILE;
     inhaltVonKonfiguration +=       "\n";
 
+    //----------------------------------------------------Schleife linear:
+    inhaltVonKonfiguration +=       SCHLEIFELINEAR_DIALOG;
+    if(vorlage_schleilin == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   ANZ_X;
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   ANZ_Y;
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VERSATZ_X;
+        inhaltVonKonfiguration +=               "10";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   VERSATZ_Y;
+        inhaltVonKonfiguration +=               "10";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   KOMMENTAR;
+        inhaltVonKonfiguration +=               "";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=               "Schleife linear";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_schleilin;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
+
+    //----------------------------------------------------Schleifenende:
+    inhaltVonKonfiguration +=       SCHLEIFENENDE_DIALOG;
+    if(vorlage_schleiend == NICHT_DEFINIERT)
+    {
+        inhaltVonKonfiguration +=   BEZEICHNUNG;
+        inhaltVonKonfiguration +=               "Schleifenende";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+        inhaltVonKonfiguration +=   AUSFUEHRBEDINGUNG;
+        inhaltVonKonfiguration +=               "1";
+        inhaltVonKonfiguration +=   ENDE_EINTRAG;
+    }else
+    {
+        inhaltVonKonfiguration +=   vorlage_schleiend;
+    }
+    inhaltVonKonfiguration +=       ENDE_ZEILE;
+    inhaltVonKonfiguration +=       "\n";
 
     //-------------------------------------------
     inhaltVonKonfiguration +=       ENDE_DIALOGE;
@@ -950,6 +1012,12 @@ void MainWindow::slotSaveConfig(QString text)
         }else if(text.contains(BOHREN_DIALOG))
         {
             vorlage_dbohren = selektiereEintrag(text, BOHREN_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(SCHLEIFELINEAR_DIALOG))
+        {
+            vorlage_schleilin = selektiereEintrag(text, SCHLEIFELINEAR_DIALOG, ENDE_ZEILE);
+        }else if(text.contains(SCHLEIFENENDE_DIALOG))
+        {
+            vorlage_schleiend = selektiereEintrag(text, SCHLEIFENENDE_DIALOG, ENDE_ZEILE);
         }
 
         //Daten in Datei sichern:
@@ -1299,25 +1367,7 @@ bool MainWindow::hat_werkzeugliste_fehler()
     }
 
     text_zeilenweise tz = w.get_werkzeuge_zeilenweise();
-    /*
-    //Prüfen ob Werkzeugnummern fehlen:
-        //Das wird schon vom Eingabedialog selbst überprüft!
-    QString tmp;
-    for(uint i = 1; i <= tz.zeilenanzahl(); i++)
-    {
-        tmp = tz.zeile(i);
-        if(selektiereEintrag(tmp, WKZ_Nummer, WKZ_ENDE_EINTRAG) == "") //wenn hier nichts eingetragen ist
-        {
-            QColor farbe(205,0,0);//rot
-            ui->listWidget_Werkzeug->item(i-1)->setForeground(QBrush(farbe));
-            QMessageBox mb;
-            mb.setText("Fehlenden Werkzeugnummer!");
-            mb.exec();
-            //Abbruch
-            return true;//Fehler gefunden
-        }
-    }
-    */
+
     //Prüfen, ob Werkzeugnumern doppelt vergeben sind
     for(uint i = 1; i <= tz.zeilenanzahl(); i++)
     {
@@ -1505,11 +1555,9 @@ void MainWindow::on_actionEntfernen_triggered()
                     break;
                 }
             }
-            //int row_letztes = row_erstes + items_menge-1;
 
             if(items_menge == 1)
             {
-                //QString tmp =tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 QString tmp = tt.get_prgtext()->zeile(ui->listWidget_Programmliste->currentRow()+1);
                 if(tmp == LISTENENDE)
                 {
@@ -1830,6 +1878,14 @@ void MainWindow::on_actionAendern_triggered()
             {
                 connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
                 emit sendDialogData(programmzeile, true, wkznamen_nur_bohrer);
+            }else if(programmzeile.contains(SCHLEIFELINEAR_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dschleilin, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
+            }else if(programmzeile.contains(SCHLEIFENENDE_DIALOG))
+            {
+                connect(this, SIGNAL(sendDialogData(QString, bool)), &dschleiend, SLOT(getDialogData(QString, bool)));
+                emit sendDialogData(programmzeile, true);
             }
         }
     }else if(ui->tabWidget->currentIndex() == INDEX_WERKZEUGLISTE)
@@ -2225,6 +2281,38 @@ void MainWindow::on_actionMakeBohren_triggered()
         connect(this, SIGNAL(sendDialogData(QString, bool, QStringList)), &dbohren, SLOT(getDialogData(QString, bool, QStringList)));
         QString msg = vorlage_dbohren;
         emit sendDialogData(msg, false, wkznamen_nur_bohrer);
+    }
+}
+
+void MainWindow::on_actionMakeSchleife_linear_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &dschleilin, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_schleilin;
+        emit sendDialogData(msg, false);
+    }
+}
+
+void MainWindow::on_actionMakeSchleifenende_triggered()
+{
+    if(ui->tabWidget->currentIndex() != INDEX_PROGRAMMLISTE)
+    {
+        QMessageBox mb;
+        mb.setText("Bitte wechseln Sie zuerst in den TAB Programmliste!");
+        mb.exec();
+    }else
+    {
+        disconnect(this, SIGNAL(sendDialogData(QString, bool)), 0, 0);
+        connect(this, SIGNAL(sendDialogData(QString, bool)), &dschleiend, SLOT(getDialogData(QString, bool)));
+        QString msg = vorlage_schleiend;
+        emit sendDialogData(msg, false);
     }
 }
 
@@ -7453,6 +7541,15 @@ void MainWindow::update_gui()
         hideElemets_noFileIsOpen();
         vorschaufenster.hide();
     }
+    if(tt.get_size() > 1)
+    {
+        ui->actionNaechste_offen_Datei->setEnabled(true);
+        ui->actionLetzte_offene_Datei->setEnabled(true);
+    }else
+    {
+        ui->actionNaechste_offen_Datei->setDisabled(true);
+        ui->actionLetzte_offene_Datei->setDisabled(true);
+    }
     aktualisiere_offene_dateien_menu();
     update_windowtitle();
 }
@@ -7494,6 +7591,7 @@ void MainWindow::on_actionTestfunktion_triggered()
     mb.setText("Die Testfunktion ist derzeit nicht in Verwendung.");
     mb.exec();
 }
+
 
 
 

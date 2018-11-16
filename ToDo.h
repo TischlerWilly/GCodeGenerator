@@ -10,7 +10,9 @@
 /*
 ----------Aktuell in Arbeit:
 -->Bearbeitungen in Schleife Wiederholen lassen
-    ->Dialog entwerfen
+    ->Einarbeitung in programmtext.cpp
+    ->Einrbeitung in Vorschaufenster
+    ->Einarbeitung in GCode-Export (mainwindow)
 
 
 

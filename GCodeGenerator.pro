@@ -62,7 +62,9 @@ SOURCES += \
     Dialoge/dialog_bogen.cpp \
     Dialoge/dialog_bohren.cpp \
     eigeneKlassen/programmtexte.cpp \
-    eigeneKlassen/indexhisory.cpp
+    eigeneKlassen/indexhisory.cpp \
+    Dialoge/dialog_schleife_linear.cpp \
+    Dialoge/dialog_schleifenende.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -118,7 +120,9 @@ HEADERS  += \
     Dialoge/dialog_bogen.h \
     Dialoge/dialog_bohren.h \
     eigeneKlassen/programmtexte.h \
-    eigeneKlassen/indexhisory.h
+    eigeneKlassen/indexhisory.h \
+    Dialoge/dialog_schleife_linear.h \
+    Dialoge/dialog_schleifenende.h
 
 FORMS    += \
     mainwindow.ui \
@@ -140,4 +144,6 @@ FORMS    += \
     Dialoge/dialog_kreis.ui \
     Dialoge/dialog_strecke.ui \
     Dialoge/dialog_bogen.ui \
-    Dialoge/dialog_bohren.ui
+    Dialoge/dialog_bohren.ui \
+    Dialoge/dialog_schleife_linear.ui \
+    Dialoge/dialog_schleifenende.ui

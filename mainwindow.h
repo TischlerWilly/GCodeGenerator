@@ -45,6 +45,8 @@
 #include "Dialoge/dialog_bogen.h"
 #include "Dialoge/dialog_bohren.h"
 #include "ToDo.h"
+#include "Dialoge/dialog_schleife_linear.h"
+#include "Dialoge/dialog_schleifenende.h"
 
 
 #define INDEX_PROGRAMMLISTE 0
@@ -137,6 +139,8 @@ private slots:
     void on_actionBohrung_in_Kreistasche_umwandeln_triggered();
     void on_actionNaechste_offen_Datei_triggered();
     void on_actionLetzte_offene_Datei_triggered();
+    void on_actionMakeSchleife_linear_triggered();
+    void on_actionMakeSchleifenende_triggered();
 
 public slots:
     void getDialogData(QString text);
@@ -151,7 +155,6 @@ public slots:
 
 
 signals:
-    //void sendDialogData(QString text);
     void sendDialogData(QString text, bool openToChangeData);
     void sendDialogData(QString text, bool openToChangeData, QStringList WerkzeugNamen);
     void sendDialogData(QString text, bool openToChangeData, QStringList WerkzeugNamen, werkzeug wkz);
@@ -189,6 +192,8 @@ private:
     Dialog_fraeser_bogen fbogen;
     Dialog_fraeser_abfahren fabfa;
     Dialog_Programmlisten programmlisten;
+    Dialog_Schleife_linear dschleilin;
+    Dialog_Schleifenende dschleiend;
 
 
 
@@ -211,6 +216,8 @@ private:
     QString         vorlage_Fabfa;
     QString         vorlage_werkzeug;
     QString         vorlage_dbohren;
+    QString         vorlage_schleilin;
+    QString         vorlage_schleiend;
     bool            speichern_unter_flag;
     QStringList     werkzeugnamen;
     QStringList     wkznamen_nur_bohrer;

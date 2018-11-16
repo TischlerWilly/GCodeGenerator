@@ -49,6 +49,8 @@
 #define FRAESERBOGEN_DIALOG     ">FBOGEN:"
 #define FRAESERABFAHREN_DIALOG  ">FABFA:"
 #define BOHREN_DIALOG           ">BOHREN"
+#define SCHLEIFELINEAR_DIALOG   ">SCHLEILIN"
+#define SCHLEIFENENDE_DIALOG    ">SCHLEIEND"
 #define LISTENENDE              ">ENDE"
 //#define ENDE_ZEILE            "#ENDE#"
 
@@ -124,6 +126,8 @@
 #define VERSATZ_X           "[AX]"
 #define VERSATZ_Y           "[AY]"
 #define VERSATZ_Z           "[SH]"
+#define ANZ_X               "[ANZX]"
+#define ANZ_Y               "[ANZY]"
 #define ENDE_EINTRAG        ";"
 
 #define FEHLER              "Fehler"
