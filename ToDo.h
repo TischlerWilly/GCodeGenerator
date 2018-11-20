@@ -11,7 +11,7 @@
 ----------Aktuell in Arbeit:
 -->Bearbeitungen in Schleife Wiederholen lassen
     ->Einarbeitung in programmtext.cpp
-    ->Einrbeitung in Vorschaufenster
+        >void programmtext::aktualisiere_schleife_linear()
     ->Einarbeitung in GCode-Export (mainwindow)
 
 

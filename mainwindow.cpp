@@ -1025,7 +1025,6 @@ void MainWindow::slotSaveConfig(QString text)
         //Konfiguration neu laden:
         loadConfig();
         //Anzeige aktualisieren:
-        //t.aktualisieren();
         tt.get_prgtext()->aktualisieren();
         vorschauAktualisieren();
     }else
@@ -2334,7 +2333,7 @@ void MainWindow::on_actionDateiNeu_triggered()
     }
     programmtext t;
     t.set_text("");
-    QString name = "Umbekannt ";
+    QString name = "Unbekannt ";
     anz_neue_dateien++;
     name += int_to_qstring(anz_neue_dateien);
     undo_redo tmpur;
