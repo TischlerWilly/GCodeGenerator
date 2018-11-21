@@ -154,3 +154,17 @@ void rechteck3d::set_drewi(double neuer_drehwinkel)
 {
     drehwinkel = neuer_drehwinkel;
 }
+
+void rechteck3d::verschieben_um(double xversatz, double yversatz)
+{
+    obli.verschieben_um(xversatz, yversatz);
+    oben.verschieben_um(xversatz, yversatz);
+    obre.verschieben_um(xversatz, yversatz);
+    links.verschieben_um(xversatz, yversatz);
+    mitte.verschieben_um(xversatz, yversatz);
+    rechts.verschieben_um(xversatz, yversatz);
+    unli.verschieben_um(xversatz, yversatz);
+    unten.verschieben_um(xversatz, yversatz);
+    unre.verschieben_um(xversatz, yversatz);
+    einfuegepunkt.verschieben_um(xversatz, yversatz);
+}

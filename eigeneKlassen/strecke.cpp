@@ -187,6 +187,12 @@ void strecke::set_laenge_2d(float neue_laenge, strecke_bezugspunkt bezugspunkt)
     }
 }
 
+void strecke::verschieben_um(double xversatz, double yversatz)
+{
+    start.verschieben_um(xversatz, yversatz);
+    ende.verschieben_um(xversatz, yversatz);
+}
+
 QString strecke::get_text()
 {
     QString msg = STRECKE;

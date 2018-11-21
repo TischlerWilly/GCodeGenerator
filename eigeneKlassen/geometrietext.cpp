@@ -13,14 +13,21 @@ void geometrietext::clear()
 
 void geometrietext::zeilenvorschub()
 {
-    text.zeilen_anhaengen(" ");
+    text.zeilen_anhaengen(" ");//fügt dem QString im tz ein "\n" und anschließend ein " " an
+                //Das " " muss übergeben werden, da die neue Zeile sonst keinen Inhalt hätte
     aktuelle_zeile = text.zeilenanzahl();
+    //jede Zeile beginnt mit einem Leerzeichen
+    //jede Zeile endet vor dem "\n"
 }
 
 void geometrietext::add_punkt(punkt3d p)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + PUNKT + TRZ_PA + \
+    add_punkt(p, aktuelle_zeile);
+}
+void geometrietext::add_punkt(punkt3d p, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + PUNKT + TRZ_PA + \
                          p.x_QString() + TRZ_PA + \
                          p.y_QString() + TRZ_PA + \
                          p.z_QString() + TRZ_PA + \
@@ -30,8 +37,12 @@ void geometrietext::add_punkt(punkt3d p)
 
 void geometrietext::add_strecke(strecke s)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + STRECKE + TRZ_PA + \
+    add_strecke(s, aktuelle_zeile);
+}
+void geometrietext::add_strecke(strecke s, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + STRECKE + TRZ_PA + \
                          s.startp().x_QString() + TRZ_PA + \
                          s.startp().y_QString() + TRZ_PA + \
                          s.startp().z_QString() + TRZ_PA + \
@@ -45,8 +56,12 @@ void geometrietext::add_strecke(strecke s)
 
 void geometrietext::add_bogen(bogen b)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + BOGEN + TRZ_PA + \
+    add_bogen(b, aktuelle_zeile);
+}
+void geometrietext::add_bogen(bogen b, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + BOGEN + TRZ_PA + \
                          b.start().x_QString() + TRZ_PA + \
                          b.start().y_QString() + TRZ_PA + \
                          b.start().z_QString() + TRZ_PA + \
@@ -60,13 +75,16 @@ void geometrietext::add_bogen(bogen b)
                          b.get_farbe() + TRZ_PA + \
                          b.get_breite_qstring() + TRZ_PA + \
                          b.get_stil() + TRZ_EL);
-
 }
 
 void geometrietext::add_kreis(kreis k)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + KREIS + TRZ_PA + \
+    add_kreis(k, aktuelle_zeile);
+}
+void geometrietext::add_kreis(kreis k, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + KREIS + TRZ_PA + \
                          k.mitte3d().x_QString() + TRZ_PA + \
                          k.mitte3d().y_QString() + TRZ_PA + \
                          k.mitte3d().z_QString() + TRZ_PA + \
@@ -79,8 +97,12 @@ void geometrietext::add_kreis(kreis k)
 
 void geometrietext::add_zylinder(zylinder z)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + ZYLINDER + TRZ_PA + \
+    add_zylinder(z, aktuelle_zeile);
+}
+void geometrietext::add_zylinder(zylinder z, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + ZYLINDER + TRZ_PA + \
                          z.mitte3d().x_QString() + TRZ_PA + \
                          z.mitte3d().y_QString() + TRZ_PA + \
                          z.mitte3d().z_QString() + TRZ_PA + \
@@ -94,8 +116,12 @@ void geometrietext::add_zylinder(zylinder z)
 
 void geometrietext::add_rechteck(rechteck3d rec)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + RECHTECK3D + TRZ_PA + \
+    add_rechteck(rec, aktuelle_zeile);
+}
+void geometrietext::add_rechteck(rechteck3d rec, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + RECHTECK3D + TRZ_PA + \
                          rec.bezpunkt_num_qstring() + TRZ_PA + \
                          rec.einfpunkt().x_QString() + TRZ_PA + \
                          rec.einfpunkt().y_QString() + TRZ_PA + \
@@ -112,8 +138,12 @@ void geometrietext::add_rechteck(rechteck3d rec)
 
 void geometrietext::add_wuerfel(wuerfel w)
 {
-    QString alter_inhalt = text.zeile(aktuelle_zeile);
-    text.zeile_ersaetzen(aktuelle_zeile, alter_inhalt + WUERFEL + TRZ_PA + \
+    add_wuerfel(w, aktuelle_zeile);
+}
+void geometrietext::add_wuerfel(wuerfel w, uint zeile)
+{
+    QString alter_inhalt = text.zeile(zeile);
+    text.zeile_ersaetzen(zeile, alter_inhalt + WUERFEL + TRZ_PA + \
                          w.bezpunkt_num_qstring() + TRZ_PA + \
                          w.einfpunkt().x_QString() + TRZ_PA + \
                          w.einfpunkt().y_QString() + TRZ_PA + \

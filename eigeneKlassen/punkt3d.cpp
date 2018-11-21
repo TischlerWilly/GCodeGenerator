@@ -7,6 +7,12 @@ punkt3d::punkt3d()
     set_z(0);
 }
 
+void punkt3d::verschieben_um(double xversatz, double yversatz)
+{
+    x_param += xversatz;
+    y_param += yversatz;
+}
+
 //-------------------Funktionen nicht innerhalb der Klasse:
 punkt3d operator +(punkt3d p1, punkt3d p2)
 {

@@ -207,6 +207,15 @@ void bogen::richtung_unkehren()
     }
 }
 
+void bogen::verschieben_um(double xversatz, double yversatz)
+{
+    if(hat_fehler() == false)
+    {
+        startp.verschieben_um(xversatz, yversatz);
+        endp.verschieben_um(xversatz, yversatz);
+        mittelp.verschieben_um(xversatz, yversatz);
+    }
+}
 
 
 

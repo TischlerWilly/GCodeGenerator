@@ -12,6 +12,12 @@ punkt2d::punkt2d(punkt3d p)
     set_y(p.y());
 }
 
+void punkt2d::verschieben_um(double xversatz, double yversatz)
+{
+    x_param += xversatz;
+    y_param += yversatz;
+}
+
 //-------------------Funktionen nicht innerhalb der Klasse:
 punkt2d operator +(punkt2d p1, punkt2d p2)
 {

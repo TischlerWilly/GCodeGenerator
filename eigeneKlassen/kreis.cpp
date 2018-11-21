@@ -23,6 +23,11 @@ kreis::kreis(QString geotext)
     set_stil(tz.zeile(9));
 }
 
+void kreis::verschieben_um(double xversatz, double yversatz)
+{
+    mittelp.verschieben_um(xversatz, yversatz);
+}
+
 QString kreis::get_text()
 {
     QString msg = KREIS;

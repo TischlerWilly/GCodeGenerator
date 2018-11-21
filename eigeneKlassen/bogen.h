@@ -97,6 +97,8 @@ public:
         return fehlertext;
     }
 
+    void    verschieben_um(double xversatz, double yversatz);
+
     QString get_text();
 
 private:

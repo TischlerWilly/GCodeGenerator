@@ -12,6 +12,10 @@
 -->Bearbeitungen in Schleife Wiederholen lassen
     ->Einarbeitung in programmtext.cpp
         >void programmtext::aktualisiere_schleife_linear()
+            >>punkt3d p3d(zeile);
+            >>zylinder z(zeile);
+            >>rechteck3d rec(zeile);
+            >>wuerfel w(zeile);
     ->Einarbeitung in GCode-Export (mainwindow)
 
 

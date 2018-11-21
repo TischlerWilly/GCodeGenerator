@@ -3004,10 +3004,13 @@ void programmtext::aktualisiere_klartext_var()
             {
                 QString zeile_klartext;
                 zeile_klartext += SCHLEIFELINEAR_DIALOG;
+
+                tmp = text_mitte(zeile, ANZ_X, ENDE_EINTRAG);
                 zeile_klartext += ANZ_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
+                tmp = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG);
                 zeile_klartext += ANZ_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -3042,7 +3045,7 @@ void programmtext::aktualisiere_klartext_var()
             if(tmp.toFloat() == true)
             {
                 QString zeile_klartext;
-                zeile_klartext += SCHLEIFELINEAR_DIALOG;
+                zeile_klartext += SCHLEIFENENDE_DIALOG;
 
                 klartext.zeilen_anhaengen(zeile_klartext);
                 var.zeile_anhaengen(variablen);
@@ -4017,6 +4020,12 @@ void programmtext::aktualisiere_geo()
                 geo.add_strecke(s);
 
                 geo.zeilenvorschub();
+            }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+            {
+                geo.zeilenvorschub();
             }
         }
     }
@@ -4632,12 +4641,128 @@ void programmtext::aktualisiere_schleife_linear()
     }
     if(warnung_frDial == false)
     {
-        //......
-        //......
-        //......
-        //......
-        //......
-        //......
+        text_zeilenweise index_beg;
+        text_zeilenweise index_end;
+        for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+        {
+            QString zeile = klartext.zeile(i);
+            if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+            {
+                index_beg.zeile_anhaengen(int_to_qstring(i));
+            }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+            {
+                index_end.zeile_anhaengen(int_to_qstring(i));
+            }
+        }
+        for(uint i=1; i<=index_beg.zeilenanzahl() ;i++)//Eine Schleife nach der Anderen abarbeiten
+        {
+            if(i>index_end.zeilenanzahl())//Wenn es für die Schleife kein Ende gibt
+            {
+                break;
+            }
+            QString zeile = klartext.zeile(index_beg.zeile(i).toInt());
+            uint anzx = text_mitte(zeile, ANZ_X, ENDE_EINTRAG).toInt();
+            uint anzy = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG).toInt();
+            double versx = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
+            double versy = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
+            //Prüfen ob innerhalb der Schleife eine weitere Schleife liegt
+            //wenn ja, dann Fehlermeldung ausgeben:
+            text_zeilenweise zeilen;
+            int ibeg = index_beg.zeile(i).toInt();
+            int iend = index_end.zeile(i).toInt();
+            int zeilenanz = iend - ibeg - 1;
+            zeilen.set_text(klartext.zeilen(ibeg+1,zeilenanz));
+            int fehlerzeile = 0;
+            for(uint ii=1; ii<=zeilen.zeilenanzahl() ;ii++)
+            {
+                QString zeile = zeilen.zeile(ii);
+                if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+                {
+                    fehlerzeile = ii;
+                    break;
+                }
+                //auf schleifenende kan niht geprüft werden
+                //ggf sind mehr schleifenenden vorhanden als anfänge
+            }
+            if(fehlerzeile != 0)
+            {
+                QString msg;
+                msg = "Fehler in Zeile ";
+                msg += int_to_qstring(ibeg + fehlerzeile);
+                msg += "!\n";
+                msg += "Verschachtelte Schleifen sind nicht erlaubt.";
+                QMessageBox mb;
+                mb.setText(msg);
+                mb.exec();
+                continue;
+            }
+            geometrietext tmpgeo = geo;
+            uint aktzei = ibeg + i;
+            for(uint ix=1; ix<=anzx ;ix++)//Aktuelle Schleife in X durchlaufen
+            {
+                double aktversx = versx * (ix-1);
+                for(uint iy=1; iy<=anzy ;iy++)//Aktuelle Schleife in Y durchlaufen
+                {
+                    double aktversy = versy * (iy-1);
+                    if(ix==1 && iy==1)
+                    {
+                        continue;
+                        //Die originale Position nicht noch einmal anfügen
+                    }
+                    //geo ergänzen:
+                    text_zeilenweise tzgeo = geo.get_text_zeilenweise();
+                    for(uint igeo=1; igeo<=tzgeo.zeilenanzahl() ;igeo++)//Die Geometrie-Zeilen durchgehen
+                    {
+                        text_zeilenweise spalten;
+                        spalten.set_trennzeichen(TRZ_EL_);
+                        spalten.set_text(tzgeo.zeile(igeo));
+                        for(uint isp=1; isp<=spalten.zeilenanzahl() ;isp++)
+                        {
+                            QString zeile = spalten.zeile(isp);
+                            if(zeile.contains(PUNKT))
+                            {
+                                //punkt3d p3d(zeile);
+                                //p3d.verschieben_um(aktversx, aktversy);
+                                //tmpgeo.add_punkt(p3d, aktzei);
+                            }else if(zeile.contains(STRECKE))
+                            {
+                                strecke s(zeile);
+                                s.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_strecke(s, aktzei);
+                            }else if(zeile.contains(BOGEN))
+                            {
+                                bogen b(zeile);
+                                b.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_bogen(b, aktzei);
+                            }else if(zeile.contains(KREIS))
+                            {
+                                kreis k(zeile);
+                                k.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_kreis(k, aktzei);
+                            }else if(zeile.contains(ZYLINDER))
+                            {
+                                //zylinder z(zeile);
+                                //z.verschieben_um(aktversx, aktversy);
+                                //tmpgeo.add_zylinder(z, aktzei);
+                            }else if(zeile.contains(RECHTECK3D))
+                            {
+                                //rechteck3d rec(zeile);
+                                //rec.verschieben_um(aktversx, aktversy);
+                                //tmpgeo.add_rechteck(rec, aktzei);
+                            }else if(zeile.contains(WUERFEL))
+                            {
+                                //wuerfel w(zeile);
+                                //w.verschieben_um(aktversx, aktversy);
+                                //tmpgeo.add_wuerfel(w, aktzei);
+                            }
+                        }
+                    }
+                }
+            }
+            //Änderungen zurückspeichern:
+            geo = tmpgeo;
+        }
+
     }
 }
 

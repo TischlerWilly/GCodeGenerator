@@ -208,6 +208,8 @@ public:
         return double_to_qstring(drehwinkel);
     }
 
+    void    verschieben_um(double xversatz, double yversatz);
+
 private:
     punkt3d obli,   oben,   obre;
     punkt3d links,  mitte,  rechts;

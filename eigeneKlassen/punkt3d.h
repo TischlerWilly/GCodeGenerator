@@ -66,6 +66,8 @@ public:
         return double_to_qstring(z_param);
     }
 
+    void    verschieben_um(double xversatz, double yversatz);
+
 private:
     double  x_param, y_param, z_param;
 };
