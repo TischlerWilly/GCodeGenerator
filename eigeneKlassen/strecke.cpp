@@ -27,7 +27,7 @@ strecke::strecke(QString geotext)
     p.set_z(tz.zeile(7).toDouble());
     set_ende(p);
     set_farbe(tz.zeile(8));
-    set_breite(tz.zeile(9).toInt());
+    set_linienbreite(tz.zeile(9).toInt());
     set_stil(tz.zeile(10));
 }
 
@@ -211,7 +211,7 @@ QString strecke::get_text()
     msg += TRZ_PA;
     msg += get_farbe();
     msg += TRZ_PA;
-    msg += get_breite_qstring();
+    msg += get_linienbreite_qstring();
     msg += TRZ_PA;
     msg += get_stil();
 

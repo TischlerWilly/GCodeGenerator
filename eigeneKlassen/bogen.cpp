@@ -37,7 +37,7 @@ bogen::bogen(QString geotext)
     set_endpunkt(ende);
     set_radius(rad, uzs);
     set_farbe(tz.zeile(12));
-    set_breite(tz.zeile(13).toInt());
+    set_linienbreite(tz.zeile(13).toInt());
     set_stil(tz.zeile(14));
 }
 
@@ -185,7 +185,7 @@ QString bogen::get_text()
     msg += TRZ_PA;
     msg += get_farbe();
     msg += TRZ_PA;
-    msg += get_breite_qstring();
+    msg += get_linienbreite_qstring();
     msg += TRZ_PA;
     msg += get_stil();
 

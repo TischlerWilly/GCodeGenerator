@@ -7,6 +7,7 @@ class wuerfel : public rechteck3d
 {
 public:
     wuerfel();
+    wuerfel(QString geotext);
     inline  void    set_hoehe(double neue_hoehe)
     {
         hoehe = neue_hoehe;

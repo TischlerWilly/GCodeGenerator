@@ -3090,7 +3090,7 @@ void programmtext::aktualisiere_geo()
             }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
             {
                 punkt3d nullpunkt(0,0,0);
-                nullpunkt.set_breite(15);
+                nullpunkt.set_linienbreite(15);
                 geo.add_punkt(nullpunkt);
 
                 rechteck3d rec;
@@ -4681,7 +4681,7 @@ void programmtext::aktualisiere_schleife_linear()
                     fehlerzeile = ii;
                     break;
                 }
-                //auf schleifenende kan niht geprüft werden
+                //auf schleifenende kan nicht geprüft werden
                 //ggf sind mehr schleifenenden vorhanden als anfänge
             }
             if(fehlerzeile != 0)
@@ -4696,8 +4696,8 @@ void programmtext::aktualisiere_schleife_linear()
                 mb.exec();
                 continue;
             }
-            geometrietext tmpgeo = geo;
-            uint aktzei = ibeg + i;
+            geometrietext tmpgeo = geo;            
+
             for(uint ix=1; ix<=anzx ;ix++)//Aktuelle Schleife in X durchlaufen
             {
                 double aktversx = versx * (ix-1);
@@ -4711,19 +4711,25 @@ void programmtext::aktualisiere_schleife_linear()
                     }
                     //geo ergänzen:
                     text_zeilenweise tzgeo = geo.get_text_zeilenweise();
-                    for(uint igeo=1; igeo<=tzgeo.zeilenanzahl() ;igeo++)//Die Geometrie-Zeilen durchgehen
+                    for(uint igeo=0; igeo<=zeilenanz ;igeo++)//Die Geometrie-Zeilen durchgehen
                     {
+                        uint aktzei = ibeg + igeo;
+                        QString zeile = tzgeo.zeile(aktzei);
+                        if(zeile == " ")
+                        {
+                            continue;//Ausgeblendete Zeile überspringen
+                        }
                         text_zeilenweise spalten;
                         spalten.set_trennzeichen(TRZ_EL_);
-                        spalten.set_text(tzgeo.zeile(igeo));
+                        spalten.set_text(zeile);
                         for(uint isp=1; isp<=spalten.zeilenanzahl() ;isp++)
                         {
                             QString zeile = spalten.zeile(isp);
                             if(zeile.contains(PUNKT))
                             {
-                                //punkt3d p3d(zeile);
-                                //p3d.verschieben_um(aktversx, aktversy);
-                                //tmpgeo.add_punkt(p3d, aktzei);
+                                punkt3d p3d(zeile);
+                                p3d.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_punkt(p3d, aktzei);
                             }else if(zeile.contains(STRECKE))
                             {
                                 strecke s(zeile);
@@ -4741,19 +4747,19 @@ void programmtext::aktualisiere_schleife_linear()
                                 tmpgeo.add_kreis(k, aktzei);
                             }else if(zeile.contains(ZYLINDER))
                             {
-                                //zylinder z(zeile);
-                                //z.verschieben_um(aktversx, aktversy);
-                                //tmpgeo.add_zylinder(z, aktzei);
+                                zylinder z(zeile);
+                                z.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_zylinder(z, aktzei);
                             }else if(zeile.contains(RECHTECK3D))
                             {
-                                //rechteck3d rec(zeile);
-                                //rec.verschieben_um(aktversx, aktversy);
-                                //tmpgeo.add_rechteck(rec, aktzei);
+                                rechteck3d rec(zeile);
+                                rec.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_rechteck(rec, aktzei);
                             }else if(zeile.contains(WUERFEL))
                             {
-                                //wuerfel w(zeile);
-                                //w.verschieben_um(aktversx, aktversy);
-                                //tmpgeo.add_wuerfel(w, aktzei);
+                                wuerfel w(zeile);
+                                w.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_wuerfel(w, aktzei);
                             }
                         }
                     }

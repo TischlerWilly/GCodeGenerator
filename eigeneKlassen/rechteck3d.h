@@ -37,6 +37,7 @@ class rechteck3d : public darstellungsatribute
 {
 public:
     rechteck3d();
+    rechteck3d(QString geotext);
 
     inline  void    set_einfuegepunkt(punkt3d p)
     {

@@ -19,7 +19,7 @@ kreis::kreis(QString geotext)
     set_radius(tz.zeile(5).toDouble());
     set_farbe(tz.zeile(6));
     set_farbe_fuellung(tz.zeile(7));
-    set_breite(tz.zeile(8).toInt());
+    set_linienbreite(tz.zeile(8).toInt());
     set_stil(tz.zeile(9));
 }
 
@@ -44,7 +44,7 @@ QString kreis::get_text()
     msg += TRZ_PA;
     msg += get_farbe_fuellung();
     msg += TRZ_PA;
-    msg += get_breite_qstring();
+    msg += get_linienbreite_qstring();
     msg += TRZ_PA;
     msg += get_stil();
 

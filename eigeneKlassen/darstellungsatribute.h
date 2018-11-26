@@ -21,7 +21,7 @@ public:
     {
         stil = neuer_stil;
     }
-    inline void set_breite(int neue_breite)
+    inline void set_linienbreite(int neue_breite)
     {
         breite = neue_breite;
     }
@@ -38,11 +38,11 @@ public:
     {
         return stil;
     }
-    inline int get_breite()
+    inline int get_linienbreite()
     {
         return breite;
     }
-    inline QString get_breite_qstring()
+    inline QString get_linienbreite_qstring()
     {
         return int_to_qstring(breite);
     }

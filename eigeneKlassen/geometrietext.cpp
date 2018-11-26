@@ -32,7 +32,7 @@ void geometrietext::add_punkt(punkt3d p, uint zeile)
                          p.y_QString() + TRZ_PA + \
                          p.z_QString() + TRZ_PA + \
                          p.get_farbe() + TRZ_PA + \
-                         p.get_breite_qstring() + TRZ_EL);
+                         p.get_linienbreite_qstring() + TRZ_EL);
 }
 
 void geometrietext::add_strecke(strecke s)
@@ -50,7 +50,7 @@ void geometrietext::add_strecke(strecke s, uint zeile)
                          s.endp().y_QString() + TRZ_PA + \
                          s.endp().z_QString() + TRZ_PA + \
                          s.get_farbe() + TRZ_PA + \
-                         s.get_breite_qstring() + TRZ_PA + \
+                         s.get_linienbreite_qstring() + TRZ_PA + \
                          s.get_stil() + TRZ_EL);
 }
 
@@ -73,7 +73,7 @@ void geometrietext::add_bogen(bogen b, uint zeile)
                          b.mitte().x_QString() + TRZ_PA + \
                          b.mitte().y_QString() + TRZ_PA + \
                          b.get_farbe() + TRZ_PA + \
-                         b.get_breite_qstring() + TRZ_PA + \
+                         b.get_linienbreite_qstring() + TRZ_PA + \
                          b.get_stil() + TRZ_EL);
 }
 
@@ -91,7 +91,7 @@ void geometrietext::add_kreis(kreis k, uint zeile)
                          k.radius_QString() + TRZ_PA + \
                          k.get_farbe() + TRZ_PA + \
                          k.get_farbe_fuellung() + TRZ_PA + \
-                         k.get_breite_qstring() + TRZ_PA + \
+                         k.get_linienbreite_qstring() + TRZ_PA + \
                          k.get_stil() + TRZ_EL);
 }
 
@@ -110,7 +110,7 @@ void geometrietext::add_zylinder(zylinder z, uint zeile)
                          z.get_hoehe_qstring() + TRZ_PA + \
                          z.get_farbe() + TRZ_PA + \
                          z.get_farbe_fuellung() + TRZ_PA + \
-                         z.get_breite_qstring() + TRZ_PA + \
+                         z.get_linienbreite_qstring() + TRZ_PA + \
                          z.get_stil() + TRZ_EL);
 }
 
@@ -132,7 +132,7 @@ void geometrietext::add_rechteck(rechteck3d rec, uint zeile)
                          rec.drewi_qstring() + TRZ_PA + \
                          rec.get_farbe() + TRZ_PA + \
                          rec.get_farbe_fuellung() + TRZ_PA + \
-                         rec.get_breite_qstring() + TRZ_PA + \
+                         rec.get_linienbreite_qstring() + TRZ_PA + \
                          rec.get_stil() + TRZ_EL);
 }
 
@@ -155,7 +155,7 @@ void geometrietext::add_wuerfel(wuerfel w, uint zeile)
                          w.get_hoehe_qstring() + TRZ_PA + \
                          w.get_farbe() + TRZ_PA + \
                          w.get_farbe_fuellung() + TRZ_PA + \
-                         w.get_breite_qstring() + TRZ_PA + \
+                         w.get_linienbreite_qstring() + TRZ_PA + \
                          w.get_stil() + TRZ_EL);
 }
 

@@ -6,6 +6,17 @@ punkt3d::punkt3d()
     set_y(0);
     set_z(0);
 }
+punkt3d::punkt3d(QString geotext)
+{
+    text_zeilenweise tz;
+    tz.set_trennzeichen(TRZ_PA_);
+    tz.set_text(geotext);
+    set_x(tz.zeile(2).toDouble());
+    set_y(tz.zeile(3).toDouble());
+    set_z(tz.zeile(4).toDouble());
+    set_farbe(tz.zeile(5));
+    set_linienbreite(tz.zeile(6).toInt());
+}
 
 void punkt3d::verschieben_um(double xversatz, double yversatz)
 {

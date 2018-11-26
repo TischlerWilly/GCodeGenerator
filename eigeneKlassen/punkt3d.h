@@ -4,11 +4,14 @@
 #include <QString>
 #include "../eigeneFunktionen/umwandeln.h"
 #include "darstellungsatribute.h"
+#include "text_zeilenweise.h"
+#include "../eigeneDefines/defines_geometrie.h"
 
 class punkt3d : public darstellungsatribute
 {
 public:
             punkt3d();
+            punkt3d(QString geotext);
     inline  punkt3d(double x, double y, double z)
     {
         x_param = x;
