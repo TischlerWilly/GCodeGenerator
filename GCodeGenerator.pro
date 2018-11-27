@@ -64,7 +64,8 @@ SOURCES += \
     eigeneKlassen/programmtexte.cpp \
     eigeneKlassen/indexhisory.cpp \
     Dialoge/dialog_schleife_linear.cpp \
-    Dialoge/dialog_schleifenende.cpp
+    Dialoge/dialog_schleifenende.cpp \
+    eigeneKlassen/gcode.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -122,7 +123,8 @@ HEADERS  += \
     eigeneKlassen/programmtexte.h \
     eigeneKlassen/indexhisory.h \
     Dialoge/dialog_schleife_linear.h \
-    Dialoge/dialog_schleifenende.h
+    Dialoge/dialog_schleifenende.h \
+    eigeneKlassen/gcode.h
 
 FORMS    += \
     mainwindow.ui \

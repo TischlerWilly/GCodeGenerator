@@ -11,6 +11,8 @@
 ----------Aktuell in Arbeit:
 -->Bearbeitungen in Schleife Wiederholen lassen
     ->Einarbeitung in GCode-Export (mainwindow)
+        >QString gcode::get_gcode()
+            >>funktion schreiben zum gcode-generieren von fkon z.B: QString get_fkon(tz)
 
 
 

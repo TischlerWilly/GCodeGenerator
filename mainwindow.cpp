@@ -3724,6 +3724,9 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::on_actionGCode_berechnen_triggered()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    gcode gc(*tt.get_prgtext());
+    gc.set_wkz(w);
+
 
     bool tmp_fkon_ein =tt.get_prgtext()->ist_aktualisieren_fkon_ein();
     if(tmp_fkon_ein == false)
