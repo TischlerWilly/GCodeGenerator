@@ -31,9 +31,11 @@ private:
     QString get_prgkopf(QString zeile_klartext);
     QString get_prgende(QString zeile_klartext);
     QString get_kom(QString zeile_klartext);
-    QString get_rta(QString zeile_klartext, QString* fehlertext);
-    QString get_kta(QString zeile_klartext, QString* fehlertext);
-    QString get_bohrung(QString zeile_klartext, QString* fehlertext);
+    QString get_rta(QString zeile_klartext, QString* fehlertext, double ax, double ay);
+    QString get_kta(QString zeile_klartext, QString* fehlertext, double ax, double ay);
+    QString get_bohrung(QString zeile_klartext, QString* fehlertext, double ax, double ay);
+    QString get_fkon(text_zeilenweise klartext, geometrietext fkon, \
+                     QString* fehlertext, double ax, double ay);
 };
 
 #endif // GCODE_H

@@ -27,7 +27,7 @@ QString gcode::get_gcode()
     t.aktualisieren_fkon_ein_aus(true);
     text_zeilenweise klartext =t.get_klartext_zeilenweise();
     QString gc;//gcode
-    QString abfahrtyp;
+    //QString abfahrtyp;
 
     for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
     {
@@ -51,7 +51,7 @@ QString gcode::get_gcode()
         }else if(zeile_kt.contains(RECHTECKTASCHE_DIALOG))
         {
             QString fehlertext;
-            gc += get_rta(zeile_kt, &fehlertext);
+            gc += get_rta(zeile_kt, &fehlertext, 0 , 0);
             if(!fehlertext.isEmpty())
             {
                 return fehlertext;
@@ -59,7 +59,7 @@ QString gcode::get_gcode()
         }else if(zeile_kt.contains(KREISTASCHE_DIALOG))
         {
             QString fehlertext;
-            gc += get_kta(zeile_kt, &fehlertext);
+            gc += get_kta(zeile_kt, &fehlertext, 0 , 0);
             if(!fehlertext.isEmpty())
             {
                 return fehlertext;
@@ -67,645 +67,40 @@ QString gcode::get_gcode()
         }else if(zeile_kt.contains(BOHREN_DIALOG))
         {
             QString fehlertext;
-            gc += get_bohrung(zeile_kt, &fehlertext);
+            gc += get_bohrung(zeile_kt, &fehlertext, 0 , 0);
             if(!fehlertext.isEmpty())
             {
                 return fehlertext;
             }
         }else if(zeile_kt.contains(FRAESERAUFRUF_DIALOG))
         {
-            /*
-            QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
-            if(aktives_wkz == NICHT_DEFINIERT)
+            text_zeilenweise tmp_klartext;
+            text_zeilenweise tmp_geo;
+            tmp_klartext.zeile_anhaengen(zeile_kt);
+            tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(i));
+            for(   ; i<=klartext.zeilenanzahl() ; i++)//i von der umfassenden Schleife wird weiter gezählt
             {
-                aktives_wkz = werkzeugname;
-            }else if(aktives_wkz != werkzeugname)
-            {
-                QString tmp =  "Werkzeugwechsel werden derzeit nicht unterstuetzt!\n";
-                        tmp += "Bitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.\n";
-                        //tmp += aktives_wkz + " != " + werkzeugname;
-                ui->plainTextEdit_GCode->clear();
-                ui->plainTextEdit_GCode->insertPlainText(tmp);
-                QApplication::restoreOverrideCursor();
-                return;
-            }
-            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
-            text_zeilenweise fkon_tz;
-            fkon_tz.set_trennzeichen(TRZ_EL_);
-            fkon_tz.set_text(zeile_fkon);
-            text_zeilenweise geoelement;
-            geoelement.set_trennzeichen(TRZ_PA_);
-            geoelement.set_text(fkon_tz.zeile(1));
-
-            //Vorschübe setzen etc.:
-            QString tmp;
-            QString werkzeug = werkzeugdaten(werkzeugname);
-            tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
-            if(tmp == "AUTO")
-            {
-                tmp = text_mitte(werkzeug, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG);
-            }
-            eintauchvorschub = tmp.toDouble();
-            tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
-            if(tmp == "AUTO")
-            {
-                tmp = text_mitte(werkzeug, WKZ_VORSCHUB, ENDE_EINTRAG);
-            }
-            vorschub = tmp.toDouble();
-            tmp = text_mitte(zeile, DREHZAHL, ENDE_EINTRAG);
-            if(tmp == "AUTO")
-            {
-                tmp = text_mitte(werkzeug, WKZ_DREHZAHL, ENDE_EINTRAG);
-            }
-            drehzahl = tmp.toDouble();
-            tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
-            if(tmp == "AUTO")
-            {
-                tmp = text_mitte(werkzeug, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG);
-            }
-            zustellmass = tmp.toDouble();
-
-            QString anfahrtyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
-            abfahrtyp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);//brauchen wir später für das Abfahren
-
-            if(zustellmass > 0)
-            {
-                //Gesamttiefe ermitteln:
-                double tiefe_min =tt.get_prgtext()->get_werkstueckdicke();
-                for(uint ii=i ; \
-                    ii<=klartext.zeilenanzahl() && !klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG); \
-                    ii++)
+                zeile_kt = klartext.zeile(i);
+                if(zeile_kt.contains(FRAESERGERADE_DIALOG)  || \
+                   zeile_kt.contains(FRAESERBOGEN_DIALOG)      )
                 {
-                    double tmp = text_mitte(klartext.zeile(ii), POSITION_Z, ENDE_EINTRAG).toDouble();
-                    if(tmp < tiefe_min)
-                    {
-                        tiefe_min = tmp;
-                    }
-                }
-                double fraestiefe_max =tt.get_prgtext()->get_werkstueckdicke()- tiefe_min;
-                double verschiebung_z = fraestiefe_max - zustellmass;
-
-                for(uint ii=i ; \
-                    verschiebung_z > 0;
-                    ii++)
+                    tmp_klartext.zeile_anhaengen(zeile_kt);
+                    tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(i));
+                }else if(zeile_kt.contains(FRAESERABFAHREN_DIALOG))
                 {
-                    QString zeile = klartext.zeile(ii); //die Variable "zeile" wird hier überladen
-                    QMessageBox mb;
-                    mb.setText(zeile);
-                    //mb.exec();
-                    if(ii == i)//Auftuf Fräser
-                    {
-                        if(anfahrtyp == ANABFAHRTYP_KEIN)
-                        {
-                            QString zeile_fkon2;
-                            if(i+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
-                            {
-                                uint ii = i+1;
-                                zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                                while(klartext.zeile(ii).isEmpty()  &&  ii+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl()  )
-                                {
-                                    ii++;
-                                    zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                                }
-                            }
-                            text_zeilenweise fkon_tz2;
-                            fkon_tz2.set_trennzeichen(TRZ_EL_);
-                            fkon_tz2.set_text(zeile_fkon2);
-                            text_zeilenweise geoelement2;
-                            geoelement2.set_trennzeichen(TRZ_PA_);
-                            geoelement2.set_text(fkon_tz2.zeile(1));
-
-                            if(fkon_tz2.zeile(1).contains(STRECKE))
-                            {
-                                //Anfahrpunkt:
-                                punkt3d startpunkt;
-                                startpunkt.set_x(geoelement2.zeile(2).toDouble());
-                                startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                                startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-                                gcode += "G0 X";
-                                gcode += double_to_qstring(runden(startpunkt.x(),2));
-                                gcode += " Y";
-                                gcode += double_to_qstring(runden(startpunkt.y(),2));
-                                gcode += " Z";
-                                gcode += double_to_qstring(runden(startpunkt.z() + verschiebung_z,2));
-                                gcode += "\n";
-
-                                //Eintauchen:
-                                startpunkt.set_z(geoelement2.zeile(4).toDouble());
-                                gcode += "G1 Z";
-                                gcode += double_to_qstring(runden(startpunkt.z() + verschiebung_z,2));
-                                gcode += " F";
-                                gcode += double_to_qstring(eintauchvorschub);
-                                gcode += "\n";
-                            }else if(fkon_tz2.zeile(1).contains(BOGEN))
-                            {
-                                //Anfahrpunkt:
-                                punkt3d startpunkt;
-                                startpunkt.set_x(geoelement2.zeile(2).toDouble());
-                                startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                                startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-                                gcode += "G0 X";
-                                gcode += double_to_qstring(runden(startpunkt.x(),2));
-                                gcode += " Y";
-                                gcode += double_to_qstring(runden(startpunkt.y(),2));
-                                gcode += " Z";
-                                gcode += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
-                                gcode += "\n";
-
-                                //Eintauchen:
-                                startpunkt.set_z(geoelement2.zeile(4).toDouble());
-                                gcode += "G1 Z";
-                                gcode += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
-                                gcode += " F";
-                                gcode += double_to_qstring(eintauchvorschub);
-                                gcode += "\n";
-                            }
-                        }else if(fkon_tz.zeile(1).contains(STRECKE))
-                        {
-                            //Anfahrpunkt:
-                            punkt3d startpunkt;
-                            startpunkt.set_x(geoelement.zeile(2).toDouble());
-                            startpunkt.set_y(geoelement.zeile(3).toDouble());
-                            startpunkt.set_z(geoelement.zeile(4).toDouble());
-                            gcode += "G0 X";
-                            gcode += double_to_qstring(runden(startpunkt.x(),2));
-                            gcode += " Y";
-                            gcode += double_to_qstring(runden(startpunkt.y(),2));
-                            gcode += " Z";
-                            gcode += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
-                            gcode += "\n";
-
-                            gcode += "G1 X";
-                            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                            gcode += " Y";
-                            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                            gcode += " Z";
-                            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
-                            gcode += " F";
-                            gcode += double_to_qstring(eintauchvorschub);
-                            gcode += "\n";
-                        }else if(fkon_tz.zeile(1).contains(BOGEN))
-                        {
-                            //Anfahrpunkt:
-                            punkt3d startpunkt;
-                            startpunkt.set_x(geoelement.zeile(2).toDouble());
-                            startpunkt.set_y(geoelement.zeile(3).toDouble());
-                            startpunkt.set_z(geoelement.zeile(4).toDouble());
-                            gcode += "G0 X";
-                            gcode += double_to_qstring(runden(startpunkt.x(),2));
-                            gcode += " Y";
-                            gcode += double_to_qstring(runden(startpunkt.y(),2));
-                            gcode += " Z";
-                            gcode += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
-                            gcode += "\n";
-
-                            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                            if(geoelement.zeile(9) == "ja")
-                            {
-                                gcode += "G2";
-                            }else
-                            {
-                                gcode += "G3";
-                            }
-                            gcode += " X";
-                            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                            gcode += " Y";
-                            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                            gcode += " Z";
-                            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
-                            gcode += " I";
-                            gcode += double_to_qstring(runden(I,2));
-                            gcode += " J";
-                            gcode += double_to_qstring(runden(J,2));
-                            gcode += " F";
-                            gcode += double_to_qstring(eintauchvorschub);
-                            gcode += "\n";
-                        }
-                    }else if(klartext.zeile(ii).contains(FRAESERGERADE_DIALOG))
-                    {
-                        QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                        text_zeilenweise fkon_tz;
-                        fkon_tz.set_trennzeichen(TRZ_EL_);
-                        fkon_tz.set_text(zeile_fkon);
-                        text_zeilenweise geoelement;
-                        geoelement.set_trennzeichen(TRZ_PA_);
-                        geoelement.set_text(fkon_tz.zeile(1));
-
-                        gcode += "G1 X";
-                        gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                        gcode += " Y";
-                        gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                        gcode += " Z";
-                        gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble() + verschiebung_z,2));
-                        gcode += " F";
-                        gcode += double_to_qstring(vorschub);
-                        gcode += "\n";
-
-                        if(fkon_tz.zeilenanzahl()==3)
-                        {
-                            geoelement.set_text(fkon_tz.zeile(2));
-                            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                            if(geoelement.zeile(9) == "ja")
-                            {
-                                gcode += "G2";
-                            }else
-                            {
-                                gcode += "G3";
-                            }
-                            gcode += " X";
-                            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                            gcode += " Y";
-                            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                            gcode += " Z";
-                            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
-                            gcode += " I";
-                            gcode += double_to_qstring(runden(I,2));
-                            gcode += " J";
-                            gcode += double_to_qstring(runden(J,2));
-                            gcode += " F";
-                            gcode += double_to_qstring(eintauchvorschub);
-                            gcode += "\n";
-                        }
-                    }else if(klartext.zeile(ii).contains(FRAESERBOGEN_DIALOG))
-                    {
-                        QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                        text_zeilenweise fkon_tz;
-                        fkon_tz.set_trennzeichen(TRZ_EL_);
-                        fkon_tz.set_text(zeile_fkon);
-                        text_zeilenweise geoelement;
-                        geoelement.set_trennzeichen(TRZ_PA_);
-                        geoelement.set_text(fkon_tz.zeile(1));
-
-                        double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                        double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                        if(geoelement.zeile(9) == "ja")
-                        {
-                            gcode += "G2";
-                        }else
-                        {
-                            gcode += "G3";
-                        }
-                        gcode += " X";
-                        gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                        gcode += " Y";
-                        gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                        gcode += " Z";
-                        gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble() + verschiebung_z,2));
-                        gcode += " I";
-                        gcode += double_to_qstring(runden(I,2));
-                        gcode += " J";
-                        gcode += double_to_qstring(runden(J,2));
-                        gcode += " F";
-                        gcode += double_to_qstring(eintauchvorschub);
-                        gcode += "\n";
-                    }else if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
-                    {
-                        punkt3d endpunkt;
-                        endpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-
-                        if(abfahrtyp == ANABFAHRTYP_KEIN)
-                        {
-                            gcode += "G1 Z";
-                            gcode += double_to_qstring(runden(endpunkt.z() + verschiebung_z,2));
-                            gcode += " F";
-                            gcode += double_to_qstring(eintauchvorschub);
-                            gcode += "\n";
-                        }else
-                        {
-                            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                            text_zeilenweise fkon_tz;
-                            fkon_tz.set_trennzeichen(TRZ_EL_);
-                            fkon_tz.set_text(zeile_fkon);
-                            text_zeilenweise geoelement;
-                            geoelement.set_trennzeichen(TRZ_PA_);
-                            geoelement.set_text(fkon_tz.zeile(1));
-
-                            if(fkon_tz.zeile(1).contains(STRECKE))
-                            {
-                                gcode += "G1 X";
-                                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                                gcode += " Y";
-                                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                                gcode += " Z";
-                                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
-                                gcode += " F";
-                                gcode += double_to_qstring(eintauchvorschub);
-                                gcode += "\n";
-                            }else if(fkon_tz.zeile(1).contains(BOGEN))
-                            {
-                                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                                if(geoelement.zeile(9) == "ja")
-                                {
-                                    gcode += "G2";
-                                }else
-                                {
-                                    gcode += "G3";
-                                }
-                                gcode += " X";
-                                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                                gcode += " Y";
-                                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                                gcode += " Z";
-                                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
-                                gcode += " I";
-                                gcode += double_to_qstring(runden(I,2));
-                                gcode += " J";
-                                gcode += double_to_qstring(runden(J,2));
-                                gcode += " F";
-                                gcode += double_to_qstring(eintauchvorschub);
-                                gcode += "\n";
-                            }
-                        }
-                    }
-
-                    if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
-                    {
-                        verschiebung_z = verschiebung_z - zustellmass;
-                        ii = i-1;
-                    }
+                    tmp_klartext.zeile_anhaengen(zeile_kt);
+                    tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(i));
+                    break;
                 }
             }
-
-            if(anfahrtyp == ANABFAHRTYP_KEIN)
+            geometrietext g;
+            g.set_text(tmp_geo.get_text());
+            QString fehlertext;
+            gc += get_fkon(tmp_klartext, g, &fehlertext, 0 , 0);
+            if(!fehlertext.isEmpty())
             {
-                QString zeile_fkon2;
-                if(i+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
-                {
-                    uint ii = i+1;
-                    zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                    while(klartext.zeile(ii).isEmpty()  &&  ii+1<=tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeilenanzahl()  )
-                    {
-                        ii++;
-                        zeile_fkon2 =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(ii);
-                    }
-                }
-                text_zeilenweise fkon_tz2;
-                fkon_tz2.set_trennzeichen(TRZ_EL_);
-                fkon_tz2.set_text(zeile_fkon2);
-                text_zeilenweise geoelement2;
-                geoelement2.set_trennzeichen(TRZ_PA_);
-                geoelement2.set_text(fkon_tz2.zeile(1));
-
-                if(fkon_tz2.zeile(1).contains(STRECKE))
-                {
-                    //Anfahrpunkt:
-                    punkt3d startpunkt;
-                    startpunkt.set_x(geoelement2.zeile(2).toDouble());
-                    startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                    startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-                    gcode += "G0 X";
-                    gcode += double_to_qstring(runden(startpunkt.x(),2));
-                    gcode += " Y";
-                    gcode += double_to_qstring(runden(startpunkt.y(),2));
-                    gcode += " Z";
-                    gcode += double_to_qstring(runden(startpunkt.z(),2));
-                    gcode += "\n";
-
-                    //Eintauchen:
-                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
-                    gcode += "G1 Z";
-                    gcode += double_to_qstring(runden(startpunkt.z(),2));
-                    gcode += " F";
-                    gcode += double_to_qstring(eintauchvorschub);
-                    gcode += "\n";
-                }else if(fkon_tz2.zeile(1).contains(BOGEN))
-                {
-                    //Anfahrpunkt:
-                    punkt3d startpunkt;
-                    startpunkt.set_x(geoelement2.zeile(2).toDouble());
-                    startpunkt.set_y(geoelement2.zeile(3).toDouble());
-                    startpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-                    gcode += "G0 X";
-                    gcode += double_to_qstring(runden(startpunkt.x(),2));
-                    gcode += " Y";
-                    gcode += double_to_qstring(runden(startpunkt.y(),2));
-                    gcode += " Z";
-                    gcode += double_to_qstring(runden(startpunkt.z(),2));
-                    gcode += "\n";
-
-                    //Eintauchen:
-                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
-                    gcode += "G1 Z";
-                    gcode += double_to_qstring(runden(startpunkt.z(),2));
-                    gcode += " F";
-                    gcode += double_to_qstring(eintauchvorschub);
-                    gcode += "\n";
-                }
-            }else if(fkon_tz.zeile(1).contains(STRECKE))
-            {
-                //Anfahrpunkt:
-                punkt3d startpunkt;
-                startpunkt.set_x(geoelement.zeile(2).toDouble());
-                startpunkt.set_y(geoelement.zeile(3).toDouble());
-                startpunkt.set_z(geoelement.zeile(4).toDouble());
-                gcode += "G0 X";
-                gcode += double_to_qstring(runden(startpunkt.x(),2));
-                gcode += " Y";
-                gcode += double_to_qstring(runden(startpunkt.y(),2));
-                gcode += " Z";
-                gcode += double_to_qstring(runden(startpunkt.z(),2));
-                gcode += "\n";
-
-                gcode += "G1 X";
-                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                gcode += " Y";
-                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                gcode += " Z";
-                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-                gcode += " F";
-                gcode += double_to_qstring(eintauchvorschub);
-                gcode += "\n";
-            }else if(fkon_tz.zeile(1).contains(BOGEN))
-            {
-                //Anfahrpunkt:
-                punkt3d startpunkt;
-                startpunkt.set_x(geoelement.zeile(2).toDouble());
-                startpunkt.set_y(geoelement.zeile(3).toDouble());
-                startpunkt.set_z(geoelement.zeile(4).toDouble());
-                gcode += "G0 X";
-                gcode += double_to_qstring(runden(startpunkt.x(),2));
-                gcode += " Y";
-                gcode += double_to_qstring(runden(startpunkt.y(),2));
-                gcode += " Z";
-                gcode += double_to_qstring(runden(startpunkt.z(),2));
-                gcode += "\n";
-
-                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                if(geoelement.zeile(9) == "ja")
-                {
-                    gcode += "G2";
-                }else
-                {
-                    gcode += "G3";
-                }
-                gcode += " X";
-                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                gcode += " Y";
-                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                gcode += " Z";
-                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-                gcode += " I";
-                gcode += double_to_qstring(runden(I,2));
-                gcode += " J";
-                gcode += double_to_qstring(runden(J,2));
-                gcode += " F";
-                gcode += double_to_qstring(eintauchvorschub);
-                gcode += "\n";
+                return fehlertext;
             }
-*/
-        }else if(zeile_kt.contains(FRAESERGERADE_DIALOG))
-        {/*
-            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
-            text_zeilenweise fkon_tz;
-            fkon_tz.set_trennzeichen(TRZ_EL_);
-            fkon_tz.set_text(zeile_fkon);
-            text_zeilenweise geoelement;
-            geoelement.set_trennzeichen(TRZ_PA_);
-            geoelement.set_text(fkon_tz.zeile(1));
-
-            gcode += "G1 X";
-            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-            gcode += " Y";
-            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-            gcode += " Z";
-            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-            gcode += " F";
-            gcode += double_to_qstring(vorschub);
-            gcode += "\n";
-
-            if(fkon_tz.zeilenanzahl()==3)
-            {
-                geoelement.set_text(fkon_tz.zeile(2));
-                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                if(geoelement.zeile(9) == "ja")
-                {
-                    gcode += "G2";
-                }else
-                {
-                    gcode += "G3";
-                }
-                gcode += " X";
-                gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                gcode += " Y";
-                gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                gcode += " Z";
-                gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-                gcode += " I";
-                gcode += double_to_qstring(runden(I,2));
-                gcode += " J";
-                gcode += double_to_qstring(runden(J,2));
-                gcode += " F";
-                gcode += double_to_qstring(eintauchvorschub);
-                gcode += "\n";
-            }
-            */
-        }else if(zeile_kt.contains(FRAESERBOGEN_DIALOG))
-        {
-            /*
-            QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
-            text_zeilenweise fkon_tz;
-            fkon_tz.set_trennzeichen(TRZ_EL_);
-            fkon_tz.set_text(zeile_fkon);
-            text_zeilenweise geoelement;
-            geoelement.set_trennzeichen(TRZ_PA_);
-            geoelement.set_text(fkon_tz.zeile(1));
-
-            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-            if(geoelement.zeile(9) == "ja")
-            {
-                gcode += "G2";
-            }else
-            {
-                gcode += "G3";
-            }
-            gcode += " X";
-            gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-            gcode += " Y";
-            gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-            gcode += " Z";
-            gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-            gcode += " I";
-            gcode += double_to_qstring(runden(I,2));
-            gcode += " J";
-            gcode += double_to_qstring(runden(J,2));
-            gcode += " F";
-            gcode += double_to_qstring(eintauchvorschub);
-            gcode += "\n";
-*/
-        }else if(zeile_kt.contains(FRAESERABFAHREN_DIALOG))
-        {
-            /*
-            punkt3d endpunkt;
-            endpunkt.set_z(tt.get_prgtext()->get_werkstueckdicke() +tt.get_prgtext()->get_sicherheitsabstand());
-
-            if(abfahrtyp == ANABFAHRTYP_KEIN)
-            {
-                gcode += "G1 Z";
-                gcode += double_to_qstring(runden(endpunkt.z(),2));
-                gcode += " F";
-                gcode += double_to_qstring(eintauchvorschub);
-                gcode += "\n";
-            }else
-            {
-                QString zeile_fkon =tt.get_prgtext()->get_fkon().get_text_zeilenweise().zeile(i);
-                text_zeilenweise fkon_tz;
-                fkon_tz.set_trennzeichen(TRZ_EL_);
-                fkon_tz.set_text(zeile_fkon);
-                text_zeilenweise geoelement;
-                geoelement.set_trennzeichen(TRZ_PA_);
-                geoelement.set_text(fkon_tz.zeile(1));
-
-                if(fkon_tz.zeile(1).contains(STRECKE))
-                {
-                    gcode += "G1 X";
-                    gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                    gcode += " Y";
-                    gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                    gcode += " Z";
-                    gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-                    gcode += " F";
-                    gcode += double_to_qstring(eintauchvorschub);
-                    gcode += "\n";
-                }else if(fkon_tz.zeile(1).contains(BOGEN))
-                {
-                    double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
-                    double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
-
-                    if(geoelement.zeile(9) == "ja")
-                    {
-                        gcode += "G2";
-                    }else
-                    {
-                        gcode += "G3";
-                    }
-                    gcode += " X";
-                    gcode += double_to_qstring(runden(geoelement.zeile(5).toDouble(),2));
-                    gcode += " Y";
-                    gcode += double_to_qstring(runden(geoelement.zeile(6).toDouble(),2));
-                    gcode += " Z";
-                    gcode += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
-                    gcode += " I";
-                    gcode += double_to_qstring(runden(I,2));
-                    gcode += " J";
-                    gcode += double_to_qstring(runden(J,2));
-                    gcode += " F";
-                    gcode += double_to_qstring(eintauchvorschub);
-                    gcode += "\n";
-                }
-            }*/
         }
 
 
@@ -781,9 +176,11 @@ QString gcode::get_kom(QString zeile_klartext)
     return gc;
 }
 
-QString gcode::get_rta(QString zeile_klartext, QString* fehlertext)
+QString gcode::get_rta(QString zeile_klartext, QString* fehlertext, double ax, double ay)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
+    //ax = X-versatz
+    //ay = Y-Versatz
     QString gc;
     fehlertext->clear();
 
@@ -803,9 +200,9 @@ QString gcode::get_rta(QString zeile_klartext, QString* fehlertext)
 
     punkt p;
     tmp = text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG);
-    p.x = tmp.toFloat();
+    p.x = tmp.toFloat() + ax;
     tmp = text_mitte(zeile_klartext, POSITION_Y, ENDE_EINTRAG);
-    p.y = tmp.toFloat();
+    p.y = tmp.toFloat() + ay;
     tasche_tmp.set_einfuegepunkt(p);
 
     tmp = text_mitte(zeile_klartext, TASCHENLAENGE, ENDE_EINTRAG);
@@ -904,7 +301,7 @@ QString gcode::get_rta(QString zeile_klartext, QString* fehlertext)
     return gc;
 }
 
-QString gcode::get_kta(QString zeile_klartext, QString *fehlertext)
+QString gcode::get_kta(QString zeile_klartext, QString *fehlertext, double ax, double ay)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
     QString gc;
@@ -925,9 +322,9 @@ QString gcode::get_kta(QString zeile_klartext, QString *fehlertext)
 
     punkt p;
     tmp = text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG);
-    p.x = tmp.toFloat();
+    p.x = tmp.toFloat() + ax;
     tmp = text_mitte(zeile_klartext, POSITION_Y, ENDE_EINTRAG);
-    p.y = tmp.toFloat();
+    p.y = tmp.toFloat() + ay;
     tasche_tmp.set_einfuegepunkt(p);
 
     tmp = text_mitte(zeile_klartext, DURCHMESSER, ENDE_EINTRAG);
@@ -1024,7 +421,7 @@ QString gcode::get_kta(QString zeile_klartext, QString *fehlertext)
     return gc;
 }
 
-QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext)
+QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double ax, double ay)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
     QString gc;
@@ -1087,8 +484,8 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext)
     {
         //Anfahrpunkt:
         punkt3d startpunkt;
-        startpunkt.set_x(text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG));
-        startpunkt.set_y(text_mitte(zeile_klartext, POSITION_Y, ENDE_EINTRAG));
+        startpunkt.set_x(text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG).toDouble() + ax);
+        startpunkt.set_y(text_mitte(zeile_klartext, POSITION_Y, ENDE_EINTRAG).toDouble() + ay);
         startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
         gc += "G0 X";
         gc += double_to_qstring(runden(startpunkt.x(),2));
@@ -1279,6 +676,645 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext)
         gc += "\n";
 
         gc += "\n";
+    }
+
+    return gc;
+}
+
+QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
+                        QString *fehlertext, double ax, double ay)
+{
+    //fkonzeilen_t = zeilen aus text die fkon enthalten
+    //fkonzeilen_kt = zeilen aus klartext die fkon enthalten
+    //es erfolgt keine erneute Prüfung ob fkonzeilen valide sind!!
+    QString gc;//gcode
+    QString abfahrtyp;
+
+    for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+    {
+        QString zeile = klartext.zeile(i);
+
+        if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            if(aktives_wkz == NICHT_DEFINIERT)
+            {
+                aktives_wkz = werkzeugname;
+            }else if(aktives_wkz != werkzeugname)
+            {
+                *fehlertext = "Werkzeugwechsel werden derzeit nicht unterstuetzt!\nBitte blenden Sie nur Bearbeitungen mit dem selben Werkzeug gleichzeitig ein.";
+                return *fehlertext;
+            }
+            QString zeile_fkon = fkon.get_text_zeilenweise().zeile(i);
+            text_zeilenweise fkon_tz;
+            fkon_tz.set_trennzeichen(TRZ_EL_);
+            fkon_tz.set_text(zeile_fkon);
+            text_zeilenweise geoelement;
+            geoelement.set_trennzeichen(TRZ_PA_);
+            geoelement.set_text(fkon_tz.zeile(1));
+
+            //Vorschübe setzen etc.:
+            QString tmp;
+            QString werkzeug = werkzeugdaten(werkzeugname);
+            tmp = text_mitte(zeile, ANFAHRVORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_EINTAUCHVORSCHUB, ENDE_EINTRAG);
+            }
+            eintauchvorschub = tmp.toDouble();
+            tmp = text_mitte(zeile, VORSCHUB, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_VORSCHUB, ENDE_EINTRAG);
+            }
+            vorschub = tmp.toDouble();
+            tmp = text_mitte(zeile, DREHZAHL, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_DREHZAHL, ENDE_EINTRAG);
+            }
+            drehzahl = tmp.toDouble();
+            tmp = text_mitte(zeile, ZUSTELLUNG, ENDE_EINTRAG);
+            if(tmp == "AUTO")
+            {
+                tmp = text_mitte(werkzeug, WKZ_ZUSTELLTIEFE, ENDE_EINTRAG);
+            }
+            zustellmass = tmp.toDouble();
+
+            QString anfahrtyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
+            abfahrtyp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);//brauchen wir später für das Abfahren
+
+            if(zustellmass > 0)
+            {
+                //Gesamttiefe ermitteln:
+                double tiefe_min =t.get_werkstueckdicke();
+                for(uint ii=i ; \
+                    ii<=klartext.zeilenanzahl() && !klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG); \
+                    ii++)
+                {
+                    double tmp = text_mitte(klartext.zeile(ii), POSITION_Z, ENDE_EINTRAG).toDouble();
+                    if(tmp < tiefe_min)
+                    {
+                        tiefe_min = tmp;
+                    }
+                }
+                double fraestiefe_max =t.get_werkstueckdicke()- tiefe_min;
+                double verschiebung_z = fraestiefe_max - zustellmass;
+
+                for(uint ii=i ; \
+                    verschiebung_z > 0;
+                    ii++)
+                {
+                    if(ii == i)//Auftuf Fräser
+                    {
+                        if(anfahrtyp == ANABFAHRTYP_KEIN)
+                        {
+                            QString zeile_fkon2;
+                            if(i+1<=fkon.get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
+                            {
+                                uint ii = i+1;
+                                zeile_fkon2 = fkon.get_text_zeilenweise().zeile(ii);
+                                while(klartext.zeile(ii).isEmpty()  &&  ii+1<=fkon.get_text_zeilenweise().zeilenanzahl()  )
+                                {
+                                    ii++;
+                                    zeile_fkon2 =fkon.get_text_zeilenweise().zeile(ii);
+                                }
+                            }
+                            text_zeilenweise fkon_tz2;
+                            fkon_tz2.set_trennzeichen(TRZ_EL_);
+                            fkon_tz2.set_text(zeile_fkon2);
+                            text_zeilenweise geoelement2;
+                            geoelement2.set_trennzeichen(TRZ_PA_);
+                            geoelement2.set_text(fkon_tz2.zeile(1));
+
+                            if(fkon_tz2.zeile(1).contains(STRECKE))
+                            {
+                                //Anfahrpunkt:
+                                punkt3d startpunkt;
+                                startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
+                                startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
+                                startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                                gc += "G0 X";
+                                gc += double_to_qstring(runden(startpunkt.x(),2));
+                                gc += " Y";
+                                gc += double_to_qstring(runden(startpunkt.y(),2));
+                                gc += " Z";
+                                gc += double_to_qstring(runden(startpunkt.z() + verschiebung_z,2));
+                                gc += "\n";
+
+                                //Eintauchen:
+                                startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                                gc += "G1 Z";
+                                gc += double_to_qstring(runden(startpunkt.z() + verschiebung_z,2));
+                                gc += " F";
+                                gc += double_to_qstring(eintauchvorschub);
+                                gc += "\n";
+                            }else if(fkon_tz2.zeile(1).contains(BOGEN))
+                            {
+                                //Anfahrpunkt:
+                                punkt3d startpunkt;
+                                startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
+                                startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
+                                startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                                gc += "G0 X";
+                                gc += double_to_qstring(runden(startpunkt.x(),2));
+                                gc += " Y";
+                                gc += double_to_qstring(runden(startpunkt.y(),2));
+                                gc += " Z";
+                                gc += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
+                                gc += "\n";
+
+                                //Eintauchen:
+                                startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                                gc += "G1 Z";
+                                gc += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
+                                gc += " F";
+                                gc += double_to_qstring(eintauchvorschub);
+                                gc += "\n";
+                            }
+                        }else if(fkon_tz.zeile(1).contains(STRECKE))
+                        {
+                            //Anfahrpunkt:
+                            punkt3d startpunkt;
+                            startpunkt.set_x(geoelement.zeile(2).toDouble() + ax);
+                            startpunkt.set_y(geoelement.zeile(3).toDouble() + ay);
+                            startpunkt.set_z(geoelement.zeile(4).toDouble());
+                            gc += "G0 X";
+                            gc += double_to_qstring(runden(startpunkt.x(),2));
+                            gc += " Y";
+                            gc += double_to_qstring(runden(startpunkt.y(),2));
+                            gc += " Z";
+                            gc += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
+                            gc += "\n";
+
+                            gc += "G1 X";
+                            gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                            gc += " Y";
+                            gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                            gc += " Z";
+                            gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                            gc += " F";
+                            gc += double_to_qstring(eintauchvorschub);
+                            gc += "\n";
+                        }else if(fkon_tz.zeile(1).contains(BOGEN))
+                        {
+                            //Anfahrpunkt:
+                            punkt3d startpunkt;
+                            startpunkt.set_x(geoelement.zeile(2).toDouble() + ax);
+                            startpunkt.set_y(geoelement.zeile(3).toDouble() + ay);
+                            startpunkt.set_z(geoelement.zeile(4).toDouble());
+                            gc += "G0 X";
+                            gc += double_to_qstring(runden(startpunkt.x(),2));
+                            gc += " Y";
+                            gc += double_to_qstring(runden(startpunkt.y(),2));
+                            gc += " Z";
+                            gc += double_to_qstring(runden(startpunkt.z()+ verschiebung_z,2));
+                            gc += "\n";
+
+                            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                            if(geoelement.zeile(9) == "ja")
+                            {
+                                gc += "G2";
+                            }else
+                            {
+                                gc += "G3";
+                            }
+                            gc += " X";
+                            gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                            gc += " Y";
+                            gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                            gc += " Z";
+                            gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                            gc += " I";
+                            gc += double_to_qstring(runden(I,2));
+                            gc += " J";
+                            gc += double_to_qstring(runden(J,2));
+                            gc += " F";
+                            gc += double_to_qstring(eintauchvorschub);
+                            gc += "\n";
+                        }
+                    }else if(klartext.zeile(ii).contains(FRAESERGERADE_DIALOG))
+                    {
+                        QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                        text_zeilenweise fkon_tz;
+                        fkon_tz.set_trennzeichen(TRZ_EL_);
+                        fkon_tz.set_text(zeile_fkon);
+                        text_zeilenweise geoelement;
+                        geoelement.set_trennzeichen(TRZ_PA_);
+                        geoelement.set_text(fkon_tz.zeile(1));
+
+                        gc += "G1 X";
+                        gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                        gc += " Y";
+                        gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                        gc += " Z";
+                        gc += double_to_qstring(runden(geoelement.zeile(7).toDouble() + verschiebung_z,2));
+                        gc += " F";
+                        gc += double_to_qstring(vorschub);
+                        gc += "\n";
+
+                        if(fkon_tz.zeilenanzahl()==3)
+                        {
+                            geoelement.set_text(fkon_tz.zeile(2));
+                            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                            if(geoelement.zeile(9) == "ja")
+                            {
+                                gc += "G2";
+                            }else
+                            {
+                                gc += "G3";
+                            }
+                            gc += " X";
+                            gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                            gc += " Y";
+                            gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                            gc += " Z";
+                            gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                            gc += " I";
+                            gc += double_to_qstring(runden(I,2));
+                            gc += " J";
+                            gc += double_to_qstring(runden(J,2));
+                            gc += " F";
+                            gc += double_to_qstring(eintauchvorschub);
+                            gc += "\n";
+                        }
+                    }else if(klartext.zeile(ii).contains(FRAESERBOGEN_DIALOG))
+                    {
+                        QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                        text_zeilenweise fkon_tz;
+                        fkon_tz.set_trennzeichen(TRZ_EL_);
+                        fkon_tz.set_text(zeile_fkon);
+                        text_zeilenweise geoelement;
+                        geoelement.set_trennzeichen(TRZ_PA_);
+                        geoelement.set_text(fkon_tz.zeile(1));
+
+                        double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                        double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                        if(geoelement.zeile(9) == "ja")
+                        {
+                            gc += "G2";
+                        }else
+                        {
+                            gc += "G3";
+                        }
+                        gc += " X";
+                        gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                        gc += " Y";
+                        gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                        gc += " Z";
+                        gc += double_to_qstring(runden(geoelement.zeile(7).toDouble() + verschiebung_z,2));
+                        gc += " I";
+                        gc += double_to_qstring(runden(I,2));
+                        gc += " J";
+                        gc += double_to_qstring(runden(J,2));
+                        gc += " F";
+                        gc += double_to_qstring(eintauchvorschub);
+                        gc += "\n";
+                    }else if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        punkt3d endpunkt;
+                        endpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+
+                        if(abfahrtyp == ANABFAHRTYP_KEIN)
+                        {
+                            gc += "G1 Z";
+                            gc += double_to_qstring(runden(endpunkt.z() + verschiebung_z,2));
+                            gc += " F";
+                            gc += double_to_qstring(eintauchvorschub);
+                            gc += "\n";
+                        }else
+                        {
+                            QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                            text_zeilenweise fkon_tz;
+                            fkon_tz.set_trennzeichen(TRZ_EL_);
+                            fkon_tz.set_text(zeile_fkon);
+                            text_zeilenweise geoelement;
+                            geoelement.set_trennzeichen(TRZ_PA_);
+                            geoelement.set_text(fkon_tz.zeile(1));
+
+                            if(fkon_tz.zeile(1).contains(STRECKE))
+                            {
+                                gc += "G1 X";
+                                gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                                gc += " Y";
+                                gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                                gc += " Z";
+                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                gc += " F";
+                                gc += double_to_qstring(eintauchvorschub);
+                                gc += "\n";
+                            }else if(fkon_tz.zeile(1).contains(BOGEN))
+                            {
+                                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                                if(geoelement.zeile(9) == "ja")
+                                {
+                                    gc += "G2";
+                                }else
+                                {
+                                    gc += "G3";
+                                }
+                                gc += " X";
+                                gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                                gc += " Y";
+                                gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                                gc += " Z";
+                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                gc += " I";
+                                gc += double_to_qstring(runden(I,2));
+                                gc += " J";
+                                gc += double_to_qstring(runden(J,2));
+                                gc += " F";
+                                gc += double_to_qstring(eintauchvorschub);
+                                gc += "\n";
+                            }
+                        }
+                    }
+
+                    if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
+                    {
+                        verschiebung_z = verschiebung_z - zustellmass;
+                        ii = i-1;
+                    }
+                }
+            }
+
+            if(anfahrtyp == ANABFAHRTYP_KEIN)
+            {
+                QString zeile_fkon2;
+                if(i+1<=fkon.get_text_zeilenweise().zeilenanzahl())//wenn es Zeilen dannach gibt
+                {
+                    uint ii = i+1;
+                    zeile_fkon2 =fkon.get_text_zeilenweise().zeile(ii);
+                    while(klartext.zeile(ii).isEmpty()  &&  fkon.get_text_zeilenweise().zeilenanzahl()  )
+                    {
+                        ii++;
+                        zeile_fkon2 = fkon.get_text_zeilenweise().zeile(ii);
+                    }
+                }
+                text_zeilenweise fkon_tz2;
+                fkon_tz2.set_trennzeichen(TRZ_EL_);
+                fkon_tz2.set_text(zeile_fkon2);
+                text_zeilenweise geoelement2;
+                geoelement2.set_trennzeichen(TRZ_PA_);
+                geoelement2.set_text(fkon_tz2.zeile(1));
+
+                if(fkon_tz2.zeile(1).contains(STRECKE))
+                {
+                    //Anfahrpunkt:
+                    punkt3d startpunkt;
+                    startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
+                    startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
+                    startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                    gc += "G0 X";
+                    gc += double_to_qstring(runden(startpunkt.x(),2));
+                    gc += " Y";
+                    gc += double_to_qstring(runden(startpunkt.y(),2));
+                    gc += " Z";
+                    gc += double_to_qstring(runden(startpunkt.z(),2));
+                    gc += "\n";
+
+                    //Eintauchen:
+                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                    gc += "G1 Z";
+                    gc += double_to_qstring(runden(startpunkt.z(),2));
+                    gc += " F";
+                    gc += double_to_qstring(eintauchvorschub);
+                    gc += "\n";
+                }else if(fkon_tz2.zeile(1).contains(BOGEN))
+                {
+                    //Anfahrpunkt:
+                    punkt3d startpunkt;
+                    startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
+                    startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
+                    startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                    gc += "G0 X";
+                    gc += double_to_qstring(runden(startpunkt.x(),2));
+                    gc += " Y";
+                    gc += double_to_qstring(runden(startpunkt.y(),2));
+                    gc += " Z";
+                    gc += double_to_qstring(runden(startpunkt.z(),2));
+                    gc += "\n";
+
+                    //Eintauchen:
+                    startpunkt.set_z(geoelement2.zeile(4).toDouble());
+                    gc += "G1 Z";
+                    gc += double_to_qstring(runden(startpunkt.z(),2));
+                    gc += " F";
+                    gc += double_to_qstring(eintauchvorschub);
+                    gc += "\n";
+                }
+            }else if(fkon_tz.zeile(1).contains(STRECKE))
+            {
+                //Anfahrpunkt:
+                punkt3d startpunkt;
+                startpunkt.set_x(geoelement.zeile(2).toDouble() + ax);
+                startpunkt.set_y(geoelement.zeile(3).toDouble() + ay);
+                startpunkt.set_z(geoelement.zeile(4).toDouble());
+                gc += "G0 X";
+                gc += double_to_qstring(runden(startpunkt.x(),2));
+                gc += " Y";
+                gc += double_to_qstring(runden(startpunkt.y(),2));
+                gc += " Z";
+                gc += double_to_qstring(runden(startpunkt.z(),2));
+                gc += "\n";
+
+                gc += "G1 X";
+                gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                gc += " Y";
+                gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                gc += " Z";
+                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                gc += " F";
+                gc += double_to_qstring(eintauchvorschub);
+                gc += "\n";
+            }else if(fkon_tz.zeile(1).contains(BOGEN))
+            {
+                //Anfahrpunkt:
+                punkt3d startpunkt;
+                startpunkt.set_x(geoelement.zeile(2).toDouble() + ax);
+                startpunkt.set_y(geoelement.zeile(3).toDouble() + ay);
+                startpunkt.set_z(geoelement.zeile(4).toDouble());
+                gc += "G0 X";
+                gc += double_to_qstring(runden(startpunkt.x(),2));
+                gc += " Y";
+                gc += double_to_qstring(runden(startpunkt.y(),2));
+                gc += " Z";
+                gc += double_to_qstring(runden(startpunkt.z(),2));
+                gc += "\n";
+
+                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                if(geoelement.zeile(9) == "ja")
+                {
+                    gc += "G2";
+                }else
+                {
+                    gc += "G3";
+                }
+                gc += " X";
+                gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                gc += " Y";
+                gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                gc += " Z";
+                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                gc += " I";
+                gc += double_to_qstring(runden(I,2));
+                gc += " J";
+                gc += double_to_qstring(runden(J,2));
+                gc += " F";
+                gc += double_to_qstring(eintauchvorschub);
+                gc += "\n";
+            }
+        }else if(zeile.contains(FRAESERGERADE_DIALOG))
+        {
+            QString zeile_fkon =fkon.get_text_zeilenweise().zeile(i);
+            text_zeilenweise fkon_tz;
+            fkon_tz.set_trennzeichen(TRZ_EL_);
+            fkon_tz.set_text(zeile_fkon);
+            text_zeilenweise geoelement;
+            geoelement.set_trennzeichen(TRZ_PA_);
+            geoelement.set_text(fkon_tz.zeile(1));
+
+            gc += "G1 X";
+            gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax, 2));
+            gc += " Y";
+            gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay, 2));
+            gc += " Z";
+            gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+            gc += " F";
+            gc += double_to_qstring(vorschub);
+            gc += "\n";
+
+            if(fkon_tz.zeilenanzahl()==3)
+            {
+                geoelement.set_text(fkon_tz.zeile(2));
+                double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                if(geoelement.zeile(9) == "ja")
+                {
+                    gc += "G2";
+                }else
+                {
+                    gc += "G3";
+                }
+                gc += " X";
+                gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                gc += " Y";
+                gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                gc += " Z";
+                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                gc += " I";
+                gc += double_to_qstring(runden(I,2));
+                gc += " J";
+                gc += double_to_qstring(runden(J,2));
+                gc += " F";
+                gc += double_to_qstring(eintauchvorschub);
+                gc += "\n";
+            }
+        }else if(zeile.contains(FRAESERBOGEN_DIALOG))
+        {
+            QString zeile_fkon = fkon.get_text_zeilenweise().zeile(i);
+            text_zeilenweise fkon_tz;
+            fkon_tz.set_trennzeichen(TRZ_EL_);
+            fkon_tz.set_text(zeile_fkon);
+            text_zeilenweise geoelement;
+            geoelement.set_trennzeichen(TRZ_PA_);
+            geoelement.set_text(fkon_tz.zeile(1));
+
+            double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+            double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+            if(geoelement.zeile(9) == "ja")
+            {
+                gc += "G2";
+            }else
+            {
+                gc += "G3";
+            }
+            gc += " X";
+            gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+            gc += " Y";
+            gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+            gc += " Z";
+            gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+            gc += " I";
+            gc += double_to_qstring(runden(I,2));
+            gc += " J";
+            gc += double_to_qstring(runden(J,2));
+            gc += " F";
+            gc += double_to_qstring(eintauchvorschub);
+            gc += "\n";
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+            punkt3d endpunkt;
+            endpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+
+            if(abfahrtyp == ANABFAHRTYP_KEIN)
+            {
+                gc += "G1 Z";
+                gc += double_to_qstring(runden(endpunkt.z(),2));
+                gc += " F";
+                gc += double_to_qstring(eintauchvorschub);
+                gc += "\n";
+            }else
+            {
+                QString zeile_fkon =fkon.get_text_zeilenweise().zeile(i);
+                text_zeilenweise fkon_tz;
+                fkon_tz.set_trennzeichen(TRZ_EL_);
+                fkon_tz.set_text(zeile_fkon);
+                text_zeilenweise geoelement;
+                geoelement.set_trennzeichen(TRZ_PA_);
+                geoelement.set_text(fkon_tz.zeile(1));
+
+                if(fkon_tz.zeile(1).contains(STRECKE))
+                {
+                    gc += "G1 X";
+                    gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                    gc += " Y";
+                    gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                    gc += " Z";
+                    gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                    gc += " F";
+                    gc += double_to_qstring(eintauchvorschub);
+                    gc += "\n";
+                }else if(fkon_tz.zeile(1).contains(BOGEN))
+                {
+                    double I = geoelement.zeile(10).toDouble() - geoelement.zeile(2).toDouble();
+                    double J = geoelement.zeile(11).toDouble() - geoelement.zeile(3).toDouble();
+
+                    if(geoelement.zeile(9) == "ja")
+                    {
+                        gc += "G2";
+                    }else
+                    {
+                        gc += "G3";
+                    }
+                    gc += " X";
+                    gc += double_to_qstring(runden(geoelement.zeile(5).toDouble() + ax,2));
+                    gc += " Y";
+                    gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
+                    gc += " Z";
+                    gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
+                    gc += " I";
+                    gc += double_to_qstring(runden(I,2));
+                    gc += " J";
+                    gc += double_to_qstring(runden(J,2));
+                    gc += " F";
+                    gc += double_to_qstring(eintauchvorschub);
+                    gc += "\n";
+                }
+            }
+
+        }
     }
 
     return gc;

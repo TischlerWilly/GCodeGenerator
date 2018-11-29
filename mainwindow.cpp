@@ -2867,10 +2867,10 @@ void MainWindow::on_import_DXF_triggered()
                     if(klasse == dxf_klasse_geo && anz_np!=1)
                     {
                         punkt2d mipu;
-                        double rad;
-                        double stawi;
-                        double endwi;
-                        double gesamtwinkel;
+                        double rad = 0;
+                        double stawi = 0;
+                        double endwi = 0;
+                        double gesamtwinkel = 0;
                         if(dxfversion == dxf2000)
                         {
                             mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2));
@@ -2913,10 +2913,10 @@ void MainWindow::on_import_DXF_triggered()
                     }else if(klasse == dxf_klasse_geo)
                     {
                         punkt2d mipu;
-                        double rad;
-                        double stawi;
-                        double endwi;
-                        double gesamtwinkel;
+                        double rad = 0;
+                        double stawi = 0;
+                        double endwi = 0;
+                        double gesamtwinkel = 0;
                         if(dxfversion == dxf2000)
                         {
                             mipu.set_x(genauigkeit_reduzieren(tz.zeile(i+16), 2).toDouble()-np.x());
@@ -3726,8 +3726,14 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     gcode gc(*tt.get_prgtext());
     gc.set_wkz(w);
+    ui->plainTextEdit_GCode->clear();
+    ui->tabWidget->setCurrentWidget(ui->tab_GCode);//Tab G-Code aktivieren
+    ui->plainTextEdit_GCode->insertPlainText(gc.get_gcode());
+    QApplication::restoreOverrideCursor();
 
-
+    //------------------------------------------------------------------
+    /*
+    //QApplication::setOverrideCursor(Qt::WaitCursor);
     bool tmp_fkon_ein =tt.get_prgtext()->ist_aktualisieren_fkon_ein();
     if(tmp_fkon_ein == false)
     {
@@ -4912,6 +4918,7 @@ void MainWindow::on_actionGCode_berechnen_triggered()
     }
 
     QApplication::restoreOverrideCursor();
+    */
 }
 
 void MainWindow::on_pushButton_Aktualisieren_GCode_clicked()
