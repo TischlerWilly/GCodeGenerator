@@ -27,6 +27,7 @@ private:
 
     QString klammern_wecklassen(QString text);
     QString werkzeugdaten(QString werkzeugname);
+    QString textzeile_als_kommentar(QString zeile);
 
     QString get_prgkopf(QString zeile_klartext);
     QString get_prgende(QString zeile_klartext);

@@ -3111,6 +3111,7 @@ bool MainWindow::on_actionDateiSpeichern_triggered()
             tt.get_prgtext()->wurde_gespeichert();
             aktuelisiere_letzte_dateien_inifile();
             aktualisiere_letzte_dateien_menu();
+            aktualisiere_offene_dateien_menu();
         }
     }
     return true;//Funktion erfolgreich beendet

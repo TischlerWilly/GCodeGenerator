@@ -32,11 +32,7 @@ QString gcode::get_gcode()
     for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
     {
         QString zeile_kt;//zeile klartext
-        zeile_kt = klartext.zeile(i);
-        gc += "(";
-        gc += klammern_wecklassen(zeile_kt);
-        gc += ")";
-        gc += "\n";
+        zeile_kt = klartext.zeile(i);        
 
         if(zeile_kt.contains(PROGRAMMKOPF_DIALOG))
         {
@@ -138,10 +134,20 @@ QString gcode::werkzeugdaten(QString werkzeugname)
     return daten;
 }
 
+QString gcode::textzeile_als_kommentar(QString zeile)
+{
+    QString gc;//gcode
+    gc += "(";
+    gc += klammern_wecklassen(zeile);
+    gc += ")";
+    gc += "\n";
+    return gc;
+}
+
 QString gcode::get_prgkopf(QString zeile_klartext)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     gc += "(";
     gc += klammern_wecklassen(text_mitte(zeile_klartext, KOMMENTAR, ENDE_EINTRAG));
     gc += ")";
@@ -152,7 +158,7 @@ QString gcode::get_prgkopf(QString zeile_klartext)
 QString gcode::get_prgende(QString zeile_klartext)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     gc += "G00";
     gc += " X";
     gc += text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG);
@@ -168,7 +174,7 @@ QString gcode::get_prgende(QString zeile_klartext)
 QString gcode::get_kom(QString zeile_klartext)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     gc += "(";
     gc += klammern_wecklassen(text_mitte(zeile_klartext, KOMMENTAR, ENDE_EINTRAG));
     gc += ")";
@@ -181,7 +187,7 @@ QString gcode::get_rta(QString zeile_klartext, QString* fehlertext, double ax, d
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
     //ax = X-versatz
     //ay = Y-Versatz
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     fehlertext->clear();
 
     QString werkzeugname = text_mitte(zeile_klartext, WKZ_NAME, ENDE_EINTRAG);
@@ -304,7 +310,7 @@ QString gcode::get_rta(QString zeile_klartext, QString* fehlertext, double ax, d
 QString gcode::get_kta(QString zeile_klartext, QString *fehlertext, double ax, double ay)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     fehlertext->clear();
 
     QString werkzeugname = text_mitte(zeile_klartext, WKZ_NAME, ENDE_EINTRAG);
@@ -424,7 +430,7 @@ QString gcode::get_kta(QString zeile_klartext, QString *fehlertext, double ax, d
 QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double ax, double ay)
 {
     //es erfolgt keine erneute Prüfung ob zeile_klartext valide ist!!
-    QString gc;
+    QString gc = textzeile_als_kommentar(zeile_klartext);
     fehlertext->clear();
 
     QString werkzeugname = text_mitte(zeile_klartext, WKZ_NAME, ENDE_EINTRAG);
@@ -696,6 +702,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
 
         if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
+            gc += textzeile_als_kommentar(zeile);
             QString werkzeugname = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
             if(aktives_wkz == NICHT_DEFINIERT)
             {
@@ -897,7 +904,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                         }
                     }else if(klartext.zeile(ii).contains(FRAESERGERADE_DIALOG))
                     {
-                        QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                        QString zeile_fkon =fkon.get_text_zeilenweise().zeile(ii);
                         text_zeilenweise fkon_tz;
                         fkon_tz.set_trennzeichen(TRZ_EL_);
                         fkon_tz.set_text(zeile_fkon);
@@ -944,7 +951,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                         }
                     }else if(klartext.zeile(ii).contains(FRAESERBOGEN_DIALOG))
                     {
-                        QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                        QString zeile_fkon =fkon.get_text_zeilenweise().zeile(ii);
                         text_zeilenweise fkon_tz;
                         fkon_tz.set_trennzeichen(TRZ_EL_);
                         fkon_tz.set_text(zeile_fkon);
@@ -1175,6 +1182,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
             }
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
+            gc += textzeile_als_kommentar(zeile);
             QString zeile_fkon =fkon.get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
@@ -1222,6 +1230,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
             }
         }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
+            gc += textzeile_als_kommentar(zeile);
             QString zeile_fkon = fkon.get_text_zeilenweise().zeile(i);
             text_zeilenweise fkon_tz;
             fkon_tz.set_trennzeichen(TRZ_EL_);
@@ -1255,6 +1264,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
             gc += "\n";
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
+            gc += textzeile_als_kommentar(zeile);
             punkt3d endpunkt;
             endpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
 
