@@ -10,8 +10,7 @@
 /*
 ----------Aktuell in Arbeit:
 -->Bearbeitungen in Schleife Wiederholen lassen
-    ->Einarbeitung in GCode-Export (mainwindow)
-        >testen
+    ->testen
 
 
 

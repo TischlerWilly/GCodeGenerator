@@ -28,13 +28,135 @@ QString gcode::get_gcode()
     text_zeilenweise klartext =t.get_klartext_zeilenweise();
     QString gc;//gcode
     //QString abfahrtyp;
+    uint ischleibeg = 0;//Index des Schleifenbegins
+    uint ischleiend = 0;//Index des Schleifenendes
 
     for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
     {
         QString zeile_kt;//zeile klartext
         zeile_kt = klartext.zeile(i);        
 
-        if(zeile_kt.contains(PROGRAMMKOPF_DIALOG))
+        if(zeile_kt.contains(SCHLEIFELINEAR_DIALOG))
+        {
+            gc += textzeile_als_kommentar(zeile_kt);
+
+            ischleibeg = i;
+            for(uint ii=i+1; ii<=klartext.zeilenanzahl() ;ii++)
+            {
+                QString zeile = klartext.zeile(ii);
+                if(zeile.contains(SCHLEIFELINEAR_DIALOG) || \
+                   zeile.contains(PROGRAMMENDE_DIALOG)     )
+                {
+                    //Schleife hat kein Ende und wird nicht ausgegeben
+                    ischleibeg = 0;
+                    ischleiend = 0;
+                    break;
+                }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+                {
+                    ischleiend = ii;
+                    break;
+                }
+            }
+            if(ischleiend != 0)//Wenn eine vollständige Schleife gefunden wurde
+            {
+                QString zeile = klartext.zeile(ischleibeg);
+                uint anzx = text_mitte(zeile, ANZ_X, ENDE_EINTRAG).toInt();
+                uint anzy = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG).toInt();
+                double versx = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
+                double versy = text_mitte(zeile, VERSATZ_Y, ENDE_EINTRAG).toDouble();
+
+                for(uint ix=1; ix<=anzx ;ix++)//Aktuelle Schleife in X durchlaufen
+                {
+                    double aktversx = versx * (ix-1);
+                    for(uint iy=1; iy<=anzy ;iy++)//Aktuelle Schleife in Y durchlaufen
+                    {
+                        double aktversy = versy * (iy-1);
+
+                        gc += "(";
+                        gc += "Schleifendurchlauf in X:";
+                        gc += int_to_qstring(ix);
+                        gc += " / in Y:";
+                        gc += int_to_qstring(iy);
+                        gc += "  /  ax=";
+                        gc += double_to_qstring(aktversx);
+                        gc += " / ay=";
+                        gc += double_to_qstring(aktversy);
+                        gc += ")";
+                        gc += "\n";
+
+                        for(uint irumpf=ischleibeg+1 ; irumpf<ischleiend ; irumpf++)
+                        {
+                            zeile_kt = klartext.zeile(irumpf);
+                            if(zeile_kt.contains(KOMMENTAR_DIALOG))
+                            {
+                                gc += get_kom(zeile_kt);
+                            }else if(zeile_kt.contains(RECHTECKTASCHE_DIALOG))
+                            {
+                                QString fehlertext;
+                                gc += get_rta(zeile_kt, &fehlertext, aktversx , aktversy);
+                                if(!fehlertext.isEmpty())
+                                {
+                                    return fehlertext;
+                                }
+                            }else if(zeile_kt.contains(KREISTASCHE_DIALOG))
+                            {
+                                QString fehlertext;
+                                gc += get_kta(zeile_kt, &fehlertext, aktversx , aktversy);
+                                if(!fehlertext.isEmpty())
+                                {
+                                    return fehlertext;
+                                }
+                            }else if(zeile_kt.contains(BOHREN_DIALOG))
+                            {
+                                QString fehlertext;
+                                gc += get_bohrung(zeile_kt, &fehlertext, aktversx , aktversy);
+                                if(!fehlertext.isEmpty())
+                                {
+                                    return fehlertext;
+                                }
+                            }else if(zeile_kt.contains(FRAESERAUFRUF_DIALOG))
+                            {
+                                text_zeilenweise tmp_klartext;
+                                text_zeilenweise tmp_geo;
+                                tmp_klartext.zeile_anhaengen(zeile_kt);
+                                tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(irumpf));
+                                for(   ; irumpf<ischleiend ; irumpf++)//Index von der umfassenden Schleife wird weiter gezählt
+                                {
+                                    zeile_kt = klartext.zeile(i);
+                                    if(zeile_kt.contains(FRAESERGERADE_DIALOG)  || \
+                                       zeile_kt.contains(FRAESERBOGEN_DIALOG)      )
+                                    {
+                                        tmp_klartext.zeile_anhaengen(zeile_kt);
+                                        tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(irumpf));
+                                    }else if(zeile_kt.contains(FRAESERABFAHREN_DIALOG))
+                                    {
+                                        tmp_klartext.zeile_anhaengen(zeile_kt);
+                                        tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(irumpf));
+                                        break;
+                                    }
+                                }
+                                geometrietext g;
+                                g.set_text(tmp_geo.get_text());
+                                QString fehlertext;
+                                gc += get_fkon(tmp_klartext, g, &fehlertext, aktversx , aktversy);
+                                if(!fehlertext.isEmpty())
+                                {
+                                    return fehlertext;
+                                }
+                            }
+                        }
+                    }
+                }
+                i = ischleiend-1;//Index der Haupt-for-Schleife erhöhen
+                //Wenn keine valide lineare Schleife gefunden wird dann wird diese ignoriert
+                //und die Bearbeitung ganz normal nur 1x ausgegeben.
+            }
+            ischleibeg = 0;
+            ischleiend = 0;
+        }else if(zeile_kt.contains(SCHLEIFENENDE_DIALOG))
+        {
+            gc += textzeile_als_kommentar(zeile_kt);
+        }else if(zeile_kt.contains(PROGRAMMKOPF_DIALOG))
         {
             gc += get_prgkopf(zeile_kt);
         }else if(zeile_kt.contains(PROGRAMMENDE_DIALOG))
@@ -98,9 +220,6 @@ QString gcode::get_gcode()
                 return fehlertext;
             }
         }
-
-
-
     }
     return gc;
 }

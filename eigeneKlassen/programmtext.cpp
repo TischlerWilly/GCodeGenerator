@@ -4664,7 +4664,7 @@ void programmtext::aktualisiere_schleife_linear()
             uint anzx = text_mitte(zeile, ANZ_X, ENDE_EINTRAG).toInt();
             uint anzy = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG).toInt();
             double versx = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
-            double versy = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
+            double versy = text_mitte(zeile, VERSATZ_Y, ENDE_EINTRAG).toDouble();
             //Prüfen ob innerhalb der Schleife eine weitere Schleife liegt
             //wenn ja, dann Fehlermeldung ausgeben:
             text_zeilenweise zeilen;
