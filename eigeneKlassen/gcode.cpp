@@ -122,7 +122,7 @@ QString gcode::get_gcode()
                                 tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(irumpf));
                                 for(   ; irumpf<ischleiend ; irumpf++)//Index von der umfassenden Schleife wird weiter gezählt
                                 {
-                                    zeile_kt = klartext.zeile(i);
+                                    zeile_kt = klartext.zeile(irumpf);
                                     if(zeile_kt.contains(FRAESERGERADE_DIALOG)  || \
                                        zeile_kt.contains(FRAESERBOGEN_DIALOG)      )
                                     {

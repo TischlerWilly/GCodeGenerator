@@ -4649,7 +4649,7 @@ void programmtext::aktualisiere_schleife_linear()
             if(zeile.contains(SCHLEIFELINEAR_DIALOG))
             {
                 index_beg.zeile_anhaengen(int_to_qstring(i));
-            }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+            }else if(zeile.contains(SCHLEIFENENDE_DIALOG) && index_beg.zeilenanzahl()>index_end.zeilenanzahl())
             {
                 index_end.zeile_anhaengen(int_to_qstring(i));
             }
