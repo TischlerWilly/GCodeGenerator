@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    update_windowtitle();
 
     //Defaultwerte:
     kopierterEintrag_t              = NICHT_DEFINIERT;
@@ -48,8 +47,6 @@ MainWindow::MainWindow(QWidget *parent) :
     anz_neue_dateien                = 0;//Zählung neuer Dateien mit 0 beginnen und dann raufzählen
 
     vorschaufenster.setParent(ui->tab_Programmliste);
-
-    hideElemets_noFileIsOpen();
 
     QDir dir(QDir::homePath() + PFAD_ZUM_PROGRAMMORDNER);
     if(!dir.exists())
@@ -181,7 +178,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(sendTextToImportGGF(QString)), &import_ggf, SLOT(getText(QString)));
     connect(&import_ggf, SIGNAL(sendData(QString)), this, SLOT(getImportGGF(QString)));
 
-    aktualisiere_letzte_dateien_menu();
+    update_gui();
 
     this->setWindowState(Qt::WindowMaximized);
 }
@@ -3288,6 +3285,8 @@ void MainWindow::hideElemets_noFileIsOpen()
     ui->actionMakeGebogene_Fraesbahn->setDisabled(true);
     ui->actionMakeAbfahren->setDisabled(true);
     ui->actionMakeBohren->setDisabled(true);
+    ui->actionMakeSchleife_linear->setDisabled(true);
+    ui->actionMakeSchleifenende->setDisabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setDisabled(true);
     ui->actionMakeStrecke->setDisabled(true);
@@ -3360,6 +3359,8 @@ void MainWindow::showElements_aFileIsOpen()
     ui->actionMakeGebogene_Fraesbahn->setEnabled(true);
     ui->actionMakeAbfahren->setEnabled(true);
     ui->actionMakeBohren->setEnabled(true);
+    ui->actionMakeSchleife_linear->setEnabled(true);
+    ui->actionMakeSchleifenende->setEnabled(true);
     //Menü CAD:
     ui->actionMakeKreis->setEnabled(true);
     ui->actionMakeStrecke->setEnabled(true);
@@ -7519,11 +7520,20 @@ void MainWindow::on_actionInfo_triggered()
 {
     QString msg;
     msg  = PROGRAMMNAME;
+    msg += " Version ";
+    msg += PROGRAMMVERSION;
     msg += "\n";
-    msg += "Autor: Oliver Schuft";
+    msg += "Autor:\t";
+    msg +=              "Oliver Schuft";
     msg += "\n";
-    msg += "Repositorry: ";
-    msg += "https://github.com/TischlerWilly/GCodeGenerator.git";
+    msg += "Homepage Autor:\t";
+    msg +=              "https://oliverschuft.jimdo.com";
+    msg += "\n";
+    msg += "Repositorry:\t";
+    msg +=              "https://github.com/TischlerWilly/GCodeGenerator.git";
+    msg += "\n";
+    msg += "Homepage:\t";
+    msg +=              "https://gcodegenerator.jimdofree.com";
 
     QMessageBox mb;
     mb.setText(msg);
@@ -7560,6 +7570,7 @@ void MainWindow::update_gui()
         ui->actionNaechste_offen_Datei->setDisabled(true);
         ui->actionLetzte_offene_Datei->setDisabled(true);
     }
+    aktualisiere_letzte_dateien_menu();
     aktualisiere_offene_dateien_menu();
     update_windowtitle();
 }
