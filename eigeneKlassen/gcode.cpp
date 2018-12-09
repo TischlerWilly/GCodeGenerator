@@ -1109,7 +1109,8 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                         if(abfahrtyp == ANABFAHRTYP_KEIN)
                         {
                             gc += "G1 Z";
-                            gc += double_to_qstring(runden(endpunkt.z() + verschiebung_z,2));
+                            //gc += double_to_qstring(runden(endpunkt.z() + verschiebung_z,2));
+                            gc += double_to_qstring(runden(endpunkt.z(),2));
                             gc += " F";
                             gc += double_to_qstring(eintauchvorschub);
                             gc += "\n";
@@ -1130,7 +1131,8 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                                 gc += " Y";
                                 gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
                                 gc += " Z";
-                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                //gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
                                 gc += " F";
                                 gc += double_to_qstring(eintauchvorschub);
                                 gc += "\n";
@@ -1151,7 +1153,8 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                                 gc += " Y";
                                 gc += double_to_qstring(runden(geoelement.zeile(6).toDouble() + ay,2));
                                 gc += " Z";
-                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                //gc += double_to_qstring(runden(geoelement.zeile(7).toDouble()+ verschiebung_z,2));
+                                gc += double_to_qstring(runden(geoelement.zeile(7).toDouble(),2));
                                 gc += " I";
                                 gc += double_to_qstring(runden(I,2));
                                 gc += " J";
