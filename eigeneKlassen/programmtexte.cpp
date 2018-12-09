@@ -24,6 +24,10 @@ void programmtexte::del()
         ih.del(current_index);
         set_current_index(ih.get_current());
     }
+    if(vp.size() == 1)
+    {
+        clear();
+    }
 }
 
 void programmtexte::del(uint index)
