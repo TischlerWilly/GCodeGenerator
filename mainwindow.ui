@@ -669,7 +669,7 @@
   </action>
   <action name="actionNaechste_offen_Datei">
    <property name="text">
-    <string>nächste offen Datei</string>
+    <string>nächste offene Datei</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Up</string>
