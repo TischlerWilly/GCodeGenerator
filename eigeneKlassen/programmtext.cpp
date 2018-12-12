@@ -18,9 +18,7 @@ void programmtext::set_text(QString neuer_Text)
     {
         text.zeile_anhaengen(LISTENENDE);
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::clear()
@@ -155,9 +153,7 @@ int programmtext::zeile_loeschen(uint zeilennummer)
         return 1; //Meldet Fehler in der Funktion
     }
     text.zeile_loeschen(zeilennummer);
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
     return 0; //Keine Fehler
 }
 
@@ -175,9 +171,7 @@ int programmtext::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge)
             text.zeile_loeschen(i);
         }
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
     return 0; //Keine Fehler
 }
 
@@ -198,9 +192,7 @@ int programmtext::zeile_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zei
     {
         text.zeile_einfuegen(zeilennummer_vor_neuer_zeile, zeilentext);
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
     return 0; //Keine Fehler
 }
 
@@ -227,9 +219,7 @@ int programmtext::zeilen_einfuegen(uint zeilennummer_vor_neuer_zeile, QString ze
             text.zeile_einfuegen(zeilennummer_vor_neuer_zeile+i-1, zeile);
         }
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
     return 0; //Keine Fehler
 }
 
@@ -240,9 +230,7 @@ void programmtext::zeile_anhaengen(QString zeilentext)
         return;
     }
     text.zeilen_anhaengen(zeilentext);
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
@@ -267,9 +255,7 @@ int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
         return 1; //Meldet Fehler in der Funktion
     }
     text.zeile_ersaetzen(zeilennummer, neuer_zeilentext);
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
     return 0; //Keine Fehler
 }
 
@@ -500,9 +486,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
         }
     }
 
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 
     anz_der_durchlaeufe--;
     if(anz_der_durchlaeufe > 0)
@@ -789,9 +773,7 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
             tzfkon.zeile_loeschen(1);
             text.zeilen_einfuegen(1, tzfkon.get_text());
         }
-        aktualisiere_klartext_var_geo();
-        aktualisiere_fkon();
-        aktualisiere_anzeigetext();
+        aktualisieren();
     }
 }
 
@@ -848,9 +830,7 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
         tzgeo.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzgeo.get_text());
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 text_zeilenweise programmtext::fkon_use_values(text_zeilenweise cam)
@@ -1006,10 +986,7 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
         tzcam.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzcam.get_text());
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
-
+    aktualisieren();
 }
 
 void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
@@ -1086,9 +1063,7 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
         tzcam_t.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzcam_t.get_text());
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
@@ -1170,9 +1145,7 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
         tzcam_t.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzcam_t.get_text());
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::rta_zu_cad(uint zeinumakt)
@@ -1433,9 +1406,7 @@ void programmtext::rta_zu_cad(uint zeinumakt)
         tzcad.zeile_loeschen(1);
         text.zeilen_einfuegen(1, tzcad.get_text());
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
@@ -1493,9 +1464,7 @@ void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
         text.zeile_vorwegsetzen(variable_ay);
         text.zeile_vorwegsetzen(variable_ax);
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
@@ -1567,9 +1536,7 @@ void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
         }
         text.zeile_ersaetzen(i, zeile);
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 
 void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
@@ -1641,13 +1608,10 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
         }
         text.zeile_ersaetzen(i, zeile);
     }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
+    aktualisieren();
 }
 //------------------------------------------------------------
 //private:
-
 void programmtext::set_sicherheitsabstand(float neuer_Abstand)
 {
     if(neuer_Abstand > 0)
@@ -1659,7 +1623,72 @@ void programmtext::set_sicherheitsabstand(float neuer_Abstand)
     }
 }
 
-void programmtext::aktualisiere_klartext_var_geo()
+void programmtext::set_wkz(werkzeug wkz)
+{
+    w = wkz;
+    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    {
+        QString zeile = text.zeile(i);
+        if( zeile.contains(WKZ_NAME) )
+        {
+            if(zeile.contains(WKZ_DURCHMESSER))
+            {
+                QString aktualles_wkz =  wkz.get_werkzeug(text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG));
+                QString wkzdm = text_mitte(aktualles_wkz, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                QString wkzdmalt = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
+                zeile.replace( WKZ_DURCHMESSER + wkzdmalt + ENDE_EINTRAG, \
+                               WKZ_DURCHMESSER + wkzdm + ENDE_EINTRAG);
+            }
+        }
+    }
+    aktualisieren();
+}
+
+bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
+{
+    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
+         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )  && \
+         (  (p1.z() == p2.z()) || ((p1.z() - tolleranz <= p2.z()) && (p1.z() + tolleranz >= p2.z()))  )     )
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
+bool programmtext::get_hat_ungesicherte_inhalte()
+{
+    if(text.get_text().isEmpty())//Hat gar keine Inhalte
+    {
+        return false;
+    }
+    if(text_kopie.get_text() == text.get_text())//Inhalt wurde seit dem Speichern noch nicht verändert
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+}
+
+void programmtext::wurde_gespeichert()
+{
+    text_kopie = text;
+}
+
+void programmtext::aktualisieren()
+{
+    aktualisiere_klartext_var();
+    aktualisiere_geo();
+    aktualisiere_fraeserdarst();
+    aktualisiere_fkon();
+    aktualisiere_anzeigetext();
+    aktualisiere_schleife_linear();
+    aktualisiere_min_max();
+}
+
+void programmtext::aktualisiere_klartext_var()
 {
     if(!aktualisieren_eingeschaltet)
     {
@@ -1698,7 +1727,7 @@ void programmtext::aktualisiere_klartext_var_geo()
                     warnung_frDial = true;
                 }
             }
-        }     
+        }
 
         if(zeile.contains(PROGRAMMKOPF_DIALOG))
         {
@@ -2880,11 +2909,6 @@ void programmtext::aktualisiere_klartext_var_geo()
                     variablen.replace(BOHRTIEFE+alterWert, BOHRTIEFE+tmp);
                 }
 
-
-
-
-
-
                 tmp = text_mitte(zeile, ANBOHRTI, ENDE_EINTRAG);
                 if(tmp == "AUTO")
                 {
@@ -2970,6 +2994,66 @@ void programmtext::aktualisiere_klartext_var_geo()
                 klartext.zeilen_anhaengen(" ");//leere Zeile
                 var.zeile_anhaengen(variablen);
             }
+        }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+        {
+            QString tmp;
+            tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
+            tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+            tmp = ausdruck_auswerten(tmp);
+            if(tmp.toFloat() == true)
+            {
+                QString zeile_klartext;
+                zeile_klartext += SCHLEIFELINEAR_DIALOG;
+
+                tmp = text_mitte(zeile, ANZ_X, ENDE_EINTRAG);
+                zeile_klartext += ANZ_X;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG);
+                zeile_klartext += ANZ_Y;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += VERSATZ_X;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                tmp = text_mitte(zeile, VERSATZ_Y, ENDE_EINTRAG);
+                tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+                tmp = ausdruck_auswerten(tmp);
+                zeile_klartext += VERSATZ_Y;
+                zeile_klartext += tmp;
+                zeile_klartext += ENDE_EINTRAG;
+
+                klartext.zeilen_anhaengen(zeile_klartext);
+                var.zeile_anhaengen(variablen);
+            }else
+            {//Wenn AFB == 0;
+                klartext.zeilen_anhaengen(" ");//leere Zeile
+                var.zeile_anhaengen(variablen);
+            }
+        }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+        {
+            QString tmp;
+            tmp = text_mitte(zeile, AUSFUEHRBEDINGUNG, ENDE_EINTRAG);
+            tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
+            tmp = ausdruck_auswerten(tmp);
+            if(tmp.toFloat() == true)
+            {
+                QString zeile_klartext;
+                zeile_klartext += SCHLEIFENENDE_DIALOG;
+
+                klartext.zeilen_anhaengen(zeile_klartext);
+                var.zeile_anhaengen(variablen);
+            }else
+            {//Wenn AFB == 0;
+                klartext.zeilen_anhaengen(" ");//leere Zeile
+                var.zeile_anhaengen(variablen);
+            }
         }else
         {
             klartext.zeilen_anhaengen("");
@@ -2978,6 +3062,16 @@ void programmtext::aktualisiere_klartext_var_geo()
 
 
     }
+}
+
+void programmtext::aktualisiere_geo()
+{
+    if(!aktualisieren_eingeschaltet)
+    {
+        return;
+    }
+    //Die Funktion "aktualisiere_klartext_var()" muss jeweils vorab aufgerufen worden sein!
+
     //CAD-Parameter ergänzen:
     if(warnung_frDial == false)
     {
@@ -2996,7 +3090,7 @@ void programmtext::aktualisiere_klartext_var_geo()
             }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
             {
                 punkt3d nullpunkt(0,0,0);
-                nullpunkt.set_breite(15);
+                nullpunkt.set_linienbreite(15);
                 geo.add_punkt(nullpunkt);
 
                 rechteck3d rec;
@@ -3926,444 +4020,173 @@ void programmtext::aktualisiere_klartext_var_geo()
                 geo.add_strecke(s);
 
                 geo.zeilenvorschub();
+            }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+            {
+                geo.zeilenvorschub();
+            }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+            {
+                geo.zeilenvorschub();
             }
         }
+    }
+}
 
-
-        //min und max berechnen:
-        text_zeilenweise geotext = geo.get_text_zeilenweise();
-        for(uint i=1;i<=geotext.zeilenanzahl();i++)
+void programmtext::aktualisiere_fraeserdarst()
+{
+    fraeserdarst.clear();
+    QString farbe = FARBE_BLAU;
+    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    {
+        QString aktzei = klartext.zeile(i);
+        if(aktzei.contains(FRAESERAUFRUF_DIALOG))
         {
-            text_zeilenweise spalten;
-            spalten.set_trennzeichen(TRZ_EL_);
-            spalten.set_text(geotext.zeile(i));
-
-            for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+            punkt3d p;
+            p.set_x(text_mitte(aktzei, POSITION_X, ENDE_EINTRAG));
+            p.set_y(text_mitte(aktzei, POSITION_Y, ENDE_EINTRAG));
+            p.set_z(text_mitte(aktzei, POSITION_Z, ENDE_EINTRAG));
+            double wkzdm = text_mitte(aktzei, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
+            if(wkzdm < 2)
             {
-                text_zeilenweise element;
-                element.set_trennzeichen(TRZ_PA_);
-                element.set_text(spalten.zeile(ii));
-
-                if(element.get_text().contains(PUNKT))
+                wkzdm =2;
+            }
+            QString bankor = text_mitte(aktzei, BAHNRORREKTUR, ENDE_EINTRAG);
+            if(bankor == BAHNRORREKTUR_keine)
+            {
+                kreis k;
+                k.set_farbe(farbe);
+                k.set_mittelpunkt(p);
+                k.set_radius(wkzdm/2);
+                fraeserdarst.add_kreis(k);
+            }else if(bankor == BAHNRORREKTUR_links)
+            {
+                if(i+1 <=text.zeilenanzahl())
                 {
-                    double x = element.zeile(2).toDouble();
-                    double y = element.zeile(3).toDouble();
-                    if(x < min_x)
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
                     {
-                        min_x = x;
-                    }else if(x > max_x)
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, false);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
                     {
-                        max_x = x;
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
                     }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(STRECKE))
+                }
+            }else //if(bankor == BAHNRORREKTUR_rechts)
+            {
+                if(i+1 <=text.zeilenanzahl())
                 {
-                    double x = element.zeile(2).toDouble();
-                    double y = element.zeile(3).toDouble();
-                    if(x < min_x)
+                    QString folgzei = klartext.zeile(i+1);
+                    if(folgzei.contains(FRAESERGERADE_DIALOG))
                     {
-                        min_x = x;
-                    }else if(x > max_x)
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        strecke s;
+                        s.set_start(p);
+                        s.set_ende(p2);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        s.drenen_um_startpunkt_2d(90, true);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        k.set_mittelpunkt(s.endp());
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
+                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
                     {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = element.zeile(5).toDouble();
-                    y = element.zeile(6).toDouble();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(BOGEN))
-                {
-                    double x = element.zeile(2).toDouble();
-                    double y = element.zeile(3).toDouble();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = element.zeile(5).toDouble();
-                    y = element.zeile(6).toDouble();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(KREIS))
-                {
-                    double rad = element.zeile(5).toDouble();
-                    double x = element.zeile(2).toDouble()-rad;
-                    double y = element.zeile(3).toDouble()-rad;
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }
-                    x = x+rad*2;
-                    y = y+rad*2;
-                    if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(ZYLINDER))
-                {
-                    double rad = element.zeile(5).toDouble();
-                    double x = element.zeile(2).toDouble()-rad;
-                    double y = element.zeile(3).toDouble()-rad;
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }
-                    x = x+rad*2;
-                    y = y+rad*2;
-                    if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(RECHTECK3D))
-                {
-                    rechteck3d r;
-                    r.set_bezugspunkt(element.zeile(2).toInt());
-                    r.set_einfuegepunkt(element.zeile(3).toDouble(),\
-                                        element.zeile(4).toDouble(),\
-                                        element.zeile(5).toDouble());
-                    r.set_laenge(element.zeile(6).toDouble());
-                    r.set_breite(element.zeile(7).toDouble());
-                    r.set_rad(element.zeile(8).toDouble());
-                    r.set_drewi(element.zeile(9).toDouble());
-
-                    double x = r.unl(false).x();
-                    double y = r.unl(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.unr(false).x();
-                    y = r.unr(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.obl(false).x();
-                    y = r.obl(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.obr(false).x();
-                    y = r.obr(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                }else if(element.get_text().contains(WUERFEL))
-                {
-                    rechteck3d r;
-                    r.set_bezugspunkt(element.zeile(2).toInt());
-                    r.set_einfuegepunkt(element.zeile(3).toDouble(),\
-                                        element.zeile(4).toDouble(),\
-                                        element.zeile(5).toDouble());
-                    r.set_laenge(element.zeile(6).toDouble());
-                    r.set_breite(element.zeile(7).toDouble());
-                    r.set_rad(element.zeile(8).toDouble());
-                    r.set_drewi(element.zeile(9).toDouble());
-
-                    double x = r.unl(false).x();
-                    double y = r.unl(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.unr(false).x();
-                    y = r.unr(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.obl(false).x();
-                    y = r.obl(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
-                    }
-                    x = r.obr(false).x();
-                    y = r.obr(false).y();
-                    if(x < min_x)
-                    {
-                        min_x = x;
-                    }else if(x > max_x)
-                    {
-                        max_x = x;
-                    }
-                    if(y < min_y)
-                    {
-                        min_y = y;
-                    }else if(y > max_y)
-                    {
-                        max_y = y;
+                        punkt3d p2;
+                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
+                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
+                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
+                        bogen b;
+                        b.set_startpunkt(p);
+                        b.set_endpunkt(p2);
+                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
+                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            b.set_radius(bograd, true);
+                        }else
+                        {
+                            b.set_radius(bograd, false);
+                        }
+                        strecke s;
+                        s.set_start(p);
+                        punkt3d mipu;
+                        mipu.set_x(b.mitte().x());
+                        mipu.set_y(b.mitte().y());
+                        s.set_ende(mipu);
+                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
+                        s.set_laenge_2d(wkzdm/2, sb);
+                        sb = strecke_bezugspunkt_ende;
+                        s.set_laenge_2d(wkzdm, sb);
+                        kreis k;
+                        k.set_farbe(farbe);
+                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        {
+                            k.set_mittelpunkt(s.endp());
+                        }else
+                        {
+                            k.set_mittelpunkt(s.startp());
+                        }
+                        k.set_radius(wkzdm/2);
+                        fraeserdarst.add_kreis(k);
                     }
                 }
             }
         }
+        fraeserdarst.zeilenvorschub();
     }
-    aktualisiere_fraeserdarst();
-}
-
-void programmtext::aktualisiere_anzeigetext()
-{
-    if(!aktualisieren_eingeschaltet)
-    {
-        return;
-    }
-
-    anzeigetext.clear();
-    for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
-    {
-        QString zeile = text.zeile(i);
-        QString tmp;
-        tmp = QString::fromStdString(int_to_string(i));
-        tmp += ": ";
-        //-----------------------
-        if(zeile.contains(PROGRAMMKOPF_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-        }else if(zeile.contains(PROGRAMMENDE_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-        }else if(zeile.contains(VARIABLE_DIALOG))
-        {
-            tmp += "Variable: ";
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " = ";
-            tmp += text_mitte(zeile, WERT, ENDE_EINTRAG);
-            tmp += "";
-        }else if(zeile.contains(KOMMENTAR_DIALOG))
-        {
-            tmp += text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG);
-        }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [";
-            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(KREISTASCHE_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [";
-            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [";
-            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
-            tmp += "]";
-            tmp += " [Z: ";
-            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(FRAESERGERADE_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [Z: ";
-            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(FRAESERBOGEN_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [Z: ";
-            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-        }else if(zeile.contains(STRECKE))
-        {
-            tmp += "CAD / Strecke";
-        }else if(zeile.contains(KREIS))
-        {
-            tmp += "CAD / Kreis";
-        }else if(zeile.contains(BOGEN))
-        {
-            tmp += "CAD / Bogen";
-        }else if(zeile.contains(BOHREN_DIALOG))
-        {
-            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
-            tmp += " [";
-            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
-            tmp += "]";
-        }else if(zeile.contains(LISTENENDE))
-        {
-            tmp += "...";
-        }else
-        {
-            tmp += zeile;
-        }
-        //-----------------------
-        if(  (zeile.at(0) == '/')  &&  (zeile.at(1) == '/')  )
-        {
-            tmp = "//" + tmp;
-        }
-        if(tmp.isEmpty())
-        {
-            tmp = " ";
-        }
-        if(i==1)
-        {
-            anzeigetext.set_text(tmp);
-        }else
-        {
-            anzeigetext.zeile_anhaengen(tmp);
-        }
-    }
-}
-
-void programmtext::set_wkz(werkzeug wkz)
-{
-    w = wkz;
-    for(uint i=1; i<=text.zeilenanzahl() ;i++)
-    {
-        QString zeile = text.zeile(i);
-        if( zeile.contains(WKZ_NAME) )
-        {
-            if(zeile.contains(WKZ_DURCHMESSER))
-            {
-                QString aktualles_wkz =  wkz.get_werkzeug(text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG));
-                QString wkzdm = text_mitte(aktualles_wkz, WKZ_DURCHMESSER, ENDE_EINTRAG);
-                QString wkzdmalt = text_mitte(zeile, WKZ_DURCHMESSER, ENDE_EINTRAG);
-                zeile.replace( WKZ_DURCHMESSER + wkzdmalt + ENDE_EINTRAG, \
-                               WKZ_DURCHMESSER + wkzdm + ENDE_EINTRAG);
-            }
-        }
-    }
-    aktualisiere_klartext_var_geo();
-    aktualisiere_fkon();
-    aktualisiere_anzeigetext();
 }
 
 void programmtext::aktualisiere_fkon()
@@ -4380,7 +4203,7 @@ void programmtext::aktualisiere_fkon()
     QString bahnkorr = BAHNRORREKTUR_keine;
     QString wkz_aktuell = "";
     double wkz_dm = 0;
-    double kantendicke = 0; 
+    double kantendicke = 0;
 
     for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
     {
@@ -4696,200 +4519,567 @@ void programmtext::aktualisiere_fkon()
 
 }
 
-bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
+void programmtext::aktualisiere_anzeigetext()
 {
-    if(  (  (p1.x() == p2.x()) || ((p1.x() - tolleranz <= p2.x()) && (p1.x() + tolleranz >= p2.x()))  )  && \
-         (  (p1.y() == p2.y()) || ((p1.y() - tolleranz <= p2.y()) && (p1.y() + tolleranz >= p2.y()))  )  && \
-         (  (p1.z() == p2.z()) || ((p1.z() - tolleranz <= p2.z()) && (p1.z() + tolleranz >= p2.z()))  )     )
+    if(!aktualisieren_eingeschaltet)
     {
-        return true;
-    }else
+        return;
+    }
+
+    anzeigetext.clear();
+    for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
     {
-        return false;
+        QString zeile = text.zeile(i);
+        QString tmp;
+        tmp = QString::fromStdString(int_to_string(i));
+        tmp += ": ";
+        //-----------------------
+        if(zeile.contains(PROGRAMMKOPF_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(PROGRAMMENDE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(VARIABLE_DIALOG))
+        {
+            tmp += "Variable: ";
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " = ";
+            tmp += text_mitte(zeile, WERT, ENDE_EINTRAG);
+            tmp += "";
+        }else if(zeile.contains(KOMMENTAR_DIALOG))
+        {
+            tmp += text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG);
+        }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(KREISTASCHE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(FRAESERGERADE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(FRAESERBOGEN_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [Z: ";
+            tmp += text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(STRECKE))
+        {
+            tmp += "CAD / Strecke";
+        }else if(zeile.contains(KREIS))
+        {
+            tmp += "CAD / Kreis";
+        }else if(zeile.contains(BOGEN))
+        {
+            tmp += "CAD / Bogen";
+        }else if(zeile.contains(BOHREN_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+            tmp += " [";
+            tmp += text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
+            tmp += "]";
+        }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
+        {
+            tmp += text_mitte(zeile, BEZEICHNUNG, ENDE_EINTRAG);
+        }else if(zeile.contains(LISTENENDE))
+        {
+            tmp += "...";
+        }else
+        {
+            tmp += zeile;
+        }
+        //-----------------------
+        if(  (zeile.at(0) == '/')  &&  (zeile.at(1) == '/')  )
+        {
+            tmp = "//" + tmp;
+        }
+        if(tmp.isEmpty())
+        {
+            tmp = " ";
+        }
+        if(i==1)
+        {
+            anzeigetext.set_text(tmp);
+        }else
+        {
+            anzeigetext.zeile_anhaengen(tmp);
+        }
     }
 }
 
-void programmtext::aktualisiere_fraeserdarst()
+void programmtext::aktualisiere_schleife_linear()
 {
-    fraeserdarst.clear();
-    QString farbe = FARBE_BLAU;
-    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    if(!aktualisieren_eingeschaltet)
     {
-        QString aktzei = klartext.zeile(i);
-        if(aktzei.contains(FRAESERAUFRUF_DIALOG))
+        return;
+    }
+    if(warnung_frDial == false)
+    {
+        text_zeilenweise index_beg;
+        text_zeilenweise index_end;
+        for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
         {
-            punkt3d p;
-            p.set_x(text_mitte(aktzei, POSITION_X, ENDE_EINTRAG));
-            p.set_y(text_mitte(aktzei, POSITION_Y, ENDE_EINTRAG));
-            p.set_z(text_mitte(aktzei, POSITION_Z, ENDE_EINTRAG));
-            double wkzdm = text_mitte(aktzei, WKZ_DURCHMESSER, ENDE_EINTRAG).toDouble();
-            if(wkzdm < 2)
+            QString zeile = klartext.zeile(i);
+            if(zeile.contains(SCHLEIFELINEAR_DIALOG))
             {
-                wkzdm =2;
+                index_beg.zeile_anhaengen(int_to_qstring(i));
+            }else if(zeile.contains(SCHLEIFENENDE_DIALOG) && index_beg.zeilenanzahl()>index_end.zeilenanzahl())
+            {
+                index_end.zeile_anhaengen(int_to_qstring(i));
             }
-            QString bankor = text_mitte(aktzei, BAHNRORREKTUR, ENDE_EINTRAG);
-            if(bankor == BAHNRORREKTUR_keine)
+        }
+        for(uint i=1; i<=index_beg.zeilenanzahl() ;i++)//Eine Schleife nach der Anderen abarbeiten
+        {
+            if(i>index_end.zeilenanzahl())//Wenn es für die Schleife kein Ende gibt
             {
-                kreis k;
-                k.set_farbe(farbe);
-                k.set_mittelpunkt(p);
-                k.set_radius(wkzdm/2);
-                fraeserdarst.add_kreis(k);
-            }else if(bankor == BAHNRORREKTUR_links)
+                break;
+            }
+            QString zeile = klartext.zeile(index_beg.zeile(i).toInt());
+            uint anzx = text_mitte(zeile, ANZ_X, ENDE_EINTRAG).toInt();
+            uint anzy = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG).toInt();
+            double versx = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
+            double versy = text_mitte(zeile, VERSATZ_Y, ENDE_EINTRAG).toDouble();
+            //Prüfen ob innerhalb der Schleife eine weitere Schleife liegt
+            //wenn ja, dann Fehlermeldung ausgeben:
+            text_zeilenweise zeilen;
+            int ibeg = index_beg.zeile(i).toInt();
+            int iend = index_end.zeile(i).toInt();
+            int zeilenanz = iend - ibeg - 1;
+            zeilen.set_text(klartext.zeilen(ibeg+1,zeilenanz));
+            int fehlerzeile = 0;
+            for(uint ii=1; ii<=zeilen.zeilenanzahl() ;ii++)
             {
-                if(i+1 <=text.zeilenanzahl())
+                QString zeile = zeilen.zeile(ii);
+                if(zeile.contains(SCHLEIFELINEAR_DIALOG))
                 {
-                    QString folgzei = klartext.zeile(i+1);
-                    if(folgzei.contains(FRAESERGERADE_DIALOG))
+                    fehlerzeile = ii;
+                    break;
+                }
+                //auf schleifenende kan nicht geprüft werden
+                //ggf sind mehr schleifenenden vorhanden als anfänge
+            }
+            if(fehlerzeile != 0)
+            {
+                QString msg;
+                msg = "Fehler in Zeile ";
+                msg += int_to_qstring(ibeg + fehlerzeile);
+                msg += "!\n";
+                msg += "Verschachtelte Schleifen sind nicht erlaubt.";
+                QMessageBox mb;
+                mb.setText(msg);
+                mb.exec();
+                continue;
+            }
+            geometrietext tmpgeo = geo;            
+
+            for(uint ix=1; ix<=anzx ;ix++)//Aktuelle Schleife in X durchlaufen
+            {
+                double aktversx = versx * (ix-1);
+                for(uint iy=1; iy<=anzy ;iy++)//Aktuelle Schleife in Y durchlaufen
+                {
+                    double aktversy = versy * (iy-1);
+                    if(ix==1 && iy==1)
                     {
-                        punkt3d p2;
-                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
-                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
-                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
-                        strecke s;
-                        s.set_start(p);
-                        s.set_ende(p2);
-                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
-                        s.set_laenge_2d(wkzdm/2, sb);
-                        s.drenen_um_startpunkt_2d(90, false);
-                        kreis k;
-                        k.set_farbe(farbe);
-                        k.set_mittelpunkt(s.endp());
-                        k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
-                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
+                        continue;
+                        //Die originale Position nicht noch einmal anfügen
+                    }
+                    //geo ergänzen:
+                    text_zeilenweise tzgeo = geo.get_text_zeilenweise();
+                    for(uint igeo=0; igeo<=zeilenanz ;igeo++)//Die Geometrie-Zeilen durchgehen
                     {
-                        punkt3d p2;
-                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
-                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
-                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
-                        bogen b;
-                        b.set_startpunkt(p);
-                        b.set_endpunkt(p2);
-                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
-                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
-                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        uint aktzei = ibeg + igeo;
+                        QString zeile = tzgeo.zeile(aktzei);
+                        if(zeile == " ")
                         {
-                            b.set_radius(bograd, true);
-                        }else
-                        {
-                            b.set_radius(bograd, false);
+                            continue;//Ausgeblendete Zeile überspringen
                         }
-                        strecke s;
-                        s.set_start(p);
-                        punkt3d mipu;
-                        mipu.set_x(b.mitte().x());
-                        mipu.set_y(b.mitte().y());
-                        s.set_ende(mipu);
-                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
-                        s.set_laenge_2d(wkzdm/2, sb);
-                        sb = strecke_bezugspunkt_ende;
-                        s.set_laenge_2d(wkzdm, sb);
-                        kreis k;
-                        k.set_farbe(farbe);
-                        if(richtung == BOGENRICHTUNG_IM_UZS)
+                        text_zeilenweise spalten;
+                        spalten.set_trennzeichen(TRZ_EL_);
+                        spalten.set_text(zeile);
+                        for(uint isp=1; isp<=spalten.zeilenanzahl() ;isp++)
                         {
-                            k.set_mittelpunkt(s.startp());
-                        }else
-                        {
-                            k.set_mittelpunkt(s.endp());
+                            QString zeile = spalten.zeile(isp);
+                            if(zeile.contains(PUNKT))
+                            {
+                                punkt3d p3d(zeile);
+                                p3d.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_punkt(p3d, aktzei);
+                            }else if(zeile.contains(STRECKE))
+                            {
+                                strecke s(zeile);
+                                s.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_strecke(s, aktzei);
+                            }else if(zeile.contains(BOGEN))
+                            {
+                                bogen b(zeile);
+                                b.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_bogen(b, aktzei);
+                            }else if(zeile.contains(KREIS))
+                            {
+                                kreis k(zeile);
+                                k.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_kreis(k, aktzei);
+                            }else if(zeile.contains(ZYLINDER))
+                            {
+                                zylinder z(zeile);
+                                z.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_zylinder(z, aktzei);
+                            }else if(zeile.contains(RECHTECK3D))
+                            {
+                                rechteck3d rec(zeile);
+                                rec.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_rechteck(rec, aktzei);
+                            }else if(zeile.contains(WUERFEL))
+                            {
+                                wuerfel w(zeile);
+                                w.verschieben_um(aktversx, aktversy);
+                                tmpgeo.add_wuerfel(w, aktzei);
+                            }
                         }
-                        k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
                     }
                 }
-            }else //if(bankor == BAHNRORREKTUR_rechts)
+            }
+            //Änderungen zurückspeichern:
+            geo = tmpgeo;
+        }
+
+    }
+}
+
+void programmtext::aktualisiere_min_max()
+{
+    min_x = 0;
+    min_y = 0;
+    max_x = 0;
+    max_y = 0;
+    //min und max berechnen:
+    text_zeilenweise geotext = geo.get_text_zeilenweise();
+    for(uint i=1;i<=geotext.zeilenanzahl();i++)
+    {
+        text_zeilenweise spalten;
+        spalten.set_trennzeichen(TRZ_EL_);
+        spalten.set_text(geotext.zeile(i));
+
+        for(uint ii=1;ii<=spalten.zeilenanzahl();ii++)
+        {
+            text_zeilenweise element;
+            element.set_trennzeichen(TRZ_PA_);
+            element.set_text(spalten.zeile(ii));
+
+            if(element.get_text().contains(PUNKT))
             {
-                if(i+1 <=text.zeilenanzahl())
+                double x = element.zeile(2).toDouble();
+                double y = element.zeile(3).toDouble();
+                if(x < min_x)
                 {
-                    QString folgzei = klartext.zeile(i+1);
-                    if(folgzei.contains(FRAESERGERADE_DIALOG))
-                    {
-                        punkt3d p2;
-                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
-                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
-                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
-                        strecke s;
-                        s.set_start(p);
-                        s.set_ende(p2);
-                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
-                        s.set_laenge_2d(wkzdm/2, sb);
-                        s.drenen_um_startpunkt_2d(90, true);
-                        kreis k;
-                        k.set_farbe(farbe);
-                        k.set_mittelpunkt(s.endp());
-                        k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
-                    }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
-                    {
-                        punkt3d p2;
-                        p2.set_x(text_mitte(folgzei, POSITION_X, ENDE_EINTRAG));
-                        p2.set_y(text_mitte(folgzei, POSITION_Y, ENDE_EINTRAG));
-                        p2.set_z(text_mitte(folgzei, POSITION_Z, ENDE_EINTRAG));
-                        bogen b;
-                        b.set_startpunkt(p);
-                        b.set_endpunkt(p2);
-                        QString bograd = text_mitte(folgzei, RADIUS, ENDE_EINTRAG);
-                        QString richtung = text_mitte(folgzei, BOGENRICHTUNG, ENDE_EINTRAG);
-                        if(richtung == BOGENRICHTUNG_IM_UZS)
-                        {
-                            b.set_radius(bograd, true);
-                        }else
-                        {
-                            b.set_radius(bograd, false);
-                        }
-                        strecke s;
-                        s.set_start(p);
-                        punkt3d mipu;
-                        mipu.set_x(b.mitte().x());
-                        mipu.set_y(b.mitte().y());
-                        s.set_ende(mipu);
-                        strecke_bezugspunkt sb = strecke_bezugspunkt_start;
-                        s.set_laenge_2d(wkzdm/2, sb);
-                        sb = strecke_bezugspunkt_ende;
-                        s.set_laenge_2d(wkzdm, sb);
-                        kreis k;
-                        k.set_farbe(farbe);
-                        if(richtung == BOGENRICHTUNG_IM_UZS)
-                        {
-                            k.set_mittelpunkt(s.endp());
-                        }else
-                        {
-                            k.set_mittelpunkt(s.startp());
-                        }
-                        k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
-                    }
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(STRECKE))
+            {
+                double x = element.zeile(2).toDouble();
+                double y = element.zeile(3).toDouble();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = element.zeile(5).toDouble();
+                y = element.zeile(6).toDouble();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(BOGEN))
+            {
+                double x = element.zeile(2).toDouble();
+                double y = element.zeile(3).toDouble();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = element.zeile(5).toDouble();
+                y = element.zeile(6).toDouble();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(KREIS))
+            {
+                double rad = element.zeile(5).toDouble();
+                double x = element.zeile(2).toDouble()-rad;
+                double y = element.zeile(3).toDouble()-rad;
+                if(x < min_x)
+                {
+                    min_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }
+                x = x+rad*2;
+                y = y+rad*2;
+                if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(ZYLINDER))
+            {
+                double rad = element.zeile(5).toDouble();
+                double x = element.zeile(2).toDouble()-rad;
+                double y = element.zeile(3).toDouble()-rad;
+                if(x < min_x)
+                {
+                    min_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }
+                x = x+rad*2;
+                y = y+rad*2;
+                if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(RECHTECK3D))
+            {
+                rechteck3d r;
+                r.set_bezugspunkt(element.zeile(2).toInt());
+                r.set_einfuegepunkt(element.zeile(3).toDouble(),\
+                                    element.zeile(4).toDouble(),\
+                                    element.zeile(5).toDouble());
+                r.set_laenge(element.zeile(6).toDouble());
+                r.set_breite(element.zeile(7).toDouble());
+                r.set_rad(element.zeile(8).toDouble());
+                r.set_drewi(element.zeile(9).toDouble());
+
+                double x = r.unl(false).x();
+                double y = r.unl(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.unr(false).x();
+                y = r.unr(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.obl(false).x();
+                y = r.obl(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.obr(false).x();
+                y = r.obr(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+            }else if(element.get_text().contains(WUERFEL))
+            {
+                rechteck3d r;
+                r.set_bezugspunkt(element.zeile(2).toInt());
+                r.set_einfuegepunkt(element.zeile(3).toDouble(),\
+                                    element.zeile(4).toDouble(),\
+                                    element.zeile(5).toDouble());
+                r.set_laenge(element.zeile(6).toDouble());
+                r.set_breite(element.zeile(7).toDouble());
+                r.set_rad(element.zeile(8).toDouble());
+                r.set_drewi(element.zeile(9).toDouble());
+
+                double x = r.unl(false).x();
+                double y = r.unl(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.unr(false).x();
+                y = r.unr(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.obl(false).x();
+                y = r.obl(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
+                }
+                x = r.obr(false).x();
+                y = r.obr(false).y();
+                if(x < min_x)
+                {
+                    min_x = x;
+                }else if(x > max_x)
+                {
+                    max_x = x;
+                }
+                if(y < min_y)
+                {
+                    min_y = y;
+                }else if(y > max_y)
+                {
+                    max_y = y;
                 }
             }
         }
-        fraeserdarst.zeilenvorschub();
     }
 }
-
-bool programmtext::get_hat_ungesicherte_inhalte()
-{
-    if(text.get_text().isEmpty())//Hat gar keine Inhalte
-    {
-        return false;
-    }
-    if(text_kopie.get_text() == text.get_text())//Inhalt wurde seit dem Speichern noch nicht verändert
-    {
-        return false;
-    }else
-    {
-        return true;
-    }
-}
-
-void programmtext::wurde_gespeichert()
-{
-    text_kopie = text;
-}
-
-
-
-
 
 
 

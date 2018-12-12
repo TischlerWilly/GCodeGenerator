@@ -7,6 +7,7 @@ class zylinder : public kreis
 {
 public:
     zylinder();
+    zylinder(QString geotext);
     inline  zylinder(punkt3d mittelpunkt, double radius, double zylinderhoehe)
     {
         set_mittelpunkt(mittelpunkt);

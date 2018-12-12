@@ -9,6 +9,26 @@ rechteck3d::rechteck3d()
     set_rad(0);
     set_drewi(0);
 }
+rechteck3d::rechteck3d(QString geotext)
+{
+    text_zeilenweise tz;
+    tz.set_trennzeichen(TRZ_PA_);
+    tz.set_text(geotext);
+    set_bezugspunkt(tz.zeile(2).toInt());
+    punkt3d p;
+    p.set_x(tz.zeile(3).toDouble());
+    p.set_y(tz.zeile(4).toDouble());
+    p.set_z(tz.zeile(5).toDouble());
+    set_einfuegepunkt(p);
+    set_laenge(tz.zeile(6).toDouble());
+    set_breite(tz.zeile(7).toDouble());
+    set_rad(tz.zeile(8).toDouble());
+    set_drewi(tz.zeile(9).toDouble());
+    set_farbe(tz.zeile(10));
+    set_farbe_fuellung(tz.zeile(11));
+    set_linienbreite(tz.zeile(12).toInt());
+    set_stil(tz.zeile(13));
+}
 
 void rechteck3d::set_z(double z)
 {
@@ -153,4 +173,18 @@ void rechteck3d::set_rad(double neuer_radius)
 void rechteck3d::set_drewi(double neuer_drehwinkel)
 {
     drehwinkel = neuer_drehwinkel;
+}
+
+void rechteck3d::verschieben_um(double xversatz, double yversatz)
+{
+    obli.verschieben_um(xversatz, yversatz);
+    oben.verschieben_um(xversatz, yversatz);
+    obre.verschieben_um(xversatz, yversatz);
+    links.verschieben_um(xversatz, yversatz);
+    mitte.verschieben_um(xversatz, yversatz);
+    rechts.verschieben_um(xversatz, yversatz);
+    unli.verschieben_um(xversatz, yversatz);
+    unten.verschieben_um(xversatz, yversatz);
+    unre.verschieben_um(xversatz, yversatz);
+    einfuegepunkt.verschieben_um(xversatz, yversatz);
 }

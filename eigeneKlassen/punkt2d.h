@@ -51,6 +51,8 @@ public:
         return double_to_qstring(y_param);
     }
 
+    void    verschieben_um(double xversatz, double yversatz);
+
 private:
     double  x_param, y_param;
 

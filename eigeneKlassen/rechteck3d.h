@@ -37,6 +37,7 @@ class rechteck3d : public darstellungsatribute
 {
 public:
     rechteck3d();
+    rechteck3d(QString geotext);
 
     inline  void    set_einfuegepunkt(punkt3d p)
     {
@@ -207,6 +208,8 @@ public:
     {
         return double_to_qstring(drehwinkel);
     }
+
+    void    verschieben_um(double xversatz, double yversatz);
 
 private:
     punkt3d obli,   oben,   obre;

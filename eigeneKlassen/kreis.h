@@ -54,6 +54,8 @@ public:
         return double_to_qstring(rad);
     }
 
+    void    verschieben_um(double xversatz, double yversatz);
+
     QString get_text();
 
 private:

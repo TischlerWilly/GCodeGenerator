@@ -148,9 +148,7 @@ public:
         if(einschalten)
         {
             aktualisieren_eingeschaltet = true;
-            aktualisiere_klartext_var_geo();
-            aktualisiere_anzeigetext();
-            aktualisiere_fkon();
+            aktualisieren();
         }else
         {
             aktualisieren_eingeschaltet = false;
@@ -162,7 +160,7 @@ public:
         if(einschalten == true)
         {
             aktualisieren_fkon_eingeschaltet = true;
-            aktualisiere_fkon();
+            aktualisieren();
         }else
         {
             aktualisieren_fkon_eingeschaltet = false;
@@ -178,12 +176,7 @@ public:
     {
         return aktualisieren_fkon_eingeschaltet;
     }
-    inline void aktualisieren()
-    {
-        aktualisiere_klartext_var_geo();
-        aktualisiere_fkon();
-        aktualisiere_anzeigetext();
-    }
+    void aktualisieren();
     void wurde_gespeichert();
     bool get_hat_ungesicherte_inhalte();
 
@@ -255,11 +248,15 @@ private:
     }
             void    set_sicherheitsabstand(float neuer_Abstand);
 
-            void    aktualisiere_klartext_var_geo();
+
+            void    aktualisiere_klartext_var();
+            void    aktualisiere_geo();
             void    aktualisiere_anzeigetext();
             void    aktualisiere_wkz();
             void    aktualisiere_fkon();
-            void    aktualisiere_fraeserdarst();
+            void    aktualisiere_fraeserdarst();            
+            void    aktualisiere_schleife_linear();
+            void    aktualisiere_min_max();
 
             text_zeilenweise fkon_use_values(text_zeilenweise cam);
 

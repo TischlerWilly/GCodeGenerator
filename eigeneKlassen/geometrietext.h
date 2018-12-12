@@ -24,12 +24,19 @@ public:
     void clear();
     void zeilenvorschub();
     void add_punkt(punkt3d p);
+    void add_punkt(punkt3d p, uint zeile);
     void add_strecke(strecke s);
+    void add_strecke(strecke s, uint zeile);
     void add_bogen(bogen b);
+    void add_bogen(bogen b, uint zeile);
     void add_kreis(kreis k);
+    void add_kreis(kreis k, uint zeile);
     void add_zylinder(zylinder z);
+    void add_zylinder(zylinder z, uint zeile);
     void add_rechteck(rechteck3d rec);
+    void add_rechteck(rechteck3d rec, uint zeile);
     void add_wuerfel(wuerfel w);
+    void add_wuerfel(wuerfel w, uint zeile);
 
     void set_text(QString neuer_text);
 

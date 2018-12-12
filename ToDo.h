@@ -5,12 +5,12 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.10.08"
+#define PROGRAMMVERSION     "2.2018.12.06"
 
 /*
 ----------Aktuell in Arbeit:
 -->Bearbeitungen in Schleife Wiederholen lassen
-    ->Dialog entwerfen
+    ->testen
 
 
 

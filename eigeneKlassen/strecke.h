@@ -31,6 +31,7 @@ public:
                                              bool drehrichtung_im_uhrzeigersinn);
             void    set_laenge_2d(float neue_laenge, \
                        strecke_bezugspunkt bezugspunkt = strecke_bezugspunkt_mitte);
+            void    verschieben_um(double xversatz, double yversatz);
 
 
     inline punkt3d startp()
