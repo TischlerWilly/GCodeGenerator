@@ -5,18 +5,20 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.12.06"
+#define PROGRAMMVERSION     "2.2018.12.16"
 
 /*
 ----------Aktuell in Arbeit:
--->Bearbeitungen in Schleife Wiederholen lassen
-    ->testen
 
 
 
 
 
--->DXF-Import derzeit nur aus LibreCAD 1.0.2(DXF2000) und 2.0.9(DXF2007) möglich
+
+-->DXF-Import derzeit nur möglich aus, bzw. getestet mit:
+   LibreCAD 1.0.2(DXF2000)
+   LibreCAD 2.0.9(DXF2007)
+   LibreCAD 2.1.2(DXF2007)
 
 
 ----------Ideen für neue Dialoge:

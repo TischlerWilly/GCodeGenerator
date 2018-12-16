@@ -289,5 +289,5 @@ bool tabelle_tz3::vorherigespalte_ersaetzen(uint zeile_aktuell, uint spalte_aktu
         }
     }
     //Text ersetzen:
-    spalte_ersatzen(zeilennummer, spaltennummer, neuer_text);
+    return spalte_ersatzen(zeilennummer, spaltennummer, neuer_text);
 }

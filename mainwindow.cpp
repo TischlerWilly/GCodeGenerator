@@ -2648,6 +2648,7 @@ void MainWindow::on_import_DXF_triggered()
             QString dxfversion;
             //DXF 2000 von LibrecAD 1.0.2 == "dxflib 2.2.0.0"
             //DXF 2007 von LibreCAD 2.0.9 == "dxfrw 0.6.3"
+            //DXF 2007 von LibreCAD 2.1.2 == "dxfrw 0.6.3"
             const QString dxf2000 = "dxflib 2.2.0.0";
             const QString dxf2007 = "dxfrw 0.6.3";
 
@@ -2680,8 +2681,13 @@ void MainWindow::on_import_DXF_triggered()
             if(dxfversion != dxf2000 && \
                dxfversion != dxf2007)
             {
+                QString msg;
+                msg  = "Diese DXF-Version wird nicht unterstuetzt!\n";
+                msg += "Weitere Informationen zum DXF-Import unter:\n";
+                msg += URL_HANDBUCH_DXF_IMPORT;
+
                 QMessageBox mb;
-                mb.setText("Diese DXF-Version wird nicht unterstuetzt!");
+                mb.setText(msg);
                 mb.exec();
                 return;
             }
@@ -7523,17 +7529,22 @@ void MainWindow::on_actionInfo_triggered()
     msg += " Version ";
     msg += PROGRAMMVERSION;
     msg += "\n";
-    msg += "Autor:\t";
+    msg += "\n";
+    msg += "Autor:\t\t";
     msg +=              "Oliver Schuft";
     msg += "\n";
     msg += "Homepage Autor:\t";
-    msg +=              "https://oliverschuft.jimdo.com";
+    msg += URL_AUTOR;
+    msg += "\n";
     msg += "\n";
     msg += "Repositorry:\t";
-    msg +=              "https://github.com/TischlerWilly/GCodeGenerator.git";
+    msg += URL_GIT;
     msg += "\n";
     msg += "Homepage:\t";
-    msg +=              "https://gcodegenerator.jimdofree.com";
+    msg += URL_HOMEPAGE;
+    msg += "\n";
+    msg += "Handbuch:\t";
+    msg += URL_HANDBUCH;
 
     QMessageBox mb;
     mb.setText(msg);

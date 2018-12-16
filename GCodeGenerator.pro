@@ -124,7 +124,8 @@ HEADERS  += \
     eigeneKlassen/indexhisory.h \
     Dialoge/dialog_schleife_linear.h \
     Dialoge/dialog_schleifenende.h \
-    eigeneKlassen/gcode.h
+    eigeneKlassen/gcode.h \
+    eigeneDefines/defines_urls.h
 
 FORMS    += \
     mainwindow.ui \
