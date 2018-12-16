@@ -48,6 +48,7 @@
 #include "Dialoge/dialog_schleife_linear.h"
 #include "Dialoge/dialog_schleifenende.h"
 #include "eigeneKlassen/gcode.h"
+#include "eigeneDefines/defines_urls.h"
 
 
 #define INDEX_PROGRAMMLISTE 0

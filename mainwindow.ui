@@ -532,7 +532,7 @@
   </action>
   <action name="import_DXF">
    <property name="text">
-    <string>DXF (LibreCad 1.0.2 / 2.0.9)</string>
+    <string>DXF</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -555,7 +555,7 @@
   </action>
   <action name="actionInfo">
    <property name="text">
-    <string>Info</string>
+    <string>Info / Handbuch</string>
    </property>
   </action>
   <action name="actionMakeStrecke">
