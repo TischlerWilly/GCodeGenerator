@@ -5,7 +5,7 @@
 
 
 
-#define PROGRAMMVERSION     "2.2018.12.16"
+#define PROGRAMMVERSION     "2.2019.11.30"
 
 /*
 ----------Aktuell in Arbeit:

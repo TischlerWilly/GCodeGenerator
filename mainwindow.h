@@ -275,6 +275,7 @@ private:
     void aktualisiere_letzte_dateien_menu();
     void aktualisiere_offene_dateien_menu();
     void openFile(QString pfad);
+    text_zeilenweise lade_maschinendarstellung();
     QString dateitext_ggf();
     void update_gui();
     void update_windowtitle();
