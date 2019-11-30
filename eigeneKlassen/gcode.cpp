@@ -3,6 +3,7 @@
 
 gcode::gcode(programmtext t_neu)
 {
+    aktuellezeile = 1;
     set_prgtext(t_neu);
 }
 
@@ -33,6 +34,7 @@ QString gcode::get_gcode()
 
     for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
     {
+        aktuellezeile = i; //wird benötigt für die Zeileninformation im G-Code-Kommentar
         QString zeile_kt;//zeile klartext
         zeile_kt = klartext.zeile(i);        
 
@@ -150,6 +152,7 @@ QString gcode::get_gcode()
                 i = ischleiend-1;//Index der Haupt-for-Schleife erhöhen
                 //Wenn keine valide lineare Schleife gefunden wird dann wird diese ignoriert
                 //und die Bearbeitung ganz normal nur 1x ausgegeben.
+                aktuellezeile = i; //wird benötigt für die Zeileninformation im G-Code-Kommentar
             }
             ischleibeg = 0;
             ischleiend = 0;
@@ -198,6 +201,7 @@ QString gcode::get_gcode()
             tmp_geo.zeile_anhaengen(t.get_fkon().get_text_zeilenweise().zeile(i));
             for(   ; i<=klartext.zeilenanzahl() ; i++)//i von der umfassenden Schleife wird weiter gezählt
             {
+                aktuellezeile = i; //wird benötigt für die Zeileninformation im G-Code-Kommentar
                 zeile_kt = klartext.zeile(i);
                 if(zeile_kt.contains(FRAESERGERADE_DIALOG)  || \
                    zeile_kt.contains(FRAESERBOGEN_DIALOG)      )
@@ -257,6 +261,8 @@ QString gcode::textzeile_als_kommentar(QString zeile)
 {
     QString gc;//gcode
     gc += "(";
+    gc += int_to_qstring(aktuellezeile);
+    gc += ": ";
     gc += klammern_wecklassen(zeile);
     gc += ")";
     gc += "\n";

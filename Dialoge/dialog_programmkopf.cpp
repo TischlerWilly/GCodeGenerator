@@ -19,15 +19,15 @@ QString Dialog_Programmkopf::dialogDataToString()
 {
     QString msg = PROGRAMMKOPF_DIALOG ;
     msg += LAENGE;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_laenge->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_laenge->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += BREITE;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_breite->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_breite->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += DICKE;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_dicke->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_dicke->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += KOMMENTAR;
@@ -35,7 +35,7 @@ QString Dialog_Programmkopf::dialogDataToString()
     msg += ENDE_EINTRAG;
 
     msg += SICHERHEITSABSTAND;
-    msg += ui->lineEdit_sicherheitsabstand->text();
+    msg += ui->lineEdit_sicherheitsabstand->text().replace(",",".");
     msg += ENDE_EINTRAG;
 
     msg += BEZEICHNUNG;
@@ -43,19 +43,19 @@ QString Dialog_Programmkopf::dialogDataToString()
     msg += ENDE_EINTRAG;
 
     msg += AUSFUEHRBEDINGUNG;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_AFB->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_AFB->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += VERSATZ_X;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ax->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ax->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += VERSATZ_Y;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ay->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_ay->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += VERSATZ_Z;
-    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_schabl->text());
+    msg += buchstaben_alle_GROSS_schreiben(ui->lineEdit_schabl->text().replace(",","."));
     msg += ENDE_EINTRAG;
 
     msg += ENDE_ZEILE;
@@ -84,16 +84,16 @@ void Dialog_Programmkopf::on_pushButton_Abbrechen_clicked()
 void Dialog_Programmkopf::getDialogData(QString text, bool openToChangeData)
 {
     openToModifyData = openToChangeData;
-    ui->lineEdit_laenge->setText(selektiereEintrag(text, LAENGE, ENDE_EINTRAG));
-    ui->lineEdit_breite->setText(selektiereEintrag(text, BREITE, ENDE_EINTRAG));
-    ui->lineEdit_dicke->setText(selektiereEintrag(text, DICKE, ENDE_EINTRAG));
+    ui->lineEdit_laenge->setText(selektiereEintrag(text, LAENGE, ENDE_EINTRAG).replace(".",","));
+    ui->lineEdit_breite->setText(selektiereEintrag(text, BREITE, ENDE_EINTRAG).replace(".",","));
+    ui->lineEdit_dicke->setText(selektiereEintrag(text, DICKE, ENDE_EINTRAG).replace(".",","));
     ui->lineEdit_kommentar1->setText( selektiereEintrag(text, KOMMENTAR, ENDE_EINTRAG));
-    ui->lineEdit_sicherheitsabstand->setText(selektiereEintrag(text, SICHERHEITSABSTAND, ENDE_EINTRAG));
+    ui->lineEdit_sicherheitsabstand->setText(selektiereEintrag(text, SICHERHEITSABSTAND, ENDE_EINTRAG).replace(".",","));
     ui->lineEdit__bezeichnung->setText(selektiereEintrag(text, BEZEICHNUNG, ENDE_EINTRAG));
-    ui->lineEdit_AFB->setText(selektiereEintrag(text, AUSFUEHRBEDINGUNG, ENDE_EINTRAG));
-    ui->lineEdit_ax->setText(selektiereEintrag(text, VERSATZ_X, ENDE_EINTRAG));
-    ui->lineEdit_ay->setText(selektiereEintrag(text, VERSATZ_Y, ENDE_EINTRAG));
-    ui->lineEdit_schabl->setText(selektiereEintrag(text, VERSATZ_Z, ENDE_EINTRAG));
+    ui->lineEdit_AFB->setText(selektiereEintrag(text, AUSFUEHRBEDINGUNG, ENDE_EINTRAG).replace(".",","));
+    ui->lineEdit_ax->setText(selektiereEintrag(text, VERSATZ_X, ENDE_EINTRAG).replace(".",","));
+    ui->lineEdit_ay->setText(selektiereEintrag(text, VERSATZ_Y, ENDE_EINTRAG).replace(".",","));
+    ui->lineEdit_schabl->setText(selektiereEintrag(text, VERSATZ_Z, ENDE_EINTRAG).replace(".",","));
     this->show();
 }
 
