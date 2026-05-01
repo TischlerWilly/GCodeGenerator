@@ -9,35 +9,22 @@ void indexhisory::add(int index)
 {
     del(index);
     QString tmp = int_to_qstring(index);
-    history.zeile_vorwegsetzen(tmp);
+    history.add_vo(tmp);
 }
 
 void indexhisory::del(int index)
 {
-    QString tmp = int_to_qstring(index);
-    uint gefunden = 0;
-    for(uint i=1; i<=history.zeilenanzahl() ;i++)
-    {
-        if(history.zeile(i) == tmp)
-        {
-            gefunden = i;
-            break;
-        }
-    }
-    if(gefunden !=0)
-    {
-        history.zeile_loeschen(gefunden);
-    }
+    history.entf(index,1);
 }
 
 int indexhisory::get_current()
 {
-    if(history.get_text().isEmpty())
+    if(!history.count())
     {
         return 0;
     }else
     {
-        return history.zeile(1).toInt();
+        return history.at(1).toInt();
     }
 }
 
@@ -48,22 +35,22 @@ void indexhisory::clear()
 
 int indexhisory::index_vor()
 {
-    if(history.zeilenanzahl() > 1)
+    if(history.count() > 1)
     {
-        QString tmp = history.zeile(1);
-        history.zeile_loeschen(1);
-        history.zeile_anhaengen(tmp);
+        QString tmp = history.at(0);
+        history.entf(0,1);
+        history.add_hi(tmp);
     }
     return get_current();
 }
 
 int indexhisory::index_nach()
 {
-    if(history.zeilenanzahl() > 1)
+    if(history.count() > 1)
     {
-        QString tmp = history.zeile(history.zeilenanzahl());
-        history.zeile_loeschen(history.zeilenanzahl());
-        history.zeile_vorwegsetzen(tmp);
+        QString tmp = history.at(history.count()-1);//das letzte Element kopieren
+        history.entf(history.count()-1,1);//das letzte Element löschen
+        history.add_vo(tmp);
     }
     return get_current();
 }

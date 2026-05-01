@@ -2319,7 +2319,7 @@ void MainWindow::on_actionDateiNeu_triggered()
     if(tt.get_size() >= max)
     {
         QString msg;
-        msg += "Bitter zuerst eine Datei schliessen!\n";
+        msg += "Bitte zuerst eine Datei schliessen!\n";
         msg += "Es koennen maximal ";
         msg += int_to_qstring(max);
         msg += " Dateien gleichzeitig offen sein!";
@@ -2497,7 +2497,7 @@ void MainWindow::openFile(QString pfad)
         if (file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             //Programmdatei laden:
-            QFileInfo info = pfad;
+            QFileInfo info(pfad);
             pfad_oefne_ggf = info.path();
             QApplication::setOverrideCursor(Qt::WaitCursor);
             text_zeilenweise tz;
@@ -2616,7 +2616,7 @@ void MainWindow::on_import_GGF_triggered()
                                                      pfad_import_ggf, tr("ggf Dateien (*.ggf)"));
     if(!dateipfad.isEmpty())
     {
-        QFileInfo info = dateipfad;
+        QFileInfo info(dateipfad);
         pfad_import_ggf = info.path();
 
         QFile file(dateipfad);
@@ -2665,7 +2665,7 @@ void MainWindow::on_import_DXF_triggered()
                                                      pfad_import_dxf , tr("DXF Dateien (*.dxf)"));
     if(!dateipfad.isEmpty())
     {
-        QFileInfo info = dateipfad;
+        QFileInfo info(dateipfad);
         pfad_import_dxf = info.path();
 
         QFile file(dateipfad);
@@ -3028,8 +3028,7 @@ bool MainWindow::on_actionDateiSchliessen_triggered()
     //Sicherheitsabfrage:
     if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)
     {
-        QFileInfo info;
-        info = tt.get_prgname();
+        QFileInfo info(tt.get_prgname());
         QString dateiname = info.baseName();
         QString msg;
 
@@ -3089,7 +3088,7 @@ bool MainWindow::on_actionDateiSpeichern_triggered()
                                                 pfad_oefne_ggf, tr("ggf Dateien (*.ggf)"));
         if(!fileName.isEmpty())
         {
-            QFileInfo info = fileName;
+            QFileInfo info(fileName);
             pfad_oefne_ggf = info.path();
             if(!fileName.contains(DATEIENDUNG_EIGENE))
             {
@@ -3137,7 +3136,7 @@ bool MainWindow::on_actionDateiSpeichern_triggered()
             file.open(QIODevice::WriteOnly | QIODevice::Text); //lege Datei neu an
             file.write(dateiInhalt.toUtf8()); //fülle Datei mit Inhalt
             file.close(); //beende Zugriff
-            QFileInfo info = tt.get_prgname();
+            QFileInfo info(tt.get_prgname());
             QString tmp = PROGRAMMNAME;
             tmp += " ( " + info.baseName() + " )";
             this->setWindowTitle(tmp);
@@ -3155,7 +3154,7 @@ void MainWindow::on_actionDateiSpeichern_unter_triggered()
     speichern_unter_flag = true;
     on_actionDateiSpeichern_triggered();
     speichern_unter_flag = false;
-    QFileInfo info = tt.get_prgname();
+    QFileInfo info(tt.get_prgname());
     QString tmp = PROGRAMMNAME;
     tmp += " ( " + info.baseName() + " )";
     this->setWindowTitle(tmp);
@@ -6445,7 +6444,7 @@ void MainWindow::update_windowtitle()
             name = "Neue Datei";
         }else
         {
-            QFileInfo info = name;
+            QFileInfo info(name);
             name = info.baseName();
         }
         if(tt.get_prgtext()->get_hat_ungesicherte_inhalte() == true)

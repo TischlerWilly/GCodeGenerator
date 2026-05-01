@@ -13,6 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += \
+    eigeneKlassen/text_zw.cpp \
     mainwindow.cpp \
     main.cpp \
     Dialoge/dialog_werkzeug.cpp \
@@ -68,6 +69,7 @@ SOURCES += \
     eigeneKlassen/gcode.cpp
 
 HEADERS  += \
+    eigeneKlassen/text_zw.h \
     mainwindow.h \
     Dialoge/dialog_werkzeug.h \
     Dialoge/dialog_variablenwerte_anzeigen.h \

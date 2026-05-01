@@ -1,7 +1,7 @@
 #ifndef INDEXHISORY_H
 #define INDEXHISORY_H
 
-#include "text_zeilenweise.h"
+#include "text_zw.h"
 #include "../eigeneFunktionen/umwandeln.h"
 
 class indexhisory
@@ -16,7 +16,7 @@ public:
     int index_nach();
 
 private:
-    text_zeilenweise history;//neue indexe vorne alte indexe hinten
+    text_zw history;//neue indexe vorne alte indexe hinten
 };
 
 #endif // INDEXHISORY_H

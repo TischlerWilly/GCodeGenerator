@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QMenu>
+#include <QPainterPath>
 #include <math.h>
 #include "../eigeneFunktionen/geometrie.h"
 #include "programmtext.h"

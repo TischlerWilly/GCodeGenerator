@@ -857,13 +857,13 @@ void vorschau::mouseMoveEvent(QMouseEvent *event)
 
 void vorschau::wheelEvent(QWheelEvent *event)
 {
-    QPoint mauspos = event->pos();
+    QPoint mauspos = event->position().toPoint();
     mauspos.setY(this->height()-mauspos.y());
     QPoint wstpos;
     wstpos.setX(  (mauspos.x() - n.x+npv.x)  /sf/zf  );
     wstpos.setY(  (n.x+npv.y - mauspos.y())  /sf/zf  );
 
-    int i = event->delta();
+    int i = event->angleDelta().y();
     if(i<0)
     {
         zoom(false);
@@ -891,7 +891,7 @@ void vorschau::wheelEvent(QWheelEvent *event)
 
 void vorschau::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::MidButton)
+    if(event->button() == Qt::MiddleButton)
     {
         mrg = true;
         maus_pos_alt_x = event->x();
@@ -906,7 +906,7 @@ void vorschau::mousePressEvent(QMouseEvent *event)
 
 void vorschau::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::MidButton)
+    if(event->button() == Qt::MiddleButton)
     {
         mrg = false;
     }
