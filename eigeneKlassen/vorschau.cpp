@@ -754,8 +754,8 @@ void vorschau::werkstueck_darstellung_berechnen()
 void vorschau::slot_aktualisieren(programmtext t_neu, int aktive_zeile)
 {
     t = t_neu;
-    wst.set_laenge(t.get_werkstuecklaenge());
-    wst.set_breite(t.get_werkstueckbreite());
+    wst.set_laenge(t.wst_laenge());
+    wst.set_breite(t.wst_breite());
     aktuelle_zeilennummer = aktive_zeile;
     werkstueck_darstellung_berechnen();
     this->update();

@@ -3168,9 +3168,9 @@ void MainWindow::on_actionMaschine_speichern_triggered()
     }
     bool nur_cad = true;
     //for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
-    for(uint i=1; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ;i++) //letzte ist "..." desshalb i< und nicht i<=
+    for(uint i=1; i<tt.get_prgtext()->text().count() ;i++) //letzte ist "..." desshalb i< und nicht i<=
     {
-        QString zeile = tt.get_prgtext()->get_text_zeilenweise().zeile(i);
+        QString zeile = tt.get_prgtext()->text().at(i);
         if(zeile.contains(BOGEN)     || \
            zeile.contains(STRECKE)   || \
            zeile.contains(KREIS)        )
@@ -3225,7 +3225,7 @@ QString MainWindow::dateitext_ggf()
     QString dateiInhalt;
     dateiInhalt  = PROGRAMMNAME;
     dateiInhalt += " Version 2\n";
-    dateiInhalt += tt.get_prgtext()->get_text();
+    dateiInhalt += tt.get_prgtext()->text().text();
 
     return dateiInhalt;
 }
@@ -4288,7 +4288,7 @@ void MainWindow::on_actionLinien_in_Fraeskonturen_umwandeln_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -4333,7 +4333,7 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -4360,7 +4360,7 @@ void MainWindow::on_actionFraeskonturen_in_Linien_umwandeln_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->text().count() ; i++)
                 {
                     if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
@@ -4435,7 +4435,7 @@ void MainWindow::on_action4_Eck_in_Rechtecktasche_umwandeln_triggered()
                 break;
             }
         }
-        if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+        if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
         {
             items_menge = items_menge-1;
         }
@@ -5518,7 +5518,7 @@ void MainWindow::on_actionCAD_sortieren_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5558,7 +5558,7 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5585,7 +5585,7 @@ void MainWindow::on_actionFraesrichtung_umkehren_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->text().count() ; i++)
                 {
                     if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
@@ -5664,7 +5664,7 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5691,7 +5691,7 @@ void MainWindow::on_actionFraesStartpunkt_vor_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->text().count() ; i++)
                 {
                     if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
@@ -5770,7 +5770,7 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5797,7 +5797,7 @@ void MainWindow::on_actionFraesStartpunkt_nach_triggered()
                     return;
                 }
                 gefunden = false;
-                for(uint i = row_erstes; i<tt.get_prgtext()->get_text_zeilenweise().zeilenanzahl() ; i++)
+                for(uint i = row_erstes; i<tt.get_prgtext()->text().count() ; i++)
                 {
                     if(tt.get_prgtext()->get_klartext_zeilenweise().zeile(i+1).contains(FRAESERABFAHREN_DIALOG))
                     {
@@ -5876,7 +5876,7 @@ void MainWindow::on_actionVerastzvariablen_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5916,7 +5916,7 @@ void MainWindow::on_actionSpiegeln_vertikel_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5928,7 +5928,7 @@ void MainWindow::on_actionSpiegeln_vertikel_triggered()
                 text_zeilenweise faufruf_zeinum;
                 for(int i=row_erstes; i<row_erstes+items_menge ;i++)
                 {
-                    QString zeile =tt.get_prgtext()->get_text_zeilenweise().zeile(i+1);
+                    QString zeile =tt.get_prgtext()->text().at(i+1);
                     if(zeile.contains(FRAESERAUFRUF_DIALOG))
                     {
                         faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
@@ -5977,7 +5977,7 @@ void MainWindow::on_actionSpiegeln_horizontal_triggered()
                     break;
                 }
             }
-            if(tt.get_prgtext()->get_text_zeilenweise().zeile(row_erstes+items_menge) == LISTENENDE)
+            if(tt.get_prgtext()->text().at(row_erstes+items_menge) == LISTENENDE)
             {
                 items_menge = items_menge-1;
             }
@@ -5989,7 +5989,7 @@ void MainWindow::on_actionSpiegeln_horizontal_triggered()
                 text_zeilenweise faufruf_zeinum;
                 for(int i=row_erstes; i<row_erstes+items_menge ;i++)
                 {
-                    QString zeile =tt.get_prgtext()->get_text_zeilenweise().zeile(i+1);
+                    QString zeile =tt.get_prgtext()->text().at(i+1);
                     if(zeile.contains(FRAESERAUFRUF_DIALOG))
                     {
                         faufruf_zeinum.zeile_anhaengen(int_to_qstring(i));
@@ -6123,12 +6123,12 @@ void MainWindow::on_actionProgrammliste_anzeigen_triggered()
 {
     QString tmp_text;
     tmp_text = "";
-    text_zeilenweise te =tt.get_prgtext()->get_text_zeilenweise();
-    for(uint i=1 ; i<=te.zeilenanzahl() ; i++)
+    text_zw te =tt.get_prgtext()->text();
+    for(uint i=0 ; i<te.count() ; i++)
     {
         tmp_text += QString::fromStdString(int_to_string(i));
         tmp_text += "--";
-        tmp_text += te.zeile(i);
+        tmp_text += te.at(i);
         tmp_text += "\n";
     }
 
@@ -6219,8 +6219,8 @@ void MainWindow::on_actionWerkzeugliste_anzeigen_triggered()
 void MainWindow::pruefe_benutzereingaben(int zeilennummer)
 {
     QMessageBox mb;
-    text_zeilenweise tz_prg =tt.get_prgtext()->get_text_zeilenweise();
-    QString programmzeile = tz_prg.zeile(zeilennummer);
+    text_zw tz_prg =tt.get_prgtext()->text();
+    QString programmzeile = tz_prg.at(zeilennummer);
     text_zeilenweise tz_kt =tt.get_prgtext()->get_klartext_zeilenweise();
     QString klartextzeile = tz_kt.zeile(zeilennummer);
     if(programmzeile.contains(RECHTECKTASCHE_DIALOG))

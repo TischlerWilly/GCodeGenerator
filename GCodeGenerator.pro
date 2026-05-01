@@ -13,6 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += \
+    eigeneKlassen/indexhistory.cpp \
     eigeneKlassen/text_zw.cpp \
     mainwindow.cpp \
     main.cpp \
@@ -63,12 +64,12 @@ SOURCES += \
     Dialoge/dialog_bogen.cpp \
     Dialoge/dialog_bohren.cpp \
     eigeneKlassen/programmtexte.cpp \
-    eigeneKlassen/indexhisory.cpp \
     Dialoge/dialog_schleife_linear.cpp \
     Dialoge/dialog_schleifenende.cpp \
     eigeneKlassen/gcode.cpp
 
 HEADERS  += \
+    eigeneKlassen/indexhistory.h \
     eigeneKlassen/text_zw.h \
     mainwindow.h \
     Dialoge/dialog_werkzeug.h \
@@ -123,7 +124,6 @@ HEADERS  += \
     Dialoge/dialog_bogen.h \
     Dialoge/dialog_bohren.h \
     eigeneKlassen/programmtexte.h \
-    eigeneKlassen/indexhisory.h \
     Dialoge/dialog_schleife_linear.h \
     Dialoge/dialog_schleifenende.h \
     eigeneKlassen/gcode.h \

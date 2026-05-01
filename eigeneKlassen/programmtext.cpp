@@ -12,52 +12,57 @@ programmtext::programmtext()
 
 void programmtext::set_text(QString neuer_Text)
 {
-    text.set_text(neuer_Text);
-    QString tmp = text.get_text();
+    Text.set_text(neuer_Text, '\n');
+    QString tmp = Text.text();
     if(!tmp.contains(LISTENENDE))
     {
-        text.zeile_anhaengen(LISTENENDE);
+        Text.add_hi(LISTENENDE);
     }
     aktualisieren();
 }
 
 void programmtext::clear()
 {
-    text.clear();
-    text_kopie.clear();
+    Text.clear();
+    Text_kopie.clear();
     clear_ausser_text();
+}
+
+text_zw programmtext::text()
+{
+    return Text;
 }
 
 void programmtext::clear_ausser_text()
 {
-    klartext.clear();
-    var.clear();
-    anzeigetext.clear();
-    geo.clear();
-    fkon.clear();
-    werkstuecklaenge = 0;
-    werkstueckbreite = 0;
-    hat_programmkopf = false;
-    hat_programmende = false;
-    sicherheitsabstand = 5;
-    min_x = 0;
-    min_y = 0;
-    max_x = 0;
-    max_y = 0;
-    anz_faufr = 0;
-    anz_fabfa = 0;
-    warnung_frDial = false;
-    versatz_x = 0;
-    versatz_y = 0;
-    versatz_z = 0;
+    Klartext.clear();
+    Var.clear();
+    Anzeigetext.clear();
+    Geo.clear();
+    Fkon.clear();
+    Wst_laenge = 0;
+    Wst_breite = 0;
+    Hat_programmkopf = false;
+    Hat_programmende = false;
+    Sicherheitsabstand = 5;
+    Min_x = 0;
+    Min_y = 0;
+    Max_x = 0;
+    Max_y = 0;
+    Anz_faufr = 0;
+    Anz_fabfa = 0;
+    Warnung_frDial = false;
+    Versatz_x = 0;
+    Versatz_y = 0;
+    Versatz_z = 0;
 }
 
 QString programmtext::get_klartext()
 {
     QString returnstring;
-    for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+    for(uint i=1 ; i<=Klartext.zeilenanzahl() ; i++)
     {
-        QString tmp = klartext.zeile(i);
+        QString tmp = Klartext.zeile(i);
         if(!tmp.isEmpty())
         {
             returnstring += tmp;
@@ -69,9 +74,9 @@ QString programmtext::get_klartext()
 QString programmtext::get_variablen()
 {
     QString returnstring;
-    for(uint i=1 ; i<=var.zeilenanzahl() ; i++)
+    for(uint i=1 ; i<=Var.zeilenanzahl() ; i++)
     {
-        QString tmp = var.zeile(i);
+        QString tmp = Var.zeile(i);
         if(!tmp.isEmpty())
         {
             returnstring += tmp;
@@ -82,7 +87,7 @@ QString programmtext::get_variablen()
 
 void programmtext::set_maschinengeometrie(text_zeilenweise tz)
 {
-    maschinengeo.clear();
+    Maschinengeo.clear();
 
     for(uint i=1; i<=tz.zeilenanzahl();i++)
     {
@@ -90,18 +95,18 @@ void programmtext::set_maschinengeometrie(text_zeilenweise tz)
         if(zeile.contains(STRECKE))
         {
             strecke s(zeile);
-            maschinengeo.add_strecke(s);
-            maschinengeo.zeilenvorschub();
+            Maschinengeo.add_strecke(s);
+            Maschinengeo.zeilenvorschub();
         }else if(zeile.contains(BOGEN))
         {
             bogen b(zeile);
-            maschinengeo.add_bogen(b);
-            maschinengeo.zeilenvorschub();
+            Maschinengeo.add_bogen(b);
+            Maschinengeo.zeilenvorschub();
         }else if (zeile.contains(KREIS))
         {
             kreis k(zeile);
-            maschinengeo.add_kreis(k);
-            maschinengeo.zeilenvorschub();
+            Maschinengeo.add_kreis(k);
+            Maschinengeo.zeilenvorschub();
         }
     }
 }
@@ -109,18 +114,18 @@ void programmtext::set_maschinengeometrie(text_zeilenweise tz)
 //---------------------------------------
 QString programmtext::zeile(uint zeilennummer)
 {
-    if(zeilennummer > text.zeilenanzahl())
+    if(zeilennummer > Text.count())
     {
         return "Fehler! Ungueltige Zeilennummer";
     }else
     {
-        return text.zeile(zeilennummer);
+        return Text.at(zeilennummer);
     }
 }
 
 QString programmtext::zeilen(uint zeilennummer_beginn, uint zeilenmenge)
 {
-    if(zeilennummer_beginn+zeilenmenge-1  > text.zeilenanzahl())
+    if(zeilennummer_beginn+zeilenmenge-1  > Text.count())
     {
         return "Fehler! Ungueltige Zeilennummer";
     }else
@@ -128,13 +133,13 @@ QString programmtext::zeilen(uint zeilennummer_beginn, uint zeilenmenge)
         QString tmp;
         for(uint i=zeilennummer_beginn ; i<zeilennummer_beginn+zeilenmenge; i++)
         {
-            if(!text.zeile(i).contains(LISTENENDE))
+            if(!Text.at(i).contains(LISTENENDE))
             {
                 if(i!=zeilennummer_beginn)
                 {
                     tmp += "\n";
                 }
-                tmp += text.zeile(i);
+                tmp += Text.at(i);
             }
         }
         return tmp;
@@ -143,32 +148,32 @@ QString programmtext::zeilen(uint zeilennummer_beginn, uint zeilenmenge)
 
 int programmtext::zeile_loeschen(uint zeilennummer)
 {
-    QString zeilentext = text.zeile(zeilennummer);
+    QString zeilentext = Text.at(zeilennummer);
     if(zeilentext.contains(LISTENENDE))
     {
         return 0; //Listenende darf nicht gelöscht werden!
     }
-    if(zeilennummer > text.zeilenanzahl())
+    if(zeilennummer > Text.count())
     {
         return 1; //Meldet Fehler in der Funktion
     }
-    text.zeile_loeschen(zeilennummer);
+    Text.entf(zeilennummer);
     aktualisieren();
     return 0; //Keine Fehler
 }
 
 int programmtext::zeilen_loeschen(uint zeilennummer_beginn, uint zeilenmenge)
 {
-    if(zeilennummer_beginn+zeilenmenge-1 > text.zeilenanzahl())
+    if(zeilennummer_beginn+zeilenmenge > Text.count())
     {
         return 1; //Meldet Fehler in der Funktion
     }
-    for(uint i=zeilennummer_beginn+zeilenmenge-1; i>=zeilennummer_beginn ; i--)
+    for(uint i=zeilennummer_beginn+zeilenmenge; i>=zeilennummer_beginn ; i--)
     {
-        QString tmp = text.zeile(i);
+        QString tmp = Text.at(i);
         if(!tmp.contains(LISTENENDE))
         {
-            text.zeile_loeschen(i);
+            Text.entf(i);
         }
     }
     aktualisieren();
@@ -181,16 +186,16 @@ int programmtext::zeile_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zei
     {
         return 0;
     }
-    if(zeilennummer_vor_neuer_zeile > text.zeilenanzahl())
+    if(zeilennummer_vor_neuer_zeile > Text.count())
     {
         return 1; //Meldet Fehler in der Funktion
     }
     if(zeilennummer_vor_neuer_zeile == 0)
     {
-        text.zeile_vorwegsetzen(zeilentext);
+        Text.add_vo(zeilentext);
     }else
     {
-        text.zeile_einfuegen(zeilennummer_vor_neuer_zeile, zeilentext);
+        Text.add_mi(zeilennummer_vor_neuer_zeile, zeilentext);
     }
     aktualisieren();
     return 0; //Keine Fehler
@@ -198,7 +203,7 @@ int programmtext::zeile_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zei
 
 int programmtext::zeilen_einfuegen(uint zeilennummer_vor_neuer_zeile, QString zeilentext)
 {
-    if(zeilennummer_vor_neuer_zeile > text.zeilenanzahl())
+    if(zeilennummer_vor_neuer_zeile > Text.count())
     {
         return 1; //Meldet Fehler in der Funktion
     }
@@ -213,10 +218,10 @@ int programmtext::zeilen_einfuegen(uint zeilennummer_vor_neuer_zeile, QString ze
         }
         if(  (zeilennummer_vor_neuer_zeile == 0)  &&  (i==1)  )
         {
-            text.zeile_vorwegsetzen(zeile);
+            Text.add_vo(zeile);
         }else
         {
-            text.zeile_einfuegen(zeilennummer_vor_neuer_zeile+i-1, zeile);
+            Text.add_mi(zeilennummer_vor_neuer_zeile+i-1, zeile);
         }
     }
     aktualisieren();
@@ -229,32 +234,22 @@ void programmtext::zeile_anhaengen(QString zeilentext)
     {
         return;
     }
-    text.zeilen_anhaengen(zeilentext);
+    Text.add_hi(zeilentext);
     aktualisieren();
 }
 
 int programmtext::zeile_ersaetzen(uint zeilennummer, QString neuer_zeilentext)
 {
-    QString alter_text;
-    alter_text = text.zeile(zeilennummer);
-    if(alter_text == LISTENENDE)
-    {
-        return 0;
-    }
-    QString zeilentext = text.zeile(zeilennummer);
+    QString zeilentext = Text.at(zeilennummer);
     if(zeilentext.contains(LISTENENDE))
     {
         return 0; //Listenende darf nicht gelöscht werden!
     }
-    if(zeilennummer > text.zeilenanzahl())
+    if(zeilennummer > Text.count()-1)
     {
         return 1; //Meldet Fehler in der Funktion
     }
-    if(zeilennummer == 0)
-    {
-        return 1; //Meldet Fehler in der Funktion
-    }
-    text.zeile_ersaetzen(zeilennummer, neuer_zeilentext);
+    Text.edit(zeilennummer, neuer_zeilentext);
     aktualisieren();
     return 0; //Keine Fehler
 }
@@ -269,9 +264,9 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
     bool hat_cad = false;
     for(uint i=zeinumbeg; i<=zeinumend; i++)
     {
-        if(text.zeile(i).contains(STRECKE) || \
-           (text.zeile(i).contains(BOGEN) && !text.zeile(i).contains(FRAESERBOGEN_DIALOG))   || \
-           text.zeile(i).contains(KREIS)   )
+        if(Text.at(i).contains(STRECKE) || \
+           (Text.at(i).contains(BOGEN) && !Text.at(i).contains(FRAESERBOGEN_DIALOG))   || \
+           Text.at(i).contains(KREIS)   )
         {
            hat_cad = true;
            break;
@@ -290,17 +285,17 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
     text_zeilenweise anderes;
     for(uint i=zeinumbeg; i<=zeinumend; i++)
     {
-        if(text.zeile(i).contains(LISTENENDE))
+        if(Text.at(i).contains(LISTENENDE))
         {
             break;
         }
-        if(text.zeile(i).contains(STRECKE) || \
-           text.zeile(i).contains(BOGEN)      )
+        if(Text.at(i).contains(STRECKE) || \
+           Text.at(i).contains(BOGEN)      )
         {
-            potfkon.zeile_anhaengen(text.zeile(i));
+            potfkon.zeile_anhaengen(Text.at(i));
         }else
         {
-            anderes.zeile_anhaengen(text.zeile(i));
+            anderes.zeile_anhaengen(Text.at(i));
         }
     }
 
@@ -313,7 +308,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
     polylinie.set_text(potfkon.zeile(1));
     potfkon.zeile_loeschen(1);
 
-    double tolleranz = 0.1;
+    double toleranz = 0.1;
     while(potfkon.zeilenanzahl()>0)
     {
         QString vergleich = "1234567890";
@@ -350,7 +345,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                 if(zeile.contains(STRECKE))
                 {
                     strecke s(zeile);
-                    if(cagleich(s.startp(), ep, tolleranz))
+                    if(cagleich(s.startp(), ep, toleranz))
                     {
                         polylinie.zeile_anhaengen(s.get_text());
                         potfkon.zeile_loeschen(i);
@@ -358,7 +353,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }if(cagleich(s.endp(), ep, tolleranz))
+                    }if(cagleich(s.endp(), ep, toleranz))
                     {
                         s.richtung_unkehren();
                         polylinie.zeile_anhaengen(s.get_text());
@@ -367,7 +362,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }else if(cagleich(s.endp(), sp, tolleranz))
+                    }else if(cagleich(s.endp(), sp, toleranz))
                     {
                         polylinie.zeile_vorwegsetzen(s.get_text());
                         potfkon.zeile_loeschen(i);
@@ -375,7 +370,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }if(cagleich(s.startp(), sp, tolleranz))
+                    }if(cagleich(s.startp(), sp, toleranz))
                     {
                         s.richtung_unkehren();
                         polylinie.zeile_vorwegsetzen(s.get_text());
@@ -401,7 +396,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                 }else if(zeile.contains(BOGEN))
                 {
                     bogen b(zeile);
-                    if(cagleich(b.start(), ep, tolleranz))
+                    if(cagleich(b.start(), ep, toleranz))
                     {
                         polylinie.zeile_anhaengen(b.get_text());
                         potfkon.zeile_loeschen(i);
@@ -409,7 +404,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }if(cagleich(b.ende(), ep, tolleranz))
+                    }if(cagleich(b.ende(), ep, toleranz))
                     {
                         b.richtung_unkehren();
                         polylinie.zeile_anhaengen(b.get_text());
@@ -418,7 +413,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }else if(cagleich(b.ende(), sp, tolleranz))
+                    }else if(cagleich(b.ende(), sp, toleranz))
                     {
                         polylinie.zeile_vorwegsetzen(b.get_text());
                         potfkon.zeile_loeschen(i);
@@ -426,7 +421,7 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
                         //durch das Löschen der Zeile ist der Index der Folgezeile um eins kleiner
                         //daher belibt i für den nächsten Schleifendurchlauf gleich
                         continue;
-                    }else if(cagleich(b.start(), sp, tolleranz))
+                    }else if(cagleich(b.start(), sp, toleranz))
                     {
                         b.richtung_unkehren();
                         polylinie.zeile_vorwegsetzen(b.get_text());
@@ -476,12 +471,11 @@ void programmtext::cad_sortieren(uint zeinumbeg, uint zeinumend, uint anz_der_du
     {
         if(iand <= anderes.zeilenanzahl())
         {
-            text.zeile_ersaetzen(i, anderes.zeile(iand));
+            Text.edit(i, anderes.zeile(iand));
             iand++;
         }else
         {
-            //text.zeile_ersaetzen(i, potfkon.zeile(ipot));
-            text.zeile_ersaetzen(i, sortiert.zeile(ipot));
+            Text.edit(i, sortiert.zeile(ipot));
             ipot++;
         }
     }
@@ -501,8 +495,8 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
     bool auswahl_ok = true;
     for(uint i=zeinumbeg; i<=zeinumend ;i++)
     {
-        if(!text.zeile(i).contains(STRECKE) && \
-           !text.zeile(i).contains(BOGEN)      )
+        if(!Text.at(i).contains(STRECKE) && \
+           !Text.at(i).contains(BOGEN)      )
         {
             auswahl_ok = false;
         }
@@ -541,7 +535,7 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
         }
 
         text_zeilenweise tzfkon;
-        QString aktuelle_zeile = text.zeile(zeinumbeg);
+        QString aktuelle_zeile = Text.at(zeinumbeg);
 
         if(aktuelle_zeile.contains(STRECKE))
         {
@@ -647,7 +641,7 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 
         for(uint i=zeinumbeg+1; i<=zeinumend ;i++)
         {
-            aktuelle_zeile = text.zeile(i);
+            aktuelle_zeile = Text.at(i);
             if(aktuelle_zeile.contains(STRECKE))
             {
                 strecke s(aktuelle_zeile);
@@ -763,15 +757,15 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
         tzfkon.zeile_anhaengen(vorlage_fabfa);
 
         //Schritt 3 CAD löschen und CAM einfügen:
-        text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+        Text.entf(zeinumbeg, zeinumend-zeinumbeg+1);
         if(zeinumbeg > 1)
         {
-            text.zeilen_einfuegen(zeinumbeg-1, tzfkon.get_text());
+            Text.add_mi(zeinumbeg-1, tzfkon.get_text());
         }else
         {
-            text.zeile_vorwegsetzen(tzfkon.zeile(1));
+            Text.add_vo(tzfkon.zeile(1));
             tzfkon.zeile_loeschen(1);
-            text.zeilen_einfuegen(1, tzfkon.get_text());
+            Text.add_mi(1, tzfkon.get_text());
         }
         aktualisieren();
     }
@@ -780,14 +774,14 @@ void programmtext::linien_zu_fkon(uint zeinumbeg, uint zeinumend, text_zeilenwei
 void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
 {
     punkt3d p;
-    QString aktzeil = klartext.zeile(zeinumbeg);
+    QString aktzeil = Klartext.zeile(zeinumbeg);
     p.set_x(text_mitte(aktzeil, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
     p.set_y(text_mitte(aktzeil, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
     p.set_z(text_mitte(aktzeil, POSITION_Z, ENDE_EINTRAG).toDouble() - get_az());
     text_zeilenweise tzgeo;
     for(uint i =zeinumbeg+1; i<=zeinumend ;i++)
     {
-        aktzeil = klartext.zeile(i);
+        aktzeil = Klartext.zeile(i);
         if(aktzeil.contains(FRAESERGERADE_DIALOG))
         {
             strecke s;
@@ -820,15 +814,15 @@ void programmtext::fkon_zu_linien(uint zeinumbeg, uint zeinumend)
         }
     }
     //CAM löschen und CAD einfügen:
-    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    Text.entf(zeinumbeg, zeinumend-zeinumbeg+1);
     if(zeinumbeg > 1)
     {
-        text.zeilen_einfuegen(zeinumbeg-1, tzgeo.get_text());
+        Text.add_mi(zeinumbeg-1, tzgeo.get_text());
     }else
     {
-        text.zeile_vorwegsetzen(tzgeo.zeile(1));
+        Text.add_vo(tzgeo.zeile(1));
         tzgeo.zeile_loeschen(1);
-        text.zeilen_einfuegen(1, tzgeo.get_text());
+        Text.add_mi(1, tzgeo.get_text());
     }
     aktualisieren();
 }
@@ -896,8 +890,8 @@ text_zeilenweise programmtext::fkon_use_values(text_zeilenweise cam)
 void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
 {
     //Inhalt der Dialoge merken:
-    QString aufruf = text.zeile(zeinumbeg);
-    QString abfahen = text.zeile(zeinumend);
+    QString aufruf = Text.at(zeinumbeg);
+    QString abfahen = Text.at(zeinumend);
 
     //Richtung umkehren:
     text_zeilenweise tzcam;
@@ -907,7 +901,7 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
     punkt3d p;
     for(uint i=zeinumend-1; i>=zeinumbeg ;i--)
     {
-        aktklartext = klartext.zeile(i);
+        aktklartext = Klartext.zeile(i);
 
         if(i == zeinumend-1)//Letzter Punkt auf der Kontur = erster Punkt in Gegenrichtung
         {
@@ -932,8 +926,8 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
             tzcam.zeile_anhaengen(abfahen);
         }else//Fräsbahnen zwischen Aufruf und Abfahren
         {
-            akttext = text.zeile(i);
-            vorklartext = klartext.zeile(i-1);
+            akttext = Text.at(i);
+            vorklartext = Klartext.zeile(i-1);
 
             p.set_x(text_mitte(vorklartext, POSITION_X, ENDE_EINTRAG).toDouble() - get_ax());
             p.set_y(text_mitte(vorklartext, POSITION_Y, ENDE_EINTRAG).toDouble() - get_ay());
@@ -976,15 +970,15 @@ void programmtext::fkon_richtung_wechseln(uint zeinumbeg, uint zeinumend)
     tzcam = fkon_use_values(tzcam);
 
     //Änderungen zurück in programmtext schreiben:
-    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    Text.entf(zeinumbeg, zeinumend-zeinumbeg+1);
     if(zeinumbeg > 1)
     {
-        text.zeilen_einfuegen(zeinumbeg-1, tzcam.get_text());
+        Text.add_mi(zeinumbeg-1, tzcam.get_text());
     }else
     {
-        text.zeile_vorwegsetzen(tzcam.zeile(1));
+        Text.add_vo(tzcam.zeile(1));
         tzcam.zeile_loeschen(1);
-        text.zeilen_einfuegen(1, tzcam.get_text());
+        Text.add_mi(1, tzcam.get_text());
     }
     aktualisieren();
 }
@@ -999,20 +993,20 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     }
 
     //Inhalt der Dialoge merken:
-    QString aufruf_t = text.zeile(zeinumbeg);
-    QString aufruf_kt = klartext.zeile(zeinumbeg);
+    QString aufruf_t = Text.at(zeinumbeg);
+    QString aufruf_kt = Klartext.zeile(zeinumbeg);
 
-    //QString abfa_t = text.zeile(zeinumend);
-    //QString abfa_kt = klartext.zeile(zeinumend);
+    //QString abfa_t = Text.at(zeinumend);
+    //QString abfa_kt = Klartext.zeile(zeinumend);
 
-    //QString camvorabfa_t = text.zeile(zeinumend-1);
-    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
+    //QString camvorabfa_t = Text.at(zeinumend-1);
+    QString camvorabfa_kt = Klartext.zeile(zeinumend-1);
 
-    QString camnachaufruf_t = text.zeile(zeinumbeg+1);
-    QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+    QString camnachaufruf_t = Text.at(zeinumbeg+1);
+    QString camnachaufruf_kt = Klartext.zeile(zeinumbeg+1);
 
     text_zeilenweise tzcam_t;
-    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+    tzcam_t.set_text(Text.at(zeinumbeg, zeinumend-zeinumbeg+1));
 
     //Prüfen, ob fkon eine geschlossene Kontur ist:
     //Ist der Endpunkt der Startpunkt?:
@@ -1053,15 +1047,15 @@ void programmtext::fkon_vor(uint zeinumbeg, uint zeinumend)
     tzcam_t = fkon_use_values(tzcam_t);
 
     //Änderungen zurück in programmtext schreiben:
-    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    Text.entf(zeinumbeg, zeinumend-zeinumbeg+1);
     if(zeinumbeg > 1)
     {
-        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+        Text.add_mi(zeinumbeg-1, tzcam_t.get_text());
     }else
     {
-        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        Text.add_vo(tzcam_t.zeile(1));
         tzcam_t.zeile_loeschen(1);
-        text.zeilen_einfuegen(1, tzcam_t.get_text());
+        Text.add_mi(1, tzcam_t.get_text());
     }
     aktualisieren();
 }
@@ -1076,22 +1070,22 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     }
 
     //Inhalt der Dialoge merken:
-    QString aufruf_t = text.zeile(zeinumbeg);
-    QString aufruf_kt = klartext.zeile(zeinumbeg);
+    QString aufruf_t = Text.at(zeinumbeg);
+    QString aufruf_kt = Klartext.zeile(zeinumbeg);
 
-    //QString abfa_t = text.zeile(zeinumend);
-    //QString abfa_kt = klartext.zeile(zeinumend);
+    //QString abfa_t = Text.at(zeinumend);
+    //QString abfa_kt = Klartext.zeile(zeinumend);
 
-    QString camvorabfa_t = text.zeile(zeinumend-1);
-    QString camvorabfa_kt = klartext.zeile(zeinumend-1);
-    //QString cam2vorabfa_t = text.zeile(zeinumend-2);
-    QString cam2vorabfa_kt = klartext.zeile(zeinumend-2);
+    QString camvorabfa_t = Text.at(zeinumend-1);
+    QString camvorabfa_kt = Klartext.zeile(zeinumend-1);
+    //QString cam2vorabfa_t = Text.at(zeinumend-2);
+    QString cam2vorabfa_kt = Klartext.zeile(zeinumend-2);
 
-    //QString camnachaufruf_t = text.zeile(zeinumbeg+1);
-    //QString camnachaufruf_kt = klartext.zeile(zeinumbeg+1);
+    //QString camnachaufruf_t = Text.at(zeinumbeg+1);
+    //QString camnachaufruf_kt = Klartext.zeile(zeinumbeg+1);
 
     text_zeilenweise tzcam_t;
-    tzcam_t.set_text(text.zeilen(zeinumbeg, zeinumend-zeinumbeg+1));
+    tzcam_t.set_text(Text.at(zeinumbeg, zeinumend-zeinumbeg+1));
 
     //Prüfen, ob fkon eine geschlossene Kontur ist:
     //Ist der Endpunkt der Startpunkt?:
@@ -1135,22 +1129,22 @@ void programmtext::fkon_nach(uint zeinumbeg, uint zeinumend)
     tzcam_t = fkon_use_values(tzcam_t);
 
     //Änderungen zurück in programmtext schreiben:
-    text.zeilen_loeschen(zeinumbeg, zeinumend-zeinumbeg+1);
+    Text.entf(zeinumbeg, zeinumend-zeinumbeg+1);
     if(zeinumbeg > 1)
     {
-        text.zeilen_einfuegen(zeinumbeg-1, tzcam_t.get_text());
+        Text.add_mi(zeinumbeg-1, tzcam_t.get_text());
     }else
     {
-        text.zeile_vorwegsetzen(tzcam_t.zeile(1));
+        Text.add_vo(tzcam_t.zeile(1));
         tzcam_t.zeile_loeschen(1);
-        text.zeilen_einfuegen(1, tzcam_t.get_text());
+        Text.add_mi(1, tzcam_t.get_text());
     }
     aktualisieren();
 }
 
 void programmtext::rta_zu_cad(uint zeinumakt)
 {
-    QString zeitex = klartext.zeile(zeinumakt);
+    QString zeitex = Klartext.zeile(zeinumakt);
     if(!zeitex.contains(RECHTECKTASCHE_DIALOG))
     {
         return;
@@ -1183,7 +1177,7 @@ void programmtext::rta_zu_cad(uint zeinumakt)
     double drewi = text_mitte(zeitex, WINKEL, ENDE_EINTRAG).toDouble();
     //dreht rta immer um den mipu unabhängig vom Bezugspunkt
     double tati = text_mitte(zeitex, TASCHENTIEFE, ENDE_EINTRAG).toDouble();
-    double posinz = werkstueckdicke - tati;
+    double posinz = Wst_dicke - tati;
     double tal = text_mitte(zeitex, TASCHENLAENGE, ENDE_EINTRAG).toDouble();
     double tab = text_mitte(zeitex, TASCHENBREITE, ENDE_EINTRAG).toDouble();
     QString bezpunkt = text_mitte(zeitex, BEZUGSPUNKT, ENDE_EINTRAG);
@@ -1396,15 +1390,15 @@ void programmtext::rta_zu_cad(uint zeinumakt)
     }
 
     //rta löschen und cad einfügen:
-    text.zeile_loeschen(zeinumakt);
+    Text.entf(zeinumakt);
     if(zeinumakt > 1)
     {
-        text.zeilen_einfuegen(zeinumakt-1, tzcad.get_text());
+        Text.add_mi(zeinumakt-1, tzcad.get_text());
     }else
     {
-        text.zeile_vorwegsetzen(tzcad.zeile(1));
+        Text.add_vo(tzcad.zeile(1));
         tzcad.zeile_loeschen(1);
-        text.zeilen_einfuegen(1, tzcad.get_text());
+        Text.add_mi(1, tzcad.get_text());
     }
     aktualisieren();
 }
@@ -1420,7 +1414,7 @@ void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
 
     for(uint i=zeinumbeg; i<=zeinumend ; i++)
     {
-        QString zeile = text.zeile(i);
+        QString zeile = Text.at(i);
         if(zeile.contains(KREISTASCHE_DIALOG)       || \
            zeile.contains(RECHTECKTASCHE_DIALOG)    || \
            zeile.contains(FRAESERAUFRUF_DIALOG)     || \
@@ -1452,17 +1446,17 @@ void programmtext::versatzvar(uint zeinumbeg, uint zeinumend)
             yneu += ENDE_EINTRAG;
             zeile.replace(yalt, yneu);
         }
-        text.zeile_ersaetzen(i, zeile);
+        Text.edit(i, zeile);
     }
 
     if(zeinumbeg >= 2)
     {
-        text.zeile_einfuegen(zeinumbeg-1, variable_ax);
-        text.zeile_einfuegen(zeinumbeg-1, variable_ay);
+        Text.add_mi(zeinumbeg-1, variable_ax);
+        Text.add_mi(zeinumbeg-1, variable_ay);
     }else
     {
-        text.zeile_vorwegsetzen(variable_ay);
-        text.zeile_vorwegsetzen(variable_ax);
+        Text.add_vo(variable_ay);
+        Text.add_vo(variable_ax);
     }
     aktualisieren();
 }
@@ -1471,8 +1465,8 @@ void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
 {
     for(uint i=zeinumbeg; i<=zeinumend ; i++)
     {
-        QString zeile = text.zeile(i);
-        QString zeilekt = klartext.zeile(i);
+        QString zeile = Text.at(i);
+        QString zeilekt = Klartext.zeile(i);
 
         if(zeile.contains(KREISTASCHE_DIALOG)       || \
            zeile.contains(RECHTECKTASCHE_DIALOG)    || \
@@ -1486,7 +1480,7 @@ void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
             xalt += text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
             xalt += ENDE_EINTRAG;
             double mass = text_mitte(zeilekt, POSITION_X, ENDE_EINTRAG).toDouble();
-            mass = werkstuecklaenge - mass;
+            mass = Wst_laenge - mass;
             QString xneu;
             xneu = POSITION_X;
             xneu += double_to_qstring(mass);
@@ -1534,7 +1528,7 @@ void programmtext::spiegeln_verti(uint zeinumbeg, uint zeinumend)
                 zeile.replace(alt, neu);
             }
         }
-        text.zeile_ersaetzen(i, zeile);
+        Text.edit(i, zeile);
     }
     aktualisieren();
 }
@@ -1543,8 +1537,8 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
 {
     for(uint i=zeinumbeg; i<=zeinumend ; i++)
     {
-        QString zeile = text.zeile(i);
-        QString zeilekt = klartext.zeile(i);
+        QString zeile = Text.at(i);
+        QString zeilekt = Klartext.zeile(i);
 
         if(zeile.contains(KREISTASCHE_DIALOG)       || \
            zeile.contains(RECHTECKTASCHE_DIALOG)    || \
@@ -1558,7 +1552,7 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
             yalt += text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
             yalt += ENDE_EINTRAG;
             double mass = text_mitte(zeilekt, POSITION_Y, ENDE_EINTRAG).toDouble();
-            mass = werkstueckbreite - mass;
+            mass = Wst_breite - mass;
             QString yneu;
             yneu = POSITION_Y;
             yneu += double_to_qstring(mass);
@@ -1606,7 +1600,7 @@ void programmtext::spiegeln_hori(uint zeinumbeg, uint zeinumend)
                 zeile.replace(alt, neu);
             }
         }
-        text.zeile_ersaetzen(i, zeile);
+        Text.edit(i, zeile);
     }
     aktualisieren();
 }
@@ -1616,19 +1610,19 @@ void programmtext::set_sicherheitsabstand(float neuer_Abstand)
 {
     if(neuer_Abstand > 0)
     {
-        sicherheitsabstand = neuer_Abstand;
+        Sicherheitsabstand = neuer_Abstand;
     }else
     {
-        sicherheitsabstand = 5;
+        Sicherheitsabstand = 5;
     }
 }
 
 void programmtext::set_wkz(werkzeug wkz)
 {
-    w = wkz;
-    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    Wkz = wkz;
+    for(uint i=1; i<=Text.count() ;i++)
     {
-        QString zeile = text.zeile(i);
+        QString zeile = Text.at(i);
         if( zeile.contains(WKZ_NAME) )
         {
             if(zeile.contains(WKZ_DURCHMESSER))
@@ -1659,11 +1653,11 @@ bool programmtext::cagleich(punkt3d p1, punkt3d p2, double tolleranz = 0.1)
 
 bool programmtext::get_hat_ungesicherte_inhalte()
 {
-    if(text.get_text().isEmpty())//Hat gar keine Inhalte
+    if(Text.text().isEmpty())//Hat gar keine Inhalte
     {
         return false;
     }
-    if(text_kopie.get_text() == text.get_text())//Inhalt wurde seit dem Speichern noch nicht verändert
+    if(Text_kopie.text() == Text.text())//Inhalt wurde seit dem Speichern noch nicht verändert
     {
         return false;
     }else
@@ -1674,7 +1668,7 @@ bool programmtext::get_hat_ungesicherte_inhalte()
 
 void programmtext::wurde_gespeichert()
 {
-    text_kopie = text;
+    Text_kopie = Text;
 }
 
 void programmtext::aktualisieren()
@@ -1690,23 +1684,23 @@ void programmtext::aktualisieren()
 
 void programmtext::aktualisiere_klartext_var()
 {
-    if(!aktualisieren_eingeschaltet)
+    if(!Aktualisieren_eingeschaltet)
     {
         return;
     }
 
     clear_ausser_text();
     QString variablen;
-    for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
+    for(uint i=1 ; i<=Text.count() ; i++)
     {
-        QString zeile = text.zeile(i);
+        QString zeile = Text.at(i);
         if(  (zeile.at(0) == '/')  &&  (zeile.at(1) == '/')  )
         {
-            klartext.zeilen_anhaengen("");
-            var.zeilen_anhaengen("");
+            Klartext.zeilen_anhaengen("");
+            Var.zeilen_anhaengen("");
             continue;//Ausgeblendete Zeile überspringen
         }
-        if(  (anz_faufr > anz_fabfa)  &&  (i<text.zeilenanzahl())  )
+        if(  (Anz_faufr > Anz_fabfa)  &&  (i<Text.count())  )
         {
             if(  zeile.contains(FRAESERGERADE_DIALOG)  ||  \
                  zeile.contains(FRAESERBOGEN_DIALOG)   ||  \
@@ -1715,16 +1709,16 @@ void programmtext::aktualisiere_klartext_var()
                 ;
             }else
             {
-                if(warnung_frDial == false)
+                if(Warnung_frDial == false)
                 {
-                    if(warnungen_sind_eingeschaltet)
+                    if(Warnungen_sind_eingeschaltet)
                     {
                         QMessageBox mb;
                         mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + \
                                    "!\nFraeser-Abfahren fehlt!");
                         mb.exec();
                     }
-                    warnung_frDial = true;
+                    Warnung_frDial = true;
                 }
             }
         }
@@ -1737,13 +1731,13 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                if(  (hat_programmkopf == true)  &&  (warnungen_sind_eingeschaltet == true)  )
+                if(  (Hat_programmkopf == true)  &&  (Warnungen_sind_eingeschaltet == true)  )
                 {
                     QMessageBox mb;
                     mb.setText("Achtung!\nProgrammkopf mehrfach vorhanden!");
                     mb.exec();
                 }
-                hat_programmkopf = true;
+                Hat_programmkopf = true;
                 QString zeile_klartext;
                 zeile_klartext += PROGRAMMKOPF_DIALOG;
                 zeile_klartext += LAENGE;
@@ -1753,7 +1747,7 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 float l = tmp.toFloat();
-                set_werkstuecklaenge(l);
+                set_wst_laenge(l);
                 if(!variablen.contains(LAENGE))
                 {
                     variablen += LAENGE;
@@ -1772,7 +1766,7 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
                 float b = tmp.toFloat();
-                set_werkstueckbreite(b);
+                set_wst_breite(b);
                 if(!variablen.contains(BREITE))
                 {
                     variablen += BREITE;
@@ -1790,7 +1784,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = ausdruck_auswerten(tmp);
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
-                set_werkstueckdicke(tmp.toFloat());
+                set_wst_dicke(tmp.toFloat());
                 if(!variablen.contains(DICKE))
                 {
                     variablen += DICKE;
@@ -1874,12 +1868,12 @@ void programmtext::aktualisiere_klartext_var()
                     variablen.replace(VERSATZ_Z+alterWert, VERSATZ_Z+tmp);
                 }
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(PROGRAMMENDE_DIALOG))
         {
@@ -1889,13 +1883,13 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                if(  (hat_programmende == true)  &&  (warnungen_sind_eingeschaltet == true)  )
+                if(  (Hat_programmende == true)  &&  (Warnungen_sind_eingeschaltet == true)  )
                 {
                     QMessageBox mb;
                     mb.setText("Achtung!\nProgramm hat mehr als ein Programmende!");
                     mb.exec();
                 }
-                hat_programmende = true;
+                Hat_programmende = true;
                 QString zeile_klartext;
                 zeile_klartext += PROGRAMMENDE_DIALOG;
                 tmp = text_mitte(zeile, MODUS, ENDE_EINTRAG);
@@ -1910,7 +1904,7 @@ void programmtext::aktualisiere_klartext_var()
                     zeile_klartext += ENDE_EINTRAG;
 
                     zeile_klartext += POSITION_Z;
-                    zeile_klartext += QString::fromStdString(  float_to_string(werkstueckdicke+sicherheitsabstand)  );
+                    zeile_klartext += QString::fromStdString(  float_to_string(Wst_dicke+Sicherheitsabstand)  );
                     zeile_klartext += ENDE_EINTRAG;
 
                 }else if(tmp == MODUS_PENDE_BENUTZERDEF)
@@ -1939,8 +1933,8 @@ void programmtext::aktualisiere_klartext_var()
                     zeile_klartext += ENDE_EINTRAG;
                 }
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(VARIABLE_DIALOG))
         {
@@ -1966,12 +1960,12 @@ void programmtext::aktualisiere_klartext_var()
                     variablen.replace(bez+alterWert, bez+wert);
                 }
 
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(KOMMENTAR_DIALOG))
         {
@@ -1987,12 +1981,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += text_mitte(zeile, KOMMENTAR, ENDE_EINTRAG);
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
         {
@@ -2016,7 +2010,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2033,7 +2027,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2092,7 +2086,7 @@ void programmtext::aktualisiere_klartext_var()
                     zeile_klartext += tmp;
                 }else
                 {
-                    zeile_klartext += QString::fromStdString(float_to_string(-taschentiefe + get_werkstueckdicke()));
+                    zeile_klartext += QString::fromStdString(float_to_string(-taschentiefe + wst_dicke()));
                 }
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(TASCHENTIEFE))
@@ -2192,17 +2186,17 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += ENDE_EINTRAG;
 
                 tmp = text_mitte(variablen, DICKE, ENDE_EINTRAG);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_z));
                 zeile_klartext += BEZUGSHOEHE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(KREISTASCHE_DIALOG))
         {
@@ -2226,7 +2220,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2243,7 +2237,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2285,7 +2279,7 @@ void programmtext::aktualisiere_klartext_var()
                     zeile_klartext += tmp;
                 }else
                 {
-                    zeile_klartext += QString::fromStdString(float_to_string(-taschentiefe + get_werkstueckdicke()));
+                    zeile_klartext += QString::fromStdString(float_to_string(-taschentiefe + wst_dicke()));
                 }
                 zeile_klartext += ENDE_EINTRAG;
                 if(!variablen.contains(TASCHENTIEFE))
@@ -2366,17 +2360,17 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += ENDE_EINTRAG;
 
                 tmp = text_mitte(variablen, DICKE, ENDE_EINTRAG);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_z));
                 zeile_klartext += BEZUGSHOEHE;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
@@ -2387,7 +2381,7 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                anz_faufr++;
+                Anz_faufr++;
                 QString zeile_klartext;
                 zeile_klartext += FRAESERAUFRUF_DIALOG;
                 tmp = text_mitte(zeile, WKZ_NAME, ENDE_EINTRAG);
@@ -2408,7 +2402,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2426,7 +2420,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2444,7 +2438,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2545,12 +2539,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(FRAESERGERADE_DIALOG))
         {
@@ -2561,17 +2555,17 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                if(anz_faufr-1 != anz_fabfa)
+                if(Anz_faufr-1 != Anz_fabfa)
                 {
-                    if(warnung_frDial == false)
+                    if(Warnung_frDial == false)
                     {
-                        if(warnungen_sind_eingeschaltet)
+                        if(Warnungen_sind_eingeschaltet)
                         {
                             QMessageBox mb;
                             mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
                             mb.exec();
                         }
-                        warnung_frDial = true;
+                        Warnung_frDial = true;
                     }
                 }
 
@@ -2580,7 +2574,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2598,7 +2592,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2616,7 +2610,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2638,12 +2632,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(FRAESERBOGEN_DIALOG))
         {
@@ -2654,17 +2648,17 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                if(anz_faufr-1 != anz_fabfa)
+                if(Anz_faufr-1 != Anz_fabfa)
                 {
-                    if(warnung_frDial == false)
+                    if(Warnung_frDial == false)
                     {
-                        if(warnungen_sind_eingeschaltet)
+                        if(Warnungen_sind_eingeschaltet)
                         {
                             QMessageBox mb;
                             mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeskontur muss zwischen Freaser-Aufruf und Fraeser-Abfahren stehen!");
                             mb.exec();
                         }
-                        warnung_frDial = true;
+                        Warnung_frDial = true;
                     }
                 }
 
@@ -2674,7 +2668,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2692,7 +2686,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2710,7 +2704,7 @@ void programmtext::aktualisiere_klartext_var()
                 tmp = text_mitte(zeile, POSITION_Z, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
                 tmp_var = ausdruck_auswerten(tmp);
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_z));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_z));
                 zeile_klartext += POSITION_Z;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2737,12 +2731,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
@@ -2752,27 +2746,27 @@ void programmtext::aktualisiere_klartext_var()
             tmp = ausdruck_auswerten(tmp);
             if(tmp.toFloat() == true)
             {
-                if(anz_faufr-1 != anz_fabfa)
+                if(Anz_faufr-1 != Anz_fabfa)
                 {
-                    if(warnung_frDial == false)
+                    if(Warnung_frDial == false)
                     {
-                        if(warnungen_sind_eingeschaltet)
+                        if(Warnungen_sind_eingeschaltet)
                         {
                             QMessageBox mb;
                             mb.setText("Fehler in Zeile " + QString::fromStdString(int_to_string(i)) + "!\nFraeser-Abfahren ohne dazu gehoerenden Fraeser-Aufruf!");
                             mb.exec();
                         }
-                        warnung_frDial = true;
+                        Warnung_frDial = true;
                     }
                 }
-                anz_fabfa++;
+                Anz_fabfa++;
                 QString zeile_klartext;
                 zeile_klartext += FRAESERABFAHREN_DIALOG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
+                Klartext.zeilen_anhaengen(zeile_klartext);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
             }
         }else if(zeile.contains(STRECKE))
         {
@@ -2780,47 +2774,47 @@ void programmtext::aktualisiere_klartext_var()
             punkt3d sp = s.startp();
             punkt3d ep = s.endp();
             punkt3d p = sp;
-            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
-            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
-            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(Versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(Versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(Versatz_z)));
             s.set_start(p);
             p = ep;
-            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
-            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
-            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(Versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(Versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(Versatz_z)));
             s.set_ende(p);
 
-            klartext.zeilen_anhaengen(s.get_text());
-            var.zeile_anhaengen(variablen);
+            Klartext.zeilen_anhaengen(s.get_text());
+            Var.zeile_anhaengen(variablen);
         }else if(zeile.contains(KREIS))
         {
             kreis k(zeile);
             punkt3d p = k.mitte3d();
-            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
-            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
-            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(Versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(Versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(Versatz_z)));
             k.set_mittelpunkt(p);
 
-            klartext.zeilen_anhaengen(k.get_text());
-            var.zeile_anhaengen(variablen);
+            Klartext.zeilen_anhaengen(k.get_text());
+            Var.zeile_anhaengen(variablen);
         }else if(zeile.contains(BOGEN))
         {
             bogen b(zeile);
             punkt3d sp = b.start();
             punkt3d ep = b.ende();
             punkt3d p = sp;
-            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
-            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
-            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(Versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(Versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(Versatz_z)));
             b.set_startpunkt(p);
             p = ep;
-            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(versatz_x)));
-            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(versatz_y)));
-            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(versatz_z)));
+            p.set_x(ausdruck_auswerten("(" + p.x_QString() + ")" + "+" + float_to_qstring(Versatz_x)));
+            p.set_y(ausdruck_auswerten("(" + p.y_QString() + ")" + "+" + float_to_qstring(Versatz_y)));
+            p.set_z(ausdruck_auswerten("(" + p.z_QString() + ")" + "+" + float_to_qstring(Versatz_z)));
             b.set_endpunkt(p);
 
-            klartext.zeilen_anhaengen(b.get_text());
-            var.zeile_anhaengen(variablen);
+            Klartext.zeilen_anhaengen(b.get_text());
+            Var.zeile_anhaengen(variablen);
         }else if(zeile.contains(BOHREN_DIALOG))
         {
             QString tmp;
@@ -2860,7 +2854,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_X, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_x));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_x));
                 zeile_klartext += POSITION_X;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2877,7 +2871,7 @@ void programmtext::aktualisiere_klartext_var()
 
                 tmp = text_mitte(zeile, POSITION_Y, ENDE_EINTRAG);
                 tmp = variablen_durch_werte_ersetzten(variablen, tmp);//Variablen durch Werte ersetzen
-                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(versatz_y));
+                tmp = ausdruck_auswerten("(" + tmp + ")" + "+" + float_to_qstring(Versatz_y));
                 zeile_klartext += POSITION_Y;
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
@@ -2987,12 +2981,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
         {
@@ -3029,12 +3023,12 @@ void programmtext::aktualisiere_klartext_var()
                 zeile_klartext += tmp;
                 zeile_klartext += ENDE_EINTRAG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
         {
@@ -3047,17 +3041,17 @@ void programmtext::aktualisiere_klartext_var()
                 QString zeile_klartext;
                 zeile_klartext += SCHLEIFENENDE_DIALOG;
 
-                klartext.zeilen_anhaengen(zeile_klartext);
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(zeile_klartext);
+                Var.zeile_anhaengen(variablen);
             }else
             {//Wenn AFB == 0;
-                klartext.zeilen_anhaengen(" ");//leere Zeile
-                var.zeile_anhaengen(variablen);
+                Klartext.zeilen_anhaengen(" ");//leere Zeile
+                Var.zeile_anhaengen(variablen);
             }
         }else
         {
-            klartext.zeilen_anhaengen("");
-            var.zeilen_anhaengen("");
+            Klartext.zeilen_anhaengen("");
+            Var.zeilen_anhaengen("");
         }
 
 
@@ -3066,58 +3060,58 @@ void programmtext::aktualisiere_klartext_var()
 
 void programmtext::aktualisiere_geo()
 {
-    if(!aktualisieren_eingeschaltet)
+    if(!Aktualisieren_eingeschaltet)
     {
         return;
     }
     //Die Funktion "aktualisiere_klartext_var()" muss jeweils vorab aufgerufen worden sein!
 
     //CAD-Parameter ergänzen:
-    if(warnung_frDial == false)
+    if(Warnung_frDial == false)
     {
         QString abtyp = NICHT_DEFINIERT; //brauchen wir an dieser Stelle, damit der Wert später
                                          //beim Fräser-Abfahren verfügbar ist
         float fdm=0;                     //Fräser-Durchmesser
 
-        for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+        for(uint i=1 ; i<=Klartext.zeilenanzahl() ; i++)
         {
 
-            QString zeile = klartext.zeile(i), tmp;
+            QString zeile = Klartext.zeile(i), tmp;
 
             if(zeile.isEmpty())
             {
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
             {
                 punkt3d nullpunkt(0,0,0);
                 nullpunkt.set_linienbreite(15);
-                geo.add_punkt(nullpunkt);
+                Geo.add_punkt(nullpunkt);
 
                 rechteck3d rec;
                 rec.set_bezugspunkt(UNTEN_LINKS);
-                rec.set_einfuegepunkt(versatz_x,versatz_y,0);
+                rec.set_einfuegepunkt(Versatz_x,Versatz_y,0);
                 rec.set_laenge(text_mitte(zeile, LAENGE, ENDE_EINTRAG));
                 rec.set_breite(text_mitte(zeile, BREITE, ENDE_EINTRAG));
                 rec.set_farbe_fuellung(FARBE_GRAU);
-                geo.add_rechteck(rec);
+                Geo.add_rechteck(rec);
 
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(PROGRAMMENDE_DIALOG))
             {
-                geo.zeilenvorschub();
-            }else if(text.zeile(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
+                Geo.zeilenvorschub();
+            }else if(Text.at(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
             {
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(KOMMENTAR_DIALOG))
             {
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(KREISTASCHE_DIALOG))
             {
                 zylinder z;
                 punkt3d p3;
                 p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
                 p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
-                p3.set_z(werkstueckdicke);
+                p3.set_z(Wst_dicke);
                 z.set_mittelpunkt(p3);
                 z.set_hoehe(text_mitte(zeile, TASCHENTIEFE, ENDE_EINTRAG));
                 z.set_radius(text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG));
@@ -3129,7 +3123,7 @@ void programmtext::aktualisiere_geo()
                 {
                      z.set_farbe_fuellung(FARBE_BLAU);
                 }
-                geo.add_zylinder(z);
+                Geo.add_zylinder(z);
                 QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
                 if(ausr.toInt() == false)
                 {
@@ -3143,10 +3137,10 @@ void programmtext::aktualisiere_geo()
                     z.set_farbe_fuellung(FARBE_GRAU);
                     if(dmta > 0)
                     {
-                        geo.add_zylinder(z);
+                        Geo.add_zylinder(z);
                     }
                 }
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
             {
                 wuerfel wue;
@@ -3154,7 +3148,7 @@ void programmtext::aktualisiere_geo()
                 punkt3d p3;
                 p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
                 p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
-                p3.set_z(werkstueckdicke);
+                p3.set_z(Wst_dicke);
                 wue.set_einfuegepunkt(p3);
                 wue.set_laenge(text_mitte(zeile, TASCHENLAENGE, ENDE_EINTRAG));
                 wue.set_breite(text_mitte(zeile, TASCHENBREITE, ENDE_EINTRAG));
@@ -3178,7 +3172,7 @@ void programmtext::aktualisiere_geo()
                 {
                      wue.set_farbe_fuellung(FARBE_BLAU);
                 }
-                geo.add_wuerfel(wue);
+                Geo.add_wuerfel(wue);
                 QString ausr = text_mitte(zeile, AUSRAEUMEN, ENDE_EINTRAG);
                 if(ausr.toInt() == false)
                 {
@@ -3206,10 +3200,10 @@ void programmtext::aktualisiere_geo()
                     wue2.set_farbe_fuellung(FARBE_GRAU);
                     if(l>0 && b>0)
                     {
-                        geo.add_wuerfel(wue2);
+                        Geo.add_wuerfel(wue2);
                     }
                 }
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERAUFRUF_DIALOG))
             {
                 abtyp = text_mitte(zeile, ABFAHRTYP, ENDE_EINTRAG);
@@ -3220,7 +3214,7 @@ void programmtext::aktualisiere_geo()
                 startpDial.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
                 startpDial.set_z(text_mitte(zeile, POSITION_Z, ENDE_EINTRAG));
 
-                tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                tmp = text_mitte(Text.at(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
                 fdm = tmp.toFloat();
                 if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
                 {
@@ -3232,20 +3226,20 @@ void programmtext::aktualisiere_geo()
 
                 if(antyp == ANABFAHRTYP_KEIN)
                 {
-                    geo.add_punkt(startpDial);
+                    Geo.add_punkt(startpDial);
                 }else if(antyp == ANABFAHRTYP_GARADE)
                 {
-                    if(i+1 > klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
+                    if(i+1 > Klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
                     {   //kein Anfahrweg nötig
-                        geo.add_punkt(startpDial);
+                        Geo.add_punkt(startpDial);
                     }else
                     {
                         uint ii = i+1;
-                        QString zeile_dannach = klartext.zeile(ii);
-                        while(zeile_dannach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
+                        QString zeile_dannach = Klartext.zeile(ii);
+                        while(zeile_dannach.isEmpty()  &&  ii+1<=Klartext.zeilenanzahl()  )
                         {
                             ii++;
-                            zeile_dannach = klartext.zeile(ii);
+                            zeile_dannach = Klartext.zeile(ii);
                         }
                         if(zeile_dannach.contains(FRAESERGERADE_DIALOG))
                         {   //Anfahrweg ist Strecke
@@ -3264,11 +3258,11 @@ void programmtext::aktualisiere_geo()
                             s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
                             //Startpunkt in Z setzen:
                             punkt3d startpunkt = s.startp();
-                            startpunkt.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            startpunkt.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             s.set_start(startpunkt);
                             //Endpunkt setzen:
                             s.set_ende(startpDial);//Damit auch Z stimmt und weniger gerechent werden muss
-                            geo.add_strecke(s);
+                            Geo.add_strecke(s);
                         }else if(zeile_dannach.contains(FRAESERBOGEN_DIALOG))
                         {
                             punkt3d endpu;
@@ -3290,30 +3284,30 @@ void programmtext::aktualisiere_geo()
                             punkt3d startpu;
                             startpu.set_x(b.mittelpunkt().x());
                             startpu.set_y(b.mittelpunkt().y());
-                            startpu.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            startpu.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             strecke s;
                             s.set_start(startpu);
                             s.set_ende(startpDial);
                             s.drenen_um_endpunkt_2d(90, -bogriuzs);
-                            geo.add_strecke(s);
+                            Geo.add_strecke(s);
                         }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
                         {   //kein Anfahrweg nötig
-                            geo.add_punkt(startpDial);
+                            Geo.add_punkt(startpDial);
                         }
                     }
                 }else //antyp == ANABFAHRTYP_KREISBOGEN_LI oder ANABFAHRTYP_KREISBOGEN_RE
                 {
-                    if(i+1 > klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
+                    if(i+1 > Klartext.zeilenanzahl()  ) //Wenn es keine Folgepunkt gibt
                     {   //kein Anfahrweg nötig
-                        geo.add_punkt(startpDial);
+                        Geo.add_punkt(startpDial);
                     }else
                     {
                         uint ii = i+1;
-                        QString zeile_dannach = klartext.zeile(ii);
-                        while(zeile_dannach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
+                        QString zeile_dannach = Klartext.zeile(ii);
+                        while(zeile_dannach.isEmpty()  &&  ii+1<=Klartext.zeilenanzahl()  )
                         {
                             ii++;
-                            zeile_dannach = klartext.zeile(ii);
+                            zeile_dannach = Klartext.zeile(ii);
                         }
                         if(zeile_dannach.contains(FRAESERGERADE_DIALOG))
                         {
@@ -3324,7 +3318,7 @@ void programmtext::aktualisiere_geo()
                             strecke s;
                             s.set_start(startpDial);
                             s.set_ende(folgepunkt);
-                            tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                            tmp = text_mitte(Text.at(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
                             float fdm = tmp.toFloat();
                             if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
                             {
@@ -3345,12 +3339,12 @@ void programmtext::aktualisiere_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
                                 b.set_radius(fdm*2, true);
-                                geo.add_bogen(b);
+                                Geo.add_bogen(b);
                             }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                             {
                                 s.drenen_um_startpunkt_2d(90, false);
@@ -3358,12 +3352,12 @@ void programmtext::aktualisiere_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
                                 b.set_radius(fdm*2, false);
-                                geo.add_bogen(b);
+                                Geo.add_bogen(b);
                             }
                         }else if(zeile_dannach.contains(FRAESERBOGEN_DIALOG))
                         {
@@ -3390,7 +3384,7 @@ void programmtext::aktualisiere_geo()
                             mipu.set_x(b.mittelpunkt().x());
                             mipu.set_y(b.mittelpunkt().y());
                             s.set_ende(mipu);
-                            tmp = text_mitte(text.zeile(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
+                            tmp = text_mitte(Text.at(i), WKZ_DURCHMESSER, ENDE_EINTRAG);
                             float fdm = tmp.toFloat();
                             if(fdm == 0)//Fräser-DM kann 0 sein wenn z.B. ungültiges Werkzeug gewählt ist
                             {
@@ -3413,12 +3407,12 @@ void programmtext::aktualisiere_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
                                 b.set_radius(fdm*2, true);
-                                geo.add_bogen(b);
+                                Geo.add_bogen(b);
                             }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                             {
                                 if(uzs)
@@ -3430,45 +3424,45 @@ void programmtext::aktualisiere_geo()
                                 punkt3d p3;
                                 p3.set_x(s.startp().x());
                                 p3.set_y(s.startp().y());
-                                p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                                p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                                 bogen b;
                                 b.set_startpunkt(p3);
                                 b.set_endpunkt(startpDial);
                                 b.set_radius(fdm*2, false);
-                                geo.add_bogen(b);
+                                Geo.add_bogen(b);
                             }
                         }else if(zeile_dannach.contains(FRAESERABFAHREN_DIALOG))
                         {   //kein Anfahrweg nötig
-                            geo.add_punkt(startpDial);
+                            Geo.add_punkt(startpDial);
                         }
                     }
                 }
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERGERADE_DIALOG))
             {
                 punkt3d startpunkt, endpunkt;
-                endpunkt.set_x(text_mitte(klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
-                endpunkt.set_y(text_mitte(klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
-                endpunkt.set_z(text_mitte(klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
+                endpunkt.set_x(text_mitte(Klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
+                endpunkt.set_y(text_mitte(Klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
+                endpunkt.set_z(text_mitte(Klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
                 QString zeile_davor, zeile_danach;
                 if(i > 1)//wenn es Zeilen vorab gibt
                 {
                     uint ii = i-1;
-                    zeile_davor = klartext.zeile(ii);
+                    zeile_davor = Klartext.zeile(ii);
                     while(zeile_davor.isEmpty()  &&  ii-1>=1  )
                     {
                         ii--;
-                        zeile_davor = klartext.zeile(ii);
+                        zeile_davor = Klartext.zeile(ii);
                     }
                 }
-                if(i+1<=klartext.zeilenanzahl())//wenn es Zeilen dannach gibt
+                if(i+1<=Klartext.zeilenanzahl())//wenn es Zeilen dannach gibt
                 {
                      uint ii = i+1;
-                     zeile_danach = klartext.zeile(ii);
-                     while(zeile_danach.isEmpty()  &&  ii+1<=klartext.zeilenanzahl()  )
+                     zeile_danach = Klartext.zeile(ii);
+                     while(zeile_danach.isEmpty()  &&  ii+1<=Klartext.zeilenanzahl()  )
                      {
                          ii++;
-                         zeile_danach = klartext.zeile(ii);
+                         zeile_danach = Klartext.zeile(ii);
                      }
                 }
 
@@ -3494,7 +3488,7 @@ void programmtext::aktualisiere_geo()
                              p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
                              p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
                              s2.set_ende(p3);
-                             double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
+                             double rad_akt = text_mitte(Klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
                              strecke s3 = s;//s3 prüft, ob die Geraden in einer Linie zueinander liegen
                              strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
                              s3.set_laenge_2d(s.laenge2dim()+s2.laenge2dim(),sb3);
@@ -3546,15 +3540,15 @@ void programmtext::aktualisiere_geo()
                                  }
                                  //------------------------------------------------------------------------
 
-                                 geo.add_strecke(s);
-                                 geo.add_bogen(b);
+                                 Geo.add_strecke(s);
+                                 Geo.add_bogen(b);
                              }else
                              {
-                                 geo.add_strecke(s);
+                                 Geo.add_strecke(s);
                              }
                          }else
                          {
-                             geo.add_strecke(s);
+                             Geo.add_strecke(s);
                          }
                      }else
                      {
@@ -3564,7 +3558,7 @@ void programmtext::aktualisiere_geo()
                          strecke s;
                          s.set_start(startpunkt);
                          s.set_ende(endpunkt);
-                         geo.add_strecke(s);
+                         Geo.add_strecke(s);
                          QString msg;
                          msg  = "Achtung!\n";
                          msg += "Beginn der geraden Fraesbahn in Zeile ";
@@ -3584,13 +3578,13 @@ void programmtext::aktualisiere_geo()
                      s.set_start(startpunkt);
                      s.set_ende(endpunkt);
 
-                     uint ii = geo.get_aktuelle_zeile()-1;
-                     QString geo_zeile_davor = geo.get_text_zeilenweise().zeile(ii);
+                     uint ii = Geo.get_aktuelle_zeile()-1;
+                     QString geo_zeile_davor = Geo.get_text_zeilenweise().zeile(ii);
 
                      while(geo_zeile_davor==" "   &&  ii-1>=1  )
                      {
                          ii--;
-                         geo_zeile_davor = geo.get_text_zeilenweise().zeile(ii);
+                         geo_zeile_davor = Geo.get_text_zeilenweise().zeile(ii);
 
                      }
                      text_zeilenweise geo_zeile_davor_tz;
@@ -3652,10 +3646,10 @@ void programmtext::aktualisiere_geo()
                          {
                              strecke_bezugspunkt sb = strecke_bezugspunkt_ende;
                              s.set_laenge_2d(s.laenge2dim()-seite_b,sb);
-                             geo.add_strecke(s);
+                             Geo.add_strecke(s);
                          }else
                          {
-                             geo.add_strecke(s);
+                             Geo.add_strecke(s);
                          }
                      }else //Wenn der Vorgänger eine Gerade ist und der Nachfolger auch
                      {
@@ -3675,7 +3669,7 @@ void programmtext::aktualisiere_geo()
                          p3.set_y(text_mitte(zeile_danach, POSITION_Y, ENDE_EINTRAG));
                          p3.set_z(text_mitte(zeile_danach, POSITION_Z, ENDE_EINTRAG));
                          s2.set_ende(p3);
-                         double rad_akt = text_mitte(klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
+                         double rad_akt = text_mitte(Klartext.zeile(i), RADIUS, ENDE_EINTRAG).toDouble();
 
                          strecke s3 = s;
                          strecke_bezugspunkt sb3 = strecke_bezugspunkt_start;
@@ -3726,30 +3720,30 @@ void programmtext::aktualisiere_geo()
                              }
                              //------------------------------------------------------------------------
 
-                             geo.add_strecke(s);
-                             geo.add_bogen(b);
+                             Geo.add_strecke(s);
+                             Geo.add_bogen(b);
                          }else
                          {
-                             geo.add_strecke(s);
+                             Geo.add_strecke(s);
                          }
                      }
                 }
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERBOGEN_DIALOG))
             {
                 punkt3d startpunkt, endpunkt;
-                endpunkt.set_x(text_mitte(klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
-                endpunkt.set_y(text_mitte(klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
-                endpunkt.set_z(text_mitte(klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
+                endpunkt.set_x(text_mitte(Klartext.zeile(i), POSITION_X, ENDE_EINTRAG));
+                endpunkt.set_y(text_mitte(Klartext.zeile(i), POSITION_Y, ENDE_EINTRAG));
+                endpunkt.set_z(text_mitte(Klartext.zeile(i), POSITION_Z, ENDE_EINTRAG));
                 QString zeile_davor;
                 if(i > 1)//wenn es Zeilen vorab gibt
                 {
                     uint ii = i-1;
-                    zeile_davor = klartext.zeile(ii);
+                    zeile_davor = Klartext.zeile(ii);
                     while(zeile_davor.isEmpty()  &&  ii-1>=1  )
                     {
                         ii--;
-                        zeile_davor = klartext.zeile(ii);
+                        zeile_davor = Klartext.zeile(ii);
                     }
                 }
                 if(zeile_davor.contains(FRAESERAUFRUF_DIALOG)   ||  \
@@ -3786,24 +3780,24 @@ void programmtext::aktualisiere_geo()
                 b.set_startpunkt(startpunkt);
                 b.set_endpunkt(endpunkt);
                 b.set_radius(rad_akt, im_uzs);
-                geo.add_bogen(b);
-                geo.zeilenvorschub();
+                Geo.add_bogen(b);
+                Geo.zeilenvorschub();
             }else if(zeile.contains(FRAESERABFAHREN_DIALOG))
             {
                 QString zeile_davor, zeile_davor_davor;
                 if(i > 1)//wenn es Zeilen vorab gibt
                 {
                     uint ii = i-1;
-                    zeile_davor = klartext.zeile(ii);
+                    zeile_davor = Klartext.zeile(ii);
                     while(zeile_davor_davor.isEmpty()  &&  ii-1>=1  )
                     {
                         ii--;
                         if(zeile_davor.isEmpty())
                         {
-                            zeile_davor = klartext.zeile(ii);
+                            zeile_davor = Klartext.zeile(ii);
                         }else
                         {
-                            zeile_davor_davor = klartext.zeile(ii);
+                            zeile_davor_davor = Klartext.zeile(ii);
                         }
                     }
                 }
@@ -3818,14 +3812,14 @@ void programmtext::aktualisiere_geo()
 
                 if(zeile_davor.contains(FRAESERAUFRUF_DIALOG))
                 {
-                    geo.add_punkt(punkt_davor);
-                    geo.zeilenvorschub();
+                    Geo.add_punkt(punkt_davor);
+                    Geo.zeilenvorschub();
                     continue;
                 }
 
                 if(abtyp == ANABFAHRTYP_KEIN)
                 {
-                    geo.add_punkt(punkt_davor);
+                    Geo.add_punkt(punkt_davor);
                 }else if(abtyp == ANABFAHRTYP_GARADE)
                 {
                     if(zeile_davor.contains(FRAESERGERADE_DIALOG))
@@ -3840,11 +3834,11 @@ void programmtext::aktualisiere_geo()
                         s.set_laenge_2d(s.laenge2dim()+fdm*2, sb);
                         //Endpunkt in Z setzen:
                         punkt3d endpunkt = s.endp();
-                        endpunkt.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                        endpunkt.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                         s.set_ende(endpunkt);
                         //Startpunkt setzen:
                         s.set_start(punkt_davor);//Damit auch Z stimmt und weniger gerechent werden muss
-                        geo.add_strecke(s);
+                        Geo.add_strecke(s);
                     }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
                     {
                         bool bogriuzs;
@@ -3862,12 +3856,12 @@ void programmtext::aktualisiere_geo()
                         punkt3d endpu;
                         endpu.set_x(b.mittelpunkt().x());
                         endpu.set_y(b.mittelpunkt().y());
-                        endpu.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                        endpu.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                         strecke s;
                         s.set_start(punkt_davor);
                         s.set_ende(endpu);
                         s.drenen_um_startpunkt_2d(-90, -bogriuzs);
-                        geo.add_strecke(s);
+                        Geo.add_strecke(s);
                     }
                 }else //abtyp == ANABFAHRTYP_KREISBOGEN_LI oder ANABFAHRTYP_KREISBOGEN_RE
                 {
@@ -3889,12 +3883,12 @@ void programmtext::aktualisiere_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
                             b.set_radius(fdm*2, true);
-                            geo.add_bogen(b);
+                            Geo.add_bogen(b);
                         }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                         {
                             s.drenen_um_startpunkt_2d(90, true);
@@ -3902,12 +3896,12 @@ void programmtext::aktualisiere_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
                             b.set_radius(fdm*2, false);
-                            geo.add_bogen(b);
+                            Geo.add_bogen(b);
                         }
 
                     }else if(zeile_davor.contains(FRAESERBOGEN_DIALOG))
@@ -3944,12 +3938,12 @@ void programmtext::aktualisiere_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
                             b.set_radius(fdm*2, true);
-                            geo.add_bogen(b);
+                            Geo.add_bogen(b);
                         }else //if(antyp == ANABFAHRTYP_KREISBOGEN_LI)
                         {
                             if(uzs)
@@ -3961,41 +3955,41 @@ void programmtext::aktualisiere_geo()
                             punkt3d p3;
                             p3.set_x(s.startp().x());
                             p3.set_y(s.startp().y());
-                            p3.set_z(versatz_z + werkstueckdicke + sicherheitsabstand);
+                            p3.set_z(Versatz_z + Wst_dicke + Sicherheitsabstand);
                             bogen b;
                             b.set_startpunkt(punkt_davor);
                             b.set_endpunkt(p3);
                             b.set_radius(fdm*2, false);
-                            geo.add_bogen(b);
+                            Geo.add_bogen(b);
                         }
                     }
                 }
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(STRECKE))
             {
                 strecke s(zeile);
-                geo.add_strecke(s);
+                Geo.add_strecke(s);
 
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(KREIS))
             {
                 kreis k(zeile);
-                geo.add_kreis(k);
+                Geo.add_kreis(k);
 
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(BOGEN))
             {
                 bogen b(zeile);
-                geo.add_bogen(b);
+                Geo.add_bogen(b);
 
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(BOHREN_DIALOG))
             {
                 zylinder z;
                 punkt3d p3;
                 p3.set_x(text_mitte(zeile, POSITION_X, ENDE_EINTRAG));
                 p3.set_y(text_mitte(zeile, POSITION_Y, ENDE_EINTRAG));
-                p3.set_z(werkstueckdicke);
+                p3.set_z(Wst_dicke);
                 z.set_mittelpunkt(p3);
                 z.set_hoehe(text_mitte(zeile, BOHRTIEFE, ENDE_EINTRAG));
                 z.set_radius(text_mitte(zeile, DURCHMESSER, ENDE_EINTRAG));
@@ -4007,25 +4001,25 @@ void programmtext::aktualisiere_geo()
                 {
                      z.set_farbe_fuellung(FARBE_BLAU);
                 }
-                geo.add_zylinder(z);
+                Geo.add_zylinder(z);
 
                 strecke s;
                 p3.set_y(z.mitte3d().y() - z.radius() - 2);
                 s.set_start(p3);
                 p3.set_y(z.mitte3d().y() + z.radius() + 2);
                 s.set_ende(p3);
-                geo.add_strecke(s);
+                Geo.add_strecke(s);
 
                 s.drenen_um_mittelpunkt_2d(90,true);
-                geo.add_strecke(s);
+                Geo.add_strecke(s);
 
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(SCHLEIFELINEAR_DIALOG))
             {
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }else if(zeile.contains(SCHLEIFENENDE_DIALOG))
             {
-                geo.zeilenvorschub();
+                Geo.zeilenvorschub();
             }
         }
     }
@@ -4033,11 +4027,11 @@ void programmtext::aktualisiere_geo()
 
 void programmtext::aktualisiere_fraeserdarst()
 {
-    fraeserdarst.clear();
+    Fraeserdarst.clear();
     QString farbe = FARBE_BLAU;
-    for(uint i=1; i<=text.zeilenanzahl() ;i++)
+    for(uint i=1; i<=Text.count() ;i++)
     {
-        QString aktzei = klartext.zeile(i);
+        QString aktzei = Klartext.zeile(i);
         if(aktzei.contains(FRAESERAUFRUF_DIALOG))
         {
             punkt3d p;
@@ -4056,12 +4050,12 @@ void programmtext::aktualisiere_fraeserdarst()
                 k.set_farbe(farbe);
                 k.set_mittelpunkt(p);
                 k.set_radius(wkzdm/2);
-                fraeserdarst.add_kreis(k);
+                Fraeserdarst.add_kreis(k);
             }else if(bankor == BAHNRORREKTUR_links)
             {
-                if(i+1 <=text.zeilenanzahl())
+                if(i+1 <=Text.count())
                 {
-                    QString folgzei = klartext.zeile(i+1);
+                    QString folgzei = Klartext.zeile(i+1);
                     if(folgzei.contains(FRAESERGERADE_DIALOG))
                     {
                         punkt3d p2;
@@ -4078,7 +4072,7 @@ void programmtext::aktualisiere_fraeserdarst()
                         k.set_farbe(farbe);
                         k.set_mittelpunkt(s.endp());
                         k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
+                        Fraeserdarst.add_kreis(k);
                     }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
                     {
                         punkt3d p2;
@@ -4117,14 +4111,14 @@ void programmtext::aktualisiere_fraeserdarst()
                             k.set_mittelpunkt(s.endp());
                         }
                         k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
+                        Fraeserdarst.add_kreis(k);
                     }
                 }
             }else //if(bankor == BAHNRORREKTUR_rechts)
             {
-                if(i+1 <=text.zeilenanzahl())
+                if(i+1 <=Text.count())
                 {
-                    QString folgzei = klartext.zeile(i+1);
+                    QString folgzei = Klartext.zeile(i+1);
                     if(folgzei.contains(FRAESERGERADE_DIALOG))
                     {
                         punkt3d p2;
@@ -4141,7 +4135,7 @@ void programmtext::aktualisiere_fraeserdarst()
                         k.set_farbe(farbe);
                         k.set_mittelpunkt(s.endp());
                         k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
+                        Fraeserdarst.add_kreis(k);
                     }else if(folgzei.contains(FRAESERBOGEN_DIALOG))
                     {
                         punkt3d p2;
@@ -4180,22 +4174,22 @@ void programmtext::aktualisiere_fraeserdarst()
                             k.set_mittelpunkt(s.startp());
                         }
                         k.set_radius(wkzdm/2);
-                        fraeserdarst.add_kreis(k);
+                        Fraeserdarst.add_kreis(k);
                     }
                 }
             }
         }
-        fraeserdarst.zeilenvorschub();
+        Fraeserdarst.zeilenvorschub();
     }
 }
 
 void programmtext::aktualisiere_fkon()
 {
-    if(!aktualisieren_eingeschaltet)
+    if(!Aktualisieren_eingeschaltet)
     {
         return;
     }
-    if(!aktualisieren_fkon_eingeschaltet)
+    if(!Aktualisieren_fkon_eingeschaltet)
     {
         return;
     }
@@ -4205,9 +4199,9 @@ void programmtext::aktualisiere_fkon()
     double wkz_dm = 0;
     double kantendicke = 0;
 
-    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
+    for(uint i=1; i<=Klartext.zeilenanzahl() ;i++)
     {
-        QString zeile = klartext.zeile(i);
+        QString zeile = Klartext.zeile(i);
 
         //----------------------------------------
         if(zeile.contains(FRAESERAUFRUF_DIALOG))
@@ -4222,28 +4216,28 @@ void programmtext::aktualisiere_fkon()
 
         if(zeile.isEmpty())
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(PROGRAMMKOPF_DIALOG))
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(PROGRAMMENDE_DIALOG))
         {
-            fkon.zeilenvorschub();
-        }else if(text.zeile(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
+            Fkon.zeilenvorschub();
+        }else if(Text.at(i).contains(VARIABLE_DIALOG))//es gibt keine Variablen im Klartext
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(KOMMENTAR_DIALOG))
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(KREISTASCHE_DIALOG))
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(RECHTECKTASCHE_DIALOG))
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(BOHREN_DIALOG))
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else if(zeile.contains(FRAESERAUFRUF_DIALOG)  || \
                  zeile.contains(FRAESERGERADE_DIALOG)  || \
                  zeile.contains(FRAESERBOGEN_DIALOG)   || \
@@ -4252,7 +4246,7 @@ void programmtext::aktualisiere_fkon()
 
             text_zeilenweise geo_zeile;
             geo_zeile.set_trennzeichen(TRZ_EL_);
-            geo_zeile.set_text(geo.get_text_zeilenweise().zeile(i));
+            geo_zeile.set_text(Geo.get_text_zeilenweise().zeile(i));
             for(uint ii=1; ii<=geo_zeile.zeilenanzahl() ;ii++)
             {
                 text_zeilenweise geo_element;
@@ -4268,13 +4262,13 @@ void programmtext::aktualisiere_fkon()
                         strecke s(geo_element.get_text());
                         s.set_farbe(FARBE_BLAU);
                         s.set_stil(STIL_GEPUNKTET);
-                        fkon.add_strecke(s);
+                        Fkon.add_strecke(s);
                     }else if(geo_element.get_text().contains(BOGEN))
                     {
                         bogen b(geo_element.get_text());
                         b.set_farbe(FARBE_BLAU);
                         b.set_stil(STIL_GEPUNKTET);
-                        fkon.add_bogen(b);
+                        Fkon.add_bogen(b);
                     }
                 }else if(bahnkorr == BAHNRORREKTUR_links)
                 {
@@ -4303,7 +4297,7 @@ void programmtext::aktualisiere_fkon()
                         s.set_ende(ep);
                         s.set_farbe(FARBE_BLAU);
                         s.set_stil(STIL_GEPUNKTET);
-                        fkon.add_strecke(s);
+                        Fkon.add_strecke(s);
                     }else if(geo_element.get_text().contains(BOGEN))
                     {
                         bogen b(geo_element.get_text());
@@ -4328,7 +4322,7 @@ void programmtext::aktualisiere_fkon()
                             b.set_radius(rad_neu, b.im_uzs());
                             b.set_farbe(FARBE_BLAU);
                             b.set_stil(STIL_GEPUNKTET);
-                            fkon.add_bogen(b);
+                            Fkon.add_bogen(b);
                         }else
                         {
                             double rad_neu = b.rad() - versatz;
@@ -4352,7 +4346,7 @@ void programmtext::aktualisiere_fkon()
                                 b.set_radius(rad_neu, b.im_uzs());
                                 b.set_farbe(FARBE_BLAU);
                                 b.set_stil(STIL_GEPUNKTET);
-                                fkon.add_bogen(b);
+                                Fkon.add_bogen(b);
                             }
                         }
 
@@ -4385,7 +4379,7 @@ void programmtext::aktualisiere_fkon()
                         s.set_ende(ep);
                         s.set_farbe(FARBE_BLAU);
                         s.set_stil(STIL_GEPUNKTET);
-                        fkon.add_strecke(s);
+                        Fkon.add_strecke(s);
                     }else if(geo_element.get_text().contains(BOGEN))
                     {
                         bogen b(geo_element.get_text());
@@ -4412,7 +4406,7 @@ void programmtext::aktualisiere_fkon()
                                 b.set_radius(rad_neu, b.im_uzs());
                                 b.set_farbe(FARBE_BLAU);
                                 b.set_stil(STIL_GEPUNKTET);
-                                fkon.add_bogen(b);
+                                Fkon.add_bogen(b);
                             }
                         }else
                         {
@@ -4435,7 +4429,7 @@ void programmtext::aktualisiere_fkon()
                             b.set_radius(rad_neu, b.im_uzs());
                             b.set_farbe(FARBE_BLAU);
                             b.set_stil(STIL_GEPUNKTET);
-                            fkon.add_bogen(b);
+                            Fkon.add_bogen(b);
                         }
                     }
 
@@ -4445,10 +4439,10 @@ void programmtext::aktualisiere_fkon()
 
                 }
             }
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }else
         {
-            fkon.zeilenvorschub();
+            Fkon.zeilenvorschub();
         }
     }
 
@@ -4458,18 +4452,18 @@ void programmtext::aktualisiere_fkon()
     tabelle_tz3 tab_fkon;
     tab_fkon.set_trennzeichen_zeilen('\n');
     tab_fkon.set_trennzeichen_spalten(TRZ_EL_);//Bogen, Strecke...
-    tab_fkon.set_text(fkon.get_text());
-    uint anz_faufruf = 0;
-    uint anz_fabfahr = 0;
+    tab_fkon.set_text(Fkon.get_text());
+    uint Anz_faufruf = 0;
+    uint Anz_fabfahr = 0;
 
-    for(uint i=1; i<=klartext.zeilenanzahl() ;i++)
+    for(uint i=1; i<=Klartext.zeilenanzahl() ;i++)
     {
-        QString zeile = klartext.zeile(i);
+        QString zeile = Klartext.zeile(i);
 
         if(zeile.contains(FRAESERABFAHREN_DIALOG))
         {
-            anz_fabfahr = 0;
-            anz_faufruf = 0;
+            Anz_fabfahr = 0;
+            Anz_faufruf = 0;
         }
         //Prüfen, ob Anfahrty = kein gesetzt ist!!
         if(zeile.contains(FRAESERAUFRUF_DIALOG))
@@ -4477,14 +4471,14 @@ void programmtext::aktualisiere_fkon()
             QString anftyp = text_mitte(zeile, ANFAHRTYP, ENDE_EINTRAG);
             if(anftyp == ANABFAHRTYP_KEIN)
             {
-                anz_faufruf++;
-                while(text.zeile(i+1).at(0)=='/'  &&  \
-                      text.zeile(i+1).at(1)=='/'  &&  \
-                      i+1 < text.zeilenanzahl())
+                Anz_faufruf++;
+                while(Text.at(i+1).at(0)=='/'  &&  \
+                      Text.at(i+1).at(1)=='/'  &&  \
+                      i+1 < Text.count())
                 {
                     i++;
                 }
-                if(i+1 < text.zeilenanzahl())
+                if(i+1 < Text.count())
                 {
                     i++;
                 }
@@ -4493,7 +4487,7 @@ void programmtext::aktualisiere_fkon()
         }
 
         //die aktuelle Zeile mit der Zeile davor verbinden:
-        if(anz_faufruf > anz_fabfahr)
+        if(Anz_faufruf > Anz_fabfahr)
         {
             for(uint ii=1 ; ii<tab_fkon.get_spaltenzahl(i) ; ii++)//Spaltenzahl ist aus einem mir noch nicht bekannten Grund um 1 zu groß!!! desshalb < und nicht <=
             {
@@ -4509,27 +4503,27 @@ void programmtext::aktualisiere_fkon()
         //----------------------------------------
         if(zeile.contains(FRAESERAUFRUF_DIALOG))
         {
-            anz_faufruf++;
+            Anz_faufruf++;
         }
     }
 
 
     //Daten in fkon zurückspeichern
-    fkon.set_text(tab_fkon.get_text());
+    Fkon.set_text(tab_fkon.get_text());
 
 }
 
 void programmtext::aktualisiere_anzeigetext()
 {
-    if(!aktualisieren_eingeschaltet)
+    if(!Aktualisieren_eingeschaltet)
     {
         return;
     }
 
-    anzeigetext.clear();
-    for(uint i=1 ; i<=text.zeilenanzahl() ; i++)
+    Anzeigetext.clear();
+    for(uint i=1 ; i<=Text.count() ; i++)
     {
-        QString zeile = text.zeile(i);
+        QString zeile = Text.at(i);
         QString tmp;
         tmp = QString::fromStdString(int_to_string(i));
         tmp += ": ";
@@ -4625,27 +4619,27 @@ void programmtext::aktualisiere_anzeigetext()
         }
         if(i==1)
         {
-            anzeigetext.set_text(tmp);
+            Anzeigetext.set_text(tmp);
         }else
         {
-            anzeigetext.zeile_anhaengen(tmp);
+            Anzeigetext.zeile_anhaengen(tmp);
         }
     }
 }
 
 void programmtext::aktualisiere_schleife_linear()
 {
-    if(!aktualisieren_eingeschaltet)
+    if(!Aktualisieren_eingeschaltet)
     {
         return;
     }
-    if(warnung_frDial == false)
+    if(Warnung_frDial == false)
     {
         text_zeilenweise index_beg;
         text_zeilenweise index_end;
-        for(uint i=1 ; i<=klartext.zeilenanzahl() ; i++)
+        for(uint i=1 ; i<=Klartext.zeilenanzahl() ; i++)
         {
-            QString zeile = klartext.zeile(i);
+            QString zeile = Klartext.zeile(i);
             if(zeile.contains(SCHLEIFELINEAR_DIALOG))
             {
                 index_beg.zeile_anhaengen(int_to_qstring(i));
@@ -4660,7 +4654,7 @@ void programmtext::aktualisiere_schleife_linear()
             {
                 break;
             }
-            QString zeile = klartext.zeile(index_beg.zeile(i).toInt());
+            QString zeile = Klartext.zeile(index_beg.zeile(i).toInt());
             uint anzx = text_mitte(zeile, ANZ_X, ENDE_EINTRAG).toInt();
             uint anzy = text_mitte(zeile, ANZ_Y, ENDE_EINTRAG).toInt();
             double versx = text_mitte(zeile, VERSATZ_X, ENDE_EINTRAG).toDouble();
@@ -4671,7 +4665,7 @@ void programmtext::aktualisiere_schleife_linear()
             int ibeg = index_beg.zeile(i).toInt();
             int iend = index_end.zeile(i).toInt();
             int zeilenanz = iend - ibeg - 1;
-            zeilen.set_text(klartext.zeilen(ibeg+1,zeilenanz));
+            zeilen.set_text(Klartext.zeilen(ibeg+1,zeilenanz));
             int fehlerzeile = 0;
             for(uint ii=1; ii<=zeilen.zeilenanzahl() ;ii++)
             {
@@ -4696,7 +4690,7 @@ void programmtext::aktualisiere_schleife_linear()
                 mb.exec();
                 continue;
             }
-            geometrietext tmpgeo = geo;            
+            geometrietext tmpgeo = Geo;
 
             for(uint ix=1; ix<=anzx ;ix++)//Aktuelle Schleife in X durchlaufen
             {
@@ -4710,7 +4704,7 @@ void programmtext::aktualisiere_schleife_linear()
                         //Die originale Position nicht noch einmal anfügen
                     }
                     //geo ergänzen:
-                    text_zeilenweise tzgeo = geo.get_text_zeilenweise();
+                    text_zeilenweise tzgeo = Geo.get_text_zeilenweise();
                     for(uint igeo=0; igeo<=zeilenanz ;igeo++)//Die Geometrie-Zeilen durchgehen
                     {
                         uint aktzei = ibeg + igeo;
@@ -4766,7 +4760,7 @@ void programmtext::aktualisiere_schleife_linear()
                 }
             }
             //Änderungen zurückspeichern:
-            geo = tmpgeo;
+            Geo = tmpgeo;
         }
 
     }
@@ -4774,12 +4768,12 @@ void programmtext::aktualisiere_schleife_linear()
 
 void programmtext::aktualisiere_min_max()
 {
-    min_x = 0;
-    min_y = 0;
-    max_x = 0;
-    max_y = 0;
+    Min_x = 0;
+    Min_y = 0;
+    Max_x = 0;
+    Max_y = 0;
     //min und max berechnen:
-    text_zeilenweise geotext = geo.get_text_zeilenweise();
+    text_zeilenweise geotext = Geo.get_text_zeilenweise();
     for(uint i=1;i<=geotext.zeilenanzahl();i++)
     {
         text_zeilenweise spalten;
@@ -4796,133 +4790,133 @@ void programmtext::aktualisiere_min_max()
             {
                 double x = element.zeile(2).toDouble();
                 double y = element.zeile(3).toDouble();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(STRECKE))
             {
                 double x = element.zeile(2).toDouble();
                 double y = element.zeile(3).toDouble();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = element.zeile(5).toDouble();
                 y = element.zeile(6).toDouble();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(BOGEN))
             {
                 double x = element.zeile(2).toDouble();
                 double y = element.zeile(3).toDouble();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = element.zeile(5).toDouble();
                 y = element.zeile(6).toDouble();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(KREIS))
             {
                 double rad = element.zeile(5).toDouble();
                 double x = element.zeile(2).toDouble()-rad;
                 double y = element.zeile(3).toDouble()-rad;
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
+                    Min_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
+                    Min_y = y;
                 }
                 x = x+rad*2;
                 y = y+rad*2;
-                if(x > max_x)
+                if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y > max_y)
+                if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(ZYLINDER))
             {
                 double rad = element.zeile(5).toDouble();
                 double x = element.zeile(2).toDouble()-rad;
                 double y = element.zeile(3).toDouble()-rad;
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
+                    Min_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
+                    Min_y = y;
                 }
                 x = x+rad*2;
                 y = y+rad*2;
-                if(x > max_x)
+                if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y > max_y)
+                if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(RECHTECK3D))
             {
@@ -4938,67 +4932,67 @@ void programmtext::aktualisiere_min_max()
 
                 double x = r.unl(false).x();
                 double y = r.unl(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.unr(false).x();
                 y = r.unr(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.obl(false).x();
                 y = r.obl(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.obr(false).x();
                 y = r.obr(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }else if(element.get_text().contains(WUERFEL))
             {
@@ -5014,67 +5008,67 @@ void programmtext::aktualisiere_min_max()
 
                 double x = r.unl(false).x();
                 double y = r.unl(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.unr(false).x();
                 y = r.unr(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.obl(false).x();
                 y = r.obl(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
                 x = r.obr(false).x();
                 y = r.obr(false).y();
-                if(x < min_x)
+                if(x < Min_x)
                 {
-                    min_x = x;
-                }else if(x > max_x)
+                    Min_x = x;
+                }else if(x > Max_x)
                 {
-                    max_x = x;
+                    Max_x = x;
                 }
-                if(y < min_y)
+                if(y < Min_y)
                 {
-                    min_y = y;
-                }else if(y > max_y)
+                    Min_y = y;
+                }else if(y > Max_y)
                 {
-                    max_y = y;
+                    Max_y = y;
                 }
             }
         }

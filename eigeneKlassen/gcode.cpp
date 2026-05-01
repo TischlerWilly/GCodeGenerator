@@ -617,7 +617,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         punkt3d startpunkt;
         startpunkt.set_x(text_mitte(zeile_klartext, POSITION_X, ENDE_EINTRAG).toDouble() + ax);
         startpunkt.set_y(text_mitte(zeile_klartext, POSITION_Y, ENDE_EINTRAG).toDouble() + ay);
-        startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+        startpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
         gc += "G0 X";
         gc += double_to_qstring(runden(startpunkt.x(),2));
         gc += " Y";
@@ -629,7 +629,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
 
         if(boti < 0)
         {
-            boti =t.get_werkstueckdicke() - boti; //z.B. boti == -2 --> 19 - -2 == 19+2 == 21
+            boti =t.wst_dicke() - boti; //z.B. boti == -2 --> 19 - -2 == 19+2 == 21
         }
         if(zustellmass <= 0)
         {
@@ -654,7 +654,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         double z;
         QString ausfahren;
         ausfahren += "G1 Z";
-        ausfahren += double_to_qstring(runden(t.get_werkstueckdicke()+2,2));
+        ausfahren += double_to_qstring(runden(t.wst_dicke()+2,2));
         ausfahren += " F";
         ausfahren += double_to_qstring(eintauchvorschub);
         ausfahren += "\n";
@@ -662,7 +662,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         if(boti > anboti + reboti)
         {
             //Anbohren:
-            z =t.get_werkstueckdicke() - anboti;
+            z =t.wst_dicke() - anboti;
             gc += "G1 Z";
             gc += double_to_qstring(runden(z,2));
             gc += " F";
@@ -680,7 +680,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
                 while(restmass > 0)
                 {
                     //Zustellen:
-                    z =t.get_werkstueckdicke() - boti + reboti + restmass;
+                    z =t.wst_dicke() - boti + reboti + restmass;
                     gc += "G1 Z";
                     gc += double_to_qstring(runden(z,2));
                     gc += " F";
@@ -691,7 +691,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
                     restmass = restmass - zustellmass;
                 }
                 //letzte Zustellung:
-                z =t.get_werkstueckdicke() - boti + reboti;
+                z =t.wst_dicke() - boti + reboti;
                 gc += "G1 Z";
                 gc += double_to_qstring(runden(z,2));
                 gc += " F";
@@ -701,7 +701,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
                 gc += ausfahren;
 
                 //Restborung:
-                z =t.get_werkstueckdicke() - boti;
+                z =t.wst_dicke() - boti;
                 gc += "G1 Z";
                 gc += double_to_qstring(runden(z,2));
                 gc += " F";
@@ -718,7 +718,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
                 while(restmass > 0)
                 {
                     //Zustellen:
-                    z =t.get_werkstueckdicke() - boti + reboti + restmass;
+                    z =t.wst_dicke() - boti + reboti + restmass;
                     gc += "G1 Z";
                     gc += double_to_qstring(runden(z,2));
                     gc += " F";
@@ -729,7 +729,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
                     restmass = restmass - zustellmass;
                 }
                 //Restborung:
-                z =t.get_werkstueckdicke() - boti;
+                z =t.wst_dicke() - boti;
                 gc += "G1 Z";
                 gc += double_to_qstring(runden(z,2));
                 gc += " F";
@@ -742,7 +742,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         {
             //heißt keine Zustellungen:
             //Anbohren:
-            z =t.get_werkstueckdicke() - anboti;
+            z =t.wst_dicke() - anboti;
             gc += "G1 Z";
             gc += double_to_qstring(runden(z,2));
             gc += " F";
@@ -753,7 +753,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
             if(reboti > 0)
             {
                 //Restborung:
-                z =t.get_werkstueckdicke() - boti;
+                z =t.wst_dicke() - boti;
                 gc += "G1 Z";
                 gc += double_to_qstring(runden(z,2));
                 gc += " F";
@@ -766,7 +766,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         {
             //heißt keine Zustellungen und kein definiertes Restbohrmaß:
             //Anbohren:
-            z =t.get_werkstueckdicke() - anboti;
+            z =t.wst_dicke() - anboti;
             gc += "G1 Z";
             gc += double_to_qstring(runden(z,2));
             gc += " F";
@@ -775,7 +775,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
             gc += "\n";
             gc += ausfahren;
             //Restborung:
-            z =t.get_werkstueckdicke() - boti;
+            z =t.wst_dicke() - boti;
             gc += "G1 Z";
             gc += double_to_qstring(runden(z,2));
             gc += " F";
@@ -787,7 +787,7 @@ QString gcode::get_bohrung(QString zeile_klartext, QString *fehlertext, double a
         {
             //heiß Bohrung in einem Zug:
             //Restborung:
-            z =t.get_werkstueckdicke() - boti;
+            z =t.wst_dicke() - boti;
             gc += "G1 Z";
             gc += double_to_qstring(runden(z,2));
             gc += " F";
@@ -879,7 +879,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
             if(zustellmass > 0)
             {
                 //Gesamttiefe ermitteln:
-                double tiefe_min =t.get_werkstueckdicke();
+                double tiefe_min =t.wst_dicke();
                 for(uint ii=i ; \
                     ii<=klartext.zeilenanzahl() && !klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG); \
                     ii++)
@@ -890,7 +890,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                         tiefe_min = tmp;
                     }
                 }
-                double fraestiefe_max =t.get_werkstueckdicke()- tiefe_min;
+                double fraestiefe_max =t.wst_dicke()- tiefe_min;
                 double verschiebung_z = fraestiefe_max - zustellmass;
 
                 for(uint ii=i ; \
@@ -925,7 +925,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                                 punkt3d startpunkt;
                                 startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
                                 startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
-                                startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                                startpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
                                 gc += "G0 X";
                                 gc += double_to_qstring(runden(startpunkt.x(),2));
                                 gc += " Y";
@@ -947,7 +947,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                                 punkt3d startpunkt;
                                 startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
                                 startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
-                                startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                                startpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
                                 gc += "G0 X";
                                 gc += double_to_qstring(runden(startpunkt.x(),2));
                                 gc += " Y";
@@ -1110,7 +1110,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                     }else if(klartext.zeile(ii).contains(FRAESERABFAHREN_DIALOG))
                     {
                         punkt3d endpunkt;
-                        endpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                        endpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
 
                         if(abfahrtyp == ANABFAHRTYP_KEIN)
                         {
@@ -1121,7 +1121,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                             gc += "\n";
                         }else
                         {
-                            QString zeile_fkon =t.get_text_zeilenweise().zeile(ii);
+                            QString zeile_fkon =t.text().at(ii);
                             text_zeilenweise fkon_tz;
                             fkon_tz.set_trennzeichen(TRZ_EL_);
                             fkon_tz.set_text(zeile_fkon);
@@ -1203,7 +1203,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                     punkt3d startpunkt;
                     startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
                     startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
-                    startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                    startpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
                     gc += "G0 X";
                     gc += double_to_qstring(runden(startpunkt.x(),2));
                     gc += " Y";
@@ -1225,7 +1225,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
                     punkt3d startpunkt;
                     startpunkt.set_x(geoelement2.zeile(2).toDouble() + ax);
                     startpunkt.set_y(geoelement2.zeile(3).toDouble() + ay);
-                    startpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+                    startpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
                     gc += "G0 X";
                     gc += double_to_qstring(runden(startpunkt.x(),2));
                     gc += " Y";
@@ -1391,7 +1391,7 @@ QString gcode::get_fkon(text_zeilenweise klartext, geometrietext fkon,\
         {
             gc += textzeile_als_kommentar(zeile);
             punkt3d endpunkt;
-            endpunkt.set_z(t.get_werkstueckdicke() +t.get_sicherheitsabstand());
+            endpunkt.set_z(t.wst_dicke() +t.get_sicherheitsabstand());
 
             if(abfahrtyp == ANABFAHRTYP_KEIN)
             {

@@ -52,7 +52,8 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../../eigeneKlassen/text_zw.cpp \
+SOURCES       = ../../eigeneKlassen/indexhistory.cpp \
+		../../eigeneKlassen/text_zw.cpp \
 		../../mainwindow.cpp \
 		../../main.cpp \
 		../../Dialoge/dialog_werkzeug.cpp \
@@ -102,7 +103,6 @@ SOURCES       = ../../eigeneKlassen/text_zw.cpp \
 		../../Dialoge/dialog_bogen.cpp \
 		../../Dialoge/dialog_bohren.cpp \
 		../../eigeneKlassen/programmtexte.cpp \
-		../../eigeneKlassen/indexhisory.cpp \
 		../../Dialoge/dialog_schleife_linear.cpp \
 		../../Dialoge/dialog_schleifenende.cpp \
 		../../eigeneKlassen/gcode.cpp moc_mainwindow.cpp \
@@ -128,7 +128,8 @@ SOURCES       = ../../eigeneKlassen/text_zw.cpp \
 		moc_dialog_bohren.cpp \
 		moc_dialog_schleife_linear.cpp \
 		moc_dialog_schleifenende.cpp
-OBJECTS       = text_zw.o \
+OBJECTS       = indexhistory.o \
+		text_zw.o \
 		mainwindow.o \
 		main.o \
 		dialog_werkzeug.o \
@@ -178,7 +179,6 @@ OBJECTS       = text_zw.o \
 		dialog_bogen.o \
 		dialog_bohren.o \
 		programmtexte.o \
-		indexhisory.o \
 		dialog_schleife_linear.o \
 		dialog_schleifenende.o \
 		gcode.o \
@@ -440,7 +440,8 @@ DIST          = /home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/exceptions.prf \
 		/home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/yacc.prf \
 		/home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/lex.prf \
-		../../../../GCodeGenerator.pro ../../eigeneKlassen/text_zw.h \
+		../../../../GCodeGenerator.pro ../../eigeneKlassen/indexhistory.h \
+		../../eigeneKlassen/text_zw.h \
 		../../mainwindow.h \
 		../../Dialoge/dialog_werkzeug.h \
 		../../Dialoge/dialog_variablenwerte_anzeigen.h \
@@ -494,11 +495,11 @@ DIST          = /home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Dialoge/dialog_bogen.h \
 		../../Dialoge/dialog_bohren.h \
 		../../eigeneKlassen/programmtexte.h \
-		../../eigeneKlassen/indexhisory.h \
 		../../Dialoge/dialog_schleife_linear.h \
 		../../Dialoge/dialog_schleifenende.h \
 		../../eigeneKlassen/gcode.h \
-		../../eigeneDefines/defines_urls.h ../../eigeneKlassen/text_zw.cpp \
+		../../eigeneDefines/defines_urls.h ../../eigeneKlassen/indexhistory.cpp \
+		../../eigeneKlassen/text_zw.cpp \
 		../../mainwindow.cpp \
 		../../main.cpp \
 		../../Dialoge/dialog_werkzeug.cpp \
@@ -548,7 +549,6 @@ DIST          = /home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Dialoge/dialog_bogen.cpp \
 		../../Dialoge/dialog_bohren.cpp \
 		../../eigeneKlassen/programmtexte.cpp \
-		../../eigeneKlassen/indexhisory.cpp \
 		../../Dialoge/dialog_schleife_linear.cpp \
 		../../Dialoge/dialog_schleifenende.cpp \
 		../../eigeneKlassen/gcode.cpp
@@ -1057,8 +1057,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /home/oliver/Qt/6.10.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../eigeneKlassen/text_zw.h ../../mainwindow.h ../../Dialoge/dialog_werkzeug.h ../../Dialoge/dialog_variablenwerte_anzeigen.h ../../Dialoge/dialog_variable.h ../../Dialoge/dialog_settings.h ../../Dialoge/dialog_rechtecktasche.h ../../Dialoge/dialog_programmkopf.h ../../Dialoge/dialog_programmende.h ../../Dialoge/dialog_kreistasche.h ../../Dialoge/dialog_kommentar.h ../../Dialoge/dialog_fraeser_gerade.h ../../Dialoge/dialog_fraeser_bogen.h ../../Dialoge/dialog_fraeser_aufruf.h ../../Dialoge/dialog_fraeser_abfahren.h ../../eigeneFunktionen/myfunktion.h ../../eigeneKlassen/werkzeug.h ../../eigeneKlassen/wenndannsonst.h ../../eigeneKlassen/vorschau.h ../../eigeneKlassen/undo_redo_wkz.h ../../eigeneKlassen/undo_redo.h ../../eigeneKlassen/text_zeilenweise.h ../../eigeneKlassen/rechtecktasche.h ../../eigeneKlassen/rechteck.h ../../eigeneKlassen/programmtext.h ../../eigeneKlassen/formel.h ../../eigeneStruncts/punkt.h ../../myDefines.h ../../eigeneFunktionen/geometrie.h ../../eigeneFunktionen/umwandeln.h ../../eigeneFunktionen/text.h ../../eigeneFunktionen/runden.h ../../eigeneMakros/makro_geometrie.h ../../ToDo.h ../../eigeneKlassen/geometrietext.h ../../eigeneDefines/defines_geometrie.h ../../eigeneKlassen/punkt3d.h ../../eigeneKlassen/strecke.h ../../eigeneKlassen/bogen.h ../../eigeneKlassen/punkt2d.h ../../Dialoge/dialog_programmlisten.h ../../eigeneKlassen/kreis.h ../../eigeneKlassen/darstellungsatribute.h ../../eigeneKlassen/zylinder.h ../../eigeneKlassen/rechteck3d.h ../../eigeneKlassen/wuerfel.h ../../eigeneKlassen/tabelle_tz3.h ../../eigeneKlassen/letzte_dateien.h ../../Dialoge/dialog_import_ggf.h ../../Dialoge/dialog_kreis.h ../../Dialoge/dialog_strecke.h ../../Dialoge/dialog_bogen.h ../../Dialoge/dialog_bohren.h ../../eigeneKlassen/programmtexte.h ../../eigeneKlassen/indexhisory.h ../../Dialoge/dialog_schleife_linear.h ../../Dialoge/dialog_schleifenende.h ../../eigeneKlassen/gcode.h ../../eigeneDefines/defines_urls.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../eigeneKlassen/text_zw.cpp ../../mainwindow.cpp ../../main.cpp ../../Dialoge/dialog_werkzeug.cpp ../../Dialoge/dialog_variablenwerte_anzeigen.cpp ../../Dialoge/dialog_variable.cpp ../../Dialoge/dialog_settings.cpp ../../Dialoge/dialog_rechtecktasche.cpp ../../Dialoge/dialog_programmkopf.cpp ../../Dialoge/dialog_programmende.cpp ../../Dialoge/dialog_kreistasche.cpp ../../Dialoge/dialog_kommentar.cpp ../../Dialoge/dialog_fraeser_gerade.cpp ../../Dialoge/dialog_fraeser_bogen.cpp ../../Dialoge/dialog_fraeser_aufruf.cpp ../../Dialoge/dialog_fraeser_abfahren.cpp ../../eigeneFunktionen/myfunktion.cpp ../../eigeneKlassen/werkzeug.cpp ../../eigeneKlassen/wenndannsonst.cpp ../../eigeneKlassen/vorschau.cpp ../../eigeneKlassen/undo_redo_wkz.cpp ../../eigeneKlassen/undo_redo.cpp ../../eigeneKlassen/text_zeilenweise.cpp ../../eigeneKlassen/rechtecktasche.cpp ../../eigeneKlassen/rechteck.cpp ../../eigeneKlassen/programmtext.cpp ../../eigeneKlassen/formel.cpp ../../eigeneFunktionen/geometrie.cpp ../../eigeneFunktionen/umwandeln.cpp ../../eigeneFunktionen/text.cpp ../../eigeneFunktionen/runden.cpp ../../eigeneKlassen/geometrietext.cpp ../../eigeneKlassen/punkt3d.cpp ../../eigeneKlassen/strecke.cpp ../../eigeneKlassen/bogen.cpp ../../eigeneKlassen/punkt2d.cpp ../../Dialoge/dialog_programmlisten.cpp ../../eigeneKlassen/kreis.cpp ../../eigeneKlassen/darstellungsatribute.cpp ../../eigeneKlassen/zylinder.cpp ../../eigeneKlassen/rechteck3d.cpp ../../eigeneKlassen/wuerfel.cpp ../../eigeneKlassen/tabelle_tz3.cpp ../../eigeneKlassen/letzte_dateien.cpp ../../Dialoge/dialog_import_ggf.cpp ../../Dialoge/dialog_kreis.cpp ../../Dialoge/dialog_strecke.cpp ../../Dialoge/dialog_bogen.cpp ../../Dialoge/dialog_bohren.cpp ../../eigeneKlassen/programmtexte.cpp ../../eigeneKlassen/indexhisory.cpp ../../Dialoge/dialog_schleife_linear.cpp ../../Dialoge/dialog_schleifenende.cpp ../../eigeneKlassen/gcode.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../eigeneKlassen/indexhistory.h ../../eigeneKlassen/text_zw.h ../../mainwindow.h ../../Dialoge/dialog_werkzeug.h ../../Dialoge/dialog_variablenwerte_anzeigen.h ../../Dialoge/dialog_variable.h ../../Dialoge/dialog_settings.h ../../Dialoge/dialog_rechtecktasche.h ../../Dialoge/dialog_programmkopf.h ../../Dialoge/dialog_programmende.h ../../Dialoge/dialog_kreistasche.h ../../Dialoge/dialog_kommentar.h ../../Dialoge/dialog_fraeser_gerade.h ../../Dialoge/dialog_fraeser_bogen.h ../../Dialoge/dialog_fraeser_aufruf.h ../../Dialoge/dialog_fraeser_abfahren.h ../../eigeneFunktionen/myfunktion.h ../../eigeneKlassen/werkzeug.h ../../eigeneKlassen/wenndannsonst.h ../../eigeneKlassen/vorschau.h ../../eigeneKlassen/undo_redo_wkz.h ../../eigeneKlassen/undo_redo.h ../../eigeneKlassen/text_zeilenweise.h ../../eigeneKlassen/rechtecktasche.h ../../eigeneKlassen/rechteck.h ../../eigeneKlassen/programmtext.h ../../eigeneKlassen/formel.h ../../eigeneStruncts/punkt.h ../../myDefines.h ../../eigeneFunktionen/geometrie.h ../../eigeneFunktionen/umwandeln.h ../../eigeneFunktionen/text.h ../../eigeneFunktionen/runden.h ../../eigeneMakros/makro_geometrie.h ../../ToDo.h ../../eigeneKlassen/geometrietext.h ../../eigeneDefines/defines_geometrie.h ../../eigeneKlassen/punkt3d.h ../../eigeneKlassen/strecke.h ../../eigeneKlassen/bogen.h ../../eigeneKlassen/punkt2d.h ../../Dialoge/dialog_programmlisten.h ../../eigeneKlassen/kreis.h ../../eigeneKlassen/darstellungsatribute.h ../../eigeneKlassen/zylinder.h ../../eigeneKlassen/rechteck3d.h ../../eigeneKlassen/wuerfel.h ../../eigeneKlassen/tabelle_tz3.h ../../eigeneKlassen/letzte_dateien.h ../../Dialoge/dialog_import_ggf.h ../../Dialoge/dialog_kreis.h ../../Dialoge/dialog_strecke.h ../../Dialoge/dialog_bogen.h ../../Dialoge/dialog_bohren.h ../../eigeneKlassen/programmtexte.h ../../Dialoge/dialog_schleife_linear.h ../../Dialoge/dialog_schleifenende.h ../../eigeneKlassen/gcode.h ../../eigeneDefines/defines_urls.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../eigeneKlassen/indexhistory.cpp ../../eigeneKlassen/text_zw.cpp ../../mainwindow.cpp ../../main.cpp ../../Dialoge/dialog_werkzeug.cpp ../../Dialoge/dialog_variablenwerte_anzeigen.cpp ../../Dialoge/dialog_variable.cpp ../../Dialoge/dialog_settings.cpp ../../Dialoge/dialog_rechtecktasche.cpp ../../Dialoge/dialog_programmkopf.cpp ../../Dialoge/dialog_programmende.cpp ../../Dialoge/dialog_kreistasche.cpp ../../Dialoge/dialog_kommentar.cpp ../../Dialoge/dialog_fraeser_gerade.cpp ../../Dialoge/dialog_fraeser_bogen.cpp ../../Dialoge/dialog_fraeser_aufruf.cpp ../../Dialoge/dialog_fraeser_abfahren.cpp ../../eigeneFunktionen/myfunktion.cpp ../../eigeneKlassen/werkzeug.cpp ../../eigeneKlassen/wenndannsonst.cpp ../../eigeneKlassen/vorschau.cpp ../../eigeneKlassen/undo_redo_wkz.cpp ../../eigeneKlassen/undo_redo.cpp ../../eigeneKlassen/text_zeilenweise.cpp ../../eigeneKlassen/rechtecktasche.cpp ../../eigeneKlassen/rechteck.cpp ../../eigeneKlassen/programmtext.cpp ../../eigeneKlassen/formel.cpp ../../eigeneFunktionen/geometrie.cpp ../../eigeneFunktionen/umwandeln.cpp ../../eigeneFunktionen/text.cpp ../../eigeneFunktionen/runden.cpp ../../eigeneKlassen/geometrietext.cpp ../../eigeneKlassen/punkt3d.cpp ../../eigeneKlassen/strecke.cpp ../../eigeneKlassen/bogen.cpp ../../eigeneKlassen/punkt2d.cpp ../../Dialoge/dialog_programmlisten.cpp ../../eigeneKlassen/kreis.cpp ../../eigeneKlassen/darstellungsatribute.cpp ../../eigeneKlassen/zylinder.cpp ../../eigeneKlassen/rechteck3d.cpp ../../eigeneKlassen/wuerfel.cpp ../../eigeneKlassen/tabelle_tz3.cpp ../../eigeneKlassen/letzte_dateien.cpp ../../Dialoge/dialog_import_ggf.cpp ../../Dialoge/dialog_kreis.cpp ../../Dialoge/dialog_strecke.cpp ../../Dialoge/dialog_bogen.cpp ../../Dialoge/dialog_bohren.cpp ../../eigeneKlassen/programmtexte.cpp ../../Dialoge/dialog_schleife_linear.cpp ../../Dialoge/dialog_schleifenende.cpp ../../eigeneKlassen/gcode.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../mainwindow.ui ../../Dialoge/dialog_werkzeug.ui ../../Dialoge/dialog_variablenwerte_anzeigen.ui ../../Dialoge/dialog_variable.ui ../../Dialoge/dialog_settings.ui ../../Dialoge/dialog_rechtecktasche.ui ../../Dialoge/dialog_programmkopf.ui ../../Dialoge/dialog_programmende.ui ../../Dialoge/dialog_kreistasche.ui ../../Dialoge/dialog_kommentar.ui ../../Dialoge/dialog_fraeser_gerade.ui ../../Dialoge/dialog_fraeser_bogen.ui ../../Dialoge/dialog_fraeser_aufruf.ui ../../Dialoge/dialog_fraeser_abfahren.ui ../../Dialoge/dialog_programmlisten.ui ../../Dialoge/dialog_import_ggf.ui ../../Dialoge/dialog_kreis.ui ../../Dialoge/dialog_strecke.ui ../../Dialoge/dialog_bogen.ui ../../Dialoge/dialog_bohren.ui ../../Dialoge/dialog_schleife_linear.ui ../../Dialoge/dialog_schleifenende.ui $(DISTDIR)/
 
 
@@ -1390,7 +1390,7 @@ moc_mainwindow.cpp: ../../mainwindow.h \
 		../../eigeneKlassen/tabelle_tz3.h \
 		../../eigeneKlassen/programmtexte.h \
 		../../eigeneKlassen/undo_redo.h \
-		../../eigeneKlassen/indexhisory.h \
+		../../eigeneKlassen/indexhistory.h \
 		../../eigeneKlassen/text_zw.h \
 		../../Dialoge/dialog_variablenwerte_anzeigen.h \
 		../../eigeneKlassen/undo_redo_wkz.h \
@@ -6283,6 +6283,91 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
+indexhistory.o: ../../eigeneKlassen/indexhistory.cpp ../../eigeneKlassen/indexhistory.h \
+		../../eigeneKlassen/text_zw.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/QString \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstring.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qchar.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qglobal.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qconfig.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qassert.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtypes.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtversion.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qlogging.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qflags.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qatomic.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qforeach.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qminmax.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qoverload.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qswap.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtresource.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompare.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringview.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qpair.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20functional.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20memory.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q17memory.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q23type_traits.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		../../eigeneFunktionen/umwandeln.h \
+		../../eigeneStruncts/punkt.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o indexhistory.o ../../eigeneKlassen/indexhistory.cpp
+
 text_zw.o: ../../eigeneKlassen/text_zw.cpp ../../eigeneKlassen/text_zw.h \
 		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/QString \
 		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstring.h \
@@ -6661,7 +6746,7 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		../../eigeneKlassen/tabelle_tz3.h \
 		../../eigeneKlassen/programmtexte.h \
 		../../eigeneKlassen/undo_redo.h \
-		../../eigeneKlassen/indexhisory.h \
+		../../eigeneKlassen/indexhistory.h \
 		../../eigeneKlassen/text_zw.h \
 		../../Dialoge/dialog_variablenwerte_anzeigen.h \
 		../../eigeneKlassen/undo_redo_wkz.h \
@@ -7013,7 +7098,7 @@ main.o: ../../main.cpp /home/oliver/Qt/6.10.1/gcc_64/include/QtWidgets/QApplicat
 		../../eigeneKlassen/tabelle_tz3.h \
 		../../eigeneKlassen/programmtexte.h \
 		../../eigeneKlassen/undo_redo.h \
-		../../eigeneKlassen/indexhisory.h \
+		../../eigeneKlassen/indexhistory.h \
 		../../eigeneKlassen/text_zw.h \
 		../../Dialoge/dialog_variablenwerte_anzeigen.h \
 		../../eigeneKlassen/undo_redo_wkz.h \
@@ -15943,94 +16028,9 @@ programmtexte.o: ../../eigeneKlassen/programmtexte.cpp ../../eigeneKlassen/progr
 		../../Dialoge/dialog_variable.h \
 		/home/oliver/Qt/6.10.1/gcc_64/include/QtWidgets/QDialog \
 		../../eigeneKlassen/undo_redo.h \
-		../../eigeneKlassen/indexhisory.h \
+		../../eigeneKlassen/indexhistory.h \
 		../../eigeneKlassen/text_zw.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o programmtexte.o ../../eigeneKlassen/programmtexte.cpp
-
-indexhisory.o: ../../eigeneKlassen/indexhisory.cpp ../../eigeneKlassen/indexhisory.h \
-		../../eigeneKlassen/text_zw.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/QString \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstring.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qchar.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qglobal.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcoreglobal.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtversionchecks.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtconfiginclude.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qconfig.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcore-config.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtconfigmacros.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompilerdetection.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qprocessordetection.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qsystemdetection.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtcoreexports.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qassert.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtnoop.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtypes.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtversion.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtypeinfo.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcontainerfwd.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qsysinfo.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qlogging.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qflags.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompare_impl.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qatomic.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbasicatomic.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qatomic_cxx11.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qgenericatomic.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qyieldcpu.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qconstructormacros.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qdarwinhelpers.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qexceptionhandling.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qforeach.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qttypetraits.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qfunctionpointer.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qglobalstatic.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qmalloc.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qminmax.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qnumeric.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20type_traits.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qoverload.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qswap.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtresource.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qttranslation.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qversiontagging.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcompare.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstdlibdetection.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcomparehelpers.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringview.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearray.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qrefcount.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qnamespace.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qtmetamacros.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydata.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qpair.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydatapointer.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qarraydataops.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qcontainertools_impl.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qxptype_traits.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20functional.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q20memory.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q17memory.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qbytearrayview.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringfwd.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringalgorithms.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qlatin1stringview.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qanystringview.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qutf8stringview.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringtokenizer.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/q23type_traits.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringbuilder.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringconverter.h \
-		/home/oliver/Qt/6.10.1/gcc_64/include/QtCore/qstringconverter_base.h \
-		../../eigeneFunktionen/umwandeln.h \
-		../../eigeneStruncts/punkt.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o indexhisory.o ../../eigeneKlassen/indexhisory.cpp
 
 dialog_schleife_linear.o: ../../Dialoge/dialog_schleife_linear.cpp ../../Dialoge/dialog_schleife_linear.h \
 		/home/oliver/Qt/6.10.1/gcc_64/include/QtWidgets/QDialog \

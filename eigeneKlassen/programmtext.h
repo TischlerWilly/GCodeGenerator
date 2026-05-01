@@ -6,6 +6,7 @@
 #include "../myDefines.h"
 #include "../eigeneFunktionen/myfunktion.h"
 #include "text_zeilenweise.h"
+#include "text_zw.h"
 #include "wenndannsonst.h"
 #include "rechtecktasche.h"
 #include "geometrietext.h"
@@ -24,112 +25,105 @@ public:
             void                clear();
     inline  void                warnungen_einschalten(bool einschalten)
     {
-        warnungen_sind_eingeschaltet = einschalten;
+        Warnungen_sind_eingeschaltet = einschalten;
     }
-    inline  QString             get_text()
-    {
-        return text.get_text();
-    }
-    inline  text_zeilenweise    get_text_zeilenweise()
-    {
-        return text;
-    }
+    text_zw    text();
             QString             get_klartext();
     inline  text_zeilenweise    get_klartext_zeilenweise()
     {
-        return klartext;
+        return Klartext;
     }
             QString             get_variablen();
     inline  text_zeilenweise    get_variablen_zeilenweise()
     {
-        return var;
+        return Var;
     }
     inline  QString             get_anzeigetext()
     {
-        return anzeigetext.get_text();
+        return Anzeigetext.get_text();
     }
     inline  text_zeilenweise    get_anzeigetext_zeilenweise()
     {
-        return anzeigetext;
+        return Anzeigetext;
     }
     inline  QString             get_anzeigetext_zeile(uint zeilennummer)
     {
-        return anzeigetext.zeile(zeilennummer);
+        return Anzeigetext.zeile(zeilennummer);
     }
 
     inline  geometrietext       get_geo()
     {
-        return geo;
+        return Geo;
     }
     inline  geometrietext       get_fkon()
     {
-        return fkon;
+        return Fkon;
     }
     inline  geometrietext       get_maschinengeo()
     {
-        return maschinengeo;
+        return Maschinengeo;
     }
     inline  geometrietext       get_fraeserdarst()
     {
-        return fraeserdarst;
+        return Fraeserdarst;
     }
 
-    inline  float   get_werkstuecklaenge()
+    inline  float   wst_laenge()
     {
-        return werkstuecklaenge;
+        return Wst_laenge;
     }
-    inline  float   get_werkstueckbreite()
+    inline  float   wst_breite()
     {
-        return werkstueckbreite;
+        return Wst_breite;
     }
-    inline  float   get_werkstueckdicke()
+    inline  float   wst_dicke()
     {
-        return werkstueckdicke;
+        return Wst_dicke;
     }
     inline  float   get_sicherheitsabstand()
     {
-        return sicherheitsabstand;
+        return Sicherheitsabstand;
     }
     inline  float   get_min_x()
     {
-        return min_x;
+        return Min_x;
     }
     inline  float   get_max_x()
     {
-        return max_x;
+        return Max_x;
     }
     inline  float   get_min_y()
     {
-        return min_y;
+        return Min_y;
     }
     inline  float   get_max_y()
     {
-        return max_y;
+        return Max_y;
     }
 
     inline  float   get_ax()
     {
-        return versatz_x;
+        return Versatz_x;
     }
     inline  float   get_ay()
     {
-        return versatz_y;
+        return Versatz_y;
     }
     inline  float   get_az()
     {
-        return versatz_z;
+        return Versatz_z;
     }
     inline  QString   get_ax_qstring()
     {
-        return double_to_qstring(versatz_x);
+        return double_to_qstring(Versatz_x);
     }
     inline  QString   get_ay_qstring()
     {
-        return double_to_qstring(versatz_y);
+        return double_to_qstring(Versatz_y);
     }
     inline  QString   get_az_qstring()
     {
-        return double_to_qstring(versatz_z);
+        return double_to_qstring(Versatz_z);
     }
 
     QString     zeile(uint zeilennummer);
@@ -147,11 +141,11 @@ public:
     {
         if(einschalten)
         {
-            aktualisieren_eingeschaltet = true;
+            Aktualisieren_eingeschaltet = true;
             aktualisieren();
         }else
         {
-            aktualisieren_eingeschaltet = false;
+            Aktualisieren_eingeschaltet = false;
         }
     }
 
@@ -159,22 +153,22 @@ public:
     {
         if(einschalten == true)
         {
-            aktualisieren_fkon_eingeschaltet = true;
+            Aktualisieren_fkon_eingeschaltet = true;
             aktualisieren();
         }else
         {
-            aktualisieren_fkon_eingeschaltet = false;
+            Aktualisieren_fkon_eingeschaltet = false;
             aktualisieren();
         }
     }
     inline bool get_aktualisieren_fkon_ein_aus()
     {
-        return aktualisieren_fkon_eingeschaltet;
+        return Aktualisieren_fkon_eingeschaltet;
     }
 
     inline  bool ist_aktualisieren_fkon_ein()
     {
-        return aktualisieren_fkon_eingeschaltet;
+        return Aktualisieren_fkon_eingeschaltet;
     }
     void aktualisieren();
     void wurde_gespeichert();
@@ -194,57 +188,57 @@ public:
     void spiegeln_hori(uint zeinumbeg, uint zeinumend);
 
 private:
-    text_zeilenweise    text;           //Programm-Rohtext (mit Formeln und Variablen)
-    text_zeilenweise    text_kopie;     //Zum Vergleichen ob sich die Datei geändert wurde seit dem Speichern
-    text_zeilenweise    klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)
-    text_zeilenweise    var;            //Variablen
-    text_zeilenweise    anzeigetext;    //Programmliste
-    geometrietext       geo;            //Geometrieen zur Darstellung
-    geometrietext       fkon;           //Fräskonturen
-    werkzeug            w;              //Werkzeug
-    geometrietext       maschinengeo;   //Maschinengeometrie
-    geometrietext       fraeserdarst;   //Darstellung des Fräsers
+    text_zw             Text;           //Programm-Rohtext (mit Formeln und Variablen)
+    text_zw             Text_kopie;     //Zum Vergleichen ob sich die Datei geändert wurde seit dem Speichern
+    text_zeilenweise    Klartext;       //Programm-Klartext (Formeln und Variablen sind nun Zahlen)
+    text_zeilenweise    Var;            //Variablen
+    text_zeilenweise    Anzeigetext;    //Programmliste
+    geometrietext       Geo;            //Geometrieen zur Darstellung
+    geometrietext       Fkon;           //Fräskonturen
+    werkzeug            Wkz;              //Werkzeug
+    geometrietext       Maschinengeo;   //Maschinengeometrie
+    geometrietext       Fraeserdarst;   //Darstellung des Fräsers
 
-    float   werkstuecklaenge;
-    float   werkstueckbreite;
-    float   werkstueckdicke;
-    float   sicherheitsabstand;
-    float   versatz_x;
-    float   versatz_y;
-    float   versatz_z;
-    bool    hat_programmkopf;
-    bool    hat_programmende;
-    float   min_x, min_y, max_x, max_y;
-    uint    anz_faufr, anz_fabfa;
-    bool    warnungen_sind_eingeschaltet;
-    bool    warnung_frDial;
-    bool    aktualisieren_eingeschaltet;
-    bool    aktualisieren_fkon_eingeschaltet;
+    float   Wst_laenge;
+    float   Wst_breite;
+    float   Wst_dicke;
+    float   Sicherheitsabstand;
+    float   Versatz_x;
+    float   Versatz_y;
+    float   Versatz_z;
+    bool    Hat_programmkopf;
+    bool    Hat_programmende;
+    float   Min_x, Min_y, Max_x, Max_y;
+    uint    Anz_faufr, Anz_fabfa;
+    bool    Warnungen_sind_eingeschaltet;
+    bool    Warnung_frDial;
+    bool    Aktualisieren_eingeschaltet;
+    bool    Aktualisieren_fkon_eingeschaltet;
 
             void    clear_ausser_text();
-    inline  void    set_werkstuecklaenge(float neue_laenge)
+    inline  void    set_wst_laenge(float neue_laenge)
     {
-        werkstuecklaenge = neue_laenge;
+        Wst_laenge = neue_laenge;
     }
-    inline  void    set_werkstueckbreite(float neue_breite)
+    inline  void    set_wst_breite(float neue_breite)
     {
-        werkstueckbreite = neue_breite;
+        Wst_breite = neue_breite;
     }
-    inline  void    set_werkstueckdicke(float neue_dicke)
+    inline  void    set_wst_dicke(float neue_dicke)
     {
-        werkstueckdicke = neue_dicke;
+        Wst_dicke = neue_dicke;
     }
     inline  void    set_versatz_x(float versatz)
     {
-        versatz_x = versatz;
+        Versatz_x = versatz;
     }
     inline  void    set_versatz_y(float versatz)
     {
-        versatz_y = versatz;
+        Versatz_y = versatz;
     }
     inline  void    set_versatz_z(float versatz)
     {
-        versatz_z = versatz;
+        Versatz_z = versatz;
     }
             void    set_sicherheitsabstand(float neuer_Abstand);
 

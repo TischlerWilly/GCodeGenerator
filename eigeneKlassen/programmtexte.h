@@ -7,7 +7,7 @@
 #include "../eigeneFunktionen/umwandeln.h"
 #include "programmtext.h"
 #include "undo_redo.h"
-#include "indexhisory.h"
+#include "indexhistory.h"
 
 
 class programmtexte
@@ -78,7 +78,7 @@ private:
     QVector<undo_redo> vur;      //Vector enthällt Wiederrufenschritte
     QVector<QString> vpname;     //Vektor enthällt Dateinahmen (Pfade)
     uint current_index;
-    indexhisory ih;
+    indexhistory ih;
     bool    aktualisieren_fkon_eingeschaltet;
 };
 
