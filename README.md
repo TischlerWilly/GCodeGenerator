@@ -1,2 +1,3 @@
-# GCodeGenerator
-Dient dem Erstellen von CNC-Programmen, mit Werkzeugverwaltung (kompatibel mit EMC2)
+# Geo2Metrics
+
+A simple GCode and BCode Generator
